@@ -85,7 +85,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Fresh database migrates reproducibly; integrity/RLS tests pass; key concurrency constraints enforced by database; schema contracts documented and queryable.
 
 ## Phase 3 — Authentication, onboarding, and account identity
-**Status:** NOT STARTED. **Dependencies:** 2.
+**Main status:** NOT STARTED (unmerged). **Execution status:** BLOCKED on live preview auth verification — [draft PR #3](https://github.com/A13Xg/Daydle/pull/3) and active [Phase3Exec.md](Phase3Exec.md). **Dependencies:** 2.
 
 **Purpose:** Enable open signup and account lifecycle with unique public identity and private credentials.
 
