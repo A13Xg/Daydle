@@ -25,7 +25,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | Phase | Name | Depends on | Main status |
 |---|---|---|---|
 | 0 | Repository foundation and delivery contract | — | COMPLETE |
-| 1 | Application skeleton, tooling, and deploy baselines | 0 | IN REVIEW — [PR #1](https://github.com/A13Xg/Daydle/pull/1) |
+| 1 | Application skeleton, tooling, and deploy baselines | 0 | COMPLETE — [PR #1](https://github.com/A13Xg/Daydle/pull/1), merge `b91a6e8` |
 | 2 | Domain model, persistence, and security foundations | 1 | NOT STARTED |
 | 3 | Authentication, onboarding, and account identity | 2 | NOT STARTED |
 | 4 | Game catalog, selection, and discovery | 3 | NOT STARTED |
@@ -55,7 +55,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** All files exist and link correctly on main; roadmap statuses are coherent; no app implementation is claimed; initial commit history reflects the repository owner only.
 
 ## Phase 1 — Application skeleton, tooling, and deploy baselines
-**Status:** IN REVIEW on branch [PR #1](https://github.com/A13Xg/Daydle/pull/1) — verified in [completedPhases/Phase1Exec.md](completedPhases/Phase1Exec.md); main remains NOT STARTED until reviewed merge. **Dependencies:** 0.
+**Status:** COMPLETE — [PR #1](https://github.com/A13Xg/Daydle/pull/1) merged at `b91a6e859ee345c132cb27380bbff4c9aa4ee56a`, archived plan [completedPhases/Phase1Exec.md](completedPhases/Phase1Exec.md), and successful [main CI](https://github.com/A13Xg/Daydle/actions/runs/43560166887). **Dependencies:** 0.
 
 **Purpose:** Produce a deployable, tested, minimal React/TypeScript/Vite app with a Cloudflare Worker API and reproducible local development.
 
