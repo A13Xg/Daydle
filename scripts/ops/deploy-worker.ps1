@@ -43,9 +43,11 @@ if ($AllowNonMain) { Write-Warning "Deploying off main ($branch) because -AllowN
 "Deploying commit $(git rev-parse --short HEAD) on $branch to $Domain"
 
 $env:VITE_SUPABASE_URL = (gh variable get VITE_SUPABASE_URL --env $Environment --repo $Repo)
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($env:VITE_SUPABASE_URL)) { throw 'Could not read the Supabase URL variable.' }
 $env:VITE_SUPABASE_PUBLISHABLE_KEY = (gh variable get VITE_SUPABASE_PUBLISHABLE_KEY --env $Environment --repo $Repo)
+if ($LASTEXITCODE -ne 0 -or $env:VITE_SUPABASE_PUBLISHABLE_KEY -notmatch '^sb_publishable_.+') { throw 'Publishable key variable is missing or not a publishable key.' }
 $env:CLOUDFLARE_ACCOUNT_ID = (gh variable get CLOUDFLARE_ACCOUNT_ID --env $Environment --repo $Repo)
-if ($env:VITE_SUPABASE_PUBLISHABLE_KEY -notmatch '^sb_publishable_') { throw 'Publishable key variable is missing or not a publishable key.' }
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($env:CLOUDFLARE_ACCOUNT_ID)) { throw 'Could not read the Cloudflare account ID variable.' }
 
 $env:CLOUDFLARE_API_TOKEN = Read-HiddenInput 'Cloudflare API token'
 try {
