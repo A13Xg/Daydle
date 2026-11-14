@@ -4,6 +4,9 @@
   "main": "./worker/index.ts",
   "compatibility_date": "2026-11-13",
   "upload_source_maps": true,
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "daydle.agoodman.io", "custom_domain": true }],
   "assets": {
     "not_found_handling": "single-page-application",
     "run_worker_first": ["/api/*"],

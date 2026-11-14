@@ -14,5 +14,12 @@ export function createBrowserSupabaseClient(
     return null;
   }
 
-  return createClient(config.url, config.publishableKey);
+  return createClient(config.url, config.publishableKey, {
+    auth: {
+      flowType: "pkce",
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: false,
+    },
+  });
 }

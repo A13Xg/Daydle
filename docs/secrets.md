@@ -4,7 +4,7 @@ This is a reference manifest, **not a request to paste credentials into a chat o
 
 ## GitHub Actions secrets and variables
 
-In [GitHub repository Actions settings](https://github.com/A13Xg/Daydle/settings/secrets/actions), prefer environment-scoped secrets for `preview` and `production`. Production deployment jobs must require explicit approval and never run on PR CI.
+In [GitHub repository Actions settings](https://github.com/A13Xg/Daydle/settings/secrets/actions), use environment-scoped secrets. The repository currently has a single protected **`production`** environment (required reviewer, deployments limited to `main`; these rules govern GitHub Actions jobs, and the local `deploy-worker.ps1` enforces `main` itself); there is no separate preview environment. Production deployment jobs must require explicit approval and never run on PR CI. The helper scripts in [scripts/ops](../scripts/ops/README.md) create and populate it.
 
 | Name | Store | Purpose |
 |---|---|---|
@@ -15,8 +15,17 @@ In [GitHub repository Actions settings](https://github.com/A13Xg/Daydle/settings
 | `CLOUDFLARE_ACCOUNT_ID` | GitHub Environment **variable** | Cloudflare account identifier |
 | `VITE_SUPABASE_URL` | GitHub Environment **variable** | Public project URL `https://<project-ref>.supabase.co` |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | GitHub Environment **variable** | Public `sb_publishable_...` key for browser RLS client |
+| `VITE_TURNSTILE_SITE_KEY` | GitHub Environment **variable** | Reserved and not read by the current UI (the CAPTCHA widget was removed); set only if an email form returns |
+| `KEEPALIVE_SUPABASE_URL` | GitHub **repository variable** | Same public project URL, read by the scheduled keep-alive workflow (repository scope so it needs no environment approval) |
+| `KEEPALIVE_SUPABASE_PUBLISHABLE_KEY` | GitHub **repository variable** | Same public publishable key, for the keep-alive workflow only |
 
-Use separate hosted projects or isolated staging resources for preview and production. GitHub deployment env secrets are distinct from runtime Worker secrets.
+Owner decision: the single hosted Supabase project is treated as production and no separate preview or staging project exists. If real user data later makes schema changes risky, add an isolated staging project first. GitHub deployment env secrets are distinct from runtime Worker secrets.
+
+Notes:
+
+- The Supabase access token is a personal token and **cannot be restricted to one project**. Use the shortest expiry that is practical and rotate it.
+- The **Turnstile secret key** is not stored in GitHub. It exists only in Supabase Auth settings (set by `scripts/ops/configure-turnstile.ps1`). Google and Apple provider credentials likewise live only in Supabase; the Apple `.p8` key stays in the owner's password manager.
+- The database password is kept in Windows Credential Manager (and as the `SUPABASE_DB_PASSWORD` secret). Nothing here authorizes running migrations; see the policy below.
 
 ## Cloudflare runtime secrets
 

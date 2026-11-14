@@ -13,7 +13,7 @@ if [[ -z "${PGPASSWORD:-}" ]]; then
   exit 2
 fi
 
-prefix="daydle_p2_${GITHUB_RUN_ID:-local}_$$"
+prefix="daydle_db_${GITHUB_RUN_ID:-local}_$$"
 databases=("${prefix}_a" "${prefix}_b")
 
 cleanup() {
@@ -28,9 +28,13 @@ for db in "${databases[@]}"; do
   createdb "$db"
   export PGDATABASE="$db"
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/bootstrap.sql
-  psql -X -v ON_ERROR_STOP=1 -f supabase/migrations/20261114050000_phase2_domain_security.sql
+  for migration in supabase/migrations/*.sql; do
+    echo "Applying migration: $migration"
+    psql -X -v ON_ERROR_STOP=1 -f "$migration"
+  done
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/fixtures.sql
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/assertions.sql
+  psql -X -v ON_ERROR_STOP=1 -f tests/sql/auth-assertions.sql
 done
 
-echo "PASS: Phase 2 schema and RLS tests passed on two clean databases."
+echo "PASS: All Daydle schema, RLS and auth identity tests passed on two clean databases."

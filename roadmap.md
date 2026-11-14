@@ -27,7 +27,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 0 | Repository foundation and delivery contract | — | COMPLETE |
 | 1 | Application skeleton, tooling, and deploy baselines | 0 | COMPLETE — [PR #1](https://github.com/A13Xg/Daydle/pull/1), merge `b91a6e8` |
 | 2 | Domain model, persistence, and security foundations | 1 | COMPLETE — [PR #2](https://github.com/A13Xg/Daydle/pull/2), merge `b4a1140` |
-| 3 | Authentication, onboarding, and account identity | 2 | NOT STARTED |
+| 3 | Authentication, onboarding, and account identity | 2 | IN REVIEW (branch proposal; main unchanged until merge) — [PR #3](https://github.com/A13Xg/Daydle/pull/3), evidence in [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md) |
 | 4 | Game catalog, selection, and discovery | 3 | NOT STARTED |
 | 5 | Today experience, PWA, and external-game navigation | 4 | NOT STARTED |
 | 6 | Deterministic parser registry and initial game coverage | 5 | NOT STARTED |
@@ -85,7 +85,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Fresh database migrates reproducibly; integrity/RLS tests pass; key concurrency constraints enforced by database; schema contracts documented and queryable.
 
 ## Phase 3 — Authentication, onboarding, and account identity
-**Status:** NOT STARTED. **Dependencies:** 2.
+**Main status:** NOT STARTED (unmerged). **Branch status:** IN REVIEW — [PR #3](https://github.com/A13Xg/Daydle/pull/3); verified with owner-approved scope changes (Apple and Google only; installed-PWA test deferred), see [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md). **Dependencies:** 2.
 
 **Purpose:** Enable open signup and account lifecycle with unique public identity and private credentials.
 
@@ -265,3 +265,48 @@ Future possibilities (not automatic phases or MVP blockers): additional parser c
 - **Archived after passing tests/review:** completedPhases/Phase1Exec.md, etc. The archive contains the final plan plus verified outcome summary, commit/PR reference, tests run, deviations, risks, and follow-ups.
 - **PR:** created as draft at phase start, marked ready for review only after validation; never auto-merge. Main ledger changes to COMPLETE only after merge verification.
 - **Status reconciliation:** record actual commit hashes and PR state; if a checked “COMPLETE” phase is missing evidence or expected artifacts, stop and diagnose rather than cascading unreliable assumptions.
+
+## Circle-Back
+
+Deferred operational items that are not numbered phases and do not block any phase's acceptance gates. Each needs explicit user authorization before work begins.
+
+### Automated Apple client-secret rotation
+**Status:** NOT STARTED. **Depends on:** Sign in with Apple configured in Supabase Auth; production environment secrets; Phase 14 production readiness (or earlier if rotation reminders prove unreliable).
+
+**Why:** Apple's OAuth client secret is a signed token that expires after at most about six months. When it lapses, Apple sign-in fails while Google sign-in keeps working. The current process is manual: re-run the local setup script before the printed expiry date.
+
+**Proposed approach:**
+- Add a scheduled GitHub Actions workflow (monthly cron plus `workflow_dispatch`) in the `production` environment. A required-reviewer rule is acceptable, since each run then prompts a human.
+- Generate the ES256 client-secret token with Node's built-in `crypto`; no new dependencies.
+- Update only `external_apple_secret` through the Supabase Management API using `SUPABASE_ACCESS_TOKEN`. Do not push a whole configuration file or touch other auth settings.
+- Re-mint only when the stored expiry is within about 30 days, or on manual dispatch. Record the new expiry and fail or open an issue if rotation fails.
+- Verify afterwards by checking that the provider is still enabled and the authorize endpoint redirects to Apple with the expected Services ID.
+- Never print the key or token, never upload them as artifacts, and mask all values in logs.
+
+**New production-environment entries:** secret `APPLE_P8_KEY`; variables `APPLE_TEAM_ID`, `APPLE_KEY_ID`, `APPLE_SERVICES_ID`. Existing `SUPABASE_ACCESS_TOKEN` and `SUPABASE_PROJECT_ID` are reused.
+
+**Tradeoff to decide first:** storing the `.p8` signing key in GitHub widens its blast radius. If that is unacceptable, use a reminder-only workflow that opens an issue 30 days before expiry and leave the secret regeneration manual.
+
+**Exit/verification:** A dispatch run rotates the secret end to end; Apple sign-in succeeds afterwards on the production domain; the new expiry is recorded; no secret appears in logs; rollback and key-revocation steps are documented in `docs/auth.md`.
+
+### Installed-PWA authentication verification
+**Status:** NOT STARTED (deferred from Phase 3 by the owner). **Depends on:** the PWA experience in Phase 5.
+
+Verify on an iPhone, in the installed PWA rather than Safari tabs: Google and Apple sign-in and return to the app, sign-out, and session restoration after the app is closed and reopened. Record results in the Phase 5 archive.
+
+### Email/password sign-in with confirmation and custom SMTP
+**Status:** NOT STARTED. **Depends on:** a verified sending domain and SMTP provider.
+
+Email/password is disabled because unconfirmed email signup allows account pre-hijacking through automatic identity linking (see [docs/auth.md](docs/auth.md)). To re-enable: configure custom SMTP on an owned domain, require email confirmation, restore a form (the removed form and widget are in git history, commit `d534cfd`), verify confirmation and password recovery on a real device, then run `scripts/ops/configure-turnstile.ps1 -EmailSignup Confirmed` if a CAPTCHA is wanted.
+
+### Google OAuth consent-screen branding and publishing
+**Status:** NOT STARTED (owner action). Publish the Google app from Testing to production and add branding: app name, support email, homepage and authorized domain. Basic scopes (`openid`, `email`, `profile`) are expected not to need Google verification; confirm in the console.
+
+### Retire or rework dormant email-era code
+**Status:** NOT STARTED. The auth actions still contain email sign-up, sign-in, recovery and CAPTCHA token pass-through, and `configure-turnstile.ps1` remains. The account page's password-reset form was removed during the Phase 3 review because any signed-in session could open it by URL. Decide whether to delete or restore them when the email decision is made, so unused paths do not rot.
+
+### Development-dependency advisories
+**Status:** NOT STARTED. Dependabot reports a moderate `minimatch` denial-of-service advisory (and `npm audit` reports moderate findings in the lint toolchain). They are development-only and do not ship in the app or Worker. Upgrade the lint tooling in a dedicated change.
+
+### Provider-supplied display names
+**Status:** NOT STARTED (owner decision needed). New users from Apple or Google get their provider name as a **public** display name and are marked as onboarded, so they are never asked to confirm it. The sign-in and account pages now disclose this. To require confirmation instead, add a forward-only migration that sets `onboarding_completed` to false for provider-supplied names (and update the trigger test), or add an explicit "choose your public name" step.

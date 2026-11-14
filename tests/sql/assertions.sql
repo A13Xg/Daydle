@@ -49,14 +49,16 @@ END $$;
 DO $$
 BEGIN
   BEGIN
-    INSERT INTO public.friend_codes(user_id, code)
-      VALUES ('11111111-1111-1111-1111-111111111111','0O1IL');
+    UPDATE public.friend_codes SET code='0O1IL'
+      WHERE user_id='11111111-1111-1111-1111-111111111111';
     RAISE EXCEPTION 'invalid friend code was accepted';
   EXCEPTION WHEN check_violation THEN NULL;
   END;
 
   BEGIN
-    UPDATE public.friend_codes SET code = '7KMP4'
+    UPDATE public.friend_codes
+      SET code = (SELECT code FROM public.friend_codes
+                  WHERE user_id = '11111111-1111-1111-1111-111111111111')
       WHERE user_id = '33333333-3333-3333-3333-333333333333';
     RAISE EXCEPTION 'duplicate friend code was accepted';
   EXCEPTION WHEN unique_violation THEN NULL;

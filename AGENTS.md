@@ -161,3 +161,10 @@ Be clear and economical; report concrete commits and links when available. Never
 - Do not connect PR CI to a live Supabase project, and do not invoke `supabase db push` or run migrations against hosted databases without explicit environment-specific deployment authorization.
 - Provider credentials may be stored in GitHub Environment secrets or Cloudflare Worker secrets without authorizing their use in CI or any live deployment. Restrict production credentials from pull-request workflows and prefer separately gated deployments.
 - Public profile tables and client-accessible results must never expose auth email, raw copied text, admin data, or unreleased puzzle performance, including through alternate aggregate, award or ranking routes.
+
+## Credential escalation without unnecessary deferral
+
+- At every phase preflight and before closing review, decide explicitly whether external credentials are **currently blocking an essential implementation or verification gate**. If yes, tell the user immediately which minimum names, scope, destination and provider configuration are required. Never solicit secret values in conversation.
+- If credentials are not yet on the critical path, implement and verify the standard architecture without prompting for premature setup; call out live integration as NOT VERIFIED, and surface the exact checkpoint when reached.
+- Do not overengineer mocks, custom providers, or elaborate fallbacks merely to avoid asking for straightforward OAuth, preview hosting, or database credentials when the next gate genuinely requires them.
+- Maintain environment separation and explicit permission for remote migrations/deployments even if GitHub secrets already exist. Production permissions must never be inferred from credential availability.

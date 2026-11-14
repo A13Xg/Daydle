@@ -1,18 +1,9 @@
--- Deterministic identities; test data only.
-INSERT INTO auth.users(id, email) VALUES
- ('11111111-1111-1111-1111-111111111111', 'one@example.invalid'),
- ('22222222-2222-2222-2222-222222222222', 'two@example.invalid'),
- ('33333333-3333-3333-3333-333333333333', 'three@example.invalid');
-
-INSERT INTO public.profiles(id, display_name) VALUES
- ('11111111-1111-1111-1111-111111111111', 'One'),
- ('22222222-2222-2222-2222-222222222222', 'Two'),
- ('33333333-3333-3333-3333-333333333333', 'Three');
-
-INSERT INTO public.friend_codes(user_id, code) VALUES
- ('11111111-1111-1111-1111-111111111111', '7KMP4'),
- ('22222222-2222-2222-2222-222222222222', '5JH3Z'),
- ('33333333-3333-3333-3333-333333333333', '2QRS9');
+-- Deterministic identities; test data only. The Phase 3 auth trigger
+-- atomically creates each profile and cryptographically random friend code.
+INSERT INTO auth.users(id, email, raw_user_meta_data) VALUES
+ ('11111111-1111-1111-1111-111111111111', 'one@example.invalid', '{"display_name":"One"}'),
+ ('22222222-2222-2222-2222-222222222222', 'two@example.invalid', '{"full_name":"Two"}'),
+ ('33333333-3333-3333-3333-333333333333', 'three@example.invalid', '{}');
 
 INSERT INTO public.game_categories(id, slug, name) VALUES
  ('12121212-1212-1212-1212-121212121212', 'word', 'Word games');
