@@ -42,7 +42,7 @@ const missing = await request("/api/v1/not-found");
 assert.equal(missing.status, 404);
 assert.match(missing.headers.get("content-type") ?? "", /application\/json/);
 
-for (const path of ["/", "/some/deep/link"]) {
+for (const path of ["/", "/auth", "/auth/callback", "/account", "/some/deep/link"]) {
   const response = await request(path, {
     headers: { "sec-fetch-mode": "navigate" },
   });
@@ -51,4 +51,4 @@ for (const path of ["/", "/some/deep/link"]) {
   assert.match(await response.text(), /Daydle/);
 }
 
-console.log("Preview smoke passed: health, methods, API 404, root, SPA fallback.");
+console.log("Preview smoke passed: health, methods, API 404, auth routes, SPA fallback.");
