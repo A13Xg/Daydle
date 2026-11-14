@@ -49,6 +49,7 @@ export async function registerEmail(
   password: string,
   displayName: string,
   origin: string,
+  captchaToken?: string,
 ): Promise<RegistrationOutcome> {
   const { data, error } = await client.auth.signUp({
     email: validateEmail(email),
@@ -56,6 +57,7 @@ export async function registerEmail(
     options: {
       data: { display_name: validateDisplayName(displayName) },
       emailRedirectTo: callbackUrl(origin),
+      ...(captchaToken ? { captchaToken } : {}),
     },
   });
 
@@ -67,10 +69,12 @@ export async function loginEmail(
   client: SupabaseClient,
   email: string,
   password: string,
+  captchaToken?: string,
 ): Promise<void> {
   const { data, error } = await client.auth.signInWithPassword({
     email: validateEmail(email),
     password,
+    ...(captchaToken ? { options: { captchaToken } } : {}),
   });
 
   if (error) throw error;
@@ -82,10 +86,14 @@ export async function sendPasswordRecovery(
   client: SupabaseClient,
   email: string,
   origin: string,
+  captchaToken?: string,
 ): Promise<void> {
   const { error } = await client.auth.resetPasswordForEmail(
     validateEmail(email),
-    { redirectTo: callbackUrl(origin, true) },
+    {
+      redirectTo: callbackUrl(origin, true),
+      ...(captchaToken ? { captchaToken } : {}),
+    },
   );
   if (error) throw error;
 }

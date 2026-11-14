@@ -14,6 +14,7 @@ PowerShell window (hidden prompts do not work in non-interactive shells). Requir
 | `set-cloudflare-credentials.ps1` | Validate a Cloudflare token, discover the account ID, and save the token (secret) and ID (variable). |
 | `register-workers-subdomain.ps1` | Read or register the account's `workers.dev` subdomain. |
 | `configure-google-auth.ps1` | Enable Google sign-in in Supabase Auth from an existing OAuth web client. |
+| `configure-turnstile.ps1` | Enable Cloudflare Turnstile CAPTCHA in Supabase Auth and open email signup behind it (basic bot protection, no email confirmation). |
 | `configure-apple-auth.ps1` | Generate Apple's client secret from your `.p8` key and store it in Supabase Auth. **Expires about every six months.** |
 | `deploy-worker.ps1` | Build with the environment's public values, deploy the Worker, attach the `wrangler.jsonc` custom domain, and verify it. |
 

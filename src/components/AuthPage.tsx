@@ -7,15 +7,22 @@ import {
   startOAuth,
   type OAuthProvider,
 } from "../lib/auth-actions";
+import { TurnstileWidget } from "./TurnstileWidget";
 
 type Mode = "sign-in" | "sign-up" | "recover";
 
 interface AuthPageProps {
   client: SupabaseClient | null;
   signedIn: boolean;
+  /** Public Cloudflare Turnstile site key; omit to render without the check. */
+  captchaSiteKey?: string | null;
 }
 
-export function AuthPage({ client, signedIn }: AuthPageProps) {
+export function AuthPage({
+  client,
+  signedIn,
+  captchaSiteKey = null,
+}: AuthPageProps) {
   const requestedMode = new URLSearchParams(window.location.search).get("mode");
   const [mode, setMode] = useState<Mode>(
     requestedMode === "signup"
@@ -30,6 +37,9 @@ export function AuthPage({ client, signedIn }: AuthPageProps) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaReset, setCaptchaReset] = useState(0);
+  const captchaMissing = Boolean(captchaSiteKey) && !captchaToken;
 
   function switchMode(next: Mode) {
     setMode(next);
@@ -41,6 +51,11 @@ export function AuthPage({ client, signedIn }: AuthPageProps) {
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!client || pending) return;
+    if (captchaSiteKey && !captchaToken) {
+      setError("Please complete the verification check.");
+      return;
+    }
+    const token = captchaToken ?? undefined;
     setPending(true);
     setError("");
     setNotice("");
@@ -52,6 +67,7 @@ export function AuthPage({ client, signedIn }: AuthPageProps) {
           password,
           displayName,
           window.location.origin,
+          token,
         );
         if (outcome === "signed-in") {
           window.location.assign("/account");
@@ -61,12 +77,17 @@ export function AuthPage({ client, signedIn }: AuthPageProps) {
           );
         }
       } else if (mode === "recover") {
-        await sendPasswordRecovery(client, email, window.location.origin);
+        await sendPasswordRecovery(
+          client,
+          email,
+          window.location.origin,
+          token,
+        );
         setNotice(
           "If this email has an account, a password reset link will be sent.",
         );
       } else {
-        await loginEmail(client, email, password);
+        await loginEmail(client, email, password, token);
         window.location.assign("/account");
       }
     } catch (cause) {
@@ -76,6 +97,9 @@ export function AuthPage({ client, signedIn }: AuthPageProps) {
           : "Authentication failed. Please retry.",
       );
     } finally {
+      // Turnstile tokens are single use: always request a fresh challenge.
+      setCaptchaToken(null);
+      setCaptchaReset((value) => value + 1);
       setPending(false);
     }
   }
@@ -182,6 +206,14 @@ export function AuthPage({ client, signedIn }: AuthPageProps) {
           </div>
         )}
 
+        {captchaSiteKey && (
+          <TurnstileWidget
+            siteKey={captchaSiteKey}
+            onToken={setCaptchaToken}
+            resetKey={captchaReset}
+          />
+        )}
+
         {error && (
           <p className="notice error" role="alert">
             {error}
@@ -193,7 +225,7 @@ export function AuthPage({ client, signedIn }: AuthPageProps) {
           </p>
         )}
 
-        <button type="submit" disabled={!client || pending}>
+        <button type="submit" disabled={!client || pending || captchaMissing}>
           {pending
             ? "Working…"
             : mode === "sign-up"

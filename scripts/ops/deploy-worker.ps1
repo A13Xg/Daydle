@@ -35,6 +35,10 @@ $env:VITE_SUPABASE_URL = (gh variable get VITE_SUPABASE_URL --env $Environment -
 $env:VITE_SUPABASE_PUBLISHABLE_KEY = (gh variable get VITE_SUPABASE_PUBLISHABLE_KEY --env $Environment --repo $Repo)
 $env:CLOUDFLARE_ACCOUNT_ID = (gh variable get CLOUDFLARE_ACCOUNT_ID --env $Environment --repo $Repo)
 if ($env:VITE_SUPABASE_PUBLISHABLE_KEY -notmatch '^sb_publishable_') { throw 'Publishable key variable is missing or not a publishable key.' }
+# Optional public Turnstile site key (see configure-turnstile.ps1). Without it the form has no CAPTCHA.
+$siteKey = (gh variable get VITE_TURNSTILE_SITE_KEY --env $Environment --repo $Repo 2>$null)
+if ($siteKey) { $env:VITE_TURNSTILE_SITE_KEY = $siteKey.Trim() }
+else { Write-Warning 'VITE_TURNSTILE_SITE_KEY is not set: the sign-up form will build without a CAPTCHA.' }
 
 $env:CLOUDFLARE_API_TOKEN = Read-HiddenInput 'Cloudflare API token'
 try {
@@ -42,7 +46,7 @@ try {
   npm run build; if ($LASTEXITCODE) { throw 'build failed' }
   npx --no-install wrangler deploy; if ($LASTEXITCODE) { throw 'wrangler deploy failed' }
 } finally {
-  Remove-Item Env:CLOUDFLARE_API_TOKEN, Env:VITE_SUPABASE_URL, Env:VITE_SUPABASE_PUBLISHABLE_KEY, Env:CLOUDFLARE_ACCOUNT_ID -ErrorAction SilentlyContinue
+  Remove-Item Env:CLOUDFLARE_API_TOKEN, Env:VITE_SUPABASE_URL, Env:VITE_SUPABASE_PUBLISHABLE_KEY, Env:VITE_TURNSTILE_SITE_KEY, Env:CLOUDFLARE_ACCOUNT_ID -ErrorAction SilentlyContinue
 }
 
 "--- verifying https://$Domain (certificate/DNS can take a few minutes)"
