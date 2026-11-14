@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { readPublicSupabaseConfig } from "./lib/config";
-import { readTurnstileSiteKey } from "./lib/captcha";
 import { fetchHealth } from "./lib/api";
 import { browserAuthClient } from "./lib/browser-auth";
 import { useAuthSession } from "./lib/use-auth";
@@ -51,11 +50,7 @@ export default function App() {
         {pathname === "/auth/callback" ? (
           <AuthCallback client={client} />
         ) : pathname === "/auth" ? (
-          <AuthPage
-            client={client}
-            signedIn={authenticated}
-            captchaSiteKey={readTurnstileSiteKey(import.meta.env)}
-          />
+          <AuthPage client={client} signedIn={authenticated} />
         ) : pathname === "/account" ? (
           <AccountPage
             client={client}

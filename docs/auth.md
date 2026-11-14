@@ -4,6 +4,8 @@ Phase 3 delivers Supabase Auth client flows and database-owned profile provision
 
 ## Implemented flows
 
+> **Current UI:** the sign-in page offers **Apple and Google only**, with one flow that signs in existing users and creates accounts for new ones. The email/password, recovery and CAPTCHA behaviour described below remains in the auth actions and tests but is not shown, because email/password is disabled (see the signup policy section).
+
 1. **Email/password signup:** a display name, email and password are submitted to Supabase Auth. When email confirmation is enabled, Daydle shows a verification-pending state; it does not represent the user as signed in. The auth-user trigger atomically creates one public profile and one private five-character friend code.
 2. **Email/password login:** Supabase Auth establishes and refreshes the browser session; the application restores it on reload. Sign-out uses Supabase Auth, not local token manipulation.
 3. **Google/Apple OAuth:** the browser starts a PKCE authorization flow and returns to `/auth/callback`; code exchange is deduplicated to tolerate React StrictMode remounts. The redirect destination is fixed and same-origin. OAuth users do not need passwords.
@@ -38,11 +40,11 @@ The app is served at `https://daydle.agoodman.io` by a Cloudflare Worker against
 
 ## Email/password signup policy and bot protection (decision: Google and Apple only)
 
-The owner first asked for email/password signup **without email confirmation**, with basic bot protection. After a security review identified the pre-hijacking risk below, the owner decided on **Google and Apple sign-in only** for now: email/password stays **disabled** in Supabase. The CAPTCHA code ships in the app but stays dormant (no site key is configured); it is kept for when email signup is enabled later.
+The owner first asked for email/password signup **without email confirmation**, with basic bot protection. After a security review identified the pre-hijacking risk below, the owner decided on **Google and Apple sign-in only** for now: email/password stays **disabled** in Supabase. The CAPTCHA token pass-through in the auth actions and `scripts/ops/configure-turnstile.ps1` are kept for when email signup is enabled later; no site key is configured.
 
 **Bot protection (code ready, not yet configured).** The publishable key is public, so anyone can call the Supabase Auth API directly. A web-form-only measure would not stop a bot; the check must be enforced by Supabase. Cloudflare Turnstile is, once configured:
 
-- Required by Supabase for email sign-up, sign-in and password recovery. The form sends a single-use token with each request and requests a fresh challenge after every attempt.
+- Required by Supabase for email sign-up, sign-in and password recovery. The auth actions can send a single-use token with each request. The email form and the widget component were removed from the UI when email/password was shelved; both can be restored from git history (commit d534cfd) if email signup returns.
 - Secret key stored only in Supabase Auth settings; public site key is the variable `VITE_TURNSTILE_SITE_KEY`. `scripts/ops/configure-turnstile.ps1` sets both in one request.
 - Not applied to Google or Apple sign-in, which already require a real provider account.
 - Basic protection only. Paid solver farms, per-IP throttling, disposable-email filtering and account clean-up are out of scope for Phase 3.

@@ -14,33 +14,62 @@ function withBrowserLocation<T>(search: string, run: () => T): T {
   return run();
 }
 
-describe("account interaction surfaces", () => {
-  it("renders semantic sign-in and OAuth options when Supabase isn't configured", () => {
-    const markup = withBrowserLocation("", () =>
-      renderToStaticMarkup(
-        createElement(AuthPage, { client: null, signedIn: false }),
-      ),
-    );
+const renderAuth = (search: string, props = {}) =>
+  withBrowserLocation(search, () =>
+    renderToStaticMarkup(
+      createElement(AuthPage, { client: null, signedIn: false, ...props }),
+    ),
+  );
+
+describe("auth page", () => {
+  it("offers Apple and Google only, with no email or password form", () => {
+    const markup = renderAuth("");
     expect(markup).toContain("Sign in to Daydle");
-    expect(markup).toContain("Authentication is not configured");
-    expect(markup).toContain('type="email"');
-    expect(markup).toContain('type="password"');
-    expect(markup).toContain("Apple");
-    expect(markup).toContain("Google");
+    expect(markup).toContain("Continue with Apple");
+    expect(markup).toContain("Continue with Google");
+    expect(markup).not.toContain('type="email"');
+    expect(markup).not.toContain('type="password"');
+    expect(markup).not.toContain("<form");
+    expect(markup).not.toContain("Forgot password");
+    expect(markup).not.toContain("Create your account");
   });
 
-  it("renders display-name signup without exposing a friend-code edit field", () => {
-    const markup = withBrowserLocation("?mode=signup", () =>
-      renderToStaticMarkup(
-        createElement(AuthPage, { client: null, signedIn: false }),
-      ),
-    );
-    expect(markup).toContain("Create your account");
-    expect(markup).toContain("Display name");
-    expect(markup).toContain("Email");
+  it("disables the provider buttons and explains when auth is unconfigured", () => {
+    const markup = renderAuth("");
+    expect(markup).toContain("Authentication is not configured");
+    expect(markup.match(/disabled=""/g)).toHaveLength(2);
+  });
+
+  it("exposes the provider choices as a labelled group of real buttons", () => {
+    const markup = renderAuth("");
+    expect(markup).toContain('role="group"');
+    expect(markup).toContain('aria-label="Sign-in options"');
+    expect(markup.match(/<button[^>]*type="button"/g)).toHaveLength(2);
+  });
+
+  it("explains privacy without exposing an email field or friend code input", () => {
+    const markup = renderAuth("");
+    expect(markup).toContain("never shown on your public profile");
     expect(markup).not.toContain('name="friendCode"');
   });
 
+  it("ignores old email-mode links and still shows the provider page", () => {
+    for (const search of ["?mode=signup", "?mode=recover"]) {
+      const markup = renderAuth(search);
+      expect(markup).toContain("Continue with Google");
+      expect(markup).not.toContain("Display name");
+    }
+  });
+
+  it("points signed-in visitors to their account instead of sign-in buttons", () => {
+    const markup = renderAuth("", { signedIn: true });
+    expect(markup).toContain("You are signed in");
+    expect(markup).toContain('href="/account"');
+    expect(markup).not.toContain("Continue with");
+  });
+});
+
+describe("account interaction surfaces", () => {
   it("provides explicit unauthenticated and callback failure states", () => {
     const account = withBrowserLocation("", () =>
       renderToStaticMarkup(

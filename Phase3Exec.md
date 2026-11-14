@@ -107,14 +107,14 @@ After the isolated source work above, the hosted environment was provisioned wit
 - **Hosting:** the Worker is deployed with the custom domain `daydle.agoodman.io` (health endpoint and SPA routes return 200 over valid TLS). `workers.dev` and preview URLs are disabled in `wrangler.jsonc`.
 - **GitHub:** a single protected `production` environment (required reviewer, `main` only) holds the public Supabase and Cloudflare values and the deployment secrets. Fork-PR workflow approval is required for all external contributors. A scheduled keep-alive workflow (`.github/workflows/keepalive.yml`) prevents free-tier inactivity pausing once it is on `main`.
 - **Auth settings:** Site URL and redirect allowlist set to the production domain (plus the local callback); Google and Apple providers configured; email/password is currently **disabled**. The owner asked for signup without email confirmation behind a Turnstile CAPTCHA, but an automated security review identified account pre-hijacking through automatic identity linking, so the owner decided on Google and Apple sign-in only and email/password stays disabled (see [docs/auth.md](docs/auth.md)). Custom SMTP is not configured.
-- **Code added for that request:** an optional Turnstile widget on the auth form (dormant until a site key is configured), token pass-through on sign-up, sign-in and recovery, and tests (35 Vitest tests now pass; typecheck and lint pass). `configure-turnstile.ps1` defaults to leaving email sign-in unchanged and refuses unconfirmed signup without `-AcceptUnconfirmedEmailRisk`.
+- **Auth page rework:** the sign-in page now offers Apple and Google only (no password; one flow for sign-in and account creation), with iOS back-button handling and privacy copy. The email form and Turnstile widget were removed from the UI. CAPTCHA token pass-through in the auth actions (tested) and `configure-turnstile.ps1` are retained; the script defaults to leaving email sign-in unchanged and refuses unconfirmed signup without `-AcceptUnconfirmedEmailRisk`. 37 Vitest tests pass; typecheck and lint pass.
 - **Owner decisions recorded:** Apple client secret expires 2027-05-15 and must be regenerated before then. **Decided:** Google and Apple sign-in only for Phase 3; email/password stays disabled. Email sign-up, login and password recovery are therefore out of the hosted Phase 3 acceptance scope. This is a recorded owner scope change: the roadmap exit text still mentions recovery. Revisit with custom SMTP and email confirmation required.
 
 ### Remaining Phase 3 gate
 
 **Source implementation, isolated CI and hosted provisioning are complete.** Not yet done, and therefore **NOT VERIFIED**:
 
-1. Email sign-up, login and logout on iPhone Safari and the installed PWA, **only if email/password is enabled** (currently it is not).
+1. Sign-out and session restoration after a provider login on iPhone Safari and the installed PWA.
 2. Google and Apple sign-in callbacks on the same devices (Google test users must include the tester).
 3. A real signup producing exactly one `public.profiles` and one `public.friend_codes` row, with the email absent from `public.profiles`.
 4. Password recovery: not applicable while email/password is disabled; recorded as out of scope for Phase 3 by the owner's decision above.

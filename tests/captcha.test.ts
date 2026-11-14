@@ -1,6 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { createElement } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
+import { describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { readTurnstileSiteKey } from "../src/lib/captcha";
 import {
@@ -8,16 +6,14 @@ import {
   registerEmail,
   sendPasswordRecovery,
 } from "../src/lib/auth-actions";
-import { AuthPage } from "../src/components/AuthPage";
+
+// The auth page currently offers Apple and Google only. This CAPTCHA support is
+// kept (and tested) so email sign-up can return later without re-deriving it.
 
 const origin = "https://daydle.example";
 const siteKey = "0xEXAMPLEexampleSiteKey123";
 const fakeClient = (auth: Record<string, unknown>) =>
   ({ auth }) as unknown as SupabaseClient;
-
-afterEach(() => {
-  vi.unstubAllGlobals();
-});
 
 describe("Turnstile site key configuration", () => {
   it("is optional so the app still renders without a CAPTCHA", () => {
@@ -122,22 +118,5 @@ describe("CAPTCHA token pass-through to Supabase Auth", () => {
         "bad-token",
       ),
     ).rejects.toThrow("captcha");
-  });
-});
-
-describe("auth form with CAPTCHA", () => {
-  const render = (props: Record<string, unknown>) => {
-    vi.stubGlobal("window", { location: { search: "?mode=signup" } });
-    return renderToStaticMarkup(
-      createElement(AuthPage, { client: null, signedIn: false, ...props }),
-    );
-  };
-
-  it("renders the challenge container when a site key is configured", () => {
-    expect(render({ captchaSiteKey: siteKey })).toContain('class="captcha"');
-  });
-
-  it("renders no challenge container without a site key", () => {
-    expect(render({})).not.toContain("captcha");
   });
 });

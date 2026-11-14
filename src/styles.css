@@ -189,9 +189,7 @@ dd {
 }
 
 .panel form button,
-.panel > button,
-.auth-navigation button,
-.oauth-actions button {
+.panel > button {
   padding: 0.65rem 1rem;
   background: #edf2f8;
   border: 1px solid #64748b;
@@ -204,22 +202,46 @@ button:disabled {
   opacity: 0.6;
 }
 
-.auth-navigation,
-.oauth-actions {
+.provider-actions {
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1.5rem 0 1rem;
+  max-width: 24rem;
+}
+
+.provider-button {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.6rem;
+  border: 1px solid transparent;
+  font-weight: 600;
+  text-align: center;
+}
+
+.provider-apple {
+  background: #000;
+  color: #fff;
+}
+
+.provider-google {
+  background: #fff;
+  color: #1f1f1f;
+  border-color: #747775;
+}
+
+.provider-button:hover:not(:disabled) {
+  filter: brightness(0.92);
+}
+
+.fine-print {
+  font-size: 0.875rem;
+  max-width: 28rem;
 }
 
 .muted {
   color: #48576c;
-}
-
-.captcha {
-  margin: 1rem 0;
-  min-height: 65px;
 }
 
 .error {
