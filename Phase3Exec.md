@@ -1,15 +1,83 @@
 # Phase 3 Execution Plan — Authentication, onboarding, and account identity
 
-**Status:** PLANNING
-**Base:** `main` at `87b2a71d98f74268ad930a0c31d73e51f737bc6e`
-**Branch:** `phase/03-auth-onboarding`
-**Source:** [roadmap.md](roadmap.md#phase-3--authentication-onboarding-and-account-identity), [IDEA.md](IDEA.md), [AGENTS.md](AGENTS.md)
+**Status:** REVIEWED / IMPLEMENTATION AUTHORIZED (verification pending)  
+**Base:** main `87b2a71d98f74268ad930a0c31d73e51f737bc6e`, following merged Phase 2 PR #2 (`b4a1140`).  
+**Branch:** `phase/03-auth-onboarding`; **Draft PR:** [#3](https://github.com/A13Xg/Daydle/pull/3).  
+**Sources:** [IDEA.md](IDEA.md), [roadmap.md](roadmap.md#phase-3--authentication-onboarding-and-account-identity), [AGENTS.md](AGENTS.md), [Phase 2 archive](completedPhases/Phase2Exec.md).
 
-## Initial scope and acceptance gates
-- Implement email/password signup, confirmation, login, recovery and logout; Apple/Google OAuth with secure browser callbacks and sessions.
-- Create a profile and cryptographically random five-character friend code automatically on auth-user creation, using a unique index and bounded atomic retry.
-- Support display-name onboarding and owner-only profile editing; do not require a password for OAuth-only accounts.
-- Run isolated PostgreSQL migration/role/trigger tests plus frontend authentication tests and existing CI.
-- Verify hosted OAuth and iOS behavior when a preview Supabase project and provider configuration become available. Do not invent results.
+## Preflight and identity design
 
-**Next:** Open the draft PR, expand and self-review this plan, then implement. Hosted credentials are not yet required for schema and source work.
+Verified Phase 2 schema, migration, owner-only profile RLS, server-only friend-code writes, CI with two disposable PostgreSQL 17 databases, frontend shell and lazy Supabase browser adapter; no hosted credentials or database deployment yet. No existing auth UI/API implementation.
+
+Use **Supabase Auth** exclusively for password hashing, email confirmation, refresh/session management, Google and Apple OAuth, and recovery. User email, provider identities, and credentials remain in `auth.users` and are never copied into `public.profiles`.
+
+On every new auth user, a narrowly scoped `SECURITY DEFINER` PostgreSQL trigger atomically creates a public profile and privately stored friend code. Use secure native UUID bytes, rejection sampling for an unbiased 31-symbol alphabet, a unique code constraint, `INSERT .. ON CONFLICT (code) DO NOTHING` and bounded retries. Race safety must rely on database uniqueness rather than read-before-write. Display name comes from valid `raw_user_meta_data.display_name`, `full_name`, or `name`; if absent, use `Player` with `onboarding_completed=false`, and prompt user to set their chosen name. Apple web OAuth frequently provides no full name; do not assume it does. Email/password signup requires display name. No password is required for OAuth-only accounts.
+
+Client-only Vite app uses PKCE Supabase auth; OAuth redirects same browser tab to `/auth/callback`, and a client callback exchanges the code and removes it from the URL via navigation. Use an idempotent in-flight callback handler to avoid React StrictMode double exchange; treat provider errors safely. Password reset uses Supabase recovery email and authenticated `updateUser({password})`. Invalid/missing provider configuration shows actionable errors but does not crash the app shell. Ensure email-confirmation pending is not shown as authenticated.
+
+## File plan
+
+- `supabase/migrations/20261114060000_phase3_auth_identity.sql`: add onboarding state, crypto friend-code functions and auth-user trigger, revoke all public execution of privileged functions; minimal owner-only profile grant.
+- `tests/sql/bootstrap.sql`, `tests/sql/fixtures.sql`, `tests/sql/assertions.sql`: local-only auth metadata stub and Phase 2 fixture adjustments for automatic trigger, revised checks using generated codes.
+- `tests/sql/auth-assertions.sql`: generated identity, uniqueness, fallback profile, collision pressure, role/column access and onboarding update tests.
+- `scripts/test-db.sh`: run all ordered `supabase/migrations/*.sql` on both clean test databases; execute both assertion suites.
+- `src/lib/auth-actions.ts`: typed sign-up/sign-in/recovery/OAuth and validation logic, redirect construction.
+- `src/lib/supabase.ts`, `src/lib/browser-auth.ts`, `src/lib/use-auth.ts`: PKCE browser config, singleton client, session state and unsubscribe/race handling.
+- `src/components/AuthPage.tsx`, `src/components/AuthCallback.tsx`, `src/components/AccountPage.tsx`: accessible user-facing signup/login/recovery/OAuth, callback status and account/onboarding/password reset.
+- `src/App.tsx` and `src/styles.css`: preserve Phase 1 API health display while introducing minimal route-based navigation; defer final styling.
+- `tests/auth.test.ts`, `tests/domain.test.ts` (if needed): mocked auth service calls and redirects/validation, security-oriented negative cases. CI runs real PostgreSQL schema tests and existing TypeScript/Worker smoke.
+- `docs/auth.md`, `docs/secrets.md`, `README.md`, `AGENTS.md`: configuration/redirect/Apple renewal and user-flow runbook; explicit credential gate.
+
+## Auth and ownership boundaries
+
+| Action | Permission | Enforcement |
+|---|---|---|
+| Register email/password | Public | Supabase Auth signUp, server-side constraints, confirmation policy |
+| Social login | Public | Supabase-managed provider OAuth; configured allowlisted redirect |
+| Session refresh and sign-out | User/browser | Supabase Auth; no hand-rolled token storage |
+| Profile creation | Trigger only | Definer owned by database owner, no public EXECUTE |
+| Friend-code allocation | Trigger only | Cryptographic 31-symbol generator and unique constraint/retry |
+| Profile read / friend-code read | Public safe profile / owner-only private code | Phase 2 RLS, no email exposure |
+| Change display name / onboarding | Authenticated owner only | RLS and column-specific UPDATE grants |
+| Password reset | Authenticated recovery token | Supabase email recovery and updateUser, no password in custom DB |
+
+No friend-code lookup/link/QR friendship or player discovery screens here; those are Phase 9. Do not create a service-role Worker endpoint in Phase 3: authentication and profile edit can be performed safely via Supabase's public client and RLS, avoiding cumbersome extra secrets.
+
+## Phase implementation order
+
+1. Commit and review this plan before code. Keep PR draft.
+2. Write forward-only SQL migration, adapt test auth bootstrap/fixtures and assertions; verify migration through PostgreSQL 17 CI and fix any trigger/RLS issues.
+3. Implement typed auth operations and PKCE client session restoration/OAuth callback, with input validation and minimal safe route handling.
+4. Implement sign-up, login, recovery, callback, account profile/onboarding edit and logout interfaces with pending/error/loading/validation states.
+5. Add auth-unit regression tests, documentation and operational guardrails, preserving baseline npm lock unless a real dependency is necessary.
+6. Run all automated checks, inspect SQL functions, auth routing and changed files for IDOR, accidental email/raw-data leakage, open redirects, handling of concurrent registrations, missing config, and password/token logging.
+7. If any material gate fails, keep draft and active plan. Once all locally testable gates pass, record actual outcomes and archived plan; if hosted OAuth/device testing is still a required launch gate, mark it explicitly `NOT VERIFIED` and keep the PR draft until owner config enables verification (or explicitly scopes an offline-only review).
+
+## Tests and exit gates
+
+- [ ] Both fresh PG17 databases replay Phase 2+3 migrations in order.
+- [ ] Trigger creates exactly one profile+unique code for email and provider metadata, including missing-name fallback; 200+ registrations generate unique 5-character codes.
+- [ ] Unprivileged users cannot call privileged code generators, edit others' profiles or read other's friend code; profile update owner-only and full-name data not leaked.
+- [ ] Email signup/login/recovery and OAuth provider call adapters have realistic success, pending and error tests, including validated redirect paths.
+- [ ] Callback duplicate-exchange avoidance, session restoration and recovery flow behave under React StrictMode and URL errors.
+- [ ] All `npm ci`, typecheck, lint, format, unit, build, Worker smoke and PostgreSQL security jobs pass.
+- [ ] Explicit external integration gate: actual Google/Apple callback, email link, and iOS Safari login cannot be called verified without a configured preview Supabase project/provider. Credentials **do not block source or isolated tests**; surface them once they actually gate review.
+- [ ] No remote database deploy or production change without authorization.
+
+## Risks / choices
+
+- Supabase auth triggers can block signups if they throw; ensure bounded collision retries, safe default names, and tests.
+- Apple web OAuth may not supply a full name and requires a web Services ID, developer signing key and periodic secret renewal. Do not store provider credentials in this repository.
+- A five-character public friend code is a discovery token, not a password; server throttling and instant friendship belong to Phase 9.
+- Password recovery and OAuth callback URLs must be explicitly allowlisted on Supabase; avoid accepting arbitrary external `next` URLs.
+- Dynamic auth email confirmation behavior depends on provider configuration; the UI must distinguish pending confirmation from an active session.
+- Browser auth should not introduce Worker service-role secret usage; direct Supabase client + owner RLS is preferable.
+- No separate auth framework, native app, custom JWT parsing, or provider credential management.
+
+## Pre-implementation self-review
+
+Scoped to Phase 3; no credentials required for CI and migration testing; trigger is a necessary DB-owned invariant and avoids privileged API setup, while owner-only client profile editing relies on preverified RLS. Treat actual provider callbacks as an external integration checkpoint, not evidence from mocks. No final design styling introduced.
+
+## Actual execution and verification
+
+**Pending.** Append measured results, fixes, CI URLs, environment limitations and review status before archive.
