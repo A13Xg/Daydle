@@ -36,6 +36,7 @@ $tmp = New-TemporaryFile
 try {
   Set-Content -Path $tmp -Value $body -Encoding utf8
   gh api -X PUT "repos/$Repo/environments/$Environment" --input $tmp | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw 'Could not apply environment protection. No credentials will be written.' }
 } finally { Remove-Item $tmp -Force }
 "Environment '$Environment' ready (required reviewer + custom branch policies)."
 
