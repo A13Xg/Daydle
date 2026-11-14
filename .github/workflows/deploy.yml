@@ -68,7 +68,7 @@ jobs:
           for i in $(seq 1 12); do
             if body=$(curl -fsS --max-time 15 "https://$domain/api/v1/health"); then
               echo "health: $body"
-              curl -fsS --max-time 15 -o /dev/null -w "SPA route /auth/callback: HTTP %{http_code}\n" "https://$domain/auth/callback"
+              curl -fsS --max-time 15 -H "Sec-Fetch-Mode: navigate" -o /dev/null -w "SPA route /auth/callback: HTTP %{http_code}\n" "https://$domain/auth/callback"
               exit 0
             fi
             echo "attempt $i failed; retrying (DNS and certificates can take minutes)"
