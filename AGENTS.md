@@ -154,3 +154,10 @@ Be clear and economical; report concrete commits and links when available. Never
 - Keep `package-lock.json` in version control; CI must use `npm ci` once the lock exists. A temporary CI artifact can be used to generate an initial lockfile, but the lock must be introduced via the authenticated repository connection, never via a commit forged to look like another identity.
 - For PR reviews, distinguish static/source inspection from executed automated checks and from deployed external-service integration. No Cloudflare or Supabase deployment is implied by a passing local build.
 - When external credentials prevent a live preview, explicitly report the provider-side verification gap. Do not disclose or request privileged tokens in this chat, and do not bypass the user's prohibition on unapproved production deployments.
+
+## PostgreSQL migration and deployment evidence
+
+- New migrations must pass two isolated clean PostgreSQL databases with row-level-security checks for `anon`, `authenticated`, and privileged roles; fixture assertions must include denial paths and same-puzzle spoiler unlocking.
+- Do not connect PR CI to a live Supabase project, and do not invoke `supabase db push` or run migrations against hosted databases without explicit environment-specific deployment authorization.
+- Provider credentials may be stored in GitHub Environment secrets or Cloudflare Worker secrets without authorizing their use in CI or any live deployment. Restrict production credentials from pull-request workflows and prefer separately gated deployments.
+- Public profile tables and client-accessible results must never expose auth email, raw copied text, admin data, or unreleased puzzle performance, including through alternate aggregate, award or ranking routes.
