@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      # Bootstrap only: capture a resolved lockfile as an artifact for the owner
+      # to commit via the authenticated GitHub connection. Switch to npm ci
+      # after package-lock.json is committed on the phase branch.
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Upload resolved dependency lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-lock
+          path: package-lock.json
+          if-no-files-found: error
+          retention-days: 3
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Format check
+        run: npm run format:check
+      - name: Unit and API tests
+        run: npm test
+      - name: Production build
+        run: npm run build
+      - name: Preview smoke
+        run: |
+          npm run preview -- --port 4173 > /tmp/daydle-preview.log 2>&1 &
+          PREVIEW_PID=$!
+          trap 'kill "$PREVIEW_PID" 2>/dev/null || true' EXIT
+          npm run smoke

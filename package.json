@@ -16,7 +16,8 @@
     "format:check": "prettier --check src worker shared tests index.html package.json vite.config.ts vitest.config.ts wrangler.jsonc eslint.config.js",
     "test": "vitest run",
     "deploy": "npm run build && wrangler deploy",
-    "cf:typegen": "wrangler types"
+    "cf:typegen": "wrangler types",
+    "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",
