@@ -106,15 +106,15 @@ After the isolated source work above, the hosted environment was provisioned wit
 - **Project and database:** one free-tier Supabase project (region us-east-2), treated as production by owner decision; no separate preview project. Both ordered migrations were applied after a dry run. Read-only checks afterwards showed 16 public and 2 `app_private` tables with row-level security on every one, 18 policies, the auth-user trigger present, the `onboarding_completed` column present, privileged friend-code functions not executable by `anon` or `authenticated`, and zero rows in `profiles`, `friend_codes` and `auth.users`.
 - **Hosting:** the Worker is deployed with the custom domain `daydle.agoodman.io` (health endpoint and SPA routes return 200 over valid TLS). `workers.dev` and preview URLs are disabled in `wrangler.jsonc`.
 - **GitHub:** a single protected `production` environment (required reviewer, `main` only) holds the public Supabase and Cloudflare values and the deployment secrets. Fork-PR workflow approval is required for all external contributors. A scheduled keep-alive workflow (`.github/workflows/keepalive.yml`) prevents free-tier inactivity pausing once it is on `main`.
-- **Auth settings:** Site URL and redirect allowlist set to the production domain (plus the local callback); Google and Apple providers configured; email/password enabled **without email confirmation** by owner decision, protected by Cloudflare Turnstile enforced in Supabase for sign-up, sign-in and recovery, minimum password length 8. Custom SMTP is not configured.
-- **Code added for that decision:** an optional Turnstile widget on the auth form, token pass-through on sign-up, sign-in and recovery, and tests (35 Vitest tests now pass; typecheck and lint pass).
-- **Owner decisions recorded:** no email confirmation for now; basic CAPTCHA-based bot protection only; Apple client secret expires 2027-05-15 and must be regenerated before then.
+- **Auth settings:** Site URL and redirect allowlist set to the production domain (plus the local callback); Google and Apple providers configured; email/password is currently **disabled**. The owner asked for signup without email confirmation behind a Turnstile CAPTCHA, but an automated security review identified account pre-hijacking through automatic identity linking, so it is not enabled pending an explicit decision (see [docs/auth.md](docs/auth.md)). Custom SMTP is not configured.
+- **Code added for that request:** an optional Turnstile widget on the auth form (dormant until a site key is configured), token pass-through on sign-up, sign-in and recovery, and tests (35 Vitest tests now pass; typecheck and lint pass). `configure-turnstile.ps1` defaults to leaving email sign-in unchanged and refuses unconfirmed signup without `-AcceptUnconfirmedEmailRisk`.
+- **Owner decisions recorded:** Apple client secret expires 2027-05-15 and must be regenerated before then. **Pending:** whether to run Google/Apple only, email with confirmation plus SMTP, or accept unconfirmed email signup.
 
 ### Remaining Phase 3 gate
 
 **Source implementation, isolated CI and hosted provisioning are complete.** Not yet done, and therefore **NOT VERIFIED**:
 
-1. Email sign-up, login and logout with the CAPTCHA on iPhone Safari and the installed PWA.
+1. Email sign-up, login and logout on iPhone Safari and the installed PWA, **only if email/password is enabled** (currently it is not).
 2. Google and Apple sign-in callbacks on the same devices (Google test users must include the tester).
 3. A real signup producing exactly one `public.profiles` and one `public.friend_codes` row, with the email absent from `public.profiles`.
 4. Password recovery: **not available** to general users until custom SMTP exists, because Supabase's built-in sender only reaches team members. This needs either an explicit owner scope decision recording recovery as out of scope for Phase 3, or SMTP setup.

@@ -31,25 +31,31 @@ The app is served at `https://daydle.agoodman.io` by a Cloudflare Worker against
 
 1. **Database:** both ordered migrations from `supabase/migrations/` are applied (after a dry run). Row-level security is enabled on every table and the auth-user trigger creates the profile and friend code. Never run `tests/sql/bootstrap.sql` or fixture data against the hosted project.
 2. **URLs:** the Supabase Site URL is `https://daydle.agoodman.io`. The redirect allowlist holds `https://daydle.agoodman.io/auth/callback` and `http://localhost:5173/auth/callback` (local development).
-3. **Email/password:** enabled, with a minimum password length of 8 and **email confirmation not required** (see the policy below).
+3. **Email/password:** currently **disabled** while the signup policy below is decided. Google and Apple are the only enabled sign-in methods.
 4. **Google:** configured from an OAuth web client whose authorized redirect URI is the Supabase-hosted `https://PROJECT_REF.supabase.co/auth/v1/callback`. The consent screen is in Testing mode, so only listed test users can sign in until it is published. Client credentials live only in Supabase.
 5. **Apple:** configured from an Apple Services ID, Key ID, Team ID and `.p8` signing key. Apple's client secret is a JWT generated locally by `scripts/ops/configure-apple-auth.ps1` and **expires after about six months** (the script prints the date; the current one is 2027-05-15). Re-run it before then or Apple sign-in fails while other methods keep working. Keep the `.p8` in a password manager, never in the repository. Apple web OAuth often returns no name; Daydle asks for one during onboarding.
 6. **Custom SMTP:** not configured. Supabase's built-in sender only reaches project team members and is heavily rate limited.
 
-## Email signup without confirmation, and bot protection
+## Email/password signup policy and bot protection (decision pending)
 
-By the owner's decision, email/password accounts are created **without email confirmation**. Because the publishable key is public, anyone can call the Supabase Auth API directly, so a bot could otherwise create unlimited accounts. The baseline defence is **Cloudflare Turnstile**, enforced by Supabase itself (not just by the web form):
+The owner asked for email/password signup **without email confirmation**, with basic bot protection. Status: **not enabled.** Email/password stays off in Supabase until the risk below is accepted or SMTP is set up. The CAPTCHA code ships in the app but stays dormant until a Turnstile site key is configured.
 
-- Supabase requires a valid Turnstile token for email sign-up, sign-in and password recovery; the site sends one from the widget. Tokens are single use, so the form requests a fresh challenge after every attempt.
-- The Turnstile **secret key** is stored only in Supabase Auth settings; the public **site key** is the variable `VITE_TURNSTILE_SITE_KEY`. `scripts/ops/configure-turnstile.ps1` sets both and enables email signup in a single request, so signup is never open without the check.
-- Google and Apple sign-in are not CAPTCHA-gated; they already require a real provider account.
-- This is basic protection, not a complete anti-abuse system. Determined or paid-solver attacks, per-IP throttling, disposable-email filtering and account clean-up are out of scope for Phase 3.
+**Bot protection (code ready, not yet configured).** The publishable key is public, so anyone can call the Supabase Auth API directly. A web-form-only measure would not stop a bot; the check must be enforced by Supabase. Cloudflare Turnstile is, once configured:
 
-Consequences to keep in mind:
+- Required by Supabase for email sign-up, sign-in and password recovery. The form sends a single-use token with each request and requests a fresh challenge after every attempt.
+- Secret key stored only in Supabase Auth settings; public site key is the variable `VITE_TURNSTILE_SITE_KEY`. `scripts/ops/configure-turnstile.ps1` sets both in one request.
+- Not applied to Google or Apple sign-in, which already require a real provider account.
+- Basic protection only. Paid solver farms, per-IP throttling, disposable-email filtering and account clean-up are out of scope for Phase 3.
 
-- Email addresses on email/password accounts are **unverified**. Anyone can register any address, so never use an email address as proof of identity or as a trust or discovery signal. Daydle never exposes emails publicly.
-- **Password recovery email will not reach most users** until custom SMTP is configured, because the built-in sender only delivers to team members. Treat recovery as unavailable for general users for now.
-- To require confirmation later, configure SMTP, then turn confirmation back on in Supabase Auth; the sign-up form already handles both outcomes.
+**Security risk of skipping confirmation: account pre-hijacking.** Supabase links sign-in methods that share a verified email. Without confirmation, anyone can register someone else's email address with a password they choose, and the account counts as confirmed. If the real owner later signs in with Google or Apple using that email, Supabase links that identity to the attacker's account, and the attacker's password keeps working. Hosted Supabase has no setting to turn off automatic linking, and the app cannot prevent it. Requiring confirmation prevents it because only the real owner can confirm the address. The impact for Daydle is takeover of a game-statistics account (no payments or sensitive data), but it is real and grows once friends and profiles exist.
+
+**Options:**
+
+1. **Google and Apple only (current state).** No email/password at all. No pre-hijack, and bots need a real provider account. The CAPTCHA can stay off.
+2. **Email with confirmation plus custom SMTP** (for example Resend on an owned domain). The proper fix; also makes password recovery work. Needs a Resend account and DNS records. Run the script with `-EmailSignup Confirmed` after SMTP works.
+3. **Email without confirmation.** Only with the owner's explicit acceptance of the risk above: `configure-turnstile.ps1 -EmailSignup Unconfirmed -AcceptUnconfirmedEmailRisk`. Never treat an email address on a password account as verified, and do not build trust, discovery or recovery features on it.
+
+**Password recovery** emails will not reach most users until custom SMTP is configured, because Supabase's built-in sender only delivers to team members.
 
 ## Verification status
 
@@ -57,7 +63,7 @@ Source correctness is established by SQL tests on disposable PostgreSQL and mock
 
 | Flow | Hosted configuration | Tested on a real device |
 |---|---|---|
-| Email sign-up and login with CAPTCHA | Configured | NOT VERIFIED |
+| Email sign-up and login with CAPTCHA | Not enabled (policy decision pending) | NOT VERIFIED (not enabled) |
 | Password recovery email | Built-in sender only (team members) | NOT AVAILABLE for general users until SMTP |
 | Google sign-in | Configured | NOT VERIFIED |
 | Apple sign-in | Configured | NOT VERIFIED |
