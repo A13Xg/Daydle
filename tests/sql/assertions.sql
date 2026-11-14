@@ -228,6 +228,29 @@ BEGIN
 END $$;
 COMMIT;
 
+-- Service-role access is intentionally privileged but cannot be reached
+-- through a publishable API key. A browser/client role must never inherit it.
+BEGIN;
+SET LOCAL ROLE service_role;
+DO $
+DECLARE total integer;
+BEGIN
+  SELECT count(*) INTO total FROM public.raw_submissions;
+  IF total <> 2 THEN
+    RAISE EXCEPTION 'service role cannot read private raw submissions';
+  END IF;
+  SELECT count(*) INTO total FROM app_private.admin_events;
+  IF total <> 0 THEN
+    RAISE EXCEPTION 'unexpected admin event fixture';
+  END IF;
+  IF NOT has_function_privilege(
+    current_user, 'app_private.purge_expired_raw_submissions()', 'EXECUTE'
+  ) THEN
+    RAISE EXCEPTION 'service role cannot perform raw purge';
+  END IF;
+END $;
+COMMIT;
+
 -- Purge primitive: expires old raw text without deleting parsed history.
 DO $$
 DECLARE removed bigint;

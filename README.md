@@ -27,7 +27,7 @@ The app shell and API health endpoint work without a Supabase project or credent
 | `npm run smoke` | HTTP smoke (requires running preview) |
 | `npm run db:test` | PostgreSQL 17 migration/constraint/RLS tests (requires disposable test server) |
 
-Database schema, test roles and security boundaries are documented in [docs/database.md](docs/database.md). CI tests the migration on two disposable PostgreSQL 17 databases without hosted Supabase credentials. Phase 2 intentionally does not deploy the migration to a live project.
+Database schema, test roles and security boundaries are documented in [docs/database.md](docs/database.md); hosting credentials and scopes are listed in [docs/secrets.md](docs/secrets.md). CI tests the migration on two disposable PostgreSQL 17 databases without hosted Supabase credentials. Phase 2 intentionally does not deploy the migration to a live project.
 
 Deployment and environment isolation are documented in [docs/deployment.md](docs/deployment.md). No production deployment is authorized merely by running CI or completing a phase.
 
