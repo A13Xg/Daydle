@@ -36,9 +36,9 @@ The app is served at `https://daydle.agoodman.io` by a Cloudflare Worker against
 5. **Apple:** configured from an Apple Services ID, Key ID, Team ID and `.p8` signing key. Apple's client secret is a JWT generated locally by `scripts/ops/configure-apple-auth.ps1` and **expires after about six months** (the script prints the date; the current one is 2027-05-15). Re-run it before then or Apple sign-in fails while other methods keep working. Keep the `.p8` in a password manager, never in the repository. Apple web OAuth often returns no name; Daydle asks for one during onboarding.
 6. **Custom SMTP:** not configured. Supabase's built-in sender only reaches project team members and is heavily rate limited.
 
-## Email/password signup policy and bot protection (decision pending)
+## Email/password signup policy and bot protection (decision: Google and Apple only)
 
-The owner asked for email/password signup **without email confirmation**, with basic bot protection. Status: **not enabled.** Email/password stays off in Supabase until the risk below is accepted or SMTP is set up. The CAPTCHA code ships in the app but stays dormant until a Turnstile site key is configured.
+The owner first asked for email/password signup **without email confirmation**, with basic bot protection. After a security review identified the pre-hijacking risk below, the owner decided on **Google and Apple sign-in only** for now: email/password stays **disabled** in Supabase. The CAPTCHA code ships in the app but stays dormant (no site key is configured); it is kept for when email signup is enabled later.
 
 **Bot protection (code ready, not yet configured).** The publishable key is public, so anyone can call the Supabase Auth API directly. A web-form-only measure would not stop a bot; the check must be enforced by Supabase. Cloudflare Turnstile is, once configured:
 
@@ -51,7 +51,7 @@ The owner asked for email/password signup **without email confirmation**, with b
 
 **Options:**
 
-1. **Google and Apple only (current state).** No email/password at all. No pre-hijack, and bots need a real provider account. The CAPTCHA can stay off.
+1. **Google and Apple only (chosen by the owner; current state).** No email/password at all. No pre-hijack, and bots need a real provider account. The CAPTCHA can stay off.
 2. **Email with confirmation plus custom SMTP** (for example Resend on an owned domain). The proper fix; also makes password recovery work. Needs a Resend account and DNS records. Run the script with `-EmailSignup Confirmed` after SMTP works.
 3. **Email without confirmation.** Only with the owner's explicit acceptance of the risk above: `configure-turnstile.ps1 -EmailSignup Unconfirmed -AcceptUnconfirmedEmailRisk`. Never treat an email address on a password account as verified, and do not build trust, discovery or recovery features on it.
 
@@ -63,7 +63,7 @@ Source correctness is established by SQL tests on disposable PostgreSQL and mock
 
 | Flow | Hosted configuration | Tested on a real device |
 |---|---|---|
-| Email sign-up and login with CAPTCHA | Not enabled (policy decision pending) | NOT VERIFIED (not enabled) |
+| Email sign-up and login with CAPTCHA | Disabled by owner decision | NOT APPLICABLE while disabled |
 | Password recovery email | Built-in sender only (team members) | NOT AVAILABLE for general users until SMTP |
 | Google sign-in | Configured | NOT VERIFIED |
 | Apple sign-in | Configured | NOT VERIFIED |
