@@ -67,7 +67,7 @@ CREATE INDEX user_games_user_sort_idx ON public.user_games(user_id, sort_order, 
 
 CREATE TABLE public.puzzles (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  game_id uuid NOT NULL REFERENCES public.games(id) ON DELETE CASCADE,
+  game_id uuid NOT NULL REFERENCES public.games(id) ON DELETE RESTRICT,
   puzzle_key text NOT NULL CHECK (char_length(btrim(puzzle_key)) BETWEEN 1 AND 160),
   puzzle_date date,
   released_at timestamptz,
@@ -86,7 +86,7 @@ CREATE INDEX puzzles_game_date_idx ON public.puzzles(game_id, puzzle_date DESC);
 CREATE TABLE public.game_results (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-  game_id uuid NOT NULL REFERENCES public.games(id) ON DELETE CASCADE,
+  game_id uuid NOT NULL REFERENCES public.games(id) ON DELETE RESTRICT,
   puzzle_id uuid NOT NULL,
   outcome text CHECK (outcome IS NULL OR outcome IN ('win', 'loss', 'complete', 'incomplete')),
   score numeric,
@@ -155,7 +155,7 @@ CREATE TABLE public.achievement_definitions (
   code text NOT NULL UNIQUE CHECK (code ~ '^[a-z][a-z0-9_]{2,79}$'),
   name text NOT NULL CHECK (char_length(btrim(name)) BETWEEN 1 AND 120),
   description text NOT NULL DEFAULT '',
-  game_id uuid REFERENCES public.games(id) ON DELETE CASCADE,
+  game_id uuid REFERENCES public.games(id) ON DELETE RESTRICT,
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
@@ -278,7 +278,24 @@ ALTER TABLE app_private.admin_members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE app_private.admin_events ENABLE ROW LEVEL SECURITY;
 
 -- Revoke inherited/default object privileges before selective exposure.
-REVOKE ALL ON ALL TABLES IN SCHEMA public FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON
+  public.profiles,
+  public.friend_codes,
+  public.game_categories,
+  public.games,
+  public.game_category_links,
+  public.user_games,
+  public.puzzles,
+  public.game_results,
+  public.raw_submissions,
+  public.result_corrections,
+  public.friendships,
+  public.blocks,
+  public.achievement_definitions,
+  public.user_achievements,
+  public.game_suggestions,
+  public.suggestion_votes
+FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON ALL TABLES IN SCHEMA app_private FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON ALL FUNCTIONS IN SCHEMA app_private FROM PUBLIC, anon, authenticated;
 
@@ -299,7 +316,24 @@ GRANT INSERT, DELETE ON public.user_games TO authenticated;
 GRANT UPDATE(sort_order) ON public.user_games TO authenticated;
 
 -- Future Worker/server operations use a restricted, server-held secret key.
-GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role;
+GRANT ALL ON
+  public.profiles,
+  public.friend_codes,
+  public.game_categories,
+  public.games,
+  public.game_category_links,
+  public.user_games,
+  public.puzzles,
+  public.game_results,
+  public.raw_submissions,
+  public.result_corrections,
+  public.friendships,
+  public.blocks,
+  public.achievement_definitions,
+  public.user_achievements,
+  public.game_suggestions,
+  public.suggestion_votes
+TO service_role;
 GRANT ALL ON ALL TABLES IN SCHEMA app_private TO service_role;
 
 GRANT EXECUTE ON FUNCTION app_private.can_view_result(uuid,uuid)
