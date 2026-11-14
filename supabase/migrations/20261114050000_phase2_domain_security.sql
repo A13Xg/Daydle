@@ -16,6 +16,20 @@ CREATE TABLE public.profiles (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
+CREATE FUNCTION app_private.set_profile_updated_at()
+RETURNS trigger LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+BEGIN
+  NEW.updated_at := now();
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER profiles_set_updated_at
+BEFORE UPDATE ON public.profiles
+FOR EACH ROW EXECUTE FUNCTION app_private.set_profile_updated_at();
+
 CREATE TABLE public.friend_codes (
   user_id uuid PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
   code varchar(5) NOT NULL UNIQUE
