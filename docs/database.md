@@ -13,6 +13,7 @@
 - `auth.users` contains email/credential identity. `public.profiles` is safe public metadata only. `public.friend_codes` is a separate owner-readable identity lookup, resolved by a future rate-limited service endpoint.
 - `public.games` and `public.game_categories` define catalog metadata independent of parser implementations. `public.user_games` records optional personal selections.
 - `public.puzzles` has a stable, game-scoped `puzzle_key`, optional puzzle date, publication timestamp, and nullable **verified** next-reset timestamp. A puzzle may have no date; a game may have multiple puzzles on the same day.
+- Game references from puzzles/results/achievement definitions use `ON DELETE RESTRICT` to preserve history during catalog maintenance; retire a game instead of deleting history.
 - `public.game_results` has a database unique constraint on (user,puzzle), composite puzzle/game FK, validated common metrics, and opaque per-game metrics. Unsupported games have no canonical results until verified parsing support.
 - `public.raw_submissions` preserves private share text and diagnostics with expiration bounded by the 90-day constraint. `public.result_corrections` is private provenance and never a public source of unrestricted manual scores.
 - Friendships are unordered (lower UUID first); blocking is directional. Neither relationship changes public profile/result visibility.

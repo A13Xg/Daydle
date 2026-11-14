@@ -26,7 +26,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 |---|---|---|---|
 | 0 | Repository foundation and delivery contract | — | COMPLETE |
 | 1 | Application skeleton, tooling, and deploy baselines | 0 | COMPLETE — [PR #1](https://github.com/A13Xg/Daydle/pull/1), merge `b91a6e8` |
-| 2 | Domain model, persistence, and security foundations | 1 | NOT STARTED |
+| 2 | Domain model, persistence, and security foundations | 1 | IN REVIEW — [PR #2](https://github.com/A13Xg/Daydle/pull/2) |
 | 3 | Authentication, onboarding, and account identity | 2 | NOT STARTED |
 | 4 | Game catalog, selection, and discovery | 3 | NOT STARTED |
 | 5 | Today experience, PWA, and external-game navigation | 4 | NOT STARTED |
@@ -70,7 +70,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Clean checkout installs and passes checks; Worker API and frontend build locally; deployment configuration documented; preview deployment demonstrated where credentials exist; no secrets in Git.
 
 ## Phase 2 — Domain model, persistence, and security foundations
-**Status:** NOT STARTED. **Dependencies:** 1.
+**Status:** IN REVIEW on branch [PR #2](https://github.com/A13Xg/Daydle/pull/2), verified in [completedPhases/Phase2Exec.md](completedPhases/Phase2Exec.md). Main remains NOT STARTED until reviewed merge. **Dependencies:** 1.
 
 **Purpose:** Establish migration-controlled PostgreSQL schema, row security, and stable application types before feature logic.
 

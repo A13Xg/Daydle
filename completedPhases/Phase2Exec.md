@@ -1,9 +1,9 @@
 # Phase 2 Execution Plan — Domain model, persistence, and security foundations
 
-**Status:** REVIEWED / IMPLEMENTATION AUTHORIZED (verification pending)  
+**Status:** VERIFIED / IN REVIEW  
 **Base:** main `76557c649aac2a54543b40db555cfbab226922c9` (Phase 1 PR #1 merged as `b91a6e8` and reconciled).  
 **Branch:** `phase/02-domain-security` · **Draft PR:** [#2](https://github.com/A13Xg/Daydle/pull/2)  
-**Authority:** [IDEA.md](IDEA.md), [roadmap.md](roadmap.md#phase-2--domain-model-persistence-and-security-foundations), [AGENTS.md](AGENTS.md).
+**Authority:** [IDEA.md](../IDEA.md), [roadmap.md](../roadmap.md#phase-2--domain-model-persistence-and-security-foundations), [AGENTS.md](../AGENTS.md).
 
 ## Preflight evidence
 
@@ -95,4 +95,53 @@ Test malformed friend codes, duplicate result/key insertion, mismatched game-puz
 
 ## Actual implementation, tests and audit
 
-**Pending**. Add real commands, CI links, failures, fixes, final scope, review issues and archive evidence after verification.
+**Verified 2026-11-14 (UTC) on** `phase/02-domain-security`; PR [#2](https://github.com/A13Xg/Daydle/pull/2). This phase is **IN REVIEW**, not COMPLETE on main until the user reviews/merges this PR and main status is reconciled.
+
+### Delivered
+
+- Added transactional, versioned Supabase SQL migration `20261114050000_phase2_domain_security.sql` with **16 public domain tables** and **two private admin tables**. Separates profiles from private friend codes, canonical puzzles from dates, result metrics from private raw share text, and symmetric friendships from blocking.
+- Added unique constraints for owner+puzzle results, game+puzzle keys, friend codes and unordered friendship pairs; composite foreign key prevents assigning a puzzle result to a different game.
+- Enabled RLS for all exposed and private tables, explicit role/column grants, public profile/catalog reads, private friend-code reads, owner-only personal selection mutation, and server-only authoritative result writes.
+- Implemented `SECURITY DEFINER` spoiler-visibility helpers with fully qualified names and restricted execution; anonymous users see only verified-reset results, authenticated users additionally see their own results and same-puzzle scores after submitting.
+- Added a bounded 90-day raw-text expiration constraint and privileged deletion primitive; raw cleanup scheduling is explicitly deferred to Phase 12.
+- Added typed shared domain contracts, test-only mock Supabase auth roles, fixtures, constraint/security assertions, and a two-clean-database runner under PostgreSQL 17.
+- Added a distinct GitHub Actions database-security job, database documentation and provider credential manifest [docs/secrets.md](../docs/secrets.md); strengthened AGENTS.md's no-unapproved-deploy and role-validation requirements.
+
+### Actual automated verification
+
+**Final passing CI:** https://github.com/A13Xg/Daydle/actions/runs/43561573074 (both jobs successful).
+
+| Gate | Execution | Result |
+|---|---|---|
+| Locked install | `npm ci --no-audit --no-fund` | PASS |
+| Strict TS | `npm run typecheck` | PASS |
+| Lint | `npm run lint` | PASS |
+| Format | `npm run format:check` | PASS |
+| App/contract tests | `npm test` | PASS — 4 suites, 14 tests |
+| Worker/client production bundle | `npm run build` | PASS |
+| HTTP preview smoke | `npm run preview -- --port 4173` and `npm run smoke` | PASS |
+| PostgreSQL 17 migrations | `bash scripts/test-db.sh` in isolated GitHub service | PASS — two independent fresh databases |
+| SQL authorization/constraints | `tests/sql/assertions.sql`, real PostgreSQL roles | PASS — anon, owners, other users, service role, raw denial, spoiler reset/unlock, uniqueness, mismatched FK, 90-day purge and destructive game-delete prevention |
+| Security/source audit | Code and changed-file inspection | PASS — no credentials, user-writable authoritative results, service-role keys in browser, or unapproved deployment workflow |
+
+### Repairs and audit findings
+
+- Initial new TypeScript files required Prettier normalization; temporary CI formatting step was removed once source was corrected.
+- Expanded negative tests revealed a transcription error in a new SQL `DO` block delimiter. Corrected and reran database suite successfully.
+- Narrowed permission changes to **Daydle-owned public tables**, avoiding modifying unrelated Supabase/public schema tables.
+- Changed puzzle/result/achievement game references to `ON DELETE RESTRICT` to protect canonical historical results from accidental catalog deletion; a corresponding negative SQL test passes.
+- Verified `friend_code` alphabet excludes O/I/L/0/1 and contains 31 unique symbols, with 31^5 possible codes.
+
+### Explicit limitations
+
+- This is a local PostgreSQL integration test against a mocked `auth.uid()` and Supabase-style roles. It **does not** demonstrate the migration deployed successfully to hosted Supabase or real OAuth flow.
+- A hosted database project/connection is not provisioned and no `supabase db push` was run. No production/preview Cloudflare Worker deployment, secrets mutation, or real-user data access occurred.
+- The database has a raw TTL constraint plus purge function, **not a running scheduled retention job**. Phase 12 must implement/verify scheduled deletion before real raw inputs are collected in production.
+- Admin UI, parser implementation, full app APIs, achievements computation and code-generation logic are out of Phase 2 scope; schema only.
+- Future public aggregate statistics, profile APIs, admin functions, and caching must apply the same viewer-specific spoiler rules; schema-only RLS does not automatically secure arbitrary future server-side materializations.
+
+### Review and recovery
+
+- Review PR #2 and CI evidence; do not automatically merge. Phase 2 becomes COMPLETE on main only after confirmed merge and verification.
+- No remote database was modified. To roll back this branch before merge, decline PR #2. After a migration deploy in a later phase, change via versioned forward migration and reviewed data-recovery plan rather than editing an already-applied migration.
+
