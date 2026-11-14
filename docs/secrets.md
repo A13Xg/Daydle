@@ -11,7 +11,7 @@ In [GitHub repository Actions settings](https://github.com/A13Xg/Daydle/settings
 | `SUPABASE_ACCESS_TOKEN` | GitHub Environment **secret** | Scoped Supabase personal token for CLI project operations |
 | `SUPABASE_DB_PASSWORD` | GitHub Environment **secret** | Database password for approved migration deployments only |
 | `SUPABASE_PROJECT_ID` | GitHub Environment **variable** | Supabase project reference used by `supabase link` |
-| `CLOUDFLARE_API_TOKEN` | GitHub Environment **secret** | Worker deployment permission, scoped to the target account |
+| `CLOUDFLARE_API_TOKEN` | GitHub Environment **secret** | Worker deployment permission, scoped to the target account; used only by the manual Deploy Worker workflow |
 | `CLOUDFLARE_ACCOUNT_ID` | GitHub Environment **variable** | Cloudflare account identifier |
 | `VITE_SUPABASE_URL` | GitHub Environment **variable** | Public project URL `https://<project-ref>.supabase.co` |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | GitHub Environment **variable** | Public `sb_publishable_...` key for browser RLS client |
@@ -39,6 +39,6 @@ Phase 12 will specify the encrypted backup destination, R2 access policy, key ma
 
 ## Policy
 
-PR CI does not use Supabase/Cloudflare secrets, does not run `supabase db push`, and does not deploy application code. Storing a secret is not authorization to use it.
+PR CI does not use Supabase/Cloudflare secrets, does not run `supabase db push`, and does not deploy application code. The only workflow that uses the Cloudflare token is the manual, reviewer-approved **Deploy Worker** workflow, which runs from `main` only. Storing a secret is not authorization to use it.
 
 Sources: [Supabase environment deployment](https://supabase.com/docs/guides/deployment/managing-environments), [Supabase API keys](https://supabase.com/docs/guides/getting-started/api-keys), [Cloudflare GitHub Actions](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/), [Cloudflare Worker secrets](https://developers.cloudflare.com/workers/configuration/secrets/).
