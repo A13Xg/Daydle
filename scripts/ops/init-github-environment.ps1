@@ -40,9 +40,20 @@ try {
 } finally { Remove-Item $tmp -Force }
 "Environment '$Environment' ready (required reviewer + custom branch policies)."
 
-$have = @(gh api "repos/$Repo/environments/$Environment/deployment-branch-policies" --jq '.branch_policies[].name')
+$policyJson = @(gh api "repos/$Repo/environments/$Environment/deployment-branch-policies" --paginate --jq '.branch_policies[] | @json')
+if ($LASTEXITCODE -ne 0) { throw 'Could not read deployment policies. No credentials will be written.' }
+$have = @($policyJson | ForEach-Object { $_ | ConvertFrom-Json })
+foreach ($policy in $have) {
+  if ($policy.type -cne 'branch' -or $Branches -cnotcontains $policy.name) {
+    throw "Unexpected deployment policy '$($policy.name)' ($($policy.type)). Review and remove it before rerunning. No credentials will be written."
+  }
+}
 foreach ($b in $Branches) {
-  if ($have -notcontains $b) { gh api -X POST "repos/$Repo/environments/$Environment/deployment-branch-policies" -f name=$b -f type=branch | Out-Null; "Allowed branch: $b" }
+  if (@($have | Where-Object { $_.type -ceq 'branch' -and $_.name -ceq $b }).Count -eq 0) {
+    gh api -X POST "repos/$Repo/environments/$Environment/deployment-branch-policies" -f name=$b -f type=branch | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw 'Could not apply deployment policy. No credentials will be written.' }
+    "Allowed branch: $b"
+  }
 }
 
 $publishable = (Invoke-SupabaseApi -Path "/v1/projects/$ProjectRef/api-keys" | Where-Object { $_.type -eq 'publishable' } | Select-Object -First 1).api_key
