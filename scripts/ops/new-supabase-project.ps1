@@ -22,8 +22,10 @@ $ErrorActionPreference = 'Stop'
 $org = Invoke-SupabaseApi -Path "/v1/organizations/$OrganizationSlug"
 if ($org.plan -ne 'free' -and -not $AllowPaid) { throw "Organization plan is '$($org.plan)', not free. Re-run with -AllowPaid only if you accept charges." }
 
-$existing = Invoke-SupabaseApi -Path '/v1/projects' | Where-Object { $_.name -eq $Name }
-if ($existing) { "Project already exists: ref=$($existing.id) region=$($existing.region)"; return }
+# Match the name only within the requested organization: a same-named project elsewhere is not a duplicate.
+$existing = @(Invoke-SupabaseApi -Path '/v1/projects' | Where-Object { $_.name -eq $Name -and $_.organization_slug -eq $OrganizationSlug })
+if ($existing.Count -gt 1) { throw "$($existing.Count) projects named '$Name' exist in organization '$OrganizationSlug'. Resolve the duplicates manually; nothing was created." }
+if ($existing.Count -eq 1) { "Project already exists: ref=$($existing[0].id) region=$($existing[0].region)"; return }
 
 if ([DaydleWinCred]::Get($CredentialName, $true)) {
   'Reusing existing database password entry.'
