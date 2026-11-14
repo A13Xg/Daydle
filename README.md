@@ -2,7 +2,7 @@
 
 **All your daily games. One place.**
 
-Daydle is an iOS-first web application for discovering daily games, launching games on publisher websites, tracking shared results, viewing public statistics and comparing performance with friends. Phase 1 currently provides only the application foundation; product functionality is implemented in later phases.
+Daydle is an iOS-first web application for discovering daily games, launching games on publisher websites, tracking shared results, viewing public statistics and comparing performance with friends. Phases 1–3 provide the application foundation, the database schema with row-level security, and Apple and Google sign-in with automatic profile and friend-code creation; game features arrive in later phases.
 
 ## Local development
 
@@ -27,7 +27,7 @@ The app shell and API health endpoint work without a Supabase project or credent
 | `npm run smoke` | HTTP smoke (requires running preview) |
 | `npm run db:test` | PostgreSQL 17 migration/constraint/RLS tests (requires disposable test server) |
 
-Database schema, test roles and security boundaries are documented in [docs/database.md](docs/database.md). Supabase authentication flow and provider setup are in [docs/auth.md](docs/auth.md); hosting credentials and scopes in [docs/secrets.md](docs/secrets.md). CI tests the migration on two disposable PostgreSQL 17 databases without hosted Supabase credentials. Phase 2 intentionally does not deploy the migration to a live project.
+Database schema, test roles and security boundaries are documented in [docs/database.md](docs/database.md). Supabase authentication flow and provider setup are in [docs/auth.md](docs/auth.md); hosting credentials and scopes in [docs/secrets.md](docs/secrets.md). CI tests the migration on two disposable PostgreSQL 17 databases without hosted Supabase credentials. Migrations are applied to the hosted project only with the owner's explicit approval.
 
 Deployment and environment isolation are documented in [docs/deployment.md](docs/deployment.md). No production deployment is authorized merely by running CI or completing a phase.
 
@@ -36,8 +36,8 @@ Deployment and environment isolation are documented in [docs/deployment.md](docs
 - [IDEA.md](IDEA.md) — approved product requirements and architectural invariants.
 - [roadmap.md](roadmap.md) — numbered delivery phases and their review gates.
 - [AGENTS.md](AGENTS.md) — mandatory branch, draft PR, verification, and review protocol.
-- [completedPhases/Phase1Exec.md](completedPhases/Phase1Exec.md) — reviewed Phase 1 execution plan (on phase branch; on main after PR merge).
+- [completedPhases/](completedPhases/) — reviewed and verified execution plans for finished phases (currently Phases 1–3; Phase 3 is in review on its branch until PR #3 merges).
+- [scripts/ops/](scripts/ops/README.md) — PowerShell helpers for provisioning, secrets, provider setup, deployment and test-account cleanup. They contain no credentials.
 - A root-level `Phase#Exec.md` exists only while its phase is actively being implemented.
-- [completedPhases/](completedPhases/) — completed and audited phase execution plans.
 
 Visual design details remain deferred, but accessible and polished interaction behavior is required.

@@ -1,13 +1,13 @@
 # Daydle — Development, preview, and deployment baseline
 
-**Phase:** 1. **Production deployment is not authorized by this document.** Provisioning of Cloudflare Workers, custom domains, Supabase projects, and secrets requires the repository owner's action and later phase approval.
+**Baseline from Phase 1, updated through Phase 3.** CI never deploys. A deployment happens only when the repository owner runs the deployment script, and a release needs the owner's explicit authorization.
 
 ## Runtime
 
 - Node.js 22 LTS or a supported newer version, npm.
 - React + TypeScript + Vite 8, with Cloudflare Vite plugin 1.x.
 - One Cloudflare Worker (`worker/index.ts`) serves versioned `/api/*`; its static asset bundle contains the React SPA.
-- Supabase Auth/PostgreSQL integration is intentionally not active in Phase 1.
+- Supabase Auth (Apple and Google) and PostgreSQL are active from Phase 3; the browser uses only the public project URL and publishable key.
 
 ## Local development
 
@@ -23,26 +23,28 @@ Cloudflare local Worker-specific secrets would go in `.dev.vars` (gitignored); n
 
 | Environment | Purpose | Setup and boundary |
 |---|---|---|
-| Local | Development and tests | Cloudflare Vite plugin provides local Worker runtime; no external accounts required for Phase 1. |
-| Preview | PR QA and iOS testing | Separate Cloudflare Worker name/subdomain, separate Supabase project or schema once database exists; never point preview at production writes. Deploy only after owner provisions credentials/authorization. |
-| Production | Public beta | Dedicated Cloudflare Worker + Supabase project. No deployment from PR CI; a separate gated production approval is required. |
+| Local | Development and tests | Cloudflare Vite plugin provides a local Worker runtime; no external accounts are required. |
+| Production (single hosted environment) | Live site and all hosted testing | Worker `daydle-app` on the custom domain `daydle.agoodman.io` (the `workers.dev` and preview URLs are disabled) plus one free-tier Supabase project. No separate preview or staging environment exists by owner decision. GitHub environment `production` requires a reviewer and allows only `main`. |
 
 The `wrangler.jsonc` file is the local baseline. For real preview and production, use environment-specific Wrangler configurations or an audited per-environment deployment configuration; keep names, routes, and secrets isolated. The Cloudflare Vite plugin emits a deployable `dist/worker/wrangler.json`; verify it before using Wrangler in an approved release.
 
-### Initial provisioning checklist (not yet executed)
+### Provisioning and release procedure
 
-1. Create Cloudflare Worker service(s) and decide the preview/production names, routes, DNS, and branch policy.
-2. Create separate Supabase project(s) and configure Auth redirect URLs. Use only publishable project key in frontend; reserve secret/service-role credentials for a server-only binding.
-3. Configure Cloudflare API token through GitHub repository secrets for approved release jobs only; do not enable automatic production deploy in CI.
-4. Run a preview build/health/SPA smoke and an iOS Safari/PWA check when authorized.
-5. Record deployed version SHA, Worker version, domain and rollback notes.
+Provisioning was executed on 2026-11-14 with the helpers in [scripts/ops](../scripts/ops/README.md); see [docs/auth.md](auth.md) and [docs/secrets.md](secrets.md) for what is configured.
+
+1. Provisioning: `new-supabase-project.ps1`, `init-github-environment.ps1`, `set-production-secrets.ps1` / `set-cloudflare-credentials.ps1`, `register-workers-subdomain.ps1`, then `configure-google-auth.ps1` and `configure-apple-auth.ps1`.
+2. Migrations: `supabase db push --dry-run`, then `supabase db push` only with the owner's explicit approval.
+3. Release: `deploy-worker.ps1` from a clean working tree builds with the environment's public values, deploys the Worker, attaches the `wrangler.jsonc` custom domain and checks `/api/v1/health`. It prompts (hidden) for the Cloudflare token, which needs Workers Scripts Edit, Account Settings Read, and for the first custom-domain attach Zone DNS Edit and Workers Routes Edit on the zone.
+4. After a merge, redeploy from `main` so the live commit matches the merged one.
+5. Record the deployed commit, Worker version and rollback notes.
+6. A scheduled workflow (`keepalive.yml`) reads one public row every few days so the free-tier project is not paused for inactivity; it runs only from `main`.
 
 ## Migrations and rollback policy
 
-- Phase 1 has **no database migrations**. Phase 2 introduces reviewed, versioned, forward-only schema migrations and RLS tests.
+- Phase 1 has no database migrations. Phase 2 and Phase 3 migrations are reviewed, versioned and forward-only, and were applied to the hosted project on 2026-11-14 after a dry run.
 - A failed web deployment should revert to the previous Cloudflare Worker version using Cloudflare's version/deployment rollback capabilities; do not assume database rollback is safe after a migration.
 - Do not deploy a Worker build if compatibility with the current database schema has not been established.
-- This Phase 1 baseline does not claim a live preview or production deployment.
+- The free Supabase tier has no automated backups; take your own exports before risky changes once real data exists.
 
 ## Required operational checks
 

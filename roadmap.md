@@ -27,7 +27,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 0 | Repository foundation and delivery contract | — | COMPLETE |
 | 1 | Application skeleton, tooling, and deploy baselines | 0 | COMPLETE — [PR #1](https://github.com/A13Xg/Daydle/pull/1), merge `b91a6e8` |
 | 2 | Domain model, persistence, and security foundations | 1 | COMPLETE — [PR #2](https://github.com/A13Xg/Daydle/pull/2), merge `b4a1140` |
-| 3 | Authentication, onboarding, and account identity | 2 | NOT STARTED |
+| 3 | Authentication, onboarding, and account identity | 2 | IN REVIEW (branch proposal; main unchanged until merge) — [PR #3](https://github.com/A13Xg/Daydle/pull/3), evidence in [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md) |
 | 4 | Game catalog, selection, and discovery | 3 | NOT STARTED |
 | 5 | Today experience, PWA, and external-game navigation | 4 | NOT STARTED |
 | 6 | Deterministic parser registry and initial game coverage | 5 | NOT STARTED |
@@ -85,7 +85,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Fresh database migrates reproducibly; integrity/RLS tests pass; key concurrency constraints enforced by database; schema contracts documented and queryable.
 
 ## Phase 3 — Authentication, onboarding, and account identity
-**Main status:** NOT STARTED (unmerged). **Execution status:** BLOCKED on real-device verification of the provisioned production auth environment — [draft PR #3](https://github.com/A13Xg/Daydle/pull/3) and active [Phase3Exec.md](Phase3Exec.md). **Dependencies:** 2.
+**Main status:** NOT STARTED (unmerged). **Branch status:** IN REVIEW — [PR #3](https://github.com/A13Xg/Daydle/pull/3); verified with owner-approved scope changes (Apple and Google only; installed-PWA test deferred), see [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md). **Dependencies:** 2.
 
 **Purpose:** Enable open signup and account lifecycle with unique public identity and private credentials.
 
@@ -288,3 +288,19 @@ Deferred operational items that are not numbered phases and do not block any pha
 **Tradeoff to decide first:** storing the `.p8` signing key in GitHub widens its blast radius. If that is unacceptable, use a reminder-only workflow that opens an issue 30 days before expiry and leave the secret regeneration manual.
 
 **Exit/verification:** A dispatch run rotates the secret end to end; Apple sign-in succeeds afterwards on the production domain; the new expiry is recorded; no secret appears in logs; rollback and key-revocation steps are documented in `docs/auth.md`.
+
+### Installed-PWA authentication verification
+**Status:** NOT STARTED (deferred from Phase 3 by the owner). **Depends on:** the PWA experience in Phase 5.
+
+Verify on an iPhone, in the installed PWA rather than Safari tabs: Google and Apple sign-in and return to the app, sign-out, and session restoration after the app is closed and reopened. Record results in the Phase 5 archive.
+
+### Email/password sign-in with confirmation and custom SMTP
+**Status:** NOT STARTED. **Depends on:** a verified sending domain and SMTP provider.
+
+Email/password is disabled because unconfirmed email signup allows account pre-hijacking through automatic identity linking (see [docs/auth.md](docs/auth.md)). To re-enable: configure custom SMTP on an owned domain, require email confirmation, restore a form (the removed form and widget are in git history, commit `d534cfd`), verify confirmation and password recovery on a real device, then run `scripts/ops/configure-turnstile.ps1 -EmailSignup Confirmed` if a CAPTCHA is wanted.
+
+### Google OAuth consent-screen branding and publishing
+**Status:** NOT STARTED (owner action). Publish the Google app from Testing to production and add branding: app name, support email, homepage and authorized domain. Basic scopes (`openid`, `email`, `profile`) are expected not to need Google verification; confirm in the console.
+
+### Retire or rework dormant email-era code
+**Status:** NOT STARTED. The auth actions still contain email sign-up, sign-in, recovery and CAPTCHA token pass-through, the account page still contains a password-reset form reachable only from a recovery link, and `configure-turnstile.ps1` remains. Decide whether to delete or restore them when the email decision is made, so unused paths do not rot.

@@ -67,11 +67,12 @@ Source correctness is established by SQL tests on disposable PostgreSQL and mock
 |---|---|---|
 | Email sign-up and login with CAPTCHA | Disabled by owner decision | NOT APPLICABLE while disabled |
 | Password recovery email | Built-in sender only (team members) | NOT AVAILABLE for general users until SMTP |
-| Google sign-in | Configured | NOT VERIFIED |
-| Apple sign-in | Configured | NOT VERIFIED |
-| Profile and friend-code rows created by the trigger on the hosted database | Migrations applied | NOT VERIFIED with a real signup |
+| Google sign-in | Configured | Verified on an iOS device (owner-reported; browser not recorded) |
+| Apple sign-in | Configured | Verified on an iOS device (owner-reported; browser not recorded) |
+| Profile and friend-code rows created by the trigger on the hosted database | Migrations applied | Verified for the Google and Apple test accounts: one row each, email absent from `profiles` |
+| Sign-out and session restoration, installed PWA | n/a | NOT VERIFIED (deferred by the owner; see the roadmap's Circle-Back section) |
 
-Device checklist: on iPhone Safari and the installed PWA, sign up and sign in with each method, confirm one `public.profiles` and one `public.friend_codes` row per user, confirm the email never appears in `public.profiles`, check the Apple private-relay case, then sign out and confirm the session is cleared.
+Remaining device checklist (deferred): in the installed PWA, sign in with each method, sign out and confirm the session is cleared, then close and reopen the app and confirm the session is restored. To retest sign-up from scratch use `scripts/ops/purge-test-users.ps1` and revoke the app at the provider first (see [scripts/ops/README.md](../scripts/ops/README.md)).
 
 ## GitHub secret requirements and timing
 
