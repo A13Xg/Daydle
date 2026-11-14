@@ -13,30 +13,57 @@ Phase 3 delivers Supabase Auth client flows and database-owned profile provision
 
 ## Browser configuration (not GitHub secrets)
 
-When a real Supabase project is available, set these **public** values on the preview site or in the developer's gitignored `.env.local`:
+Set these **public** values in the GitHub `production` environment (used by `scripts/ops/deploy-worker.ps1`) or in the developer's gitignored `.env.local`:
 
 | Name | Value |
 |---|---|
 | `VITE_SUPABASE_URL` | `https://PROJECT_REF.supabase.co` |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | `sb_publishable_...` key from the project |
+| `VITE_TURNSTILE_SITE_KEY` | Optional. Public Cloudflare Turnstile site key; enables the sign-up CAPTCHA widget |
 
-These are *not* privileged secrets. Never put the `sb_secret_` key or a legacy service-role JWT into `VITE_*` variables.
+These are *not* privileged secrets. Never put the `sb_secret_` key, a legacy service-role JWT, or the Turnstile **secret** key into `VITE_*` variables.
 
-The app supports build, placeholder startup, and mock/SQL tests with **neither value configured**; sign-in controls remain disabled and describe missing configuration.
+The app supports build, placeholder startup, and mock/SQL tests with **none of these values configured**; sign-in controls remain disabled and describe missing configuration.
 
-## Hosted Supabase setup needed for live verification
+## Hosted configuration (production)
 
-Only when an actual preview environment is authorized:
+The app is served at `https://daydle.agoodman.io` by a Cloudflare Worker against a single free-tier Supabase project that is treated as production. There is no separate preview project or GitHub environment. Provisioning used the PowerShell helpers in [scripts/ops](../scripts/ops/README.md); no credentials are stored in the repository.
 
-1. Create the Supabase project and obtain the project reference, URL and publishable key.
-2. Apply **both ordered migrations** from `supabase/migrations/` to the preview database (through an approved migration job or explicit CLI invocation). Do not run `tests/sql/bootstrap.sql` or fixture data against hosted Supabase.
-3. In Auth settings, allow email/password registration, enable email confirmation for the target policy, and set the Site URL to the preview domain. Add `https://PREVIEW_HOST/auth/callback` and local `http://localhost:5173/auth/callback` to the redirect allowlist where applicable.
-4. Configure Google provider using an OAuth client ID/secret in the **Supabase Auth provider configuration**, with the Supabase-hosted `/auth/v1/callback` as the Google OAuth redirect. These secrets belong in the provider console/Supabase, not the Vite frontend.
-5. Configure Apple web OAuth using an Apple Developer web Services ID, signing key and required identifiers in the **Apple/Supabase provider consoles**. Apple web OAuth often does not include the user's full name; Daydle requests name onboarding when absent. The Apple generated client secret requires periodic renewal (normally every six months).
-6. Test email registration + confirmation, login, password recovery, OAuth callbacks and logout on a real iPhone Safari session and an installed PWA. Check private relay emails if using Apple.
-7. Confirm `public.profiles` and `public.friend_codes` are inserted by the auth-user trigger, and the email never appears in public profiles.
+1. **Database:** both ordered migrations from `supabase/migrations/` are applied (after a dry run). Row-level security is enabled on every table and the auth-user trigger creates the profile and friend code. Never run `tests/sql/bootstrap.sql` or fixture data against the hosted project.
+2. **URLs:** the Supabase Site URL is `https://daydle.agoodman.io`. The redirect allowlist holds `https://daydle.agoodman.io/auth/callback` and `http://localhost:5173/auth/callback` (local development).
+3. **Email/password:** enabled, with a minimum password length of 8 and **email confirmation not required** (see the policy below).
+4. **Google:** configured from an OAuth web client whose authorized redirect URI is the Supabase-hosted `https://PROJECT_REF.supabase.co/auth/v1/callback`. The consent screen is in Testing mode, so only listed test users can sign in until it is published. Client credentials live only in Supabase.
+5. **Apple:** configured from an Apple Services ID, Key ID, Team ID and `.p8` signing key. Apple's client secret is a JWT generated locally by `scripts/ops/configure-apple-auth.ps1` and **expires after about six months** (the script prints the date; the current one is 2027-05-15). Re-run it before then or Apple sign-in fails while other methods keep working. Keep the `.p8` in a password manager, never in the repository. Apple web OAuth often returns no name; Daydle asks for one during onboarding.
+6. **Custom SMTP:** not configured. Supabase's built-in sender only reaches project team members and is heavily rate limited.
 
-Hosted provider setup and an actual domain are currently **not available**. Tests based on SQL/stand-in auth and mocked SDK calls establish source correctness but are **not proof** of a real hosted Apple/Google callback or email deliverability.
+## Email signup without confirmation, and bot protection
+
+By the owner's decision, email/password accounts are created **without email confirmation**. Because the publishable key is public, anyone can call the Supabase Auth API directly, so a bot could otherwise create unlimited accounts. The baseline defence is **Cloudflare Turnstile**, enforced by Supabase itself (not just by the web form):
+
+- Supabase requires a valid Turnstile token for email sign-up, sign-in and password recovery; the site sends one from the widget. Tokens are single use, so the form requests a fresh challenge after every attempt.
+- The Turnstile **secret key** is stored only in Supabase Auth settings; the public **site key** is the variable `VITE_TURNSTILE_SITE_KEY`. `scripts/ops/configure-turnstile.ps1` sets both and enables email signup in a single request, so signup is never open without the check.
+- Google and Apple sign-in are not CAPTCHA-gated; they already require a real provider account.
+- This is basic protection, not a complete anti-abuse system. Determined or paid-solver attacks, per-IP throttling, disposable-email filtering and account clean-up are out of scope for Phase 3.
+
+Consequences to keep in mind:
+
+- Email addresses on email/password accounts are **unverified**. Anyone can register any address, so never use an email address as proof of identity or as a trust or discovery signal. Daydle never exposes emails publicly.
+- **Password recovery email will not reach most users** until custom SMTP is configured, because the built-in sender only delivers to team members. Treat recovery as unavailable for general users for now.
+- To require confirmation later, configure SMTP, then turn confirmation back on in Supabase Auth; the sign-up form already handles both outcomes.
+
+## Verification status
+
+Source correctness is established by SQL tests on disposable PostgreSQL and mocked SDK tests. Those are **not proof** of the hosted flows below.
+
+| Flow | Hosted configuration | Tested on a real device |
+|---|---|---|
+| Email sign-up and login with CAPTCHA | Configured | NOT VERIFIED |
+| Password recovery email | Built-in sender only (team members) | NOT AVAILABLE for general users until SMTP |
+| Google sign-in | Configured | NOT VERIFIED |
+| Apple sign-in | Configured | NOT VERIFIED |
+| Profile and friend-code rows created by the trigger on the hosted database | Migrations applied | NOT VERIFIED with a real signup |
+
+Device checklist: on iPhone Safari and the installed PWA, sign up and sign in with each method, confirm one `public.profiles` and one `public.friend_codes` row per user, confirm the email never appears in `public.profiles`, check the Apple private-relay case, then sign out and confirm the session is cleared.
 
 ## GitHub secret requirements and timing
 

@@ -1,6 +1,6 @@
 # Phase 3 Execution Plan — Authentication, onboarding, and account identity
 
-**Status:** IMPLEMENTED / BLOCKED ON HOSTED AUTH VERIFICATION (draft PR; not ready for review)  
+**Status:** IMPLEMENTED; HOSTED ENVIRONMENT PROVISIONED / BLOCKED ON REAL-DEVICE AUTH VERIFICATION (draft PR; not ready for review)  
 **Base:** main `87b2a71d98f74268ad930a0c31d73e51f737bc6e`, following merged Phase 2 PR #2 (`b4a1140`).  
 **Branch:** `phase/03-auth-onboarding`; **Draft PR:** [#3](https://github.com/A13Xg/Daydle/pull/3).  
 **Sources:** [IDEA.md](IDEA.md), [roadmap.md](roadmap.md#phase-3--authentication-onboarding-and-account-identity), [AGENTS.md](AGENTS.md), [Phase 2 archive](completedPhases/Phase2Exec.md).
@@ -99,16 +99,27 @@ Scoped to Phase 3; no credentials required for CI and migration testing; trigger
 - Early SQL failure due to schema-qualifying special `COALESCE/NULLIF` expressions was repaired and rerun; cryptographic code sampling skips UUID metadata bytes. Temporary formatting job was removed; the current workflow is nonmutating.
 - No hosted Supabase migration, real email delivery, Apple/Google browser callback, or iOS device/PWA end-to-end test has been run.
 
-### Current external verification blocker
+### Hosted environment provisioning (record)
 
-**Source implementation and isolated CI are complete.** The remaining essential Phase 3 exit gate is a real preview signup-to-profile/login/password recovery and Google/Apple callback test on the primary iOS target. This requires:
+After the isolated source work above, the hosted environment was provisioned with the PowerShell helpers in [scripts/ops](scripts/ops/README.md). No credentials are committed.
 
-1. Authorized preview Supabase project with `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, and project reference `SUPABASE_PROJECT_ID` (public GitHub preview environment variables).
-2. Applied ordered Phase 2 and Phase 3 migrations in that preview project, via an explicitly approved migration action. For automation, environment secrets `SUPABASE_ACCESS_TOKEN` and `SUPABASE_DB_PASSWORD` are required. Do not supply values in chat.
-3. Enabled email provider with confirmation/redirect allowlist, Google OAuth client and Apple web Services ID/client secret installed in Supabase (providers' own credentials remain in provider dashboards).
-4. Accessible HTTPS preview domain for testing iOS Safari and installed PWA OAuth callback context. Cloudflare deployment may require `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` when such preview deployment is explicitly authorized.
+- **Project and database:** one free-tier Supabase project (region us-east-2), treated as production by owner decision; no separate preview project. Both ordered migrations were applied after a dry run. Read-only checks afterwards showed 16 public and 2 `app_private` tables with row-level security on every one, 18 policies, the auth-user trigger present, the `onboarding_completed` column present, privileged friend-code functions not executable by `anon` or `authenticated`, and zero rows in `profiles`, `friend_codes` and `auth.users`.
+- **Hosting:** the Worker is deployed with the custom domain `daydle.agoodman.io` (health endpoint and SPA routes return 200 over valid TLS). `workers.dev` and preview URLs are disabled in `wrangler.jsonc`.
+- **GitHub:** a single protected `production` environment (required reviewer, `main` only) holds the public Supabase and Cloudflare values and the deployment secrets. Fork-PR workflow approval is required for all external contributors. A scheduled keep-alive workflow (`.github/workflows/keepalive.yml`) prevents free-tier inactivity pausing once it is on `main`.
+- **Auth settings:** Site URL and redirect allowlist set to the production domain (plus the local callback); Google and Apple providers configured; email/password enabled **without email confirmation** by owner decision, protected by Cloudflare Turnstile enforced in Supabase for sign-up, sign-in and recovery, minimum password length 8. Custom SMTP is not configured.
+- **Code added for that decision:** an optional Turnstile widget on the auth form, token pass-through on sign-up, sign-in and recovery, and tests (35 Vitest tests now pass; typecheck and lint pass).
+- **Owner decisions recorded:** no email confirmation for now; basic CAPTCHA-based bot protection only; Apple client secret expires 2027-05-15 and must be regenerated before then.
 
-Until these are configured, **hosted OAuth, email confirmation and iOS flows are NOT VERIFIED**. This is now a genuine blocker for Phase 3 review completion—not a reason to add custom OAuth infrastructure or skip provider integration. The PR must remain **draft** and `Phase3Exec.md` must remain active at the repository root. Do not archive it, mark Phase 3 IN REVIEW/COMPLETE, merge, or start dependent Phase 4 without satisfying the gate or an explicit change to acceptance scope.
+### Remaining Phase 3 gate
+
+**Source implementation, isolated CI and hosted provisioning are complete.** Not yet done, and therefore **NOT VERIFIED**:
+
+1. Email sign-up, login and logout with the CAPTCHA on iPhone Safari and the installed PWA.
+2. Google and Apple sign-in callbacks on the same devices (Google test users must include the tester).
+3. A real signup producing exactly one `public.profiles` and one `public.friend_codes` row, with the email absent from `public.profiles`.
+4. Password recovery: **not available** to general users until custom SMTP exists, because Supabase's built-in sender only reaches team members. This needs either an explicit owner scope decision recording recovery as out of scope for Phase 3, or SMTP setup.
+
+Until these are verified (or the acceptance scope is explicitly changed by the owner), the PR must remain **draft** and this plan must remain active at the repository root. Do not archive it, mark Phase 3 IN REVIEW or COMPLETE, merge, or start Phase 4.
 
 ### Review and recovery
 
