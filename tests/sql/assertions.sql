@@ -232,7 +232,7 @@ COMMIT;
 -- through a publishable API key. A browser/client role must never inherit it.
 BEGIN;
 SET LOCAL ROLE service_role;
-DO $
+DO $$
 DECLARE total integer;
 BEGIN
   SELECT count(*) INTO total FROM public.raw_submissions;
@@ -248,7 +248,7 @@ BEGIN
   ) THEN
     RAISE EXCEPTION 'service role cannot perform raw purge';
   END IF;
-END $;
+END $$;
 COMMIT;
 
 -- Purge primitive: expires old raw text without deleting parsed history.
