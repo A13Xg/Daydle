@@ -20,20 +20,6 @@ jobs:
           node-version: "22"
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
-      - name: Normalize and emit Phase 3 source for owner commit
-        run: |
-          npx prettier --write src/App.tsx src/components/AccountPage.tsx src/components/AuthCallback.tsx src/components/AuthPage.tsx src/lib/auth-actions.ts src/lib/use-auth.ts tests/auth-callback.test.ts tests/auth-ui.test.ts tests/auth.test.ts
-          node -e '
-            const fs = require("node:fs");
-            for (const path of ["src/App.tsx","src/components/AccountPage.tsx","src/components/AuthCallback.tsx","src/components/AuthPage.tsx","src/lib/auth-actions.ts","src/lib/use-auth.ts","tests/auth-callback.test.ts","tests/auth-ui.test.ts","tests/auth.test.ts"]) {
-              const raw = fs.readFileSync(path, "utf8");
-              console.log("BEGIN_FORMAT_FILE:" + path);
-              for (let i = 0; i < raw.length; i += 3000) {
-                console.log("FORMAT_CHUNK:" + JSON.stringify(raw.slice(i, i + 3000)));
-              }
-              console.log("END_FORMAT_FILE:" + path);
-            }
-          '
       - name: Typecheck
         run: npm run typecheck
       - name: Lint
