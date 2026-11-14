@@ -1,0 +1,78 @@
+name: Deploy Worker
+
+# Manual production deploy. Runs only when someone starts it, and only from main.
+# The `production` environment requires reviewer approval before the job starts, and its
+# deployment rule limits it to main, so the Cloudflare token is never exposed to PR jobs.
+# Equivalent to scripts/ops/deploy-worker.ps1, with the token held as an environment secret.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+    steps:
+      - name: Require main
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "Deploys run only from main (got $GITHUB_REF)." >&2
+          exit 1
+
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci --no-audit --no-fund
+
+      - name: Check public configuration
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          [[ "$VITE_SUPABASE_URL" =~ ^https://[^/[:space:]]+/?$ ]] || { echo "VITE_SUPABASE_URL is missing or not an https origin." >&2; exit 1; }
+          [[ "$VITE_SUPABASE_PUBLISHABLE_KEY" == sb_publishable_?* ]] || { echo "VITE_SUPABASE_PUBLISHABLE_KEY is missing or not a publishable key." >&2; exit 1; }
+          [[ -n "$CLOUDFLARE_ACCOUNT_ID" ]] || { echo "CLOUDFLARE_ACCOUNT_ID is missing." >&2; exit 1; }
+          [[ -n "$CLOUDFLARE_API_TOKEN" ]] || { echo "CLOUDFLARE_API_TOKEN secret is missing." >&2; exit 1; }
+
+      - name: Build
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: npm run build
+
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx --no-install wrangler deploy
+
+      - name: Verify
+        run: |
+          domain="daydle.agoodman.io"
+          for i in $(seq 1 12); do
+            if body=$(curl -fsS --max-time 15 "https://$domain/api/v1/health"); then
+              echo "health: $body"
+              curl -fsS --max-time 15 -o /dev/null -w "SPA route /auth/callback: HTTP %{http_code}\n" "https://$domain/auth/callback"
+              exit 0
+            fi
+            echo "attempt $i failed; retrying (DNS and certificates can take minutes)"
+            sleep 15
+          done
+          echo "Site not reachable after the deploy." >&2
+          exit 1
