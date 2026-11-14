@@ -305,5 +305,8 @@ Email/password is disabled because unconfirmed email signup allows account pre-h
 ### Retire or rework dormant email-era code
 **Status:** NOT STARTED. The auth actions still contain email sign-up, sign-in, recovery and CAPTCHA token pass-through, and `configure-turnstile.ps1` remains. The account page's password-reset form was removed during the Phase 3 review because any signed-in session could open it by URL. Decide whether to delete or restore them when the email decision is made, so unused paths do not rot.
 
+### Development-dependency advisories
+**Status:** NOT STARTED. Dependabot reports a moderate `minimatch` denial-of-service advisory (and `npm audit` reports moderate findings in the lint toolchain). They are development-only and do not ship in the app or Worker. Upgrade the lint tooling in a dedicated change.
+
 ### Provider-supplied display names
 **Status:** NOT STARTED (owner decision needed). New users from Apple or Google get their provider name as a **public** display name and are marked as onboarded, so they are never asked to confirm it. The sign-in and account pages now disclose this. To require confirmation instead, add a forward-only migration that sets `onboarding_completed` to false for provider-supplied names (and update the trigger test), or add an explicit "choose your public name" step.

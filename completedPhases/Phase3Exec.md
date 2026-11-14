@@ -107,7 +107,8 @@ Scoped to Phase 3; no credentials required for CI and migration testing; trigger
 | `npm run build` | Pass; the bundle contains no secret or service-role key patterns |
 | `npm run smoke` | Pass against a local preview (CI) |
 | PostgreSQL 17 SQL security suite (`bash scripts/test-db.sh`) | Pass in CI job `database-security` on two clean databases. **Not run locally** (no PostgreSQL 17 server was set up). |
-| CI on the last code change | Success, jobs `validate` and `database-security`: https://github.com/A13Xg/Daydle/actions/runs/43575493346 (commit `a096e4b`). Later commits change documentation only. |
+| CI on the last code change | Success, jobs `validate` and `database-security`: https://github.com/A13Xg/Daydle/actions/runs/43575493346 (commit `a096e4b`). Later commits are documentation, review fixes and ops-script hardening; see the Copilot review below. |
+| CI after the Copilot review fixes | Success, jobs `validate` and `database-security`: https://github.com/A13Xg/Daydle/actions/runs/43643095862 (commit `22e2df1`). |
 
 ### Hosted verification (production project, 2026-11-14)
 
@@ -140,6 +141,16 @@ Scoped to Phase 3; no credentials required for CI and migration testing; trigger
   6. *Nits, accepted:* `random_friend_code` does not need `SECURITY DEFINER`, `btrim` strips only spaces, and `onboarding_completed` is user-writable. These are harmless, and the migration is already applied and forward-only. The credential name default `Daydle-Preview-Supabase-DB` is kept because it names the existing Credential Manager entry. Sign-out ends sessions on all devices (Supabase's default) and is now documented.
   7. *Documentation discrepancies* (about a dozen stale or wrong statements about the CAPTCHA widget, a preview environment, the password form, email sign-in, grants and CI references): all corrected.
   - **Not verifiable by the reviewer:** anything in the hosted environment, and PowerShell runtime behaviour. Hosted facts are recorded above from direct read-only checks and owner-reported device testing.
+
+- **Copilot pull-request review** (GitHub's automated reviewer; six inline findings, three rated high). Five were fixed by Copilot Autofix commits made through the GitHub web interface and reviewed here; the sixth was fixed separately:
+  1. *High:* `init-github-environment.ps1` continued after a failed environment-protection call and could write the database password into an unprotected environment. **Fixed:** it throws before any credential is written.
+  2. *High:* rerunning with `-Branches main` left older branch, wildcard and tag policies in place. **Fixed:** it reads every policy and fails closed on anything outside the requested allowlist before writing credentials.
+  3. *High:* `AccountPage` kept the previous user's profile, name draft and friend code when another tab changed the signed-in user. **Fixed:** the page is keyed by user ID so state resets on an identity change. Typecheck, lint and tests pass; **not exercised in a real two-tab browser session**.
+  4. *Medium:* a failed `git fetch` left a stale `origin/main` for the deploy guard. **Fixed:** the script aborts on a fetch failure.
+  5. *Medium:* unchecked `gh variable get` reads. **Fixed:** each read and value is checked, and the Supabase URL must be an https origin.
+  6. *Medium:* `new-supabase-project.ps1` matched an existing project by name across all organizations. **Fixed in this branch** (not by Copilot): it matches name and organization and refuses on multiple matches.
+  - The five Autofix commits carry a `Co-authored-by` trailer for the review tool. The owner reviewed this and accepted it. The PowerShell changes were checked by parsing and by testing the filter logic, **not by running the scripts against GitHub or Supabase**.
+  - Dependabot reports a moderate `minimatch` advisory in the development-only lint toolchain (already open on `main`); it does not ship in the app or Worker and is tracked in the roadmap's Circle-Back section.
 
 ### Known limitations
 
