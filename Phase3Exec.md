@@ -1,6 +1,6 @@
 # Phase 3 Execution Plan — Authentication, onboarding, and account identity
 
-**Status:** REVIEWED / IMPLEMENTATION AUTHORIZED (verification pending)  
+**Status:** IMPLEMENTED / BLOCKED ON HOSTED AUTH VERIFICATION (draft PR; not ready for review)  
 **Base:** main `87b2a71d98f74268ad930a0c31d73e51f737bc6e`, following merged Phase 2 PR #2 (`b4a1140`).  
 **Branch:** `phase/03-auth-onboarding`; **Draft PR:** [#3](https://github.com/A13Xg/Daydle/pull/3).  
 **Sources:** [IDEA.md](IDEA.md), [roadmap.md](roadmap.md#phase-3--authentication-onboarding-and-account-identity), [AGENTS.md](AGENTS.md), [Phase 2 archive](completedPhases/Phase2Exec.md).
@@ -80,4 +80,37 @@ Scoped to Phase 3; no credentials required for CI and migration testing; trigger
 
 ## Actual execution and verification
 
-**Pending.** Append measured results, fixes, CI URLs, environment limitations and review status before archive.
+### Implementation completed on phase branch
+
+- `supabase/migrations/20261114060000_phase3_auth_identity.sql`: forward migration for onboarding flag, privileged account-registration trigger, secure unbiased five-character friend-code creation, unique collision retry and restricted EXECUTE grants.
+- Local SQL bootstrap/fixtures and `scripts/test-db.sh` updated to replay **Phase 2 + Phase 3** against two fresh PostgreSQL 17 databases. Added `tests/sql/auth-assertions.sql` with 250 additional registrations, owner-only profile update, code uniqueness, forbidden privileged calls and profile fallback checks.
+- Browser Supabase client configured for PKCE, persisted sessions and explicit callback handling. Email/password signup/login/verification pending, password recovery, Apple/Google OAuth request, callback exchange/StrictMode de-duplication, session restoration, signout, account profile/onboarding state and owner-only friend-code display are implemented.
+- Functional account/login/recovery/error/loading states were added without fixing the final visual styling.
+- `docs/auth.md` documents required provider setup, migrations, callback allowlisting and Apple signing-key renewal. `AGENTS.md` now requires alerting the user only when credentials actually block an essential gate.
+- App smoke checks include `/auth`, `/auth/callback`, `/account` and homepage SPA navigation.
+
+### Executed tests and review
+
+- **Final nonmutating source CI:** https://github.com/A13Xg/Daydle/actions/runs/43563613098 — both `validate` and `database-security` succeeded.
+- `npm ci`, `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm test`, `npm run build` and preview `npm run smoke` passed.
+- **27 Vitest tests** pass, including auth action validation, SDK call contracts, OAuth unsafe URL rejection, callback single-use race handling and rendered account form semantics.
+- Both isolated PostgreSQL databases replay both migrations and pass Phase 2 security plus Phase 3 registration/identity assertions. No hosted credentials or privileged API were used.
+- PR code-review scan found no embedded secrets, unsafe HTML injection, arbitrary dynamic evaluation or contributor metadata. All source commits use authenticated repository identity and remain isolated to Phase 3.
+- Early SQL failure due to schema-qualifying special `COALESCE/NULLIF` expressions was repaired and rerun; cryptographic code sampling skips UUID metadata bytes. Temporary formatting job was removed; the current workflow is nonmutating.
+- No hosted Supabase migration, real email delivery, Apple/Google browser callback, or iOS device/PWA end-to-end test has been run.
+
+### Current external verification blocker
+
+**Source implementation and isolated CI are complete.** The remaining essential Phase 3 exit gate is a real preview signup-to-profile/login/password recovery and Google/Apple callback test on the primary iOS target. This requires:
+
+1. Authorized preview Supabase project with `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, and project reference `SUPABASE_PROJECT_ID` (public GitHub preview environment variables).
+2. Applied ordered Phase 2 and Phase 3 migrations in that preview project, via an explicitly approved migration action. For automation, environment secrets `SUPABASE_ACCESS_TOKEN` and `SUPABASE_DB_PASSWORD` are required. Do not supply values in chat.
+3. Enabled email provider with confirmation/redirect allowlist, Google OAuth client and Apple web Services ID/client secret installed in Supabase (providers' own credentials remain in provider dashboards).
+4. Accessible HTTPS preview domain for testing iOS Safari and installed PWA OAuth callback context. Cloudflare deployment may require `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` when such preview deployment is explicitly authorized.
+
+Until these are configured, **hosted OAuth, email confirmation and iOS flows are NOT VERIFIED**. This is now a genuine blocker for Phase 3 review completion—not a reason to add custom OAuth infrastructure or skip provider integration. The PR must remain **draft** and `Phase3Exec.md` must remain active at the repository root. Do not archive it, mark Phase 3 IN REVIEW/COMPLETE, merge, or start dependent Phase 4 without satisfying the gate or an explicit change to acceptance scope.
+
+### Review and recovery
+
+No remote services, database or production environments were modified. A branch can be reverted/closed without data migration rollback. Once hosted migration is explicitly authorized and performed, changes must be forward-only; do not rewrite deployed migration history.
+
