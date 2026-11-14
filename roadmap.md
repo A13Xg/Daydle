@@ -27,7 +27,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 0 | Repository foundation and delivery contract | — | COMPLETE |
 | 1 | Application skeleton, tooling, and deploy baselines | 0 | COMPLETE — [PR #1](https://github.com/A13Xg/Daydle/pull/1), merge `b91a6e8` |
 | 2 | Domain model, persistence, and security foundations | 1 | COMPLETE — [PR #2](https://github.com/A13Xg/Daydle/pull/2), merge `b4a1140` |
-| 3 | Authentication, onboarding, and account identity | 2 | IN REVIEW (branch proposal; main unchanged until merge) — [PR #3](https://github.com/A13Xg/Daydle/pull/3), evidence in [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md) |
+| 3 | Authentication, onboarding, and account identity | 2 | COMPLETE with owner-approved scope changes — [PR #3](https://github.com/A13Xg/Daydle/pull/3), merge `bff7b89`, evidence in [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md) |
 | 4 | Game catalog, selection, and discovery | 3 | NOT STARTED |
 | 5 | Today experience, PWA, and external-game navigation | 4 | NOT STARTED |
 | 6 | Deterministic parser registry and initial game coverage | 5 | NOT STARTED |
@@ -85,7 +85,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Fresh database migrates reproducibly; integrity/RLS tests pass; key concurrency constraints enforced by database; schema contracts documented and queryable.
 
 ## Phase 3 — Authentication, onboarding, and account identity
-**Main status:** NOT STARTED (unmerged). **Branch status:** IN REVIEW — [PR #3](https://github.com/A13Xg/Daydle/pull/3); verified with owner-approved scope changes (Apple and Google only; installed-PWA test deferred), see [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md). **Dependencies:** 2.
+**Main status:** COMPLETE — [PR #3](https://github.com/A13Xg/Daydle/pull/3), merge `bff7b89`; verified with owner-approved scope changes (Apple and Google only; installed-PWA test deferred), see [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md). **Dependencies:** 2.
 
 **Purpose:** Enable open signup and account lifecycle with unique public identity and private credentials.
 
