@@ -53,6 +53,7 @@ export default function App() {
           <AuthPage client={client} signedIn={authenticated} />
         ) : pathname === "/account" ? (
           <AccountPage
+            key={authenticated ? authState.session.user.id : "signed-out"}
             client={client}
             user={authenticated ? authState.session.user : null}
             loadingSession={authState.status === "loading"}
