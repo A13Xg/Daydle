@@ -24,9 +24,9 @@ Cloudflare local Worker-specific secrets would go in `.dev.vars` (gitignored); n
 | Environment | Purpose | Setup and boundary |
 |---|---|---|
 | Local | Development and tests | Cloudflare Vite plugin provides a local Worker runtime; no external accounts are required. |
-| Production (single hosted environment) | Live site and all hosted testing | Worker `daydle-app` on the custom domain `daydle.agoodman.io` (the `workers.dev` and preview URLs are disabled) plus one free-tier Supabase project. No separate preview or staging environment exists by owner decision. GitHub environment `production` requires a reviewer and allows only `main`. |
+| Production (single hosted environment) | Live site and all hosted testing | Worker `daydle-app` on the custom domain `daydle.agoodman.io` (the `workers.dev` and preview URLs are disabled) plus one free-tier Supabase project. No separate preview or staging environment exists by owner decision. The GitHub environment `production` requires a reviewer and allows only `main` for Actions jobs; the local deploy script enforces `main` on its own. |
 
-The `wrangler.jsonc` file is the local baseline. For real preview and production, use environment-specific Wrangler configurations or an audited per-environment deployment configuration; keep names, routes, and secrets isolated. The Cloudflare Vite plugin emits a deployable `dist/worker/wrangler.json`; verify it before using Wrangler in an approved release.
+The `wrangler.jsonc` file is the local baseline. If a second environment is ever added, use environment-specific Wrangler configurations or an audited per-environment deployment configuration; keep names, routes, and secrets isolated. The Cloudflare Vite plugin emits a deployable `dist/worker/wrangler.json`; verify it before using Wrangler in an approved release.
 
 ### Provisioning and release procedure
 
@@ -34,7 +34,7 @@ Provisioning was executed on 2026-11-14 with the helpers in [scripts/ops](../scr
 
 1. Provisioning: `new-supabase-project.ps1`, `init-github-environment.ps1`, `set-production-secrets.ps1` / `set-cloudflare-credentials.ps1`, `register-workers-subdomain.ps1`, then `configure-google-auth.ps1` and `configure-apple-auth.ps1`.
 2. Migrations: `supabase db push --dry-run`, then `supabase db push` only with the owner's explicit approval.
-3. Release: `deploy-worker.ps1` from a clean working tree builds with the environment's public values, deploys the Worker, attaches the `wrangler.jsonc` custom domain and checks `/api/v1/health`. It prompts (hidden) for the Cloudflare token, which needs Workers Scripts Edit, Account Settings Read, and for the first custom-domain attach Zone DNS Edit and Workers Routes Edit on the zone.
+3. Release: `deploy-worker.ps1` from a clean working tree on the tip of `main` (it refuses anything else unless `-AllowNonMain` is passed) builds with the environment's public values, deploys the Worker, attaches the `wrangler.jsonc` custom domain and checks `/api/v1/health`. It prompts (hidden) for the Cloudflare token, which needs Workers Scripts Edit, Account Settings Read, and for the first custom-domain attach Zone DNS Edit and Workers Routes Edit on the zone.
 4. After a merge, redeploy from `main` so the live commit matches the merged one.
 5. Record the deployed commit, Worker version and rollback notes.
 6. A scheduled workflow (`keepalive.yml`) reads one public row every few days so the free-tier project is not paused for inactivity; it runs only from `main`.

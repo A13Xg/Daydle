@@ -29,7 +29,7 @@
                  -AcceptUnconfirmedEmailRisk.
 
   The Secret Key is stored only in Supabase and never printed or written to disk.
-  Redeploy afterwards (deploy-worker.ps1) so the site includes the widget.
+  The site no longer renders a CAPTCHA widget; restore an email form before relying on this.
 #>
 param(
   [string]$ProjectRef,
@@ -79,4 +79,4 @@ $c = Invoke-SupabaseApi -Path "/v1/projects/$ProjectRef/config/auth"
 "email signup     : $($c.external_email_enabled)"
 "auto-confirm     : $($c.mailer_autoconfirm)"
 "min password len : $($c.password_min_length)"
-'Next: redeploy with scripts/ops/deploy-worker.ps1 so the site includes the CAPTCHA widget.'
+'Note: the current site has no email form or CAPTCHA widget, so this only prepares Supabase for a future email sign-in.'

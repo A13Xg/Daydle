@@ -43,7 +43,7 @@
 
 Migration `supabase/migrations/20261114060000_phase3_auth_identity.sql` (forward-only, requires the Phase 2 migration):
 
-- Adds `profiles.onboarding_completed boolean not null default false`; `authenticated` may update only that column and the display name, on its own row.
+- Adds `profiles.onboarding_completed boolean not null default false`; `authenticated` may update only `display_name`, `avatar_url` and `onboarding_completed` on its own row (grants from the Phase 2 and Phase 3 migrations). Profiles are publicly readable, so provider-supplied names are public.
 - `app_private.random_friend_code()` builds a five-character code from the 31-symbol alphabet `ABCDEFGHJKMNPQRSTUVWXYZ23456789` using secure UUID bytes (skipping version and variant bytes) with rejection sampling to avoid modulo bias.
 - `app_private.allocate_friend_code(uuid)` inserts with `ON CONFLICT (code) DO NOTHING` and retries up to 32 times; uniqueness comes from the database constraint, never a read-before-write check.
 - `app_private.on_auth_user_created()` and trigger `daydle_auth_user_created` on `auth.users` create one profile and one friend code per new user. The display name comes from `display_name`, `full_name` or `name` in the provider metadata, otherwise `Player` with `onboarding_completed = false`. If code allocation fails, the signup is aborted, so an auth user cannot exist without a profile and code. Email addresses are never copied into `public.profiles`.

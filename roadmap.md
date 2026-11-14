@@ -273,7 +273,7 @@ Deferred operational items that are not numbered phases and do not block any pha
 ### Automated Apple client-secret rotation
 **Status:** NOT STARTED. **Depends on:** Sign in with Apple configured in Supabase Auth; production environment secrets; Phase 14 production readiness (or earlier if rotation reminders prove unreliable).
 
-**Why:** Apple's OAuth client secret is a signed token that expires after at most about six months. When it lapses, Apple sign-in fails while email and Google sign-in keep working. The current process is manual: re-run the local setup script before the printed expiry date.
+**Why:** Apple's OAuth client secret is a signed token that expires after at most about six months. When it lapses, Apple sign-in fails while Google sign-in keeps working. The current process is manual: re-run the local setup script before the printed expiry date.
 
 **Proposed approach:**
 - Add a scheduled GitHub Actions workflow (monthly cron plus `workflow_dispatch`) in the `production` environment. A required-reviewer rule is acceptable, since each run then prompts a human.
@@ -303,4 +303,7 @@ Email/password is disabled because unconfirmed email signup allows account pre-h
 **Status:** NOT STARTED (owner action). Publish the Google app from Testing to production and add branding: app name, support email, homepage and authorized domain. Basic scopes (`openid`, `email`, `profile`) are expected not to need Google verification; confirm in the console.
 
 ### Retire or rework dormant email-era code
-**Status:** NOT STARTED. The auth actions still contain email sign-up, sign-in, recovery and CAPTCHA token pass-through, the account page still contains a password-reset form reachable only from a recovery link, and `configure-turnstile.ps1` remains. Decide whether to delete or restore them when the email decision is made, so unused paths do not rot.
+**Status:** NOT STARTED. The auth actions still contain email sign-up, sign-in, recovery and CAPTCHA token pass-through, and `configure-turnstile.ps1` remains. The account page's password-reset form was removed during the Phase 3 review because any signed-in session could open it by URL. Decide whether to delete or restore them when the email decision is made, so unused paths do not rot.
+
+### Provider-supplied display names
+**Status:** NOT STARTED (owner decision needed). New users from Apple or Google get their provider name as a **public** display name and are marked as onboarded, so they are never asked to confirm it. The sign-in and account pages now disclose this. To require confirmation instead, add a forward-only migration that sets `onboarding_completed` to false for provider-supplied names (and update the trigger test), or add an explicit "choose your public name" step.

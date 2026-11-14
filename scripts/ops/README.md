@@ -17,7 +17,7 @@ PowerShell window (hidden prompts do not work in non-interactive shells). Requir
 | `configure-turnstile.ps1` | Enable Cloudflare Turnstile CAPTCHA in Supabase Auth. Email signup is only touched with `-EmailSignup` (default leaves it unchanged; unconfirmed signup needs `-AcceptUnconfirmedEmailRisk`). Not needed while the site is Apple/Google only. |
 | `configure-apple-auth.ps1` | Generate Apple's client secret from your `.p8` key and store it in Supabase Auth. **Expires about every six months.** |
 | `purge-test-users.ps1` | List and (with `-Execute`) permanently delete user accounts so sign-up can be retested. Dry run by default; masks emails; type-the-project-ref confirmation. **Destructive; test accounts only.** |
-| `deploy-worker.ps1` | Build with the environment's public values, deploy the Worker, attach the `wrangler.jsonc` custom domain, and verify it. |
+| `deploy-worker.ps1` | Build with the environment's public values, deploy the Worker, attach the `wrangler.jsonc` custom domain, and verify it. Deploys only a clean tip of `origin/main` (override with `-AllowNonMain`). |
 
 Shared helpers live in `lib/common.ps1`.
 

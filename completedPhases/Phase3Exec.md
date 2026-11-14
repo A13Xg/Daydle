@@ -36,7 +36,7 @@ Client-only Vite app uses PKCE Supabase auth; OAuth redirects same browser tab t
 | Social login | Public | Supabase-managed provider OAuth; configured allowlisted redirect |
 | Session refresh and sign-out | User/browser | Supabase Auth; no hand-rolled token storage |
 | Profile creation | Trigger only | Definer owned by database owner, no public EXECUTE |
-| Friend-code allocation | Trigger only | Cryptographic 31-symbol generator and unique constraint/retry |
+| Friend-code allocation | Trigger only (the two code functions are also executable by `service_role`) | Cryptographic 31-symbol generator and unique constraint/retry |
 | Profile read / friend-code read | Public safe profile / owner-only private code | Phase 2 RLS, no email exposure |
 | Change display name / onboarding | Authenticated owner only | RLS and column-specific UPDATE grants |
 | Password reset | Authenticated recovery token | Supabase email recovery and updateUser, no password in custom DB |
@@ -57,7 +57,7 @@ No friend-code lookup/link/QR friendship or player discovery screens here; those
 
 - [x] Both fresh PG17 databases replay Phase 2+3 migrations in order. (CI `database-security`)
 - [x] Trigger creates exactly one profile+unique code for email and provider metadata, including missing-name fallback; 200+ registrations generate unique 5-character codes.
-- [x] Unprivileged users cannot call privileged code generators, edit others' profiles or read other's friend code; profile update owner-only and full-name data not leaked.
+- [x] Unprivileged users cannot call privileged code generators, edit others' profiles or read other's friend code; profile update owner-only; the email address never reaches `profiles`. Provider display names do (profiles are publicly readable by design), which the review found was undisclosed and is now disclosed in the UI.
 - [x] Email signup/login/recovery and OAuth provider call adapters have realistic success, pending and error tests, including validated redirect paths. (Mocked SDK tests; the email flows are disabled in the hosted environment, see scope changes.)
 - [x] Callback duplicate-exchange avoidance, session restoration and recovery flow behave under React StrictMode and URL errors.
 - [x] All `npm ci`, typecheck, lint, format, unit, build, Worker smoke and PostgreSQL security jobs pass.
@@ -84,7 +84,7 @@ Scoped to Phase 3; no credentials required for CI and migration testing; trigger
 
 - **Database (`supabase/migrations/20261114060000_phase3_auth_identity.sql`):** `profiles.onboarding_completed`; `SECURITY DEFINER` functions `random_friend_code`, `allocate_friend_code` and trigger `on_auth_user_created` (`search_path` empty, fully qualified names); unbiased five-character friend codes (UUID bytes, rejection sampling, 31-symbol alphabet) inserted with `ON CONFLICT (code) DO NOTHING` and up to 32 attempts; the trigger creates one profile and one friend code per new auth user, and a failure aborts the signup so no auth user can exist without them; `EXECUTE` revoked from `PUBLIC`, `anon` and `authenticated`.
 - **Frontend:** Supabase PKCE client and session hook; typed auth actions (OAuth, plus email sign-up, sign-in and recovery with CAPTCHA token pass-through retained and tested); fixed same-origin `/auth/callback` with single-use code exchange that survives React StrictMode; account page with display-name onboarding, owner-only friend-code display and sign-out; a focused **Apple and Google** sign-in page.
-- **Tests:** 37 Vitest tests (auth actions, redirect validation, callback race handling, UI semantics, CAPTCHA token pass-through, config validation, existing domain/API tests) and SQL assertions on two disposable PostgreSQL 17 databases including 250 additional registrations.
+- **Tests:** 37 Vitest tests (auth actions, redirect validation, callback race handling, UI semantics, CAPTCHA token pass-through, config validation, existing domain/API tests) and SQL assertions on two disposable PostgreSQL 17 databases including 250 additional registrations, a forced friend-code collision that must be retried, an allocation failure that must abort the whole signup, anon and service_role function grants, and display-name edge cases.
 - **Operations:** PowerShell helpers in [scripts/ops](../scripts/ops/README.md) for provisioning, secrets, provider configuration, deployment and test-account purging; a scheduled Supabase keep-alive workflow (`.github/workflows/keepalive.yml`); [docs/auth.md](../docs/auth.md), [docs/secrets.md](../docs/secrets.md), [docs/deployment.md](../docs/deployment.md) and [docs/database.md](../docs/database.md) updated.
 
 ### Owner scope changes and deviations from the plan
@@ -107,7 +107,7 @@ Scoped to Phase 3; no credentials required for CI and migration testing; trigger
 | `npm run build` | Pass; the bundle contains no secret or service-role key patterns |
 | `npm run smoke` | Pass against a local preview (CI) |
 | PostgreSQL 17 SQL security suite (`bash scripts/test-db.sh`) | Pass in CI job `database-security` on two clean databases. **Not run locally** (no PostgreSQL 17 server was set up). |
-| CI on the final branch head | Success: https://github.com/A13Xg/Daydle/actions/runs/43574287251 (commit `e3fec3f`) |
+| CI on the last code change | Success, jobs `validate` and `database-security`: https://github.com/A13Xg/Daydle/actions/runs/43575493346 (commit `a096e4b`). Later commits change documentation only. |
 
 ### Hosted verification (production project, 2026-11-14)
 
@@ -122,7 +122,7 @@ Scoped to Phase 3; no credentials required for CI and migration testing; trigger
 | Gate | Result |
 |---|---|
 | Signup-to-profile flow passes on the primary target | **Verified** for Google and Apple on an iOS device (owner-reported) with hosted database evidence. Email/password not applicable (disabled). Installed PWA deferred. |
-| Identity rules verified | **Verified:** SQL suite (250 registrations, uniqueness, fallback name, collision handling) and hosted privilege check. |
+| Identity rules verified | **Verified:** SQL suite (250 registrations, uniqueness, fallback name, forced-collision retry, allocation failure aborting the signup with no partial registration, name truncation and blank-name fallback, function grants) and hosted privilege check. |
 | Unauthorized access rejected | **Verified:** SQL suite (cross-user profile edits, friend-code reads, privileged function calls) and hosted function-grant check. |
 | Recovery and callback handling validated | **Callback: verified** (mocked race and error tests plus live Google and Apple round trips). **Recovery: not verified,** out of scope by owner decision (no custom SMTP; Supabase's built-in sender only reaches team members). |
 
@@ -131,12 +131,22 @@ Scoped to Phase 3; no credentials required for CI and migration testing; trigger
 - **Automated security review of the signup change** flagged unconfirmed email signup as an account pre-hijacking risk (see scope change 2). Resolved by keeping email/password disabled; `configure-turnstile.ps1` now defaults to leaving email unchanged and refuses unconfirmed signup without `-AcceptUnconfirmedEmailRisk`.
 - **Earlier SQL repair:** schema-qualifying the special `COALESCE`/`NULLIF` expressions failed in CI and was fixed; code sampling skips UUID version and variant bytes.
 - **Secret hygiene:** the repository, ops scripts, build output and docs were scanned for project references, account identifiers, provider identifiers and key patterns; none are committed. Secrets exist only in GitHub environment secrets, Supabase Auth settings and Windows Credential Manager.
-- **Independent review:** see the section added by the final review pass below.
+- **Independent review** (a read-only Claude Opus subagent reviewed the whole branch diff against `origin/main`; verdict **ready after minor fixes**, no blockers). Findings and what was done:
+  1. *Medium, verified:* the sign-up trigger copies the provider's real name into `profiles.display_name`, which anyone holding the public key can read, and marks onboarding complete. This matches IDEA.md ("accept a provider-supplied display name") but was undisclosed, and this archive wrongly said "full-name data not leaked". **Fixed:** the sign-in page and account page now say the name is public and can be changed, and the archive wording is corrected. **Owner decision still open:** whether provider names should instead require confirmation (a new forward migration setting `onboarding_completed` to false); tracked in the roadmap's Circle-Back section.
+  2. *Medium:* `deploy-worker.ps1` deployed any branch, so the "main only" environment rule did not govern real deployments. **Fixed:** it now refuses anything except the tip of `origin/main` unless `-AllowNonMain` is passed, and the docs say the GitHub rules apply to Actions jobs only.
+  3. *Low:* the "set a new password" form was reachable at `/account?reset=1` by any signed-in session. **Fixed:** removed.
+  4. *Low:* the SQL tests did not exercise the retry or failure paths and one message was misleading. **Fixed:** added a forced-collision retry test, an allocation-failure test (the signup must abort with no user, profile or code left), anon and service_role grant checks, name truncation and blank-name checks; CI passes.
+  5. *Low:* raw provider or Supabase error text could reach the sign-in page. **Fixed:** fixed copy. The account page still shows validation and Supabase messages; accepted as low risk.
+  6. *Nits, accepted:* `random_friend_code` does not need `SECURITY DEFINER`, `btrim` strips only spaces, and `onboarding_completed` is user-writable. These are harmless, and the migration is already applied and forward-only. The credential name default `Daydle-Preview-Supabase-DB` is kept because it names the existing Credential Manager entry. Sign-out ends sessions on all devices (Supabase's default) and is now documented.
+  7. *Documentation discrepancies* (about a dozen stale or wrong statements about the CAPTCHA widget, a preview environment, the password form, email sign-in, grants and CI references): all corrected.
+  - **Not verifiable by the reviewer:** anything in the hosted environment, and PowerShell runtime behaviour. Hosted facts are recorded above from direct read-only checks and owner-reported device testing.
 
 ### Known limitations
 
 - Email/password sign-up, email confirmation and password recovery are not available (disabled); no custom SMTP.
+- Provider-supplied names (often real names) become public display names automatically and mark onboarding complete; users are told and can change them. Whether to require confirmation instead is an open owner decision.
 - No public friend-code lookup exists yet, so lookup and enumeration rate limiting belong to Phase 9.
+- Sign-out ends the session on every device (Supabase's default global scope).
 - Apple's client secret **expires 2027-05-15**; re-run `scripts/ops/configure-apple-auth.ps1` before then or Apple sign-in fails.
 - The keep-alive schedule runs only from the default branch, so it starts after this PR is merged; GitHub disables schedules in public repositories after 60 days without repository activity.
 - The free Supabase tier has no automated backups. One project serves as production, so schema changes carry real risk once real users exist.

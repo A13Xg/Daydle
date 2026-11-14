@@ -4,7 +4,7 @@ This is a reference manifest, **not a request to paste credentials into a chat o
 
 ## GitHub Actions secrets and variables
 
-In [GitHub repository Actions settings](https://github.com/A13Xg/Daydle/settings/secrets/actions), use environment-scoped secrets. The repository currently has a single protected **`production`** environment (required reviewer, deployments limited to `main`); there is no separate preview environment. Production deployment jobs must require explicit approval and never run on PR CI. The helper scripts in [scripts/ops](../scripts/ops/README.md) create and populate it.
+In [GitHub repository Actions settings](https://github.com/A13Xg/Daydle/settings/secrets/actions), use environment-scoped secrets. The repository currently has a single protected **`production`** environment (required reviewer, deployments limited to `main`; these rules govern GitHub Actions jobs, and the local `deploy-worker.ps1` enforces `main` itself); there is no separate preview environment. Production deployment jobs must require explicit approval and never run on PR CI. The helper scripts in [scripts/ops](../scripts/ops/README.md) create and populate it.
 
 | Name | Store | Purpose |
 |---|---|---|
@@ -15,7 +15,7 @@ In [GitHub repository Actions settings](https://github.com/A13Xg/Daydle/settings
 | `CLOUDFLARE_ACCOUNT_ID` | GitHub Environment **variable** | Cloudflare account identifier |
 | `VITE_SUPABASE_URL` | GitHub Environment **variable** | Public project URL `https://<project-ref>.supabase.co` |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | GitHub Environment **variable** | Public `sb_publishable_...` key for browser RLS client |
-| `VITE_TURNSTILE_SITE_KEY` | GitHub Environment **variable** | Public Cloudflare Turnstile site key for the sign-up CAPTCHA widget |
+| `VITE_TURNSTILE_SITE_KEY` | GitHub Environment **variable** | Reserved and not read by the current UI (the CAPTCHA widget was removed); set only if an email form returns |
 | `KEEPALIVE_SUPABASE_URL` | GitHub **repository variable** | Same public project URL, read by the scheduled keep-alive workflow (repository scope so it needs no environment approval) |
 | `KEEPALIVE_SUPABASE_PUBLISHABLE_KEY` | GitHub **repository variable** | Same public publishable key, for the keep-alive workflow only |
 
