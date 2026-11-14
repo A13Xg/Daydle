@@ -6,8 +6,9 @@ ALTER TABLE public.profiles
   ADD COLUMN onboarding_completed boolean NOT NULL DEFAULT false;
 GRANT UPDATE(onboarding_completed) ON public.profiles TO authenticated;
 
--- PostgreSQL's gen_random_uuid() uses a cryptographically secure RNG. Read
--- random UUID bytes, rejecting values >= 248 for unbiased 31-way selection.
+-- PostgreSQL's gen_random_uuid() uses a cryptographically secure RNG. Skip
+-- UUID version/variant bytes (6,8), then reject values >= 248 to avoid
+-- modulo bias when selecting from 31 characters.
 -- No email, display name or other personal information enters the code.
 CREATE FUNCTION app_private.random_friend_code()
 RETURNS text
@@ -24,6 +25,9 @@ BEGIN
   WHILE pg_catalog.length(candidate) < 5 LOOP
     sample := pg_catalog.uuid_send(pg_catalog.gen_random_uuid());
     FOR byte_index IN 0..15 LOOP
+      IF byte_index IN (6, 8) THEN
+        CONTINUE;
+      END IF;
       value := pg_catalog.get_byte(sample, byte_index);
       IF value < 248 THEN
         candidate := candidate || pg_catalog.substr(alphabet, (value % 31) + 1, 1);
