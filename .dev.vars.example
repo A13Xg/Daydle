@@ -1,0 +1,2 @@
+# Local Cloudflare Worker secrets, if future phases require any.
+# Never commit .dev.vars or place privileged tokens under VITE_.

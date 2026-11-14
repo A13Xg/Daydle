@@ -148,3 +148,9 @@ For each phase completion in the conversation, report:
 - **State:** PR ready for review or BLOCKED, plan archived or active, main status unchanged until merge.
 
 Be clear and economical; report concrete commits and links when available. Never represent a plan, draft PR, or unexecuted test as completed work.
+## Execution-environment evidence policy
+
+- If the current local runtime cannot access package registries, execute real build/test gates through repository CI; an attempted command returning a network error is **NOT VERIFIED**, never a passing test.
+- Keep `package-lock.json` in version control; CI must use `npm ci` once the lock exists. A temporary CI artifact can be used to generate an initial lockfile, but the lock must be introduced via the authenticated repository connection, never via a commit forged to look like another identity.
+- For PR reviews, distinguish static/source inspection from executed automated checks and from deployed external-service integration. No Cloudflare or Supabase deployment is implied by a passing local build.
+- When external credentials prevent a live preview, explicitly report the provider-side verification gap. Do not disclose or request privileged tokens in this chat, and do not bypass the user's prohibition on unapproved production deployments.
