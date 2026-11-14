@@ -11,7 +11,8 @@ export function isFriendCode(value: unknown): value is string {
 
 export type GameLifecycle = "active" | "inactive" | "retired";
 export type ParserSupport = "unsupported" | "experimental" | "supported";
-export type GameCadence = "daily" | "weekly" | "irregular" | "multiple_daily" | "unknown";
+export type GameCadence =
+  "daily" | "weekly" | "irregular" | "multiple_daily" | "unknown";
 export type GameOutcome = "win" | "loss" | "complete" | "incomplete";
 
 export interface PublicProfile {
