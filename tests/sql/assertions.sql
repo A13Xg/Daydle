@@ -105,6 +105,11 @@ BEGIN
     RAISE EXCEPTION 'array metrics accepted';
   EXCEPTION WHEN check_violation THEN NULL;
   END;
+  BEGIN
+    DELETE FROM public.games WHERE id='aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
+    RAISE EXCEPTION 'game deletion destroyed historical puzzle records';
+  EXCEPTION WHEN foreign_key_violation THEN NULL;
+  END;
 END $$;
 
 -- Anonymous: public profiles and stale results only. Current puzzles hidden.
