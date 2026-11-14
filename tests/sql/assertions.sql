@@ -56,8 +56,8 @@ BEGIN
   END;
 
   BEGIN
-    INSERT INTO public.friend_codes(user_id, code)
-      VALUES ('33333333-3333-3333-3333-333333333333','7KMP4');
+    UPDATE public.friend_codes SET code = '7KMP4'
+      WHERE user_id = '33333333-3333-3333-3333-333333333333';
     RAISE EXCEPTION 'duplicate friend code was accepted';
   EXCEPTION WHEN unique_violation THEN NULL;
   END;
