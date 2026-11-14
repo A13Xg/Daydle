@@ -30,3 +30,15 @@ Shared helpers live in `lib/common.ps1`.
   configuration file.
 - No script applies database migrations. Use `supabase db push --dry-run`, then `supabase db push`
   only after explicit approval.
+
+## Free-tier keep-alive
+
+`.github/workflows/keepalive.yml` reads one public row through the Supabase API on days 1, 7, 13, 19, 25
+and 31 of each month (gaps never exceed 6 days; free projects pause after about a week idle). It uses
+only the public URL and publishable key, stored as the repository variables `KEEPALIVE_SUPABASE_URL` and
+`KEEPALIVE_SUPABASE_PUBLISHABLE_KEY`, and needs no secrets or deployment approval.
+
+- Scheduled workflows run **only from the default branch**; the schedule starts after this is merged to `main`.
+- GitHub disables schedules in public repositories after 60 days with no repository activity. If runs stop,
+  re-enable the workflow in the Actions tab or make any commit.
+- It prevents inactivity pausing only; it is not a backup. Export data separately.
