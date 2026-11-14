@@ -34,6 +34,7 @@ if (-not $Domain) {
 $dirty = git status --porcelain
 if ($dirty -and -not $AllowDirty) { throw "Working tree has uncommitted changes:`n$dirty`nCommit first or pass -AllowDirty." }
 git fetch --quiet origin main
+if ($LASTEXITCODE -ne 0) { throw 'Could not refresh origin/main. Nothing deployed.' }
 $branch = (git branch --show-current)
 if (-not $AllowNonMain -and ($branch -ne 'main' -or (git rev-parse HEAD) -ne (git rev-parse origin/main))) {
   throw "Refusing to deploy: HEAD must be the tip of origin/main (on '$branch'). Merge and pull main first, or pass -AllowNonMain for a deliberate off-main deploy."
