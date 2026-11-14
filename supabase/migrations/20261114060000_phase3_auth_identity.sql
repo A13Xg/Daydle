@@ -74,10 +74,10 @@ DECLARE
   candidate_name text;
   valid_name boolean;
 BEGIN
-  candidate_name := pg_catalog.coalesce(
-    pg_catalog.nullif(pg_catalog.btrim(NEW.raw_user_meta_data ->> 'display_name'), ''),
-    pg_catalog.nullif(pg_catalog.btrim(NEW.raw_user_meta_data ->> 'full_name'), ''),
-    pg_catalog.nullif(pg_catalog.btrim(NEW.raw_user_meta_data ->> 'name'), '')
+  candidate_name := COALESCE(
+    NULLIF(pg_catalog.btrim(NEW.raw_user_meta_data ->> 'display_name'), ''),
+    NULLIF(pg_catalog.btrim(NEW.raw_user_meta_data ->> 'full_name'), ''),
+    NULLIF(pg_catalog.btrim(NEW.raw_user_meta_data ->> 'name'), '')
   );
 
   valid_name := candidate_name IS NOT NULL;
