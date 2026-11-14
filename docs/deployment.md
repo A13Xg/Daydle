@@ -27,7 +27,7 @@ Cloudflare local Worker-specific secrets would go in `.dev.vars` (gitignored); n
 | Preview | PR QA and iOS testing | Separate Cloudflare Worker name/subdomain, separate Supabase project or schema once database exists; never point preview at production writes. Deploy only after owner provisions credentials/authorization. |
 | Production | Public beta | Dedicated Cloudflare Worker + Supabase project. No deployment from PR CI; a separate gated production approval is required. |
 
-The `wrangler.jsonc` file is the local baseline. For real preview and production, use environment-specific Wrangler configurations or an audited per-environment deployment configuration; keep names, routes, and secrets isolated. The Cloudflare Vite plugin emits a deployable `dist/wrangler.json`; verify it before using Wrangler in an approved release.
+The `wrangler.jsonc` file is the local baseline. For real preview and production, use environment-specific Wrangler configurations or an audited per-environment deployment configuration; keep names, routes, and secrets isolated. The Cloudflare Vite plugin emits a deployable `dist/worker/wrangler.json`; verify it before using Wrangler in an approved release.
 
 ### Initial provisioning checklist (not yet executed)
 
