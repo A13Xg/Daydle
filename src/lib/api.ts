@@ -1,6 +1,12 @@
-import { HEALTH_PATH, isHealthResponse, type HealthResponse } from "../../shared/contracts";
+import {
+  HEALTH_PATH,
+  isHealthResponse,
+  type HealthResponse,
+} from "../../shared/contracts";
 
-export async function fetchHealth(signal?: AbortSignal): Promise<HealthResponse> {
+export async function fetchHealth(
+  signal?: AbortSignal,
+): Promise<HealthResponse> {
   const response = await fetch(HEALTH_PATH, {
     method: "GET",
     cache: "no-store",

@@ -1,7 +1,11 @@
 import { HEALTH_PATH } from "../shared/contracts";
 import { healthResponse } from "./health";
 
-function apiError(status: number, code: string, extraHeaders?: HeadersInit): Response {
+function apiError(
+  status: number,
+  code: string,
+  extraHeaders?: HeadersInit,
+): Response {
   return new Response(JSON.stringify({ error: code }), {
     status,
     headers: {

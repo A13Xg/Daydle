@@ -26,12 +26,18 @@ describe("health fetch contract", () => {
   });
 
   it("rejects malformed successful responses", async () => {
-    vi.stubGlobal("fetch", vi.fn(async () => Response.json({ status: "ok" })));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => Response.json({ status: "ok" })),
+    );
     await expect(fetchHealth()).rejects.toThrow("invalid response");
   });
 
   it("rejects HTTP failures", async () => {
-    vi.stubGlobal("fetch", vi.fn(async () => new Response(null, { status: 503 })));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response(null, { status: 503 })),
+    );
     await expect(fetchHealth()).rejects.toThrow("HTTP 503");
   });
 });

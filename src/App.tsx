@@ -36,8 +36,8 @@ export default function App() {
       <main id="main" className="content">
         <h1>All your daily games. One place.</h1>
         <p className="lead">
-          The Daydle application foundation is online. Game discovery, daily results, and friends
-          will be added in subsequent phases.
+          The Daydle application foundation is online. Game discovery, daily
+          results, and friends will be added in subsequent phases.
         </p>
 
         <section aria-labelledby="foundation-heading" className="panel">
@@ -66,17 +66,25 @@ export default function App() {
           </dl>
           {serviceStatus === "unavailable" && (
             <div className="notice" role="alert">
-              <p>The API could not be reached. Verify the development server and try again.</p>
-              <button type="button" onClick={() => {
-                setServiceStatus("loading");
-                setAttempt((current) => current + 1);
-              }}>
+              <p>
+                The API could not be reached. Verify the development server and
+                try again.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setServiceStatus("loading");
+                  setAttempt((current) => current + 1);
+                }}
+              >
                 Retry API check
               </button>
             </div>
           )}
           {supabase.status === "invalid" && (
-            <p className="notice" role="status">{supabase.reason}</p>
+            <p className="notice" role="status">
+              {supabase.reason}
+            </p>
           )}
         </section>
 
@@ -91,7 +99,9 @@ export default function App() {
       </main>
 
       <footer className="site-footer">
-        <p>Public beta foundation — no accounts or game results are active yet.</p>
+        <p>
+          Public beta foundation — no accounts or game results are active yet.
+        </p>
       </footer>
     </div>
   );

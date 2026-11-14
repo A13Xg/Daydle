@@ -8,7 +8,9 @@ export type PublicSupabaseConfig =
   | { status: "invalid"; reason: string }
   | { status: "configured"; url: string; publishableKey: string };
 
-export function readPublicSupabaseConfig(env: PublicEnvironment): PublicSupabaseConfig {
+export function readPublicSupabaseConfig(
+  env: PublicEnvironment,
+): PublicSupabaseConfig {
   const urlText = env.VITE_SUPABASE_URL?.trim();
   const publishableKey = env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
 
@@ -17,23 +19,42 @@ export function readPublicSupabaseConfig(env: PublicEnvironment): PublicSupabase
   }
 
   if (!urlText || !publishableKey) {
-    return { status: "invalid", reason: "Both public Supabase variables are required." };
+    return {
+      status: "invalid",
+      reason: "Both public Supabase variables are required.",
+    };
   }
 
   let url: URL;
   try {
     url = new URL(urlText);
   } catch {
-    return { status: "invalid", reason: "Supabase URL must be an absolute URL." };
+    return {
+      status: "invalid",
+      reason: "Supabase URL must be an absolute URL.",
+    };
   }
 
   const localHosts = new Set(["localhost", "127.0.0.1", "[::1]"]);
-  if (url.protocol !== "https:" && !(url.protocol === "http:" && localHosts.has(url.hostname))) {
-    return { status: "invalid", reason: "Supabase URL must use HTTPS outside local development." };
+  if (
+    url.protocol !== "https:" &&
+    !(url.protocol === "http:" && localHosts.has(url.hostname))
+  ) {
+    return {
+      status: "invalid",
+      reason: "Supabase URL must use HTTPS outside local development.",
+    };
   }
 
-  if (!publishableKey.startsWith("sb_publishable_") || publishableKey.length <= "sb_publishable_".length) {
-    return { status: "invalid", reason: "Use a Supabase publishable key, never a secret or service-role key." };
+  if (
+    !publishableKey.startsWith("sb_publishable_") ||
+    publishableKey.length <= "sb_publishable_".length
+  ) {
+    return {
+      status: "invalid",
+      reason:
+        "Use a Supabase publishable key, never a secret or service-role key.",
+    };
   }
 
   return { status: "configured", url: url.origin, publishableKey };

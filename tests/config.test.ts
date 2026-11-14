@@ -33,9 +33,18 @@ describe("public Supabase configuration", () => {
     const cases = [
       { VITE_SUPABASE_URL: "https://daydle.supabase.co" },
       { VITE_SUPABASE_PUBLISHABLE_KEY: publishableKey },
-      { VITE_SUPABASE_URL: "not a URL", VITE_SUPABASE_PUBLISHABLE_KEY: publishableKey },
-      { VITE_SUPABASE_URL: "http://example.com", VITE_SUPABASE_PUBLISHABLE_KEY: publishableKey },
-      { VITE_SUPABASE_URL: "https://daydle.supabase.co", VITE_SUPABASE_PUBLISHABLE_KEY: "sb_secret_1234" },
+      {
+        VITE_SUPABASE_URL: "not a URL",
+        VITE_SUPABASE_PUBLISHABLE_KEY: publishableKey,
+      },
+      {
+        VITE_SUPABASE_URL: "http://example.com",
+        VITE_SUPABASE_PUBLISHABLE_KEY: publishableKey,
+      },
+      {
+        VITE_SUPABASE_URL: "https://daydle.supabase.co",
+        VITE_SUPABASE_PUBLISHABLE_KEY: "sb_secret_1234",
+      },
     ];
 
     for (const input of cases) {

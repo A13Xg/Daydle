@@ -15,7 +15,9 @@ describe("Worker HTTP routing", () => {
   });
 
   it("rejects unsupported methods on health with Allow header", async () => {
-    const response = routeRequest(new Request(url(HEALTH_PATH), { method: "POST" }));
+    const response = routeRequest(
+      new Request(url(HEALTH_PATH), { method: "POST" }),
+    );
     expect(response.status).toBe(405);
     expect(response.headers.get("allow")).toBe("GET");
     expect(await response.json()).toEqual({ error: "method_not_allowed" });
