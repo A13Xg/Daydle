@@ -265,3 +265,26 @@ Future possibilities (not automatic phases or MVP blockers): additional parser c
 - **Archived after passing tests/review:** completedPhases/Phase1Exec.md, etc. The archive contains the final plan plus verified outcome summary, commit/PR reference, tests run, deviations, risks, and follow-ups.
 - **PR:** created as draft at phase start, marked ready for review only after validation; never auto-merge. Main ledger changes to COMPLETE only after merge verification.
 - **Status reconciliation:** record actual commit hashes and PR state; if a checked “COMPLETE” phase is missing evidence or expected artifacts, stop and diagnose rather than cascading unreliable assumptions.
+
+## Circle-Back
+
+Deferred operational items that are not numbered phases and do not block any phase's acceptance gates. Each needs explicit user authorization before work begins.
+
+### Automated Apple client-secret rotation
+**Status:** NOT STARTED. **Depends on:** Sign in with Apple configured in Supabase Auth; production environment secrets; Phase 14 production readiness (or earlier if rotation reminders prove unreliable).
+
+**Why:** Apple's OAuth client secret is a signed token that expires after at most about six months. When it lapses, Apple sign-in fails while email and Google sign-in keep working. The current process is manual: re-run the local setup script before the printed expiry date.
+
+**Proposed approach:**
+- Add a scheduled GitHub Actions workflow (monthly cron plus `workflow_dispatch`) in the `production` environment. A required-reviewer rule is acceptable, since each run then prompts a human.
+- Generate the ES256 client-secret token with Node's built-in `crypto`; no new dependencies.
+- Update only `external_apple_secret` through the Supabase Management API using `SUPABASE_ACCESS_TOKEN`. Do not push a whole configuration file or touch other auth settings.
+- Re-mint only when the stored expiry is within about 30 days, or on manual dispatch. Record the new expiry and fail or open an issue if rotation fails.
+- Verify afterwards by checking that the provider is still enabled and the authorize endpoint redirects to Apple with the expected Services ID.
+- Never print the key or token, never upload them as artifacts, and mask all values in logs.
+
+**New production-environment entries:** secret `APPLE_P8_KEY`; variables `APPLE_TEAM_ID`, `APPLE_KEY_ID`, `APPLE_SERVICES_ID`. Existing `SUPABASE_ACCESS_TOKEN` and `SUPABASE_PROJECT_ID` are reused.
+
+**Tradeoff to decide first:** storing the `.p8` signing key in GitHub widens its blast radius. If that is unacceptable, use a reminder-only workflow that opens an issue 30 days before expiry and leave the secret regeneration manual.
+
+**Exit/verification:** A dispatch run rotates the secret end to end; Apple sign-in succeeds afterwards on the production domain; the new expiry is recorded; no secret appears in logs; rollback and key-revocation steps are documented in `docs/auth.md`.
