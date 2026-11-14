@@ -33,7 +33,8 @@ Deployment and environment isolation are documented in [docs/deployment.md](docs
 - [IDEA.md](IDEA.md) — approved product requirements and architectural invariants.
 - [roadmap.md](roadmap.md) — numbered delivery phases and their review gates.
 - [AGENTS.md](AGENTS.md) — mandatory branch, draft PR, verification, and review protocol.
-- [Phase1Exec.md](Phase1Exec.md) — active Phase 1 plan (when present).
+- [completedPhases/Phase1Exec.md](completedPhases/Phase1Exec.md) — reviewed Phase 1 execution plan (on phase branch; on main after PR merge).
+- A root-level `Phase#Exec.md` exists only while its phase is actively being implemented.
 - [completedPhases/](completedPhases/) — completed and audited phase execution plans.
 
 Visual design details remain deferred, but accessible and polished interaction behavior is required.

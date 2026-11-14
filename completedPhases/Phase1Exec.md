@@ -1,10 +1,10 @@
 # Phase 1 Execution Plan — Application skeleton, tooling, and deploy baselines
 
-**State:** REVIEWED / IMPLEMENTATION AUTHORIZED (plan review only; feature gates still pending)  
+**State:** VERIFIED / IN REVIEW  
 **Base:** `main` at `839498fa09e9ff2cabd7f4487f21165a8e0bed6a`  
 **Branch:** `phase/01-application-skeleton`  
 **Draft PR:** [#1](https://github.com/A13Xg/Daydle/pull/1)  
-**Sources:** [IDEA.md](IDEA.md), [roadmap.md](roadmap.md#phase-1--application-skeleton-tooling-and-deploy-baselines), [AGENTS.md](AGENTS.md).
+**Sources:** [IDEA.md](../IDEA.md), [roadmap.md](../roadmap.md#phase-1--application-skeleton-tooling-and-deploy-baselines), [AGENTS.md](../AGENTS.md).
 
 ## Verified baseline
 
@@ -75,4 +75,41 @@ Confirmed no existing code to conflict with, no need for monorepo, no dependency
 
 ## Actual implementation / verification
 
-**Pending.** Record concrete commits, commands and outputs, discovered defects and fixes, unresolved gates, and PR state here before considering archive.
+**Implementation completed on** `phase/01-application-skeleton`, draft PR [#1](https://github.com/A13Xg/Daydle/pull/1). Phase 1 is **IN REVIEW**, not COMPLETE on main until merged and reconciled.
+
+### Delivered
+
+- Created a single package with strict TypeScript and Node 22, React + Vite 8, Cloudflare Vite plugin + Worker, generated deployable assets, versioned health API and shared response contract.
+- Added browser-only lazy Supabase public config adapter, explicitly preserving service/secret key boundaries. Missing external credentials remain a supported non-failing startup state.
+- Implemented accessible mobile-friendly placeholder UI with API status, loading, failure, and retry states; no fictitious product functionality.
+- Committed resolved npm lockfile (287 package entries), CI checks using `npm ci`, contract/Worker/config tests, preview HTTP smoke, and deployment/rollback guidance.
+- Extended AGENTS.md's evidence and execution-environment rules. No production deploy, schema migration, live auth, or Supabase project change.
+
+### Verification evidence
+
+**Passing non-mutating CI run:** https://github.com/A13Xg/Daydle/actions/runs/43558271002  
+GitHub-hosted Ubuntu runner with Node 22, after formatting was committed:
+
+| Gate | Actual command | Observed outcome |
+|---|---|---|
+| Dependency install | `npm ci --no-audit --no-fund` | PASS |
+| Types | `npm run typecheck` | PASS |
+| Lint | `npm run lint` | PASS |
+| Formatting | `npm run format:check` | PASS |
+| Unit and API contract tests | `npm test` | PASS — 3 suites, 11 tests |
+| Bundle | `npm run build` | PASS — Cloudflare Worker and client assets generated |
+| HTTP smoke | `npm run preview -- --port 4173` + `npm run smoke` | PASS — JSON health, 405 Allow, JSON API 404, root HTML, SPA deep-link fallback |
+| Source/security audit | Review Worker/config/CI/ignore rules and PR file list | PASS — no embedded credentials, arbitrary evaluation, dangerous HTML injection, or automated production deployment identified |
+| Contributor and scope audit | GitHub commits and 35 changed-file paths | PASS — owner-authenticated commits; scope confined to Phase 1 |
+
+**Defects found and repaired:** Node .mjs globals omitted in ESLint; 11 source files required Prettier normalization; temporary bootstrap CI lockfile/format emitting steps removed after finalizing canonical artifacts. Clean CI subsequently passed.
+
+**Constraints and limitations:** The isolated local tool environment could not resolve npm registry hosts; actual install, build and API preview were executed in GitHub Actions rather than locally. A public Cloudflare preview and a real iOS-device interaction smoke were **not performed** because services/domains and credentials are not provisioned; those integrations are intentionally not a Phase 1 requirement without provider access. Supabase is configuration-only, not a live connectivity proof. Do not label either external deployment as tested. No database migrations or production release occurred.
+
+### Review and rollback
+
+- Review PR #1; do not merge automatically.
+- Because no database migrations or remote deploy occurred, rollback is the PR branch revert/decline before merge, or standard Git revert after merge. Do not manually reset main.
+- Before future live deployment, provision separate preview/production Cloudflare and Supabase environments, configure authorized secrets, and perform external HTTP/iOS acceptance checks.
+- Phase 1 on main remains NOT STARTED pending PR merge. Upon merge, verify main and perform a status-only COMPLETE reconciliation as documented in AGENTS.md.
+
