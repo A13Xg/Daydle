@@ -17,7 +17,9 @@ function withBrowserLocation<T>(search: string, run: () => T): T {
 describe("account interaction surfaces", () => {
   it("renders semantic sign-in and OAuth options when Supabase isn't configured", () => {
     const markup = withBrowserLocation("", () =>
-      renderToStaticMarkup(createElement(AuthPage, { client: null, signedIn: false })),
+      renderToStaticMarkup(
+        createElement(AuthPage, { client: null, signedIn: false }),
+      ),
     );
     expect(markup).toContain("Sign in to Daydle");
     expect(markup).toContain("Authentication is not configured");
@@ -29,7 +31,9 @@ describe("account interaction surfaces", () => {
 
   it("renders display-name signup without exposing a friend-code edit field", () => {
     const markup = withBrowserLocation("?mode=signup", () =>
-      renderToStaticMarkup(createElement(AuthPage, { client: null, signedIn: false })),
+      renderToStaticMarkup(
+        createElement(AuthPage, { client: null, signedIn: false }),
+      ),
     );
     expect(markup).toContain("Create your account");
     expect(markup).toContain("Display name");
@@ -38,14 +42,20 @@ describe("account interaction surfaces", () => {
   });
 
   it("provides explicit unauthenticated and callback failure states", () => {
-    const account = withBrowserLocation("", () => renderToStaticMarkup(
-      createElement(AccountPage, { client: null, user: null, loadingSession: false }),
-    ));
+    const account = withBrowserLocation("", () =>
+      renderToStaticMarkup(
+        createElement(AccountPage, {
+          client: null,
+          user: null,
+          loadingSession: false,
+        }),
+      ),
+    );
     expect(account).toContain("Authentication is not configured");
 
-    const callback = withBrowserLocation("", () => renderToStaticMarkup(
-      createElement(AuthCallback, { client: null }),
-    ));
+    const callback = withBrowserLocation("", () =>
+      renderToStaticMarkup(createElement(AuthCallback, { client: null })),
+    );
     expect(callback).toContain("Contact the site administrator");
   });
 });

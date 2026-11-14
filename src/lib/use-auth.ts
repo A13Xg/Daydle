@@ -8,7 +8,9 @@ export type AuthSessionState =
   | { status: "signed-out" }
   | { status: "signed-in"; session: Session };
 
-export function useAuthSession(client: SupabaseClient | null): AuthSessionState {
+export function useAuthSession(
+  client: SupabaseClient | null,
+): AuthSessionState {
   const [state, setState] = useState<AuthSessionState>(
     client ? { status: "loading" } : { status: "not-configured" },
   );
@@ -21,26 +23,39 @@ export function useAuthSession(client: SupabaseClient | null): AuthSessionState 
     let active = true;
     let receivedEvent = false;
 
-    const { data: { subscription } } = client.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = client.auth.onAuthStateChange((_event, session) => {
       if (!active) return;
       receivedEvent = true;
-      setState(session ? { status: "signed-in", session } : { status: "signed-out" });
+      setState(
+        session ? { status: "signed-in", session } : { status: "signed-out" },
+      );
     });
 
-    void client.auth.getSession()
+    void client.auth
+      .getSession()
       .then(({ data, error }) => {
         if (!active || receivedEvent) return;
         if (error) {
-          setState({ status: "error", message: "Could not restore your session." });
+          setState({
+            status: "error",
+            message: "Could not restore your session.",
+          });
         } else {
-          setState(data.session
-            ? { status: "signed-in", session: data.session }
-            : { status: "signed-out" });
+          setState(
+            data.session
+              ? { status: "signed-in", session: data.session }
+              : { status: "signed-out" },
+          );
         }
       })
       .catch(() => {
         if (active && !receivedEvent) {
-          setState({ status: "error", message: "Could not restore your session." });
+          setState({
+            status: "error",
+            message: "Could not restore your session.",
+          });
         }
       });
 

@@ -18,8 +18,14 @@ interface AccountPageProps {
   loadingSession: boolean;
 }
 
-export function AccountPage({ client, user, loadingSession }: AccountPageProps) {
-  const [profileState, setProfileState] = useState<ProfileState>({ status: "loading" });
+export function AccountPage({
+  client,
+  user,
+  loadingSession,
+}: AccountPageProps) {
+  const [profileState, setProfileState] = useState<ProfileState>({
+    status: "loading",
+  });
   const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
@@ -27,27 +33,56 @@ export function AccountPage({ client, user, loadingSession }: AccountPageProps) 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [reload, setReload] = useState(0);
-  const passwordRecovery = new URLSearchParams(window.location.search).get("reset") === "1";
+  const passwordRecovery =
+    new URLSearchParams(window.location.search).get("reset") === "1";
 
   useEffect(() => {
     if (!client || !user) return;
     let live = true;
     void Promise.all([
-      client.from("profiles").select("display_name,onboarding_completed").eq("id", user.id).single(),
-      client.from("friend_codes").select("code").eq("user_id", user.id).single(),
-    ]).then(([profileResult, codeResult]) => {
-      if (!live) return;
-      if (profileResult.error || codeResult.error || !profileResult.data || !codeResult.data) {
-        setProfileState({ status: "error", message: "Your account profile could not be loaded. Please retry." });
-        return;
-      }
-      const profile = profileResult.data as Profile;
-      setProfileState({ status: "loaded", profile, friendCode: codeResult.data.code as string });
-      setDisplayName(profile.display_name);
-    }).catch(() => {
-      if (live) setProfileState({ status: "error", message: "Your account profile could not be loaded. Please retry." });
-    });
-    return () => { live = false; };
+      client
+        .from("profiles")
+        .select("display_name,onboarding_completed")
+        .eq("id", user.id)
+        .single(),
+      client
+        .from("friend_codes")
+        .select("code")
+        .eq("user_id", user.id)
+        .single(),
+    ])
+      .then(([profileResult, codeResult]) => {
+        if (!live) return;
+        if (
+          profileResult.error ||
+          codeResult.error ||
+          !profileResult.data ||
+          !codeResult.data
+        ) {
+          setProfileState({
+            status: "error",
+            message: "Your account profile could not be loaded. Please retry.",
+          });
+          return;
+        }
+        const profile = profileResult.data as Profile;
+        setProfileState({
+          status: "loaded",
+          profile,
+          friendCode: codeResult.data.code as string,
+        });
+        setDisplayName(profile.display_name);
+      })
+      .catch(() => {
+        if (live)
+          setProfileState({
+            status: "error",
+            message: "Your account profile could not be loaded. Please retry.",
+          });
+      });
+    return () => {
+      live = false;
+    };
   }, [client, user?.id, reload]);
 
   async function saveProfile(event: FormEvent<HTMLFormElement>) {
@@ -58,18 +93,24 @@ export function AccountPage({ client, user, loadingSession }: AccountPageProps) 
     setError("");
     try {
       const name = validateDisplayName(displayName);
-      const { data, error: saveError } = await client.from("profiles")
+      const { data, error: saveError } = await client
+        .from("profiles")
         .update({ display_name: name, onboarding_completed: true })
         .eq("id", user.id)
         .select("display_name,onboarding_completed")
         .single();
-      if (saveError || !data) throw saveError ?? new Error("Profile was not updated.");
-      setProfileState((state) => state.status === "loaded"
-        ? { ...state, profile: data as Profile }
-        : state);
+      if (saveError || !data)
+        throw saveError ?? new Error("Profile was not updated.");
+      setProfileState((state) =>
+        state.status === "loaded"
+          ? { ...state, profile: data as Profile }
+          : state,
+      );
       setMessage("Your profile has been updated.");
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not save your profile.");
+      setError(
+        cause instanceof Error ? cause.message : "Could not save your profile.",
+      );
     } finally {
       setSavingProfile(false);
     }
@@ -87,7 +128,11 @@ export function AccountPage({ client, user, loadingSession }: AccountPageProps) 
       window.history.replaceState(null, "", "/account");
       setMessage("Your password has been updated.");
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not update your password.");
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Could not update your password.",
+      );
     } finally {
       setSavingPassword(false);
     }
@@ -105,10 +150,20 @@ export function AccountPage({ client, user, loadingSession }: AccountPageProps) 
   }
 
   if (!client) {
-    return <section className="panel"><h1>Account</h1><p>Authentication is not configured yet.</p></section>;
+    return (
+      <section className="panel">
+        <h1>Account</h1>
+        <p>Authentication is not configured yet.</p>
+      </section>
+    );
   }
   if (loadingSession) {
-    return <section className="panel"><h1>Account</h1><p role="status">Restoring your session…</p></section>;
+    return (
+      <section className="panel">
+        <h1>Account</h1>
+        <p role="status">Restoring your session…</p>
+      </section>
+    );
   }
   if (!user) {
     return (
@@ -123,22 +178,30 @@ export function AccountPage({ client, user, loadingSession }: AccountPageProps) 
   return (
     <section aria-labelledby="account-heading" className="panel account-panel">
       <h1 id="account-heading">Your account</h1>
-      <p><strong>Email:</strong> {user.email ?? "Email unavailable"}</p>
+      <p>
+        <strong>Email:</strong> {user.email ?? "Email unavailable"}
+      </p>
       {profileState.status === "loading" ? (
         <p role="status">Loading your profile…</p>
       ) : profileState.status === "error" ? (
         <div role="alert" className="notice error">
           <p>{profileState.message}</p>
-          <button type="button" onClick={() => {
-            setProfileState({ status: "loading" });
-            setReload((value) => value + 1);
-          }}>Retry</button>
+          <button
+            type="button"
+            onClick={() => {
+              setProfileState({ status: "loading" });
+              setReload((value) => value + 1);
+            }}
+          >
+            Retry
+          </button>
         </div>
       ) : (
         <>
           {!profileState.profile.onboarding_completed && (
             <p className="notice" role="status">
-              Complete your profile by choosing a display name. OAuth-only accounts do not require a password.
+              Complete your profile by choosing a display name. OAuth-only
+              accounts do not require a password.
             </p>
           )}
           <form onSubmit={(event) => void saveProfile(event)}>
@@ -161,7 +224,10 @@ export function AccountPage({ client, user, loadingSession }: AccountPageProps) 
           <div className="identity-code">
             <span>Friend code</span>
             <strong>{profileState.friendCode}</strong>
-            <small>Shareable codes, QR links, and friend connections arrive in Phase 9.</small>
+            <small>
+              Shareable codes, QR links, and friend connections arrive in Phase
+              9.
+            </small>
           </div>
         </>
       )}
@@ -188,9 +254,19 @@ export function AccountPage({ client, user, loadingSession }: AccountPageProps) 
         </form>
       )}
 
-      {error && <p role="alert" className="notice error">{error}</p>}
-      {message && <p role="status" className="notice">{message}</p>}
-      <button type="button" onClick={() => void signOut()}>Sign out</button>
+      {error && (
+        <p role="alert" className="notice error">
+          {error}
+        </p>
+      )}
+      {message && (
+        <p role="status" className="notice">
+          {message}
+        </p>
+      )}
+      <button type="button" onClick={() => void signOut()}>
+        Sign out
+      </button>
     </section>
   );
 }

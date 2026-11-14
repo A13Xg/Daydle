@@ -5,9 +5,13 @@ import { exchangeCallbackOnce } from "../src/components/AuthCallback";
 describe("OAuth callback under React StrictMode", () => {
   it("uses one code exchange for concurrent mounts", async () => {
     let complete!: (value: unknown) => void;
-    const pending = new Promise((resolve) => { complete = resolve; });
+    const pending = new Promise((resolve) => {
+      complete = resolve;
+    });
     const exchangeCodeForSession = vi.fn().mockReturnValue(pending);
-    const client = { auth: { exchangeCodeForSession } } as unknown as SupabaseClient;
+    const client = {
+      auth: { exchangeCodeForSession },
+    } as unknown as SupabaseClient;
 
     const first = exchangeCallbackOnce(client, "auth-code-1");
     const duplicate = exchangeCallbackOnce(client, "auth-code-1");
@@ -22,11 +26,14 @@ describe("OAuth callback under React StrictMode", () => {
     const client = {
       auth: {
         exchangeCodeForSession: vi.fn().mockResolvedValue({
-          data: { session: null }, error: new Error("invalid_grant"),
+          data: { session: null },
+          error: new Error("invalid_grant"),
         }),
       },
     } as unknown as SupabaseClient;
 
-    await expect(exchangeCallbackOnce(client, "expired-auth-code")).rejects.toThrow("invalid_grant");
+    await expect(
+      exchangeCallbackOnce(client, "expired-auth-code"),
+    ).rejects.toThrow("invalid_grant");
   });
 });

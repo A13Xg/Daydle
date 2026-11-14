@@ -28,10 +28,13 @@ export function validatePassword(password: string): string {
 
 export function callbackUrl(origin: string, recovery = false): string {
   const base = new URL(origin);
-  if (base.protocol !== "https:" && !(
-    base.protocol === "http:" &&
-    ["localhost", "127.0.0.1", "[::1]"].includes(base.hostname)
-  )) {
+  if (
+    base.protocol !== "https:" &&
+    !(
+      base.protocol === "http:" &&
+      ["localhost", "127.0.0.1", "[::1]"].includes(base.hostname)
+    )
+  ) {
     throw new Error("Authentication callback requires a secure origin.");
   }
 
@@ -71,7 +74,8 @@ export async function loginEmail(
   });
 
   if (error) throw error;
-  if (!data.session) throw new Error("Authentication did not establish a session.");
+  if (!data.session)
+    throw new Error("Authentication did not establish a session.");
 }
 
 export async function sendPasswordRecovery(
@@ -100,13 +104,17 @@ export async function startOAuth(
   });
 
   if (error) throw error;
-  if (!data.url) throw new Error("The identity provider did not provide a login URL.");
+  if (!data.url)
+    throw new Error("The identity provider did not provide a login URL.");
 
   const redirect = new URL(data.url);
-  if (redirect.protocol !== "https:" && !(
-    redirect.protocol === "http:" &&
-    ["localhost", "127.0.0.1", "[::1]"].includes(redirect.hostname)
-  )) {
+  if (
+    redirect.protocol !== "https:" &&
+    !(
+      redirect.protocol === "http:" &&
+      ["localhost", "127.0.0.1", "[::1]"].includes(redirect.hostname)
+    )
+  ) {
     throw new Error("The identity provider returned an unsafe URL.");
   }
   return redirect.toString();
@@ -119,7 +127,8 @@ export async function exchangeAuthCode(
   if (!code) throw new Error("Missing authorization code.");
   const { data, error } = await client.auth.exchangeCodeForSession(code);
   if (error) throw error;
-  if (!data.session) throw new Error("Authentication did not establish a session.");
+  if (!data.session)
+    throw new Error("Authentication did not establish a session.");
 }
 
 export async function changePassword(
