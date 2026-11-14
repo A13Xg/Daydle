@@ -154,3 +154,85 @@ dd {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Functional authentication controls; final visual design is deferred. */
+.site-header nav a,
+.brand {
+  color: inherit;
+  text-decoration: none;
+}
+
+.auth-panel,
+.account-panel {
+  max-width: 36rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0.9rem 0;
+}
+
+.field input {
+  padding: 0.75rem;
+  border: 1px solid #64748b;
+  border-radius: 0.4rem;
+  font: inherit;
+  color: inherit;
+  background: white;
+}
+
+.field input:focus-visible {
+  outline: 3px solid #4c73bd;
+  outline-offset: 2px;
+}
+
+.panel form button,
+.panel > button,
+.auth-navigation button,
+.oauth-actions button {
+  padding: 0.65rem 1rem;
+  background: #edf2f8;
+  border: 1px solid #64748b;
+  border-radius: 0.4rem;
+  color: #182232;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.auth-navigation,
+.oauth-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.muted {
+  color: #48576c;
+}
+
+.error {
+  border: 1px solid #b91c1c;
+  background: #fef2f2;
+}
+
+.identity-code {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.75rem;
+  margin-block: 1rem;
+  border: 1px solid #dbe2ea;
+  border-radius: 0.5rem;
+}
+
+.identity-code strong {
+  font-size: 1.5rem;
+  letter-spacing: 0.12em;
+}
