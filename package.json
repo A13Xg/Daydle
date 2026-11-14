@@ -17,7 +17,8 @@
     "test": "vitest run",
     "deploy": "npm run build && wrangler deploy",
     "cf:typegen": "wrangler types",
-    "smoke": "node scripts/smoke.mjs"
+    "smoke": "node scripts/smoke.mjs",
+    "db:test": "bash scripts/test-db.sh"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",
