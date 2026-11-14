@@ -10,13 +10,17 @@
     and, to create the custom-domain DNS record, Zone > DNS > Edit and Zone > Workers Routes > Edit
     scoped to the domain's zone.
   - Refuses to deploy a dirty working tree unless -AllowDirty is passed.
+  - Refuses to deploy anything except the current tip of origin/main unless -AllowNonMain is passed.
+    The GitHub environment's required reviewer and main-only rule apply to GitHub Actions jobs, not to
+    this local script, so this guard is what keeps releases on main.
   - Run from the repository root in an interactive PowerShell window.
 #>
 param(
   [string]$Repo,
   [string]$Environment = 'production',
   [string]$Domain,
-  [switch]$AllowDirty
+  [switch]$AllowDirty,
+  [switch]$AllowNonMain
 )
 $ErrorActionPreference = 'Stop'
 . "$PSScriptRoot/lib/common.ps1"
@@ -29,16 +33,18 @@ if (-not $Domain) {
 }
 $dirty = git status --porcelain
 if ($dirty -and -not $AllowDirty) { throw "Working tree has uncommitted changes:`n$dirty`nCommit first or pass -AllowDirty." }
-"Deploying commit $(git rev-parse --short HEAD) on $(git branch --show-current) to $Domain"
+git fetch --quiet origin main
+$branch = (git branch --show-current)
+if (-not $AllowNonMain -and ($branch -ne 'main' -or (git rev-parse HEAD) -ne (git rev-parse origin/main))) {
+  throw "Refusing to deploy: HEAD must be the tip of origin/main (on '$branch'). Merge and pull main first, or pass -AllowNonMain for a deliberate off-main deploy."
+}
+if ($AllowNonMain) { Write-Warning "Deploying off main ($branch) because -AllowNonMain was passed." }
+"Deploying commit $(git rev-parse --short HEAD) on $branch to $Domain"
 
 $env:VITE_SUPABASE_URL = (gh variable get VITE_SUPABASE_URL --env $Environment --repo $Repo)
 $env:VITE_SUPABASE_PUBLISHABLE_KEY = (gh variable get VITE_SUPABASE_PUBLISHABLE_KEY --env $Environment --repo $Repo)
 $env:CLOUDFLARE_ACCOUNT_ID = (gh variable get CLOUDFLARE_ACCOUNT_ID --env $Environment --repo $Repo)
 if ($env:VITE_SUPABASE_PUBLISHABLE_KEY -notmatch '^sb_publishable_') { throw 'Publishable key variable is missing or not a publishable key.' }
-# Optional public Turnstile site key (see configure-turnstile.ps1). Without it the form has no CAPTCHA.
-$siteKey = (gh variable get VITE_TURNSTILE_SITE_KEY --env $Environment --repo $Repo 2>$null)
-if ($siteKey) { $env:VITE_TURNSTILE_SITE_KEY = $siteKey.Trim() }
-else { Write-Warning 'VITE_TURNSTILE_SITE_KEY is not set: the sign-up form will build without a CAPTCHA.' }
 
 $env:CLOUDFLARE_API_TOKEN = Read-HiddenInput 'Cloudflare API token'
 try {
@@ -46,7 +52,7 @@ try {
   npm run build; if ($LASTEXITCODE) { throw 'build failed' }
   npx --no-install wrangler deploy; if ($LASTEXITCODE) { throw 'wrangler deploy failed' }
 } finally {
-  Remove-Item Env:CLOUDFLARE_API_TOKEN, Env:VITE_SUPABASE_URL, Env:VITE_SUPABASE_PUBLISHABLE_KEY, Env:VITE_TURNSTILE_SITE_KEY, Env:CLOUDFLARE_ACCOUNT_ID -ErrorAction SilentlyContinue
+  Remove-Item Env:CLOUDFLARE_API_TOKEN, Env:VITE_SUPABASE_URL, Env:VITE_SUPABASE_PUBLISHABLE_KEY, Env:CLOUDFLARE_ACCOUNT_ID -ErrorAction SilentlyContinue
 }
 
 "--- verifying https://$Domain (certificate/DNS can take a few minutes)"

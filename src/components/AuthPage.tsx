@@ -39,11 +39,10 @@ export function AuthPage({ client, signedIn }: AuthPageProps) {
     try {
       const url = await startOAuth(client, provider, window.location.origin);
       window.location.assign(url);
-    } catch (cause) {
+    } catch {
+      // Fixed text: provider and Supabase error messages can expose configuration details.
       setError(
-        cause instanceof Error
-          ? cause.message
-          : "Unable to connect to the provider. Please try again.",
+        "We couldn't start sign-in with that provider. Please try again in a moment.",
       );
       setPendingProvider(null);
     }
@@ -104,9 +103,11 @@ export function AuthPage({ client, signedIn }: AuthPageProps) {
       )}
 
       <p className="muted fine-print">
-        Your provider shares your name and email address with Daydle. Your email
-        is never shown on your public profile. If you use Apple&rsquo;s Hide My
-        Email, Daydle only sees Apple&rsquo;s private relay address.
+        Your provider shares your name and email address with Daydle. Your name
+        becomes your public display name, which anyone can see, and you can
+        change it on your account page. Your email is never shown. If you use
+        Apple&rsquo;s Hide My Email, Daydle only sees Apple&rsquo;s private
+        relay address.
       </p>
     </section>
   );

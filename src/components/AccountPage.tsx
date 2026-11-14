@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
-import { changePassword, validateDisplayName } from "../lib/auth-actions";
+import { validateDisplayName } from "../lib/auth-actions";
 
 interface Profile {
   display_name: string;
@@ -27,14 +27,10 @@ export function AccountPage({
     status: "loading",
   });
   const [displayName, setDisplayName] = useState("");
-  const [password, setPassword] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
-  const [savingPassword, setSavingPassword] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [reload, setReload] = useState(0);
-  const passwordRecovery =
-    new URLSearchParams(window.location.search).get("reset") === "1";
 
   useEffect(() => {
     if (!client || !user) return;
@@ -116,28 +112,7 @@ export function AccountPage({
     }
   }
 
-  async function updatePassword(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!client || savingPassword) return;
-    setSavingPassword(true);
-    setMessage("");
-    setError("");
-    try {
-      await changePassword(client, password);
-      setPassword("");
-      window.history.replaceState(null, "", "/account");
-      setMessage("Your password has been updated.");
-    } catch (cause) {
-      setError(
-        cause instanceof Error
-          ? cause.message
-          : "Could not update your password.",
-      );
-    } finally {
-      setSavingPassword(false);
-    }
-  }
-
+  // Signs out of every device, which is Supabase's default (global) scope.
   async function signOut() {
     if (!client) return;
     setError("");
@@ -200,8 +175,7 @@ export function AccountPage({
         <>
           {!profileState.profile.onboarding_completed && (
             <p className="notice" role="status">
-              Complete your profile by choosing a display name. OAuth-only
-              accounts do not require a password.
+              Complete your profile by choosing a display name.
             </p>
           )}
           <form onSubmit={(event) => void saveProfile(event)}>
@@ -214,8 +188,15 @@ export function AccountPage({
                 required
                 value={displayName}
                 onChange={(event) => setDisplayName(event.target.value)}
+                aria-describedby="profile-name-hint"
                 disabled={savingProfile}
               />
+              <small id="profile-name-hint" className="muted">
+                Your display name is public: anyone can see it, including people
+                who are not signed in. Your email address is never shown. If
+                your Apple or Google name was filled in for you, change it here
+                if you would rather not use your real name.
+              </small>
             </div>
             <button type="submit" disabled={savingProfile}>
               {savingProfile ? "Saving…" : "Save profile"}
@@ -230,28 +211,6 @@ export function AccountPage({
             </small>
           </div>
         </>
-      )}
-
-      {passwordRecovery && (
-        <form onSubmit={(event) => void updatePassword(event)}>
-          <h2>Set a new password</h2>
-          <div className="field">
-            <label htmlFor="new-password">New password</label>
-            <input
-              id="new-password"
-              type="password"
-              autoComplete="new-password"
-              required
-              minLength={8}
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              disabled={savingPassword}
-            />
-          </div>
-          <button type="submit" disabled={savingPassword}>
-            {savingPassword ? "Updating…" : "Update password"}
-          </button>
-        </form>
       )}
 
       {error && (

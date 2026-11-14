@@ -5,7 +5,7 @@
   Apple's "client secret" is an ES256-signed JWT that expires after at most ~6 months. This script
   builds it locally with Node's built-in crypto (the .p8 never leaves this machine), then patches ONLY
   the three Apple fields in the project's auth config. RE-RUN BEFORE THE PRINTED EXPIRY DATE or Apple
-  sign-in will stop working (email and Google keep working).
+  sign-in will stop working (Google keeps working).
   Apple portal values required: Team ID, Key ID, Services ID (the web client ID) and the .p8 file.
   Services ID must list the return URL: https://<project-ref>.supabase.co/auth/v1/callback
   Keep the .p8 in a password manager or encrypted storage, not in the repo or Downloads.

@@ -47,9 +47,10 @@ describe("auth page", () => {
     expect(markup.match(/<button[^>]*type="button"/g)).toHaveLength(2);
   });
 
-  it("explains privacy without exposing an email field or friend code input", () => {
+  it("discloses that the provider name becomes a public display name", () => {
     const markup = renderAuth("");
-    expect(markup).toContain("never shown on your public profile");
+    expect(markup).toContain("becomes your public display name");
+    expect(markup).toContain("Your email is never shown");
     expect(markup).not.toContain('name="friendCode"');
   });
 

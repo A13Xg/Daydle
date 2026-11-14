@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Enable Cloudflare Turnstile CAPTCHA in Supabase Auth and open email/password signup behind it.
+  Enable Cloudflare Turnstile CAPTCHA in Supabase Auth; optionally open email/password signup (see -EmailSignup).
 .DESCRIPTION
   Basic bot protection for signup without email confirmation. Because the Supabase publishable key is
   public, a bot can call the Auth API directly, so the check must be enforced by Supabase, not just the
