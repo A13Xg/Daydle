@@ -16,6 +16,7 @@ PowerShell window (hidden prompts do not work in non-interactive shells). Requir
 | `configure-google-auth.ps1` | Enable Google sign-in in Supabase Auth from an existing OAuth web client. |
 | `configure-turnstile.ps1` | Enable Cloudflare Turnstile CAPTCHA in Supabase Auth. Email signup is only touched with `-EmailSignup` (default leaves it unchanged; unconfirmed signup needs `-AcceptUnconfirmedEmailRisk`). Not needed while the site is Apple/Google only. |
 | `configure-apple-auth.ps1` | Generate Apple's client secret from your `.p8` key and store it in Supabase Auth. **Expires about every six months.** |
+| `purge-test-users.ps1` | List and (with `-Execute`) permanently delete user accounts so sign-up can be retested. Dry run by default; masks emails; type-the-project-ref confirmation. **Destructive; test accounts only.** |
 | `deploy-worker.ps1` | Build with the environment's public values, deploy the Worker, attach the `wrangler.jsonc` custom domain, and verify it. |
 
 Shared helpers live in `lib/common.ps1`.
@@ -43,3 +44,12 @@ only the public URL and publishable key, stored as the repository variables `KEE
 - GitHub disables schedules in public repositories after 60 days with no repository activity. If runs stop,
   re-enable the workflow in the Actions tab or make any commit.
 - It prevents inactivity pausing only; it is not a backup. Export data separately.
+
+## Retesting sign-up
+
+`purge-test-users.ps1` deletes accounts from the live database (all their data cascades; there is no
+undo and no free-tier backup), so use it only while the project holds test accounts. Run it without
+`-Execute` first to preview. For a true first-time test, also revoke the app at the provider (Apple:
+iPhone Settings > Apple ID > Sign-In & Security > Sign in with Apple > Daydle > Stop Using Apple ID,
+which also makes Apple send the name again; Google: myaccount.google.com/permissions) and sign out on the
+test device. A single user can also be deleted in the Supabase dashboard under Authentication > Users.
