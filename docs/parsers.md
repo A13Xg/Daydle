@@ -1,6 +1,6 @@
 # Daydle deterministic share parsers (Phase 6)
 
-Pure, server-safe TypeScript modules under `shared/parsers/` decode **one** publisher share-text result per call. They do not make network calls, store raw clipboard text, resolve authentication, write to Supabase, or expose a Worker endpoint. The Phase 7 service will apply authorization, canonical game/puzzle mapping, result persistence, duplicate/correction behavior, and retention.
+Pure, server-safe TypeScript modules under `shared/parsers/` decode **one** publisher share-text result per call. They do not make network calls, store raw clipboard text, resolve authentication, write to Supabase, or expose a Worker endpoint. The [Phase 7 implementation](results.md) adds server-authoritative authorization, canonical game/puzzle mapping, result persistence, duplicate/correction behavior, and retention metadata. It is not deployed until explicitly authorized.
 
 ## Initial versioned coverage
 
@@ -30,7 +30,7 @@ Normalization accepts at most **10,000 UTF-16 code units** and **64 raw lines**,
 
 - A puzzle **number does not establish its publisher date**. Results with numbers only retain `puzzleDate=null`; Phase 7 resolves publisher release identities and may need the user to confirm a game/date.
 - Only classic **Daily Quordle** is supported; Extreme and Sequence intentionally return unknown. Mini parsing currently covers publisher `I solved ... Mini Crossword in ...!` text, not image-only shares. Wordle requires its grid rather than trusting a header alone.
-- Ingestion and catalog `parser_status=supported` remain disabled until Phase 7 wires an authorized API. Strands markers demonstrate claimed completion, not a validated puzzle solution. No global score conversions exist.
+- The Phase 7 forward-only migration marks only these five catalog parsers supported when deployed; existing hosted catalog rows remain unchanged until approved migration. Strands markers demonstrate claimed completion, not a validated puzzle solution. No global score conversions exist.
 - No actual iOS native wrapper is included. This library is platform-independent and uses no DOM or Node-specific APIs, preserving future packaging options.
 
 ### Verified source checks

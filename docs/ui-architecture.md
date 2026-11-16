@@ -21,10 +21,11 @@ The PWA build precaches the font and icon along with its versioned static assets
 | /account | Tab | Existing Supabase-authenticated profile display/edit and friend code; email stays private |
 | /lineup | Stack | Existing atomic saved-selection reorder path, Up/Down buttons and offline read-only safeguards |
 | /games/:slug | Stack | Catalog detail, HTTPS publisher link and selected-game toggle |
-| /how-it-works | Stack | Three accurate steps: selection, publisher launch, explicit Paste (not auto-save) |
+| /how-it-works | Stack | Three steps: selection, publisher launch, explicit Paste submission |
+| /history | Stack | Phase 7 authenticated private result list, filter, detail and confirmed deletion; never cached offline |
 | /notifications | Stack | Honest unavailable state; no push/alert service |
 | /auth, /auth/callback | Blank | Existing Apple/Google OAuth and callback handling, no tab chrome |
-| Paste dialog | Modal stack overlay | Explicit clipboard user gesture and manual fallback; raw text stays in memory |
+| Paste dialog | Modal stack overlay | Explicit clipboard gesture/manual fallback; Phase 7 submits only after user action with authenticated API, optional unknown retention requires separate consent |
 
 The top bar uses bundled branding, search and account shortcuts. The notification icon links to an explicit unavailable state, with **no fake unread counter**. Mobile has a fixed frosted 5-tab bar; stack routes and the Paste overlay hide it. Desktop keeps the same navigable hierarchy in a centered responsive layout.
 
