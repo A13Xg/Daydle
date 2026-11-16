@@ -11,7 +11,7 @@ import {
 } from "../scripts/ops/verify-migration-plan.mjs";
 
 const filenames = EXPECTED_MIGRATIONS.map((version) => version + "_test.sql");
-const projectRef = "xyjuriehmrkdqdmcxdso";
+const projectRef = "abcdefghijklmnopqrst";
 const accessToken = "synthetic-do-not-log";
 
 function report(remoteVersions: string[]) {
