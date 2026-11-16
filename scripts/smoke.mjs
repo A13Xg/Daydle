@@ -42,7 +42,7 @@ const missing = await request("/api/v1/not-found");
 assert.equal(missing.status, 404);
 assert.match(missing.headers.get("content-type") ?? "", /application\/json/);
 
-for (const path of ["/", "/auth", "/auth/callback", "/account", "/games", "/games/wordle", "/some/deep/link"]) {
+for (const path of ["/", "/today", "/auth", "/auth/callback", "/account", "/games", "/games/wordle", "/some/deep/link"]) {
   const response = await request(path, {
     headers: { "sec-fetch-mode": "navigate" },
   });
@@ -51,4 +51,29 @@ for (const path of ["/", "/auth", "/auth/callback", "/account", "/games", "/game
   assert.match(await response.text(), /Daydle/);
 }
 
-console.log("Preview smoke passed: health, methods, API 404, auth routes, SPA fallback.");
+
+const manifestResponse = await request("/app.webmanifest");
+assert.equal(manifestResponse.status, 200);
+const manifest = await manifestResponse.json();
+assert.equal(manifest.start_url, "/today");
+assert.equal(manifest.display, "standalone");
+assert.ok(manifest.icons.some((item) => item.purpose === "maskable"));
+
+for (const [name, size] of [["icon-192.png", 192],
+  ["icon-512.png", 512], ["apple-touch-icon.png", 180]]) {
+  const icon = await request("/icons/" + name);
+  assert.equal(icon.status, 200, name);
+  const binary = Buffer.from(await icon.arrayBuffer());
+  assert.equal(binary.readUInt32BE(16), size);
+  assert.equal(binary.readUInt32BE(20), size);
+}
+
+const serviceWorker = await request("/sw.js");
+assert.equal(serviceWorker.status, 200);
+const swSource = await serviceWorker.text();
+assert.match(swSource, /daydle-shell-[a-f0-9]{16}/);
+assert.match(swSource, /\/assets\//);
+assert.doesNotMatch(swSource, /__DAYDLE_PWA_CONFIG__/);
+
+console.log("Preview smoke passed: API, Today deep link, PWA manifest/icons and generated service worker.");
+

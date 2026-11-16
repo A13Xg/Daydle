@@ -18,6 +18,20 @@ import {
   type CatalogData,
 } from "../lib/catalog-api";
 import { GameDetailPage } from "./GameDetailPage";
+import {
+  readPublicCatalog,
+  readSelectedSnapshot,
+  savePublicCatalog,
+  saveSelectedSnapshot,
+} from "../lib/offline-snapshot";
+
+function optionalLocalStorage(): Storage | undefined {
+  try {
+    return window.localStorage;
+  } catch {
+    return undefined;
+  }
+}
 
 type CatalogState =
   | { status: "loading" }
@@ -68,6 +82,11 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
   const [selectionLoading, setSelectionLoading] = useState(Boolean(userId));
   const [selectionError, setSelectionError] = useState("");
   const [saveError, setSaveError] = useState("");
+  const [catalogOffline, setCatalogOffline] = useState(false);
+  const [selectionReadOnly, setSelectionReadOnly] = useState(false);
+  const [online, setOnline] = useState(
+    () => typeof navigator === "undefined" || navigator.onLine,
+  );
   const [saving, setSaving] = useState(false);
   const [retry, setRetry] = useState(0);
   const saveLock = useRef(false);
@@ -79,34 +98,67 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
   });
 
   useEffect(() => {
+    const onOnline = () => {
+      setOnline(true);
+      setRetry((n) => n + 1);
+    };
+    const onOffline = () => setOnline(false);
+    window.addEventListener("online", onOnline);
+    window.addEventListener("offline", onOffline);
+    return () => {
+      window.removeEventListener("online", onOnline);
+      window.removeEventListener("offline", onOffline);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!client) return;
     let active = true;
+    const storage = optionalLocalStorage();
     setCatalogState({ status: "loading" });
     setSelectionLoading(Boolean(userId));
     setSelectionError("");
     setSaveError("");
     setSelectedIds([]);
+    setCatalogOffline(false);
+    setSelectionReadOnly(false);
 
     void loadCatalog(client)
       .then((data) => {
-        if (active) setCatalogState({ status: "ready", data });
+        if (!active) return;
+        savePublicCatalog(storage, data);
+        setCatalogState({ status: "ready", data });
       })
       .catch(() => {
-        if (active)
+        if (!active) return;
+        const cached = readPublicCatalog(storage);
+        if (cached) {
+          setCatalogOffline(true);
+          setCatalogState({ status: "ready", data: cached });
+        } else {
           setCatalogState({
             status: "error",
             message: "The game catalog could not be loaded.",
           });
+        }
       });
 
     if (userId) {
       void loadSelectedGames(client, userId)
         .then((ids) => {
-          if (active) setSelectedIds(ids);
+          if (!active) return;
+          saveSelectedSnapshot(storage, userId, ids);
+          setSelectedIds(ids);
         })
         .catch(() => {
-          if (active)
+          if (!active) return;
+          const cached = readSelectedSnapshot(storage, userId);
+          if (cached) {
+            setSelectedIds(cached);
+            setSelectionReadOnly(true);
+          } else {
             setSelectionError("Your saved games could not be loaded.");
+          }
         })
         .finally(() => {
           if (active) setSelectionLoading(false);
@@ -123,7 +175,10 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
       !userId ||
       saveLock.current ||
       selectionLoading ||
-      selectionError
+      selectionError ||
+      catalogOffline ||
+      selectionReadOnly ||
+      !online
     )
       return;
     saveLock.current = true;
@@ -132,6 +187,7 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
     try {
       const outcome = await saveAndReconcileSelectedGames(client, userId, next);
       setSelectedIds(outcome.gameIds);
+      saveSelectedSnapshot(optionalLocalStorage(), userId, outcome.gameIds);
       if (!outcome.confirmed) {
         setSaveError(
           "The save response was uncertain. We reloaded your games from the server; review the current selection before editing again.",
@@ -151,7 +207,15 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
   }
 
   function toggleGame(id: string) {
-    if (!userId || saveLock.current || selectionLoading || selectionError)
+    if (
+      !userId ||
+      saveLock.current ||
+      selectionLoading ||
+      selectionError ||
+      catalogOffline ||
+      selectionReadOnly ||
+      !online
+    )
       return;
     const next = selectedIds.includes(id)
       ? selectedIds.filter((selected) => selected !== id)
@@ -167,6 +231,13 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
       .map((id) => lookup.get(id))
       .filter((game): game is CatalogGame => game !== undefined);
   }, [games, selectedIds]);
+
+  const editingDisabled =
+    !online ||
+    catalogOffline ||
+    selectionReadOnly ||
+    selectionLoading ||
+    Boolean(selectionError);
 
   if (!client) {
     return (
@@ -215,6 +286,15 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
       );
     return (
       <>
+        {(!online || catalogOffline || selectionReadOnly) && (
+          <p className="notice" role="status">
+            Showing previously viewed game information read-only. Saving and
+            reordering need a connection.
+            <button type="button" onClick={() => setRetry((n) => n + 1)}>
+              Retry
+            </button>
+          </p>
+        )}
         {userId && (
           <SelectionNotice
             loading={selectionLoading}
@@ -231,7 +311,7 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
           game={game}
           selected={selectedIds.includes(game.id)}
           signedIn={Boolean(userId)}
-          saving={saving || selectionLoading || Boolean(selectionError)}
+          saving={saving || editingDisabled}
           onToggle={toggleGame}
         />
       </>
@@ -249,6 +329,15 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
         </p>
       </header>
 
+      {(!online || catalogOffline || selectionReadOnly) && (
+        <div role="status" className="notice">
+          Previously viewed games are available read-only. Saving and reordering
+          require a connection.
+          <button type="button" onClick={() => setRetry((n) => n + 1)}>
+            Retry
+          </button>
+        </div>
+      )}
       {userId && (
         <section className="panel" aria-labelledby="my-games-heading">
           <h2 id="my-games-heading">My games</h2>
@@ -274,7 +363,7 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
                   <div className="selected-actions">
                     <button
                       type="button"
-                      disabled={saving || index === 0}
+                      disabled={saving || editingDisabled || index === 0}
                       aria-label={`Move ${game.name} up`}
                       onClick={() =>
                         void commitSelection(
@@ -286,7 +375,11 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
                     </button>
                     <button
                       type="button"
-                      disabled={saving || index === selectedGames.length - 1}
+                      disabled={
+                        saving ||
+                        editingDisabled ||
+                        index === selectedGames.length - 1
+                      }
                       aria-label={`Move ${game.name} down`}
                       onClick={() =>
                         void commitSelection(
@@ -298,7 +391,7 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
                     </button>
                     <button
                       type="button"
-                      disabled={saving}
+                      disabled={saving || editingDisabled}
                       onClick={() => toggleGame(game.id)}
                       aria-label={`Remove ${game.name} from my games`}
                     >
@@ -449,6 +542,7 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
                           type="button"
                           disabled={
                             saving ||
+                            editingDisabled ||
                             selectionLoading ||
                             Boolean(selectionError) ||
                             (!selected && !canAddGame(game))

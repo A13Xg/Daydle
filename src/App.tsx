@@ -1,36 +1,74 @@
-import { useEffect, useState } from "react";
-import { readPublicSupabaseConfig } from "./lib/config";
+import { useEffect, useRef, useState } from "react";
 import { fetchHealth } from "./lib/api";
 import { browserAuthClient } from "./lib/browser-auth";
 import { useAuthSession } from "./lib/use-auth";
+import { readPublisherLaunch, clearPublisherLaunch } from "./lib/launch-return";
 import { AuthPage } from "./components/AuthPage";
 import { AuthCallback } from "./components/AuthCallback";
 import { AccountPage } from "./components/AccountPage";
 import { CatalogPage } from "./components/CatalogPage";
+import { TodayPage } from "./components/TodayPage";
+import { PasteDialog } from "./components/PasteDialog";
 
-type ServiceStatus = "loading" | "ready" | "unavailable";
+type HealthStatus = "checking" | "ready" | "unavailable";
+
+function sessionStorageAvailable(): Storage | undefined {
+  try {
+    return window.sessionStorage;
+  } catch {
+    return undefined;
+  }
+}
 
 export default function App() {
-  const [serviceStatus, setServiceStatus] = useState<ServiceStatus>("loading");
-  const [attempt, setAttempt] = useState(0);
-  const supabase = readPublicSupabaseConfig(import.meta.env);
   const client = browserAuthClient();
   const authState = useAuthSession(client);
+  const authenticated = authState.status === "signed-in";
+  const userId = authenticated ? authState.session.user.id : null;
   const pathname = window.location.pathname;
   const catalogDetail = pathname.match(/^\/games\/([a-z0-9-]+)\/?$/);
-  const authenticated = authState.status === "signed-in";
+  const [pasteOpen, setPasteOpen] = useState(false);
+  const [returnPrompt, setReturnPrompt] = useState(false);
+  const [health, setHealth] = useState<HealthStatus>("checking");
+  const [healthRetry, setHealthRetry] = useState(0);
+  const pasteTrigger = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const controller = new AbortController();
-
-    fetchHealth(controller.signal)
-      .then(() => setServiceStatus("ready"))
-      .catch(() => {
-        if (!controller.signal.aborted) setServiceStatus("unavailable");
-      });
-
+    fetchHealth(controller.signal).then(
+      () => setHealth("ready"),
+      () => {
+        if (!controller.signal.aborted) setHealth("unavailable");
+      },
+    );
     return () => controller.abort();
-  }, [attempt]);
+  }, [healthRetry]);
+
+  useEffect(() => {
+    function onResume() {
+      if (document.visibilityState === "hidden") return;
+      if (readPublisherLaunch(sessionStorageAvailable())) setReturnPrompt(true);
+    }
+    window.addEventListener("focus", onResume);
+    window.addEventListener("pageshow", onResume);
+    document.addEventListener("visibilitychange", onResume);
+    return () => {
+      window.removeEventListener("focus", onResume);
+      window.removeEventListener("pageshow", onResume);
+      document.removeEventListener("visibilitychange", onResume);
+    };
+  }, []);
+
+  function openPaste() {
+    clearPublisherLaunch(sessionStorageAvailable());
+    setReturnPrompt(false);
+    setPasteOpen(true);
+  }
+
+  function closePaste() {
+    setPasteOpen(false);
+    requestAnimationFrame(() => pasteTrigger.current?.focus());
+  }
 
   return (
     <div className="app">
@@ -38,16 +76,60 @@ export default function App() {
         Skip to content
       </a>
       <header className="site-header">
-        <a href="/" className="brand">
+        <a href="/today" className="brand">
           Daydle
         </a>
         <nav aria-label="Primary navigation">
-          <a href="/games">Games</a>
+          <a
+            href="/today"
+            aria-current={
+              pathname === "/" || pathname === "/today" ? "page" : undefined
+            }
+          >
+            Today
+          </a>
+          <a
+            href="/games"
+            aria-current={pathname.startsWith("/games") ? "page" : undefined}
+          >
+            Games
+          </a>
           <a href={authenticated ? "/account" : "/auth"}>
             {authenticated ? "Account" : "Sign in"}
           </a>
         </nav>
+        <button
+          type="button"
+          className="paste-global"
+          onClick={openPaste}
+          ref={pasteTrigger}
+        >
+          Paste Results
+        </button>
       </header>
+
+      {returnPrompt && !pasteOpen && (
+        <aside className="return-banner" role="status">
+          <p>
+            Back from a game? Open Paste Results when you're ready. Clipboard
+            access requires a separate tap.
+          </p>
+          <div>
+            <button type="button" onClick={openPaste}>
+              Paste Results
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                clearPublisherLaunch(sessionStorageAvailable());
+                setReturnPrompt(false);
+              }}
+            >
+              Dismiss
+            </button>
+          </div>
+        </aside>
+      )}
 
       <main id="main" className="content">
         {pathname === "/auth/callback" ? (
@@ -56,106 +138,50 @@ export default function App() {
           <AuthPage client={client} signedIn={authenticated} />
         ) : pathname === "/games" || catalogDetail ? (
           <CatalogPage
-            key={authenticated ? authState.session.user.id : "anonymous"}
+            key={userId ?? "anonymous"}
             client={client}
-            userId={authenticated ? authState.session.user.id : null}
+            userId={userId}
             detailSlug={catalogDetail?.[1]}
           />
         ) : pathname === "/account" ? (
           <AccountPage
-            key={authenticated ? authState.session.user.id : "signed-out"}
+            key={userId ?? "signed-out"}
             client={client}
             user={authenticated ? authState.session.user : null}
             loadingSession={authState.status === "loading"}
           />
         ) : (
-          <>
-            <h1>All your daily games. One place.</h1>
-            <p className="lead">
-              Daydle's account foundation is taking shape. Game discovery, daily
-              results and friends will be added in subsequent phases.
-            </p>
-            <p>
-              <a className="action-link" href="/games">
-                Explore daily games
-              </a>
-            </p>
-            <section aria-labelledby="foundation-heading" className="panel">
-              <h2 id="foundation-heading">Environment readiness</h2>
-              <dl className="statuses">
-                <div>
-                  <dt>Cloudflare API</dt>
-                  <dd role="status" aria-live="polite">
-                    {serviceStatus === "ready"
-                      ? "Available"
-                      : serviceStatus === "loading"
-                        ? "Checking…"
-                        : "Unavailable"}
-                  </dd>
-                </div>
-                <div>
-                  <dt>Supabase public configuration</dt>
-                  <dd>
-                    {supabase.status === "configured"
-                      ? "Configured (connection not tested)"
-                      : supabase.status === "unconfigured"
-                        ? "Not configured"
-                        : "Configuration invalid"}
-                  </dd>
-                </div>
-                <div>
-                  <dt>Authentication</dt>
-                  <dd role="status">
-                    {authenticated
-                      ? "Signed in"
-                      : authState.status === "loading"
-                        ? "Restoring…"
-                        : "Not signed in"}
-                  </dd>
-                </div>
-              </dl>
-              {serviceStatus === "unavailable" && (
-                <div className="notice" role="alert">
-                  <p>
-                    The API could not be reached. Verify the development server
-                    and try again.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setServiceStatus("loading");
-                      setAttempt((current) => current + 1);
-                    }}
-                  >
-                    Retry API check
-                  </button>
-                </div>
-              )}
-              {supabase.status === "invalid" && (
-                <p className="notice" role="status">
-                  {supabase.reason}
-                </p>
-              )}
-              {authState.status === "error" && (
-                <p className="notice error" role="alert">
-                  {authState.message}
-                </p>
-              )}
-            </section>
-            <section aria-labelledby="next-heading" className="panel">
-              <h2 id="next-heading">Coming in later phases</h2>
-              <ul>
-                <li>Track game results and completion.</li>
-                <li>Paste and track results.</li>
-                <li>Compare scores, trends, and achievements.</li>
-              </ul>
-            </section>
-          </>
+          <TodayPage
+            key={userId ?? "anonymous"}
+            client={client}
+            userId={userId}
+          />
         )}
       </main>
       <footer className="site-footer">
-        <p>Public beta foundation — game results are not active yet.</p>
+        <small>
+          Daydle opens games on their publisher sites. Played markers are
+          manual, not verified results.
+        </small>
+        {health === "unavailable" && (
+          <span role="alert">
+            {" "}
+            Daydle API unavailable.
+            <button
+              type="button"
+              onClick={() => {
+                setHealth("checking");
+                setHealthRetry((n) => n + 1);
+              }}
+            >
+              Retry
+            </button>
+          </span>
+        )}
       </footer>
+      {pasteOpen && (
+        <PasteDialog key={userId ?? "anonymous"} onClose={closePaste} />
+      )}
     </div>
   );
 }

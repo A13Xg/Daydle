@@ -188,3 +188,11 @@ Be clear and economical; report concrete commits and links when available. Never
 - Never interpret a transport/RPC failure as proof that a database write rolled back. Reconcile authoritative persisted state before issuing another full-list mutation, and block editing if the reconciliation read also fails.
 - Replace-many operations must serialize even when the previous child set is empty. Lock the stable parent row before DELETE/INSERT and test two overlapping independent transactions.
 - Errors that disable actions must be visible with retry controls on *every* route where those actions appear, including deep-linked detail pages.
+
+## Phase 5 Today/PWA safety and acceptance contract
+
+- Manual `user_game_day_marks` are owner-only intent flags and must never be confused with verified canonical results, publisher puzzle dates, results, scoreboards, or achievements. Server role/RLS tests enforce private ownership.
+- The persistent global Paste entry must never read clipboard in focus/visibility effects. Call Clipboard API only inside a user gesture and retain manual textarea fallback; do not store raw paste text in localStorage, Cache API, logs or analytics.
+- Service worker caches only versioned generic shell assets and static public files. Explicitly bypass OAuth callback/account pages, Supabase, Worker API, `/rest`, non-GET, cross-origin and authenticated requests; never cache viewer-specific spoilers or private marks.
+- Offline UI shows only previously viewed, bounded public game metadata plus IDs of games selected by the currently authenticated account, and marks unavailable when live private status cannot be read. Offline does not queue result writes.
+- Do not claim PWA/Safari integration, OAuth return or clipboard permission behavior has been verified on an iPhone without real observed device evidence. Automated simulated-worker tests support code review but cannot replace device checks. Production release requires separately reviewed migration-before-app sequencing.
