@@ -85,7 +85,7 @@ describe("authenticated result Worker boundary", () => {
       apikey: env.SUPABASE_PUBLISHABLE_KEY,
       authorization: JWT,
     });
-    expect(calls[1]?.url).toEndWith("/rpc/ingest_parsed_share");
+    expect(calls[1]?.url).toMatch(/\/rpc\/ingest_parsed_share$/);
     expect(calls[1]?.body).toMatchObject({
       p_user: USER,
       p_raw: wordle,
@@ -100,7 +100,8 @@ describe("authenticated result Worker boundary", () => {
     for (const text of ["I played Wordle yesterday", "", "x".repeat(10_001)]) {
       const res = await worker.fetch(makeRequest(path(), "POST", { text }), env);
       expect(res.status).toBe(422);
-      expect(JSON.stringify(await res.json())).not.toContain(text.slice(0, 150));
+      const safeResponse = JSON.stringify(await res.json());
+      if (text.length > 0) expect(safeResponse).not.toContain(text.slice(0, 150));
     }
     expect(calls.filter(x => x.url.includes("/rpc/"))).toHaveLength(0);
   });
