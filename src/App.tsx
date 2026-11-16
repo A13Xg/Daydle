@@ -179,7 +179,9 @@ export default function App() {
           </span>
         )}
       </footer>
-      {pasteOpen && <PasteDialog onClose={closePaste} />}
+      {pasteOpen && (
+        <PasteDialog key={userId ?? "anonymous"} onClose={closePaste} />
+      )}
     </div>
   );
 }

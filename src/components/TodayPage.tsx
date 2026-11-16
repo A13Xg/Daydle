@@ -166,7 +166,7 @@ export function TodayPage({
       );
       if (!next.confirmed) {
         setStatusError(
-          "Your save response was interrupted. We reloaded your status; check it before continuing.",
+          "The change was not confirmed. We reloaded your status; check it before continuing.",
         );
       }
     } catch {
