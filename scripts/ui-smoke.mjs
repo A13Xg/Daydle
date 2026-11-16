@@ -176,6 +176,11 @@ async function visit(client, pathname, viewport) {
   ) {
     throw new Error("Arcade shell assertion failed: " + JSON.stringify(result));
   }
+  if (process.env.DAYDLE_UI_CAPTURE === "1" && viewport.width === 393 &&
+      ["/today", "/auth", "/statistics"].includes(pathname)) {
+    const shot = await client.send("Page.captureScreenshot", { format: "png", fromSurface: true });
+    console.log("ARCADE_SCREENSHOT_JSON:" + JSON.stringify({ path: pathname, data: shot.data }));
+  }
   console.log(
     "UI-SMOKE PASS",
     viewport.width + "x" + viewport.height,

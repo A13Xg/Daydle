@@ -36,7 +36,7 @@ jobs:
           PREVIEW_PID=$!
           trap 'kill "$PREVIEW_PID" 2>/dev/null || true' EXIT
           npm run smoke
-          node scripts/ui-smoke.mjs
+          DAYDLE_UI_CAPTURE=1 node scripts/ui-smoke.mjs
 
   database-security:
     runs-on: ubuntu-latest
