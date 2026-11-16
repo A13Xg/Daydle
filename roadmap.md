@@ -266,6 +266,26 @@ Future possibilities (not automatic phases or MVP blockers): additional parser c
 - **PR:** created as draft at phase start, marked ready for review only after validation; never auto-merge. Main ledger changes to COMPLETE only after merge verification.
 - **Status reconciliation:** record actual commit hashes and PR state; if a checked “COMPLETE” phase is missing evidence or expected artifacts, stop and diagnose rather than cascading unreliable assumptions.
 
+## Prioritized current-state follow-up
+
+This is a roadmap suggestion, not authorization to implement or change hosted settings. Evidence is from `main` at `d4644ceb4a5bc8e41258d40eefd30f118c2e425d`. Existing phase scopes, owner-approved deferrals, and completion statuses are unchanged; the open Phase 4 planning PR [#5](https://github.com/A13Xg/Daydle/pull/5) is not treated as delivered functionality.
+
+### 1. P1 — Restore the existing Supabase keep-alive request
+
+**Impact and priority:** The configured inactivity-prevention workflow cannot perform its database read. Address this operational regression before relying on the next scheduled run: an otherwise idle free-tier project can pause, interrupting both sign-in and database-backed features. This is not evidence that the project is currently paused, and it does not make unfinished product phases blockers.
+
+**Current evidence:**
+- [`.github/workflows/keepalive.yml`](.github/workflows/keepalive.yml), lines 29–31 and 39–48, loads and validates `SUPABASE_PUBLISHABLE_KEY`, but the actual request sends the literal header `apikey: ***` instead. Passing configuration validation therefore cannot make the read succeed.
+- A read-only probe of the deployed project's exact `games?select=id&limit=1` endpoint returned **HTTP 401 / `Invalid API key`** with the current workflow's header, versus **HTTP 200 / `[]`** with the public publishable key already shipped in the browser bundle. No privileged credential or database write was used.
+- The workflow is active but had no recorded runs at inspection. This is a reproduced request failure, not a claim about a failed scheduled run. [`scripts/ops/README.md`](scripts/ops/README.md#free-tier-keep-alive) and [`docs/deployment.md`](docs/deployment.md#provisioning-and-release-procedure) currently describe this workflow as the protection against inactivity pausing.
+
+**Suggested scope:**
+- Use the already-configured public key in the request header; keep the row-limited, read-only query, HTTP-200 requirement, and no privileged secrets.
+- Add an isolated regression check that exercises the workflow request with synthetic configuration against a local HTTP stub and verifies the transmitted key, path, and non-200 failure behavior. The current CI runs application and SQL checks but does not execute this operations request.
+- After review and an explicitly authorized workflow dispatch, verify one successful run on `main`; ensure the owner receives failure notifications. Do not infer successful database activity from the Worker's independent `/api/v1/health` endpoint.
+
+**Acceptance evidence:** The request regression check passes, a deliberately invalid key still fails, and an approved dispatch records HTTP 200 from the public database read. Record the run URL without logging key values. No schema migration, production deployment, broader credential scope, or phase renumbering is needed.
+
 ## Circle-Back
 
 Deferred operational items that are not numbered phases and do not block any phase's acceptance gates. Each needs explicit user authorization before work begins.
