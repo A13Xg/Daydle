@@ -105,7 +105,7 @@ iOS home-screen apps do **not** guarantee external-tab return handling and use a
 
 ### Unverified material gates (must remain draft)
 
-- No release authorization was given to apply **Phase 4 catalog migration if pending, then Phase 5 marker migration**, and redeploy the associated Worker on protected production. The existing production instance is not guaranteed to contain either new schema or frontend.
+- **Release authorization is now granted by the owner**, but no hosted migration or deployment has run. The protected, main-only release workflow has been prepared on PR #7; execution requires the source to be merged into `main` and the existing production environment reviewer approval. The existing production site must still be treated as running the old schema/frontend until a successful live release job.
 - No physical iPhone Safari or installed home-screen PWA was available to exercise OAuth, installation, real external publisher handoff/return, clipboard gesture/permission handling, offline reload or account-switch isolation. All eight device scenarios in [docs/pwa.md](docs/pwa.md) are **NOT VERIFIED**, not implicitly satisfied by browser API mocks or SW simulation.
 - Signed-in hosted marker changes, OAuth and saved-game persistence could not be verified end-to-end without the authorized schema-first deployment.
 - There is no history UI or canonical parser/ingestion yet; those belong to Phase 7 and Phase 6 respectively. History cannot be pre-cached until such a view exists.
@@ -113,7 +113,14 @@ iOS home-screen apps do **not** guarantee external-tab return handling and use a
 
 ### Disposition and next action
 
-**Keep PR #7 DRAFT, `Phase5Exec.md` ACTIVE at repository root, and Phase 5 NOT STARTED on main / BLOCKED on the branch.** Do not archive, mark ready, merge, deploy, or begin Phase 6 without new owner authorization or an explicit approved adjustment to real-device acceptance gates.
+**Keep PR #7 DRAFT, `Phase5Exec.md` ACTIVE at repository root, and Phase 5 NOT STARTED on main / BLOCKED on the branch.** The owner has authorized the schema-first production rollout, but this does not waive the established separate PR-merge and protected-environment review requirements. Because real-device evidence is an exit gate, Phase 5 remains unverified. Do not silently auto-merge, archive or advance to Phase 6.
 
-To unblock full acceptance: obtain explicit approval for schema-first production migration and protected Worker deploy, then run the [eight real-iPhone acceptance scenarios](docs/pwa.md#manual-iphone-acceptance-matrix--not-verified) and record actual results. No new credentials are needed for the already implemented source/CI.
+To unblock the **approved release**, first complete review and merge of PR #7 (required by the main-only production environment), then manually dispatch the new [Release Phase 5 — schema-first production rollout](.github/workflows/release-phase5.yml) on `main` and approve the protected production job. It fail-closes if remote migration history differs from exactly the reviewed Phase 2–5 chain, applies pending SQL before deploying, and verifies live PWA endpoints. Finally run the [eight real-iPhone acceptance scenarios](docs/pwa.md#manual-iphone-acceptance-matrix--not-verified) and record actual results. The Supabase integration was installed, but no direct database actions were exposed in this chat when the release was prepared.
 
+
+### Release preparation performed after explicit authorization
+
+- Added `scripts/ops/verify-migration-plan.mjs` and `tests/release-plan.test.ts`, using an exact allowlist of the four existing migrations and refusing unknown remote SQL history or missing Phase 2/3 baseline.
+- Added `.github/workflows/release-phase5.yml` as a manual `main`-only GitHub Actions workflow using the existing reviewer-protected `production` environment and its GitHub secrets/variables. It runs the full frontend suite, confirms project identity, links Supabase CLI v2.117.0, checks and dry-runs remote migrations, applies pending reviewed SQL with explicit confirmation, verifies all four are deployed, builds with production public configuration, deploys Cloudflare, and smoke-tests live PWA URLs.
+- **No live execution yet:** The connected Supabase app has no callable SQL tools exposed in this session; the GitHub integration cannot dispatch workflows, and PR #7 is unmerged. No bypass of branch policy or privileged credentials was attempted.
+- Local release-plan checks passed with the rest of the test suite in GitHub Actions. The release run itself, hosted migration state and final iPhone scenarios remain NOT VERIFIED.
