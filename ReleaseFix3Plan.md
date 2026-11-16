@@ -1,6 +1,6 @@
 # Production Phase 5 — deployed Worker health check failure
 
-**State:** IMPLEMENTED / LIVE ENDPOINTS VERIFIED — final source CI pending · **Branch:** `fix/phase5-live-health-routing` · **Base:** `be904ffe84d650d0b8c4efe06b2f145e7afa0085`.
+**State:** IMPLEMENTED / LIVE VERIFIED / CI PASS — ready for human review · **Branch:** `fix/phase5-live-health-routing` · **Base:** `be904ffe84d650d0b8c4efe06b2f145e7afa0085`.
 
 Production [run 43814332227](https://github.com/A13Xg/Daydle/actions/runs/43814332227) successfully applied Phase 4/5 SQL and deployed the Cloudflare Worker version `126e8806-3cb5-4765-a164-225466531727`; failed only in live smoke at `/api/v1/health` when HTML was received instead of JSON. Direct Supabase migration read confirms all four versions.
 
@@ -25,3 +25,11 @@ Production [run 43814332227](https://github.com/A13Xg/Daydle/actions/runs/438143
 **Public CI distinction:** An ordinary PR build has no production `VITE_SUPABASE_URL` or `VITE_SUPABASE_PUBLISHABLE_KEY`, yielding a different hashed JavaScript bundle and therefore a different SW cache version. Public CI can verify a correctly formed deployed SW without comparing it to its local dev build; the protected release always enforces exact production artifact equality. No credential or DB modification is needed for public checks.
 
 **Release:** The site is already deployed. PR #10 hardens future release check reports; the owner can review/merge it without new SQL changes. Any later manual deployment continues requiring the production environment reviewer. Real iPhone validation is the only remaining material Phase 5 product gate.
+
+## Verified execution evidence
+
+- [Immutable-source CI run 43816919772](https://github.com/A13Xg/Daydle/actions/runs/43816919772): **both jobs passed**; **118 tests/23 suites**, strict TypeScript, lint, formatting, production Worker/Vite build, PWA HTTP preview smoke and two PostgreSQL 17 migration/RLS security databases.
+- [Live read-only CI run 43816547897](https://github.com/A13Xg/Daydle/actions/runs/43816547897) performed **nine successful public checks**: JSON health, JSON 404, manifest, service worker, Today, Games and three PNG icons. This is separate from the production Worker deployment and made no hosted changes.
+- The original [production release 43814332227](https://github.com/A13Xg/Daydle/actions/runs/43814332227) already applied Phases 4 and 5 and deployed Worker `126e8806-3cb5-4765-a164-225466531727`. Subsequent read-only Supabase migration inspection confirmed all four records. **No additional database migration or production Worker redeploy was performed on this branch.**
+- Source/diff audit found no credential leaks, unapproved background deploy, model/assistant attribution or unsafe executable behavior.
+- **Outstanding:** User's physical iPhone Safari/home-screen PWA acceptance remains NOT VERIFIED. PR #10 should be reviewed/merged only by owner; the protected production action is not automatically dispatched.
