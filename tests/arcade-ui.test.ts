@@ -134,8 +134,15 @@ describe("feature previews and static onboarding", () => {
   );
 
   it("shows four unavailable statistics metrics instead of invented performance", () => {
-    const markup = renderToStaticMarkup(createElement(FeaturePendingPage, { feature: "statistics" }));
-    for (const metric of ["Total solved", "Win rate", "Average speed", "Flawless runs"]) {
+    const markup = renderToStaticMarkup(
+      createElement(FeaturePendingPage, { feature: "statistics" }),
+    );
+    for (const metric of [
+      "Total solved",
+      "Win rate",
+      "Average speed",
+      "Flawless runs",
+    ]) {
       expect(markup).toContain(metric);
     }
     expect(markup.match(/aria-label="Not available"/g)).toHaveLength(4);

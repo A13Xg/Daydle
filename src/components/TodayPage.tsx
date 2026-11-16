@@ -196,20 +196,30 @@ export function TodayPage({
     return (
       <div className="today-page today-guest">
         <div className="today-guest-status">
-          <span className="status-pill"><ArcadeIcon name="today" size={17} /> YOUR DAILY HUB</span>
+          <span className="status-pill">
+            <ArcadeIcon name="today" size={17} /> YOUR DAILY HUB
+          </span>
           <span className="muted">Always your choice to play</span>
         </div>
         <header className="today-heading today-guest-heading">
           <p className="eyebrow">YOUR PERSONAL PUZZLE ROTATION</p>
           <h1 id="today-title">Build your daily puzzle lineup.</h1>
           <p className="lead">
-            Collect the games you love, open them at their publisher, and return whenever you're ready for another round.
+            Collect the games you love, open them at their publisher, and return
+            whenever you're ready for another round.
           </p>
           <div className="welcome-actions">
-            <a className="action-link" href="/games">Discover daily games <ArcadeIcon name="arrow" size={18} /></a>
-            <a className="secondary-link" href="/auth">Sign in to save a lineup</a>
+            <a className="action-link" href="/games">
+              Discover daily games <ArcadeIcon name="arrow" size={18} />
+            </a>
+            <a className="secondary-link" href="/auth">
+              Sign in with Apple or Google
+            </a>
           </div>
-          <p className="muted welcome-note">Your lineup and manual played marks stay private. Result saving is coming in a later phase.</p>
+          <p className="muted welcome-note">
+            Your lineup and manual played marks stay private. Result saving is
+            coming in a later phase.
+          </p>
         </header>
         <section className="today-guest-grid" aria-label="How Daydle works">
           <article className="panel today-guest-card">
@@ -223,7 +233,9 @@ export function TodayPage({
             <p>Follow each publisher link. No forced schedule.</p>
           </article>
         </section>
-        <a className="today-guide-link" href="/how-it-works">How the daily ritual works <ArcadeIcon name="arrow" size={18} /></a>
+        <a className="today-guide-link" href="/how-it-works">
+          How the daily ritual works <ArcadeIcon name="arrow" size={18} />
+        </a>
       </div>
     );
 

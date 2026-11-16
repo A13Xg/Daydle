@@ -103,10 +103,28 @@ function browserMetrics() {
     active: tabs.filter((el) => el.getAttribute("aria-current") === "page")
       .length,
     header: header.length,
-    minHeaderTargetWidth: Math.min(1000, ...headerTargets.map((el) => Math.round(el.getBoundingClientRect().width))),
-    minHeaderTargetHeight: Math.min(1000, ...headerTargets.map((el) => Math.round(el.getBoundingClientRect().height))),
-    minTabFont: Math.min(1000, ...tabs.map((el) => Number.parseFloat(getComputedStyle(el).fontSize))),
-    minBrandBadgeFont: Math.min(1000, ...brandBadges.map((el) => Number.parseFloat(getComputedStyle(el).fontSize))),
+    minHeaderTargetWidth: Math.min(
+      1000,
+      ...headerTargets.map((el) =>
+        Math.round(el.getBoundingClientRect().width),
+      ),
+    ),
+    minHeaderTargetHeight: Math.min(
+      1000,
+      ...headerTargets.map((el) =>
+        Math.round(el.getBoundingClientRect().height),
+      ),
+    ),
+    minTabFont: Math.min(
+      1000,
+      ...tabs.map((el) => Number.parseFloat(getComputedStyle(el).fontSize)),
+    ),
+    minBrandBadgeFont: Math.min(
+      1000,
+      ...brandBadges.map((el) =>
+        Number.parseFloat(getComputedStyle(el).fontSize),
+      ),
+    ),
     minButton: Math.min(
       1000,
       ...buttons.map((el) => Math.round(el.getBoundingClientRect().height)),
@@ -175,19 +193,31 @@ async function visit(client, pathname, viewport) {
     result.header !== (kind === "blank" ? 0 : 1) ||
     result.active !== (kind === "tab" ? 1 : 0) ||
     result.minButton < 44 ||
-    (result.header > 0 && (result.minHeaderTargetWidth < 44 || result.minHeaderTargetHeight < 44)) ||
-    (result.tabCount > 0 && (result.tabMinHeight < 44 || result.minTabFont < 11)) ||
-    (result.minBrandBadgeFont < 11) ||
+    (result.header > 0 &&
+      (result.minHeaderTargetWidth < 44 ||
+        result.minHeaderTargetHeight < 44)) ||
+    (result.tabCount > 0 &&
+      (result.tabMinHeight < 44 || result.minTabFont < 11)) ||
+    result.minBrandBadgeFont < 11 ||
     !result.font ||
     result.theme !== "#051424" ||
     result.hasCDN
   ) {
     throw new Error("Arcade shell assertion failed: " + JSON.stringify(result));
   }
-  if (process.env.DAYDLE_UI_CAPTURE === "1" && viewport.width === 393 &&
-      ["/today", "/statistics", "/auth"].includes(pathname)) {
-    const shot = await client.send("Page.captureScreenshot", { format: "png", fromSurface: true });
-    console.log("VISUAL_SCREENSHOT_JSON:" + JSON.stringify({ path: pathname, data: shot.data }));
+  if (
+    process.env.DAYDLE_UI_CAPTURE === "1" &&
+    viewport.width === 393 &&
+    ["/today", "/statistics", "/auth"].includes(pathname)
+  ) {
+    const shot = await client.send("Page.captureScreenshot", {
+      format: "png",
+      fromSurface: true,
+    });
+    console.log(
+      "VISUAL_SCREENSHOT_JSON:" +
+        JSON.stringify({ path: pathname, data: shot.data }),
+    );
   }
   console.log(
     "UI-SMOKE PASS",
@@ -225,7 +255,10 @@ try {
     exitReason = { code, signal };
   });
   for (let i = 0; i < 250; i++) {
-    if (exitReason) throw new Error("Chromium exited during startup: " + JSON.stringify(exitReason));
+    if (exitReason)
+      throw new Error(
+        "Chromium exited during startup: " + JSON.stringify(exitReason),
+      );
     try {
       port = Number(
         readFileSync(join(directory, "DevToolsActivePort"), "utf8").split(
@@ -238,7 +271,10 @@ try {
     }
     await sleep(100);
   }
-  if (!port) throw new Error("Chromium DevTools did not become ready within 25 seconds.");
+  if (!port)
+    throw new Error(
+      "Chromium DevTools did not become ready within 25 seconds.",
+    );
   const pages = await (
     await fetch("http://127.0.0.1:" + port + "/json/list")
   ).json();
