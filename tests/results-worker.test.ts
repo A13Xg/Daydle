@@ -89,7 +89,7 @@ describe("authenticated result Worker boundary", () => {
     expect(calls[1]?.body).toMatchObject({
       p_user: USER,
       p_raw: wordle,
-      p_parsed: { gameSlug: "wordle", puzzleKey: "wordle-1406", attempts: 4 },
+      p_parsed: { gameSlug: "wordle", puzzleKey: "wordle:number:1406", attempts: 4 },
       p_replace_id: null,
     });
     expect(calls[1]?.init?.headers).toMatchObject({ apikey: env.SUPABASE_SERVICE_ROLE_KEY });
