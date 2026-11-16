@@ -1,8 +1,8 @@
 name: Supabase keep-alive
 
-# One row-limited, read-only database request daily. The previous "*/6" day
-# expression could leave a SEVEN-day gap between the 25th of a 30-day month
-# and the 1st of the next. A daily schedule avoids that calendar edge case.
+# One row-limited, read-only database request daily. The previous "*/6"
+# cadence was valid (maximum scheduled gap: 6 days); daily checks improve
+# resilience if GitHub delays or skips an individual scheduled run.
 #
 # This is a best-effort inactivity probe, NOT an uptime guarantee: GitHub may
 # delay scheduled runs and disable schedules after prolonged repository inactivity.

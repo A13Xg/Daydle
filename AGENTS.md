@@ -175,3 +175,9 @@ Be clear and economical; report concrete commits and links when available. Never
 - `parser_status=supported` requires a real Phase 6 parser with validated fixtures. A launchable catalog entry does not imply that pasted results can be ingested. Link-check status is manual metadata, not a live availability guarantee.
 - Client-saved games are updated through the authenticated atomic `set_my_games(uuid[])` RPC with ordering, validation, and cross-account restrictions. Never grant browser clients unrestricted catalog mutations or service-role credentials.
 - New catalog migrations must pass fresh PostgreSQL constraint/RLS/admin-role tests. In a live environment apply approved schema migrations before deploying application code that depends on the new columns/RPCs; do not run either automatically from PR CI.
+
+## Evidence-first operational changes
+
+- Inspect literal committed workflow source before claiming credential regressions. Redacted `***` output from an unrelated probe is not evidence the actual `apikey` header is defective.
+- Scheduled maintenance jobs require tests of the outbound request, denial/non-200 behavior and secret-safe logging. Distinguish local stub checks from real hosted Actions runs.
+- Calculate cron month-boundary gaps correctly. GitHub schedules may be delayed or disabled; keep-alive is best-effort, never a backup or uptime guarantee.

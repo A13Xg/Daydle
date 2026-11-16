@@ -115,3 +115,9 @@ Verified latest main at `d4644ce`, Phases 0–3 COMPLETE, prior PR #3 merged, pa
 - Review PR #5; no auto-merge. Branch roadmap says IN REVIEW while main must remain NOT STARTED until a verified reviewed merge and status reconciliation.
 - No hosted schema or production data was changed. Revert/decline branch before merge; once a migration has been deployed, use an audited forward migration rather than rewriting applied migration history.
 
+
+### Supplemental review: operational suggestions from PR #6
+
+- Audited [PR #6](https://github.com/A13Xg/Daydle/pull/6) and its feedback. The original `apikey: ***` regression claim was rejected: `main` already sends the configured public key; testing a literal redaction placeholder does not prove failure.
+- Rechecked `*/6` scheduling across months: maximum gap was six days, so no calendar bug. A daily cadence gives additional resilience to delayed or missed GitHub runs.
+- Added and tested the isolated read-only keep-alive request, synthetic local HTTP-stub contract checks, and runbook updates on PR #5. Live default-branch dispatch remains a separately documented post-merge validation, not an implied completed run.

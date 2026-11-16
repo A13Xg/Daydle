@@ -266,6 +266,20 @@ Future possibilities (not automatic phases or MVP blockers): additional parser c
 - **PR:** created as draft at phase start, marked ready for review only after validation; never auto-merge. Main ledger changes to COMPLETE only after merge verification.
 - **Status reconciliation:** record actual commit hashes and PR state; if a checked “COMPLETE” phase is missing evidence or expected artifacts, stop and diagnose rather than cascading unreliable assumptions.
 
+## Operational follow-up — Supabase keep-alive reliability
+
+**Status:** IMPLEMENTED ON BRANCH / VERIFICATION PENDING in [Phase 4 PR #5](https://github.com/A13Xg/Daydle/pull/5). **Priority:** operational resilience, independent of Phase 4 catalog delivery.
+
+**Assessment of [PR #6](https://github.com/A13Xg/Daydle/pull/6):** Its claimed `apikey: ***` failure is unsupported. The actual `main` workflow already uses the configured `${SUPABASE_PUBLISHABLE_KEY}` header. A request made with a literal redaction placeholder is not a valid reproduction. Its six-day `*/6` cron also had no seven-day boundary gap. Neither is a demonstrated production defect.
+
+**Accepted and implemented improvements:**
+- Increase the cheap, row-limited read-only cron to **daily** for missed/delayed-run resilience, not to fix a nonexistent month-boundary defect.
+- Extract the HTTP check into `scripts/ops/keepalive.mjs`; validate the public Supabase origin/key, preserve the real API key header, fail on HTTP errors, and avoid logging secrets/response bodies.
+- Add isolated local-HTTP-server regression tests for request method, header, row-limited endpoint, 200 success, 401 denial and schedule.
+- Update operations runbooks, clearly separating local CI evidence from hosted success.
+
+**Pending post-merge verification:** After owner review/merge, manually dispatch `Supabase keep-alive` on `main`; verify HTTP 200 with configured repository variables and monitor workflow notifications/last success. PR CI cannot verify an actual scheduled run and performs no production dispatch, schema migration or deployment.
+
 ## Circle-Back
 
 Deferred operational items that are not numbered phases and do not block any phase's acceptance gates. Each needs explicit user authorization before work begins.

@@ -1,4 +1,4 @@
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { pathToFileURL } from "node:url";
 import { resolve } from "node:path";
 
 const CHECK_PATH = "/rest/v1/games?select=id&limit=1";
