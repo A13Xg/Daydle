@@ -222,6 +222,7 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
               {selectedGames.map((game, index) => (
                 <li key={game.id}>
                   <span className="selected-game-title">{game.name}</span>
+                  {!canLaunchGame(game) && <span className="muted"> — {gameAvailabilityLabel(game)}</span>}
                   <div className="selected-actions">
                     <button
                       type="button"
