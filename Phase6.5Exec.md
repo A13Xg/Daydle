@@ -1,6 +1,6 @@
 # Phase 6.5 Execution Plan — Obsidian Arcade UI/UX overhaul
 
-**Status:** PLAN REVIEWED — implementation pending.
+**Status:** BLOCKED ON REAL-DEVICE ACCEPTANCE — implementation and automated source checks pass; draft PR remains open until redesigned iOS Safari/installed-PWA testing is documented.
 **Branch/PR:** `phase/06.5-obsidian-arcade-ui` · [PR #13](https://github.com/A13Xg/Daydle/pull/13) (draft).
 **Base:** `main` `99401d5b31242c139f77d3700c2f2a7e3c12ada6`, verified merge of parser [PR #12](https://github.com/A13Xg/Daydle/pull/12). [Main CI 43930997408](https://github.com/A13Xg/Daydle/actions/runs/43930997408) passed.
 **Product/security authority:** [IDEA.md](IDEA.md), [AGENTS.md](AGENTS.md), [roadmap.md](roadmap.md), [Phase 6 archive](completedPhases/Phase6Exec.md).
@@ -51,3 +51,38 @@
 - Offline CSS/font/icon assets must be build-version cached as static public shell without leaking private data; inspect service-worker asset semantics after adding files.
 - Future native packaging must not be misrepresented as implemented; web OAuth in WKWebView would need a platform adapter in a later approved phase.
 - Main remains untouched; rollback by closing/reverting PR. No migration or hosted rollback needed.
+
+## Phase 6.5 implementation and verification report — November 16, 2026
+
+### Implemented (source branch, not deployed)
+
+- Introduced the approved Obsidian Arcade dark design system in bundled CSS with semantic tokens, responsive tonal surfaces, rounded cards, locally bundled variable Plus Jakarta Sans under SIL Open Font License, inline SVG icon primitives, emblem and harmonized PWA icons.
+- Replaced the former three-link header with fixed safe-area-aware top app bar, five-tab primary bottom navigation, separate stack-header routes, and blank authentication shell. Added dedicated saved-game lineup editor based on the existing authenticated, atomic reconciled selection RPC.
+- Updated Today, Discover/catalog/detail, OAuth, Account and Paste visual composition; preserved owner-private manual played markers, publisher links, explicit clipboard gesture/manual fallback, existing backend, offline read-only snapshots, per-user remounting, and safe API caching exclusions.
+- Future Statistics and Friends tabs show honest placeholder states; Notifications and How It Works are stack routes. No invented scores, counts, achievements, friend requests, auto-launch, OCR, push alerts or additional authentication options.
+- Added source-level route/accessibility/PWA tests and a real headless Chromium CDP smoke with responsive width assertions at 320, 393 and 1024 px; safe-area insets emulated in Chrome. Added precise route and portability documentation in [docs/ui-architecture.md](docs/ui-architecture.md).
+
+### Automated verification — PASS
+
+- [CI #43936827206](https://github.com/A13Xg/Daydle/actions/runs/43936827206) on committed branch source `e2b81e7d782378f7160ac61f53a388c9117b12ea`: both `validate` and `database-security` passed.
+- `npm ci --no-audit --no-fund`, `npm run typecheck`, `npm run lint`, `npm run format:check`: PASS.
+- `npm test`: **195/195 tests across 25 suites**, including 31 added Obsidian/route/compatibility assertions and service worker safety coverage.
+- `npm run build`, `npm run smoke`: PASS, including generated PWA shell and restricted caching.
+- `node scripts/ui-smoke.mjs`: **16/16 Chromium route/viewport checks** passed, with no horizontal overflow, required shell/tab visibility, local fonts, >=44px buttons/nav, no runtime CDN dependencies and emulated safe-area insets.
+- `bash scripts/test-db.sh`: PASS across the two CI isolated PostgreSQL 17 security databases.
+- Chrome screenshots of signed-out Today, Statistics and Auth were reviewed. Visual feedback led to a more complete signed-out Today hero, friendlier Statistics copy and additional bottom-tab footer clearance. Temporary screenshot capture and formatting diagnostic code were subsequently removed. Initial intermediate CI failures were corrected; the clean committed-source final run passed.
+
+### Security and scope audit
+
+- No new Supabase migration, Worker API endpoint, hosted write, app deployment, OAuth provider, Xcode/Capacitor package or runtime CDN dependencies.
+- Existing clipboard text is not persisted/logged; authorization and RLS remain server-defined. Service worker continues bypassing account/auth/API/secret-bearing requests.
+- Third-party font retains its upstream SIL OFL licensing notice; no prohibited contributor/tool attribution was added.
+- `main` remains at Phase 6 merge `99401d5` pending owner action on PR #13.
+
+### Material acceptance gate — NOT VERIFIED
+
+Physical **iPhone Safari and home-screen PWA** acceptance has not been rerun on the new interface. Chromium desktop emulation does not establish actual safe-area/keyboard behavior, OAuth return, publisher external-context return, clipboard permission/fallback, offline restore or account isolation under the redesigned navigation. The earlier owner-reported Phase 5 iPhone pass applied to an earlier interface and is not a Phase 6.5 pass. End-to-end authenticated UI states were not available to headless public CI without connected account credentials.
+
+**Next operator checkpoint:** After the owner explicitly authorizes a preview/production rollout or other device-test environment, exercise the redesigned UI on a real iPhone: navigation/safe areas, Apple/Google sign-in, lineup editing, publisher handoff/return, clipboard permission and manual paste, offline restart, and account switching. Record results; do not claim those tests passed now.
+
+**Disposition:** Implementation and source-level CI checks pass, but **Phase 6.5 is BLOCKED ON DEVICE ACCEPTANCE**, so `Phase6.5Exec.md` stays active at repository root and [PR #13](https://github.com/A13Xg/Daydle/pull/13) remains DRAFT. No merge, deployment, Phase 7 start, archive or COMPLETE status is authorized by automated CI alone.
