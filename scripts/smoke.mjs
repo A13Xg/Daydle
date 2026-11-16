@@ -42,7 +42,7 @@ const missing = await request("/api/v1/not-found");
 assert.equal(missing.status, 404);
 assert.match(missing.headers.get("content-type") ?? "", /application\/json/);
 
-for (const path of ["/", "/auth", "/auth/callback", "/account", "/games", "/games/wordle", "/some/deep/link"]) {
+for (const path of ["/", "/today", "/auth", "/auth/callback", "/account", "/games", "/games/wordle", "/some/deep/link"]) {
   const response = await request(path, {
     headers: { "sec-fetch-mode": "navigate" },
   });
