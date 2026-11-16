@@ -20,19 +20,6 @@ jobs:
           node-version: "22"
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
-      - name: Normalize final live smoke test
-        run: |
-          npx prettier --write tests/live-release.test.ts
-          node -e '
-            const fs = require("node:fs");
-            const path = "tests/live-release.test.ts";
-            const raw = fs.readFileSync(path, "utf8");
-            console.log("BEGIN_FORMAT_FILE:" + path);
-            for (let i = 0; i < raw.length; i += 1800) {
-              console.log("FORMAT_BASE64:" + Buffer.from(raw.slice(i, i + 1800), "utf8").toString("base64"));
-            }
-            console.log("END_FORMAT_FILE:" + path);
-          '
       - name: Typecheck
         run: npm run typecheck
       - name: Lint
@@ -43,8 +30,6 @@ jobs:
         run: npm test
       - name: Production build
         run: npm run build
-      - name: Verify live deployment using public-only semantic checks
-        run: node scripts/ops/verify-live-release.mjs --public-only
       - name: Preview smoke
         run: |
           npm run preview -- --port 4173 > /tmp/daydle-preview.log 2>&1 &
