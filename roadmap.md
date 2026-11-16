@@ -29,7 +29,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 2 | Domain model, persistence, and security foundations | 1 | COMPLETE — [PR #2](https://github.com/A13Xg/Daydle/pull/2), merge `b4a1140` |
 | 3 | Authentication, onboarding, and account identity | 2 | COMPLETE with owner-approved scope changes — [PR #3](https://github.com/A13Xg/Daydle/pull/3), merge `bff7b89`, evidence in [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md) |
 | 4 | Game catalog, selection, and discovery | 3 | COMPLETE — [PR #5](https://github.com/A13Xg/Daydle/pull/5), merge `e0fcb2b` |
-| 5 | Today experience, PWA, and external-game navigation | 4 | NOT STARTED |
+| 5 | Today experience, PWA, and external-game navigation | 4 | BLOCKED — source [PR #7](https://github.com/A13Xg/Daydle/pull/7) merged; production rollout [run #43810002170](https://github.com/A13Xg/Daydle/actions/runs/43810002170) failed before SQL/deploy; [fix PR #8](https://github.com/A13Xg/Daydle/pull/8) in review; iPhone acceptance pending |
 | 6 | Deterministic parser registry and initial game coverage | 5 | NOT STARTED |
 | 7 | Result ingestion, history, and correction lifecycle | 6 | NOT STARTED |
 | 8 | Personal statistics, streaks, and achievements | 7 | NOT STARTED |
@@ -122,7 +122,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 
 
 ## Phase 5 — Today experience, PWA, and external-game navigation
-**Main status:** NOT STARTED (unmerged). **Branch execution:** RELEASE CANDIDATE / IN REVIEW, **ROLLOUT AUTHORIZED BUT NOT EXECUTED**; physical iPhone acceptance remains a post-release phase gate — [draft PR #7](https://github.com/A13Xg/Daydle/pull/7), active [Phase5Exec.md](Phase5Exec.md) and [passing CI](https://github.com/A13Xg/Daydle/actions/runs/43803934602). **Dependencies:** 4.
+**Main status:** BLOCKED — [PR #7](https://github.com/A13Xg/Daydle/pull/7) merged at `75039ac1`, [main CI passed](https://github.com/A13Xg/Daydle/actions/runs/43809997908); authorized production [run 43810002170](https://github.com/A13Xg/Daydle/actions/runs/43810002170) failed at migration history preflight before any hosted SQL or Worker deployment. [Fix PR #8](https://github.com/A13Xg/Daydle/pull/8) adds guarded read-only verification and conditional metadata reconciliation. Physical iPhone acceptance remains a post-release phase gate — [merged PR #7](https://github.com/A13Xg/Daydle/pull/7), active [Phase5Exec.md](Phase5Exec.md) and [passing CI](https://github.com/A13Xg/Daydle/actions/runs/43803934602). **Dependencies:** 4.
 
 **Automated gates completed on PR #7:**
 - [x] Today from selected games in order with private manual played markers distinct from verified results.
@@ -132,7 +132,10 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 - [x] 84 frontend/security tests, two clean PostgreSQL 17 replay/authorization suites, build, lint, format and HTTP PWA smoke.
 - [x] Owner authorization for schema-first Phase 4/5 migration and Cloudflare Worker release received; no remote action was performed during preparation.
 - [x] Main-only, protected-environment, manual [release workflow](.github/workflows/release-phase5.yml) and migration-history allowlist/preflight tests committed; no new project credentials requested.
-- [ ] Execute release: owner reviews/merges PR #7, triggers the `main` release workflow, approves the `production` environment job, and verifies the live job reports completed migrations and healthy PWA endpoints.
+- [x] Owner reviewed/merged PR #7; `main` CI passed. Protected production job was dispatched, credentials validated and Supabase project linked successfully.
+- [x] Release failure isolated: the migration-history guard rejected Phase 2/3 tracking; **no migrations or Worker deployment ran**.
+- [x] Fix source in [PR #8](https://github.com/A13Xg/Daydle/pull/8): version-only diagnostics, strict baseline SQL/RLS/trigger read-only check, metadata-only repair of verified missing Phase 2/3 versions and fail-closed regression tests; [CI 43811905266](https://github.com/A13Xg/Daydle/actions/runs/43811905266) passed **98 tests/21 suites and both PG17 schema probe stages**.
+- [ ] Merge fix PR #8, re-dispatch the production release workflow on `main`, approve the reviewer gate and confirm **actual** SQL migration and Worker deploy success. Scope failures or mismatched remote schema are blockers, not permission to bypass checks.
 - [ ] Physical iPhone Safari/home-screen install, Google/Apple sign-in, publisher return, clipboard permissions, offline restoration, and account switching. All remain NOT VERIFIED. Keep Phase 5's final acceptance open. The owner-directed release-first sequence permits reviewed merge before iPhone verification without declaring the phase complete.
 
 

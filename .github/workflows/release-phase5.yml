@@ -83,7 +83,15 @@ jobs:
           set -euo pipefail
           supabase link --project-ref "$SUPABASE_PROJECT_ID"
           supabase migration list --linked > "$RUNNER_TEMP/daydle-before.txt"
-          node scripts/ops/verify-migration-plan.mjs "$RUNNER_TEMP/daydle-before.txt"
+          # The first Phase 2/3 migrations may have been applied directly to
+          # the hosted database without being recorded in Supabase's history.
+          # Never assume this is true: verify all required tables, RLS policies,
+          # functions and auth trigger using a read-only Management API query
+          # before repairing *only* the verified baseline history entries.
+          # Any mismatch or missing read permission stops before SQL/deploy.
+          node scripts/ops/reconcile-migration-history.mjs "$RUNNER_TEMP/daydle-before.txt"
+          supabase migration list --linked > "$RUNNER_TEMP/daydle-after-baseline.txt"
+          node scripts/ops/verify-migration-plan.mjs "$RUNNER_TEMP/daydle-after-baseline.txt"
           supabase db push --linked --dry-run
 
       - name: Apply reviewed migrations only
