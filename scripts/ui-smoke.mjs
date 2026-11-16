@@ -1,3 +1,4 @@
+/* global document, location, window, getComputedStyle */
 // Real Chromium/CDP viewport smoke; no test-framework dependency or network CDN.
 // Run against a started npm run preview -- --port 4173 server.
 import { spawn, spawnSync } from "node:child_process";
@@ -65,7 +66,6 @@ async function evaluate(client, expression) {
 
 function browserMetrics() {
   const visible = (selector) => [...document.querySelectorAll(selector)].filter((el) => el.getClientRects().length);
-  const nav = visible(".arcade-tabbar");
   const header = visible(".arcade-topbar");
   const buttons = visible("button");
   const tabs = visible(".tabbar-link");
