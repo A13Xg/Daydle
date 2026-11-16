@@ -183,7 +183,7 @@ async function visit(client, pathname, viewport) {
   }
   const kind = pathname.startsWith("/auth")
     ? "blank"
-    : ["/lineup", "/how-it-works", "/notifications", "/games/wordle"].includes(
+    : ["/lineup", "/history", "/how-it-works", "/notifications", "/games/wordle"].includes(
           pathname,
         )
       ? "stack"
@@ -289,6 +289,7 @@ try {
             "/today",
             "/games",
             "/lineup",
+            "/history",
             "/statistics",
             "/friends",
             "/account",
@@ -301,7 +302,7 @@ try {
     for (const pathname of paths) await visit(client, pathname, viewport);
   }
   console.log(
-    "UI-SMOKE: 16 route/viewport checks passed (Chromium, not Safari).",
+    "UI-SMOKE: 17 route/viewport checks passed (Chromium, not Safari).",
   );
 } finally {
   client?.close();
