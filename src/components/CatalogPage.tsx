@@ -42,6 +42,7 @@ export interface CatalogPageProps {
   client: SupabaseClient | null;
   userId: string | null;
   detailSlug?: string;
+  lineupOnly?: boolean;
 }
 
 export interface SelectionNoticeProps {
@@ -74,7 +75,7 @@ export function SelectionNotice({
   return null;
 }
 
-export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
+export function CatalogPage({ client, userId, detailSlug, lineupOnly = false }: CatalogPageProps) {
   const [catalogState, setCatalogState] = useState<CatalogState>({
     status: "loading",
   });
@@ -320,12 +321,14 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
 
   const filtered = filterCatalog(games, filters);
   return (
-    <div className="catalog-page">
+    <div className={lineupOnly ? "lineup-page" : "catalog-page"}>
       <header className="catalog-heading">
-        <h1>Discover daily games</h1>
+        <p className="eyebrow">{lineupOnly ? "MY DAILY RITUAL" : "THE PUZZLE LIBRARY"}</p>
+        <h1>{lineupOnly ? "Daily lineup editor" : "Discover daily games"}</h1>
         <p>
-          Explore games on their publishers' websites, save your favorites and
-          return to track results when support is available.
+          {lineupOnly
+            ? "Adjust your saved rotation. Each move is saved to your account and verified against the server."
+            : "Discover puzzles worth coming back to. Play each game on its publisher site and build your own ritual."}
         </p>
       </header>
 
@@ -340,7 +343,7 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
       )}
       {userId && (
         <section className="panel" aria-labelledby="my-games-heading">
-          <h2 id="my-games-heading">My games</h2>
+          <div className="today-toolbar"><h2 id="my-games-heading">My games</h2><a href={lineupOnly ? "/games" : "/lineup"}>{lineupOnly ? "Add more games" : "Edit lineup"}</a></div>
           {selectionLoading || selectionError ? (
             <SelectionNotice
               loading={selectionLoading}
@@ -348,12 +351,12 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
               onRetry={() => setRetry((n) => n + 1)}
             />
           ) : selectedGames.length === 0 ? (
-            <p>No saved games yet. Browse below and add your favorites.</p>
+            <p>No saved games yet. <a href="/games">Discover games</a> to start your lineup.</p>
           ) : (
             <ol className="selected-games">
               {selectedGames.map((game, index) => (
                 <li key={game.id}>
-                  <span className="selected-game-title">{game.name}</span>
+                  <span className={"game-avatar " + game.slug} aria-hidden="true">{game.name.slice(0, 2).toUpperCase()}</span><span className="selected-game-title">{game.name}</span>
                   {!canLaunchGame(game) && (
                     <span className="muted">
                       {" "}
@@ -410,6 +413,15 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
         </section>
       )}
 
+      {lineupOnly && !userId && (
+        <div className="panel">
+          <p>Sign in to save and reorder your personal lineup.</p>
+          <a href="/auth">Sign in with Apple or Google</a>
+        </div>
+      )}
+      {lineupOnly && saveError && <p className="notice error" role="alert">{saveError}</p>}
+      {!lineupOnly ? (
+        <>
       <section className="panel catalog-filters" aria-label="Catalog filters">
         <div className="field">
           <label htmlFor="catalog-search">Search games</label>
@@ -510,6 +522,9 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
               return (
                 <li key={game.id} className="catalog-card">
                   <article>
+                    <div className={"game-avatar " + game.slug} aria-hidden="true">
+                      {game.name.slice(0, 2).toUpperCase()}
+                    </div>
                     <h3>
                       <a href={`/games/${encodeURIComponent(game.slug)}`}>
                         {game.name}
@@ -525,7 +540,7 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
                     </p>
                     <div className="game-actions">
                       {launchable && href ? (
-                        <a
+                        <a className="action-link"
                           href={href}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -560,6 +575,14 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
           </ul>
         )}
       </section>
+        </>
+      ) : (
+        <section className="panel">
+          <h2>One lineup. Your pace.</h2>
+          <p>Use Up and Down to reorder your games. Publisher launches remain one game per tap. The list stays editable only while online and your account state is verified.</p>
+          <a className="secondary-link" href="/games">Browse more games</a>
+        </section>
+      )}
     </div>
   );
 }
