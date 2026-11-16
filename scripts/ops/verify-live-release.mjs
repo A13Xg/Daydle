@@ -40,7 +40,7 @@ async function checkJson(response, validate, label) {
   return validate(payload) ? null : `${label}: JSON data did not match the release contract`;
 }
 
-async function inspectHealth(response) {
+export async function inspectHealth(response) {
   return checkJson(
     response,
     (value) =>
@@ -52,7 +52,7 @@ async function inspectHealth(response) {
   );
 }
 
-async function inspectMissingApi(response) {
+export async function inspectMissingApi(response) {
   if (response.status !== 404 || !/\bapplication\/json\b/i.test(responseType(response))) {
     return `unknown API: HTTP ${response.status}, content-type ${responseType(response)}, expected JSON 404`;
   }
@@ -64,7 +64,7 @@ async function inspectMissingApi(response) {
   }
 }
 
-async function inspectManifest(response) {
+export async function inspectManifest(response) {
   return checkJson(
     response,
     (value) =>
@@ -77,7 +77,7 @@ async function inspectManifest(response) {
   );
 }
 
-async function inspectServiceWorker(response, expectedSource) {
+export async function inspectServiceWorker(response, expectedSource) {
   if (response.status !== 200 || !/(?:javascript|ecmascript)/i.test(responseType(response))) {
     return `service worker: HTTP ${response.status}, content-type ${responseType(response)}`;
   }
@@ -88,7 +88,7 @@ async function inspectServiceWorker(response, expectedSource) {
   return null;
 }
 
-async function inspectIcon(response, size) {
+export async function inspectIcon(response, size) {
   if (response.status !== 200 || !/image\/png/i.test(responseType(response))) {
     return `icon ${size}: HTTP ${response.status}, content-type ${responseType(response)}`;
   }
@@ -100,7 +100,7 @@ async function inspectIcon(response, size) {
   return null;
 }
 
-async function inspectPage(response, path) {
+export async function inspectPage(response, path) {
   if (response.status !== 200 || !/text\/html/i.test(responseType(response))) {
     return `${path}: HTTP ${response.status}, content-type ${responseType(response)}`;
   }
