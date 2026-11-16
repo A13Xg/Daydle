@@ -122,7 +122,16 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 
 
 ## Phase 5 — Today experience, PWA, and external-game navigation
-**Status:** NOT STARTED. **Dependencies:** 4.
+**Main status:** NOT STARTED (unmerged). **Branch execution:** IMPLEMENTED / CI VERIFIED, **BLOCKED** on authorized hosted migration/deployment and real-iPhone Safari + installed-PWA acceptance — [draft PR #7](https://github.com/A13Xg/Daydle/pull/7), active [Phase5Exec.md](Phase5Exec.md) and [passing CI](https://github.com/A13Xg/Daydle/actions/runs/43803584212). **Dependencies:** 4.
+
+**Automated gates completed on PR #7:**
+- [x] Today from selected games in order with private manual played markers distinct from verified results.
+- [x] Global user-tap clipboard entry, manual/denied/empty/oversized paths, publisher return hint, responsive fixed mobile action.
+- [x] Installable manifest, generated 180/192/512/maskable PNG icons, build-versioned service worker and public-only app-shell caching.
+- [x] Offline public catalog/Today snapshots and owner-keyed selected IDs without caching private game marks, raw input or spoiler-sensitive data.
+- [x] 84 frontend/security tests, two clean PostgreSQL 17 replay/authorization suites, build, lint, format and HTTP PWA smoke.
+- [ ] **Required manual gate:** Authorized migrations and Worker release, real iPhone Safari/home-screen install, provider auth, launch/return, clipboard permissions, offline restoration and account switching. All remain NOT VERIFIED. Keep draft.
+
 
 **Purpose:** Close the mobile game-launch-return loop without inventing iOS clipboard/browser capabilities.
 

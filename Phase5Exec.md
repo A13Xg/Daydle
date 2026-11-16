@@ -1,6 +1,6 @@
 # Phase 5 Execution Plan — Today experience, PWA, and external-game navigation
 
-**Status:** REVIEWED / IMPLEMENTATION IN PROGRESS (verification pending)  
+**Status:** IMPLEMENTED AND CI VERIFIED — BLOCKED ON LIVE iOS/PWA ACCEPTANCE (draft PR)  
 **Base:** reconciled `main` at `e076ccb3cfba8c3173442eb8ad77780727d8e309`; [Phase 4 PR #5](https://github.com/A13Xg/Daydle/pull/5) merged at `e0fcb2b`; main CI successful.  
 **Branch:** `phase/05-today-pwa` · **Draft PR:** [#7](https://github.com/A13Xg/Daydle/pull/7).  
 **Sources:** [IDEA.md](IDEA.md) sections 5–8, [roadmap.md](roadmap.md#phase-5--today-experience-pwa-and-external-game-navigation), [AGENTS.md](AGENTS.md), [Phase 4 archive](completedPhases/Phase4Exec.md).
@@ -47,14 +47,14 @@ iOS home-screen apps do **not** guarantee external-tab return handling and use a
 
 ## Acceptance criteria
 
-- [ ] Real database: 2 clean PG17 migrations and owner-private played markers; anon/other-user denial, only selected games markable, mark/unmark tested.
-- [ ] Today accounts: selected list in correct order, manual played state and unambiguous no-result-yet labels, empty/loading/error/retry/offline flows; signed-out visitor guidance.
-- [ ] External games: safe publisher links, cross-browser return/help CTA, no invented guaranteed PWA-to-Safari link capture.
-- [ ] Paste shell: user-gesture clipboard only, manual fallback, denied, empty, oversize, interrupted, closing-clears, never submit/log/store before Phase 7.
-- [ ] Manifest/valid PNG icons (192, 512, Apple 180), generated service worker, installability/HTTPS support, app shell direct-deep-link offline fallback.
-- [ ] Offline: previously cached **safe** catalog and selected IDs only; no authenticated Supabase/API/puzzle results or raw content intercepted/cached; user-scoped snapshot does not show when signed out/other account.
-- [ ] All frontend/Worker/unit/build/smoke/db CI pass; regression for service worker controls tested.
-- [ ] Source/diff/security and docs review, no attribution or unapproved production mutation.
+- [x] Real database: 2 clean PG17 migrations and owner-private played markers; anon/other-user denial, only selected games markable, mark/unmark tested.
+- [x] Today accounts: selected list in correct order, manual played state and unambiguous no-result-yet labels, empty/loading/error/retry/offline flows; signed-out visitor guidance.
+- [x] External games: safe publisher links, cross-browser return/help CTA, no invented guaranteed PWA-to-Safari link capture.
+- [x] Paste shell: user-gesture clipboard only, manual fallback, denied, empty, oversize, interrupted, closing-clears, never submit/log/store before Phase 7.
+- [x] Manifest/valid PNG icons (192, 512, Apple 180), generated service worker, installability/HTTPS support, app shell direct-deep-link offline fallback.
+- [x] Offline: previously cached **safe** catalog and selected IDs only; no authenticated Supabase/API/puzzle results or raw content intercepted/cached; user-scoped snapshot does not show when signed out/other account.
+- [x] All frontend/Worker/unit/build/smoke/db CI pass; regression for service worker controls tested.
+- [x] Source/diff/security and docs review, no attribution or unapproved production mutation.
 - [ ] Real iPhone Safari and installed PWA: install, external link, return, clipboard permission and offline/online restoration, Google/Apple installed-PWA authentication documented as **VERIFIED** only with actual device evidence; otherwise keep draft, flag blocked only at exit.
 
 ## Risks and explicit caveats
@@ -68,4 +68,52 @@ iOS home-screen apps do **not** guarantee external-tab return handling and use a
 
 ## Actual results, evidence and review disposition
 
-**Pending**. Record execution evidence and CI links; keep phase plan active until material verification gates are satisfied.
+**Phase branch:** `phase/05-today-pwa`; [draft PR #7](https://github.com/A13Xg/Daydle/pull/7). **Source implementation is complete and automated gates pass.** Full Phase 5 acceptance remains **BLOCKED** on authorized hosted deployment and real iPhone Safari/installed-PWA observation.
+
+### Delivered source
+
+- Forward-only `supabase/migrations/20261115050000_phase5_today_marks.sql` with a private RLS-protected, owner-owned `user_game_day_marks` table. Manual status is unique per user/game/device-local-day; existing selected-game FK cascade maintains integrity and it creates no verified result.
+- `/today` (also home) loads owner selections in order, shows external game launch links, an explicit manual played/unplayed toggle, no-result-yet status, optional participation, loading/empty/error/retry and safe read-only offline fallback.
+- Catalog browser and game details show bounded offline **public metadata**, with account-specific ordered selections only when the current authenticated identity matches. Offline editor actions are disabled, never silently queued.
+- Global `Paste Results` on all routes, including a fixed mobile action while scrolling, short-lived publisher return hint, explicit-gesture Clipboard API access, manual paste/denied/empty/oversize fallbacks, labeled accessible dialog, Escape/cancel/clear, no clipboard persistence/upload.
+- Reproducible standard PNG 180/192/512 + maskable icons, `app.webmanifest`, Apple installation metadata and root service worker generated with a SHA-256-derived cache identifier after Vite build.
+- Service worker intercepts only public same-origin app-shell routes/static assets. It excludes auth/callback/account, `/api/*`, Supabase/cross-origin, credential-bearing requests and non-GET/query-bearing requests; offline shell and snapshot explicitly contain no private results, raw share text or sensitive tokens.
+- Operations documentation `docs/pwa.md`, README and AGENTS.md updated for genuine Safari limitations, schema-before-app rollout and documented manual iOS matrix.
+
+### Executed verification
+
+**Final immutable-source CI:** https://github.com/A13Xg/Daydle/actions/runs/43803584212 — both `validate` and `database-security` SUCCESS on final audited source.
+
+| Gate | Observed |
+|---|---|
+| Locked install / strict TypeScript | PASS |
+| ESLint and immutable Prettier check | PASS |
+| Unit, API, UI, SW and privacy tests | **84 passed, 19 suites** |
+| Vite/Cloudflare Worker production build | PASS; SW generated for **9 hashed/static shell assets** under `daydle-shell-c7e1764097457c64` |
+| HTTP smoke | PASS; API/health, root + Today deep link, manifest/PNG dimensions, emitted service worker |
+| PostgreSQL 17 isolated replay | PASS on **two fresh databases** across all versioned migrations |
+| Manual marker authorization and integrity | PASS; owner read/mark/unmark, anonymous/other-user denial, selected-game FK, duplicate prevention, cascade, no fabricated results |
+| Source patch audit | PASS; no hardcoded keys, eval, unsafe HTML injection, automatic deployment commands or nonowner contributor attribution |
+
+### Security / UX audit and corrections
+
+- Rendered the user's Today activity only after the current account's identity is known; stateful route keys separate account sessions. Read-only public snapshots are projected to a strict list of catalog properties and user-selected IDs, bounded by size, age and owner key.
+- Corrected service-worker ESLint global declarations and committed canonical Prettier formatting rather than leaving a CI mutating step. Final CI is non-mutating.
+- Added read-only offline support in existing `CatalogPage` as well as Today. Saving and reordering are prohibited when only cached data or no network is available.
+- Made the mobile Paste control persist in the viewport while the page scrolls. Clipboard text stays only in React memory until dialog closes; no network API is connected.
+- Reviewed PR file list and patch for credential/log/authorization leaks. No hosted account, project configuration, migration or Worker deployment was modified.
+
+### Unverified material gates (must remain draft)
+
+- No release authorization was given to apply **Phase 4 catalog migration if pending, then Phase 5 marker migration**, and redeploy the associated Worker on protected production. The existing production instance is not guaranteed to contain either new schema or frontend.
+- No physical iPhone Safari or installed home-screen PWA was available to exercise OAuth, installation, real external publisher handoff/return, clipboard gesture/permission handling, offline reload or account-switch isolation. All eight device scenarios in [docs/pwa.md](docs/pwa.md) are **NOT VERIFIED**, not implicitly satisfied by browser API mocks or SW simulation.
+- Signed-in hosted marker changes, OAuth and saved-game persistence could not be verified end-to-end without the authorized schema-first deployment.
+- There is no history UI or canonical parser/ingestion yet; those belong to Phase 7 and Phase 6 respectively. History cannot be pre-cached until such a view exists.
+- No guarantee that Safari routes external pages back to installed PWAs; UI provides explicit home-screen/tab switcher guidance.
+
+### Disposition and next action
+
+**Keep PR #7 DRAFT, `Phase5Exec.md` ACTIVE at repository root, and Phase 5 NOT STARTED on main / BLOCKED on the branch.** Do not archive, mark ready, merge, deploy, or begin Phase 6 without new owner authorization or an explicit approved adjustment to real-device acceptance gates.
+
+To unblock full acceptance: obtain explicit approval for schema-first production migration and protected Worker deploy, then run the [eight real-iPhone acceptance scenarios](docs/pwa.md#manual-iphone-acceptance-matrix--not-verified) and record actual results. No new credentials are needed for the already implemented source/CI.
+
