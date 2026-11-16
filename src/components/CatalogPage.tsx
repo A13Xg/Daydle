@@ -151,7 +151,8 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
   }
 
   function toggleGame(id: string) {
-    if (!userId || saveLock.current || selectionLoading || selectionError) return;
+    if (!userId || saveLock.current || selectionLoading || selectionError)
+      return;
     const next = selectedIds.includes(id)
       ? selectedIds.filter((selected) => selected !== id)
       : [...selectedIds, id];

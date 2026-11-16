@@ -102,5 +102,4 @@ describe("catalog accessibility / outbound-link states", () => {
     expect(html).toContain('role="status"');
     expect(html).toContain("Loading your games");
   });
-
 });
