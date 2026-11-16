@@ -172,7 +172,7 @@ Daydle ships as a **web/PWA** (React, TypeScript, Vite, Cloudflare). For archite
 
 Rules that follow from supporting both:
 
-1. **Ship nothing from a runtime CDN.** Mockups load Tailwind (Play CDN), Plus Jakarta Sans and Material Symbols from the network for convenience only. The real app compiles Tailwind at build time and bundles the font files and an icon subset, so the iOS build works offline, loads instantly and passes App Store review. The Tailwind Play CDN must never ship.
+1. **Ship nothing from a runtime CDN.** Mockups load Tailwind (Play CDN), Plus Jakarta Sans and Material Symbols from the network for convenience only. The current React app uses compiled semantic CSS design tokens and bundles Plus Jakarta Sans and inline SVG icons. This preserves web/PWA offline reliability and future iOS packaging flexibility; it does not establish App Store compliance. The Tailwind Play CDN must never ship.
 2. **Relative, bundled assets only.** No hotlinked images. Mockups use `assets/` (emblem, placeholder avatars).
 3. **Feature-detect, never user-agent sniff.** Clipboard, share, vibration and notifications behave differently in Safari, a home-screen PWA and a `WKWebView`. Every such feature needs a graceful fallback (see Interaction).
 4. **No hover-only affordances.** Hover styles are enhancements; Tailwind is configured with `future.hoverOnlyWhenSupported` so touch devices never get sticky hover.

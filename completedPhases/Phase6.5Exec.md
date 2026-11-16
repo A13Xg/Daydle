@@ -101,3 +101,13 @@ Physical **iPhone Safari and home-screen PWA** acceptance has not been rerun on 
 
 - PR: [#13](https://github.com/A13Xg/Daydle/pull/13), requested human review; branch base remains merged Phase 6 main commit 99401d5.
 - All required source/browser CI gates PASS; real iPhone device testing remains NOT VERIFIED and deferred until before release. No production changes or new phase begun.
+
+
+## Reference-screen visual parity revision — November 16, 2026
+
+- Compared actual guest Today, Statistics and unconfigured Auth screenshots with their owner-approved `today`, `statistics` and `welcome_auth` reference PNGs and DESIGN.md rules. The previous screenshots had a generic sign-in hierarchy, a feature-placeholder void where metric cards were expected, undersized navigation/badge labels (9–10px), and header hit areas of 40–42px on narrow screens.
+- Replaced the auth layout with the reference's emblem + Daydle Arcade wordmark + ritual headline + branded Apple/Google icons; kept the real OAuth provider code and explicit unconfigured state. **Did not invent** the mockup's sample live counts, social badges, or unsupported email UI.
+- Reworked guest Today with a status strip, arcade hero and two secondary cards, retaining accurate signed-out privacy statements and real links; converted Statistics to a four-card Master Metrics placeholder and empty Guess Distribution grouping without fabricated values.
+- Increased mobile tab font to 12px and brand badge fonts to at least 11px; fixed mobile header icon targets to 44×44px, updated actual CDP geometry assertions, and added tests for the metric cards and provider branding. Added CSS `prefers-contrast: more` fallback.
+- [Canonical formatting and visual-capture CI #43948359080](https://github.com/A13Xg/Daydle/actions/runs/43948359080) passed **196/196 tests across 25 suites**, 16 Chromium viewport/route checks and both PostgreSQL security jobs. Fresh real compiled-app images and provenance are in [screenshots README](../docs/screenshots/README.md). Temporary screenshot and formatting instrumentation was subsequently removed; a clean-source CI run is required to close this revision.
+- Scope remains Phase 6.5 visual implementation. Authenticated visuals and real physical-iPhone acceptance remain **NOT VERIFIED** (owner-deferred), not success claims. PR #13 is unmerged, and no hosted deploy or migration occurred.

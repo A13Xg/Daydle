@@ -46,5 +46,13 @@ Manual review on a real iPhone is still needed after a separately authorized pre
 
 - [Today, guest-state mobile screenshot](screenshots/arcade-today-guest.png) — genuine CI-built app; no signed-in account or saved data.
 - [Statistics placeholder screenshot](screenshots/arcade-statistics-placeholder.png) — genuine CI-built app; does not imply statistics are operational.
-- Screenshots: Chromium 393×852, scale 2, safe-area emulation, captured by [CI #43942504930](https://github.com/A13Xg/Daydle/actions/runs/43942504930). They are documentation assets, not reference mockups.
+- Screenshots: Chromium 393×852, scale 2, safe-area emulation, recaptured after design audit in [CI #43948359080](https://github.com/A13Xg/Daydle/actions/runs/43948359080). They are documentation assets, not reference mockups.
 - Owner explicitly deferred physical iPhone Safari/installed-PWA tests for Phase 6.5 PR review. They remain NOT VERIFIED and are required before a subsequent release; existing Phase 5 device evidence cannot be reused as proof of redesigned UI behavior.
+
+
+## Approved screenshot parity audit
+
+- Current [auth reference comparison](screenshots/arcade-auth-unconfigured.png) matches the emblem/wordmark, action hierarchy and provider marks. The environment's disabled OAuth buttons indicate missing CI credentials, not a production OAuth regression.
+- [Guest Today](screenshots/arcade-today-guest.png) now uses a dashboard status strip, hero panel and secondary card grid instead of the previous oversized generic welcome. It does not imitate authenticated scores.
+- [Statistics](screenshots/arcade-statistics-placeholder.png) carries the approved 2×2 metric-card and distribution-section structure; values remain explicitly unavailable until the relevant feature phases.
+- All mobile nav labels use at least 11px; top-bar icon targets are >=44×44px. The Chromium viewport script now asserts these computed dimensions, and reduced-motion/increased-contrast CSS remains supported.

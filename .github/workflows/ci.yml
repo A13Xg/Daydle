@@ -24,14 +24,6 @@ jobs:
         run: npm run typecheck
       - name: Lint
         run: npm run lint
-      - name: Temporary canonical visual-alignment formatting
-        run: |
-          npx prettier --write src/components/AuthPage.tsx src/components/FeaturePendingPage.tsx src/components/TodayPage.tsx src/styles.css tests/auth-ui.test.ts tests/arcade-ui.test.ts scripts/ui-smoke.mjs
-          node --input-type=module <<'VISUAL_FORMAT'
-          import { readFileSync } from 'node:fs';
-          const files = ["src/components/AuthPage.tsx","src/components/FeaturePendingPage.tsx","src/components/TodayPage.tsx","src/styles.css","tests/auth-ui.test.ts","tests/arcade-ui.test.ts","scripts/ui-smoke.mjs"];
-          for (const path of files) console.log('VISUAL_FORMAT_JSON:' + JSON.stringify({ path, content: readFileSync(path, 'utf8') }));
-          VISUAL_FORMAT
       - name: Format check
         run: npm run format:check
       - name: Unit and API tests
@@ -44,7 +36,7 @@ jobs:
           PREVIEW_PID=$!
           trap 'kill "$PREVIEW_PID" 2>/dev/null || true' EXIT
           npm run smoke
-          DAYDLE_UI_CAPTURE=1 node scripts/ui-smoke.mjs
+          node scripts/ui-smoke.mjs
 
   database-security:
     runs-on: ubuntu-latest
