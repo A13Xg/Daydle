@@ -1,6 +1,6 @@
 # Phase 5 Execution Plan — Today experience, PWA, and external-game navigation
 
-**Status:** IMPLEMENTED AND CI VERIFIED — BLOCKED ON LIVE iOS/PWA ACCEPTANCE (draft PR)  
+**Status:** RELEASE CANDIDATE / READY FOR HUMAN REVIEW — automated checks passed; production and physical iPhone acceptance pending  
 **Base:** reconciled `main` at `e076ccb3cfba8c3173442eb8ad77780727d8e309`; [Phase 4 PR #5](https://github.com/A13Xg/Daydle/pull/5) merged at `e0fcb2b`; main CI successful.  
 **Branch:** `phase/05-today-pwa` · **Draft PR:** [#7](https://github.com/A13Xg/Daydle/pull/7).  
 **Sources:** [IDEA.md](IDEA.md) sections 5–8, [roadmap.md](roadmap.md#phase-5--today-experience-pwa-and-external-game-navigation), [AGENTS.md](AGENTS.md), [Phase 4 archive](completedPhases/Phase4Exec.md).
@@ -103,7 +103,7 @@ iOS home-screen apps do **not** guarantee external-tab return handling and use a
 - Made the mobile Paste control persist in the viewport while the page scrolls. Clipboard text stays only in React memory until dialog closes; no network API is connected.
 - Cleared the in-memory Paste component when the authenticated user changes, preventing clipboard preview text from surviving an account switch. Also corrected wording for an unconfirmed manual-marker write. Reviewed PR file list and patch for credential/log/authorization leaks. No hosted account, project configuration, migration or Worker deployment was modified.
 
-### Unverified material gates (must remain draft)
+### Unverified material gates (post-release acceptance; not phase completion)
 
 - **Release authorization is now granted by the owner**, but no hosted migration or deployment has run. The protected, main-only release workflow has been prepared on PR #7; execution requires the source to be merged into `main` and the existing production environment reviewer approval. The existing production site must still be treated as running the old schema/frontend until a successful live release job.
 - No physical iPhone Safari or installed home-screen PWA was available to exercise OAuth, installation, real external publisher handoff/return, clipboard gesture/permission handling, offline reload or account-switch isolation. All eight device scenarios in [docs/pwa.md](docs/pwa.md) are **NOT VERIFIED**, not implicitly satisfied by browser API mocks or SW simulation.
@@ -113,7 +113,7 @@ iOS home-screen apps do **not** guarantee external-tab return handling and use a
 
 ### Disposition and next action
 
-**Keep PR #7 DRAFT, `Phase5Exec.md` ACTIVE at repository root, and Phase 5 NOT STARTED on main / BLOCKED on the branch.** The owner has authorized the schema-first production rollout, but this does not waive the established separate PR-merge and protected-environment review requirements. Because real-device evidence is an exit gate, Phase 5 remains unverified. Do not silently auto-merge, archive or advance to Phase 6.
+**Release-first acceptance exception:** The owner authorized a production rollout before performing physical-iPhone tests. The only production environment requires main-only deployment, so PR #7 may become **READY FOR HUMAN REVIEW** as a release candidate with green CI, while `Phase5Exec.md` stays active and Phase 5 remains NOT COMPLETE until real-device evidence. **No automatic merge, deployment, protected-review bypass, plan archival or Phase 6 start is authorized.** Owner must review/merge PR #7, then dispatch/approve the protected release, then test the iPhone.
 
 To unblock the **approved release**, first complete review and merge of PR #7 (required by the main-only production environment), then manually dispatch the new [Release Phase 5 — schema-first production rollout](.github/workflows/release-phase5.yml) on `main` and approve the protected production job. It fail-closes if remote migration history differs from exactly the reviewed Phase 2–5 chain, applies pending SQL before deploying, and verifies live PWA endpoints. Finally run the [eight real-iPhone acceptance scenarios](docs/pwa.md#manual-iphone-acceptance-matrix--not-verified) and record actual results. The Supabase integration was installed, but no direct database actions were exposed in this chat when the release was prepared.
 

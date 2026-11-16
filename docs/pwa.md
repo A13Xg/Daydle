@@ -44,3 +44,7 @@ iOS installed PWAs may have isolated browser storage distinct from Safari tabs a
 ## Operational notes
 
 PR CI never deploys the PWA automatically. The owner **has explicitly authorized** a Phase 4-then-Phase 5 migration and Worker rollout, but no such hosted changes have yet occurred. Because the environment is restricted to `main`, Phase 5 must first be reviewed and merged by the owner; the separate merge prohibition remains in force. Then manually run [Release Phase 5 — schema-first production rollout](../.github/workflows/release-phase5.yml) from GitHub Actions on `main` (or `gh workflow run release-phase5.yml --ref main`), and approve the protected `production` job. The workflow verifies the exact migration history, dry-runs, applies pending approved migrations, verifies their presence, deploys the Worker and checks live URLs. Do not test as a completed release unless the workflow succeeds. Do not claim Phase 5 passed its real-device gate without observed iPhone evidence.
+
+### Release-first review exception
+
+This is the owner's single production environment, so physical iPhone PWA acceptance is impossible until a production deployment. The owner specifically authorized the production release first and will test afterward. For this phase only, PR #7 may be marked ready for human code review and manually merged with green CI; the phase remains unverified until the eight real-device checks pass. Protected production reviewer approval remains mandatory. This does not permit automatic merge or an unreviewed PR-triggered deployment.

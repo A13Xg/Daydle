@@ -122,7 +122,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 
 
 ## Phase 5 — Today experience, PWA, and external-game navigation
-**Main status:** NOT STARTED (unmerged). **Branch execution:** IMPLEMENTED / CI VERIFIED, **ROLLOUT AUTHORIZED BUT NOT EXECUTED**; blocked on protected main-branch release and real-iPhone Safari + installed-PWA acceptance — [draft PR #7](https://github.com/A13Xg/Daydle/pull/7), active [Phase5Exec.md](Phase5Exec.md) and [passing CI](https://github.com/A13Xg/Daydle/actions/runs/43803934602). **Dependencies:** 4.
+**Main status:** NOT STARTED (unmerged). **Branch execution:** RELEASE CANDIDATE / IN REVIEW, **ROLLOUT AUTHORIZED BUT NOT EXECUTED**; physical iPhone acceptance remains a post-release phase gate — [draft PR #7](https://github.com/A13Xg/Daydle/pull/7), active [Phase5Exec.md](Phase5Exec.md) and [passing CI](https://github.com/A13Xg/Daydle/actions/runs/43803934602). **Dependencies:** 4.
 
 **Automated gates completed on PR #7:**
 - [x] Today from selected games in order with private manual played markers distinct from verified results.
@@ -133,7 +133,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 - [x] Owner authorization for schema-first Phase 4/5 migration and Cloudflare Worker release received; no remote action was performed during preparation.
 - [x] Main-only, protected-environment, manual [release workflow](.github/workflows/release-phase5.yml) and migration-history allowlist/preflight tests committed; no new project credentials requested.
 - [ ] Execute release: owner reviews/merges PR #7, triggers the `main` release workflow, approves the `production` environment job, and verifies the live job reports completed migrations and healthy PWA endpoints.
-- [ ] Physical iPhone Safari/home-screen install, Google/Apple sign-in, publisher return, clipboard permissions, offline restoration, and account switching. All remain NOT VERIFIED. Keep Phase 5's final acceptance open.
+- [ ] Physical iPhone Safari/home-screen install, Google/Apple sign-in, publisher return, clipboard permissions, offline restoration, and account switching. All remain NOT VERIFIED. Keep Phase 5's final acceptance open. The owner-directed release-first sequence permits reviewed merge before iPhone verification without declaring the phase complete.
 
 
 **Purpose:** Close the mobile game-launch-return loop without inventing iOS clipboard/browser capabilities.
