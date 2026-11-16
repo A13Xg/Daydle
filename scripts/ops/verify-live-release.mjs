@@ -95,7 +95,11 @@ export async function inspectServiceWorker(response, expectedSource) {
     return `service worker: HTTP ${response.status}, content-type ${responseType(response)}`;
   }
   const actual = await response.text();
-  if (actual !== expectedSource) {
+  if (!/daydle-shell-[a-f0-9]{16}/.test(actual) ||
+      actual.includes("__DAYDLE_PWA_CONFIG__")) {
+    return "service worker: invalid or unconfigured deployed script";
+  }
+  if (expectedSource !== undefined && actual !== expectedSource) {
     return "service worker: deployed version differs from current build";
   }
   return null;
@@ -222,7 +226,12 @@ if (invoked === import.meta.url) {
       );
     } else {
       await verifyLiveRelease({
-        expectedServiceWorker: readFileSync("dist/client/sw.js", "utf8"),
+        // CI public probes have no VITE_* values and therefore produce
+        // different hashed assets than the protected production build.
+        // Production release MUST compare the exact built SW version.
+        expectedServiceWorker: process.argv.includes("--public-only")
+          ? undefined
+          : readFileSync("dist/client/sw.js", "utf8"),
       });
     }
   } catch (error) {
