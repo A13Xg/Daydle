@@ -41,3 +41,10 @@ The top bar uses bundled branding, search and account shortcuts. The notificatio
 GitHub CI executes TypeScript typecheck, ESLint, immutable Prettier, the existing API/UX/clipboard/privacy/PWA unit tests, production build, PWA smoke and two isolated PostgreSQL 17 RLS databases. Chromium's real layout engine should additionally validate 320×740, 393×852 and 1024×768 route/shell rendering with no horizontal overflow or unsafe mobile buttons. These are browser-emulation checks, **not** a substitute for actual post-redesign Safari or installed-PWA device acceptance.
 
 Manual review on a real iPhone is still needed after a separately authorized preview/production deployment: install/launch, Apple and Google OAuth, publisher tab handoff/return, Paste permission/denied flow, safe-area header/nav/keyboard, offline restore, account isolation and selected-game edits. An older Phase 5 physical-device pass does **not** certify redesigned Phase 6.5 behavior. No hosted deployment is authorized merely by merging this PR.
+
+## Implemented UI screenshots and device validation status
+
+- [Today, guest-state mobile screenshot](screenshots/arcade-today-guest.png) — genuine CI-built app; no signed-in account or saved data.
+- [Statistics placeholder screenshot](screenshots/arcade-statistics-placeholder.png) — genuine CI-built app; does not imply statistics are operational.
+- Screenshots: Chromium 393×852, scale 2, safe-area emulation, captured by [CI #43942504930](https://github.com/A13Xg/Daydle/actions/runs/43942504930). They are documentation assets, not reference mockups.
+- Owner explicitly deferred physical iPhone Safari/installed-PWA tests for Phase 6.5 PR review. They remain NOT VERIFIED and are required before a subsequent release; existing Phase 5 device evidence cannot be reused as proof of redesigned UI behavior.

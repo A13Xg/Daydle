@@ -1,10 +1,10 @@
 # Phase 6.5 Execution Plan — Obsidian Arcade UI/UX overhaul
 
-**Status:** BLOCKED ON REAL-DEVICE ACCEPTANCE — implementation and automated source checks pass; draft PR remains open until redesigned iOS Safari/installed-PWA testing is documented.
+**Status:** IN REVIEW — owner explicitly deferred the physical-iPhone gate for this PR. Device validation remains NOT VERIFIED and is required before a future release. Source, UI browser checks and security CI passed.
 **Branch/PR:** `phase/06.5-obsidian-arcade-ui` · [PR #13](https://github.com/A13Xg/Daydle/pull/13) (draft).
 **Base:** `main` `99401d5b31242c139f77d3700c2f2a7e3c12ada6`, verified merge of parser [PR #12](https://github.com/A13Xg/Daydle/pull/12). [Main CI 43930997408](https://github.com/A13Xg/Daydle/actions/runs/43930997408) passed.
-**Product/security authority:** [IDEA.md](IDEA.md), [AGENTS.md](AGENTS.md), [roadmap.md](roadmap.md), [Phase 6 archive](completedPhases/Phase6Exec.md).
-**Visual authority:** approved [Obsidian Arcade tokens](referenceFiles/Daydle%20UI-UX%20Reference/DESIGN.md) and all thirteen mockup PNG/HTML examples.
+**Product/security authority:** [IDEA.md](../IDEA.md), [AGENTS.md](../AGENTS.md), [roadmap.md](../roadmap.md), [Phase 6 archive](../completedPhases/Phase6Exec.md).
+**Visual authority:** approved [Obsidian Arcade tokens](../referenceFiles/Daydle%20UI-UX%20Reference/DESIGN.md) and all thirteen mockup PNG/HTML examples.
 
 ## Preflight findings and decisions
 
@@ -60,7 +60,7 @@
 - Replaced the former three-link header with fixed safe-area-aware top app bar, five-tab primary bottom navigation, separate stack-header routes, and blank authentication shell. Added dedicated saved-game lineup editor based on the existing authenticated, atomic reconciled selection RPC.
 - Updated Today, Discover/catalog/detail, OAuth, Account and Paste visual composition; preserved owner-private manual played markers, publisher links, explicit clipboard gesture/manual fallback, existing backend, offline read-only snapshots, per-user remounting, and safe API caching exclusions.
 - Future Statistics and Friends tabs show honest placeholder states; Notifications and How It Works are stack routes. No invented scores, counts, achievements, friend requests, auto-launch, OCR, push alerts or additional authentication options.
-- Added source-level route/accessibility/PWA tests and a real headless Chromium CDP smoke with responsive width assertions at 320, 393 and 1024 px; safe-area insets emulated in Chrome. Added precise route and portability documentation in [docs/ui-architecture.md](docs/ui-architecture.md).
+- Added source-level route/accessibility/PWA tests and a real headless Chromium CDP smoke with responsive width assertions at 320, 393 and 1024 px; safe-area insets emulated in Chrome. Added precise route and portability documentation in [docs/ui-architecture.md](../docs/ui-architecture.md).
 
 ### Automated verification — PASS
 
@@ -79,10 +79,25 @@
 - Third-party font retains its upstream SIL OFL licensing notice; no prohibited contributor/tool attribution was added.
 - `main` remains at Phase 6 merge `99401d5` pending owner action on PR #13.
 
-### Material acceptance gate — NOT VERIFIED
+### Owner-deferred iPhone acceptance — NOT VERIFIED (required before release)
 
 Physical **iPhone Safari and home-screen PWA** acceptance has not been rerun on the new interface. Chromium desktop emulation does not establish actual safe-area/keyboard behavior, OAuth return, publisher external-context return, clipboard permission/fallback, offline restore or account isolation under the redesigned navigation. The earlier owner-reported Phase 5 iPhone pass applied to an earlier interface and is not a Phase 6.5 pass. End-to-end authenticated UI states were not available to headless public CI without connected account credentials.
 
 **Next operator checkpoint:** After the owner explicitly authorizes a preview/production rollout or other device-test environment, exercise the redesigned UI on a real iPhone: navigation/safe areas, Apple/Google sign-in, lineup editing, publisher handoff/return, clipboard permission and manual paste, offline restart, and account switching. Record results; do not claim those tests passed now.
 
-**Disposition:** Implementation and source-level CI checks pass, but **Phase 6.5 is BLOCKED ON DEVICE ACCEPTANCE**, so `Phase6.5Exec.md` stays active at repository root and [PR #13](https://github.com/A13Xg/Daydle/pull/13) remains DRAFT. No merge, deployment, Phase 7 start, archive or COMPLETE status is authorized by automated CI alone.
+**Revised disposition (owner instruction, after original report):** The owner explicitly deferred real-iPhone testing for PR #13 code review. This is a scope-specific acceptance-gate deferral, **not a PASS** and not a release/deployment authorization. Implementation and source-level browser/security checks are sufficient to request PR review; archive this plan with the unverified device gate documented. Owner merge approval is still required, and real iPhone acceptance must be revisited before any release. Phase 7 is not started as part of this change.
+
+## Final UI screenshot and independent review evidence — November 16, 2026
+
+- [Screenshot capture CI #43942504930](https://github.com/A13Xg/Daydle/actions/runs/43942504930) passed both validation and isolated PostgreSQL security jobs. Built React app screenshots were captured in headless Chromium at 393×852 CSS pixels with 2× device scale and iOS safe-area emulation.
+- [Today guest screen](../../docs/screenshots/arcade-today-guest.png) and [Statistics placeholder](../../docs/screenshots/arcade-statistics-placeholder.png) were inspected for layout, accessible tab/header structure, contrast, text readability, background, spacing and action visibility; screenshots were embedded in PR #13. They are real output from the compiled app, **not the reference mockups**.
+- The CI environment lacks Supabase public configuration and user login; the screenshot evidence only covers guest/pending states. The real signed-in Today rotation and OAuth callbacks were **not visually tested in these captures**.
+- A temporary screenshot-enabled CI/smoke variant was removed after capturing screenshots. The **final clean source CI #43942975320** at commit b0faa725e78efac7a06d2d0135922f7a25a563f8 passed both jobs, immutable formatting, typecheck, lint, 195 tests in 25 suites, production build/PWA smoke and 16 Chromium viewport/route cases (320×740, 393×852, 1024×768).
+- PR diff reviewed: no migrations, Worker route edits, native iOS packaging, third-party runtime CDN, leaked credentials, tool attribution, or unnecessary package/lockfile changes. The screenshots and font license remain source-available, with the screenshots excluded from the PWA precache.
+- **Owner decision:** real-iPhone Safari and home-screen PWA acceptance is explicitly **DEFERRED for Phase 6.5 PR review**, not passed. It remains a pre-release checkpoint covering touch/focus, browser/PWA safe areas, Apple/Google sign-in, publisher handoff/return, explicit clipboard gesture, offline restore and account isolation.
+- The explicit owner deferral supersedes the original plan's requirement to keep the PR draft solely for this device gate. Source completion permits an IN REVIEW status, archived plan and ready-for-review PR, **without authorizing merge or deployment**.
+
+### Final state
+
+- PR: [#13](https://github.com/A13Xg/Daydle/pull/13), requested human review; branch base remains merged Phase 6 main commit 99401d5.
+- All required source/browser CI gates PASS; real iPhone device testing remains NOT VERIFIED and deferred until before release. No production changes or new phase begun.

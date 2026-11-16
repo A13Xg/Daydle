@@ -33,7 +33,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 4 | Game catalog, selection, and discovery | 3 | COMPLETE — [PR #5](https://github.com/A13Xg/Daydle/pull/5), merge `e0fcb2b` |
 | 5 | Today experience, PWA, and external-game navigation | 4 | COMPLETE — [PR #7](https://github.com/A13Xg/Daydle/pull/7) merged; [release](https://github.com/A13Xg/Daydle/actions/runs/43814332227) deployed; [PR #10](https://github.com/A13Xg/Daydle/pull/10) merged; owner-reported 8/8 iPhone PWA tests PASS; [archive](completedPhases/Phase5Exec.md) |
 | 6 | Deterministic parser registry and initial game coverage | 5 | COMPLETE — [PR #12](https://github.com/A13Xg/Daydle/pull/12), merge `99401d5`, [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43930997408) passed, [archive](completedPhases/Phase6Exec.md) |
-| 6.5 | Obsidian Arcade UI/UX overhaul | 6 | BLOCKED ON DEVICE ACCEPTANCE — source and CI verified in [draft PR #13](https://github.com/A13Xg/Daydle/pull/13), real redesigned-iPhone tests not verified; no change to main |
+| 6.5 | Obsidian Arcade UI/UX overhaul | 6 | IN REVIEW — [PR #13](https://github.com/A13Xg/Daydle/pull/13), [final clean CI](https://github.com/A13Xg/Daydle/actions/runs/43942975320); iPhone retest explicitly owner-deferred (NOT VERIFIED, required before release); not yet merged into main |
 | 7 | Result ingestion, history, and correction lifecycle | 6.5 | NOT STARTED |
 | 8 | Personal statistics, streaks, and achievements | 7 | NOT STARTED |
 | 9 | Public profiles and instant friendship | 8 | NOT STARTED |
@@ -175,7 +175,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Fixture suite verifies all supported games, false-positive and malformed-input handling, confidence routing, puzzle resolution, and bounded execution.
 
 ## Phase 6.5 — Obsidian Arcade UI/UX overhaul
-**Status:** BLOCKED ON PHYSICAL DEVICE ACCEPTANCE — [draft PR #13](https://github.com/A13Xg/Daydle/pull/13) implements UI, [CI #43936827206](https://github.com/A13Xg/Daydle/actions/runs/43936827206) passed 195 tests and 16 Chromium checks, but redesigned iPhone Safari/PWA testing remains NOT VERIFIED. Phase plan remains [Phase6.5Exec.md](Phase6.5Exec.md) at root; no UI changes on main yet. **Dependencies:** 6. **Visual authority:** [Obsidian Arcade](referenceFiles/Daydle%20UI-UX%20Reference/DESIGN.md) and 13 approved example screens.
+**Status:** IN REVIEW on [PR #13](https://github.com/A13Xg/Daydle/pull/13), source validated by [CI #43942975320](https://github.com/A13Xg/Daydle/actions/runs/43942975320) (195 tests/25 suites, 16 Chromium route/viewport cases, two database security jobs). The physical iPhone Safari/PWA gate was expressly deferred by the owner for PR review; it is **NOT VERIFIED** and must be revisited before any release. [Archived plan](completedPhases/Phase6.5Exec.md), with real-browser screenshot provenance [here](docs/screenshots/README.md). No UI changes on main until merge. **Dependencies:** 6. **Visual authority:** [Obsidian Arcade](referenceFiles/Daydle%20UI-UX%20Reference/DESIGN.md) and 13 approved example screens.
 
 **Purpose:** Build the permanent mobile-first visual system before adding result history, statistics and social interfaces.
 
