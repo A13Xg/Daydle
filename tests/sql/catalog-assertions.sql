@@ -147,10 +147,7 @@ END $$;
 ROLLBACK;
 
 -- Existing favorites may preserve a later-retired game; new owners cannot add it.
-BEGIN;
-SELECT public.admin_retire_game('40000000-0000-4000-8000-000000000011');
-ROLLBACK;
--- Run with owner role to avoid role authorization when asserting metadata.
+-- Modify catalog under migration owner only for this test, then roll it back.
 BEGIN;
 UPDATE public.games SET status='retired'
 WHERE id='40000000-0000-4000-8000-000000000011';
