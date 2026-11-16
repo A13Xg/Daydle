@@ -24,27 +24,26 @@ Apply `supabase/migrations/20261115050000_phase5_today_marks.sql` **after** Phas
 
 Testing without credentials: `npm ci`, `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm test`, `npm run build`, `npm run preview -- --port 4173`, `npm run smoke`, and `bash scripts/test-db.sh` on disposable PG17.
 
-## Manual iPhone acceptance matrix — NOT VERIFIED
+## Manual iPhone acceptance matrix — OWNER-ATTESTED PASS
 
-These checks **cannot be marked passed from CI alone** and remain outstanding until observed on a real device and a properly migrated, authorized environment:
+On November 16, 2026 the owner reported all eight scenarios **passed on a physical iPhone** following the authorized release. This is owner-attested manual verification, not an independently collected device log or CI simulation:
 
 | # | Scenario | Expected result | Status |
 |---|---|---|---|
-| 1 | Open Daydle in iPhone Safari and add to home screen | Standalone app opens with Daydle icon and Today page | NOT VERIFIED |
-| 2 | Google OAuth from installed PWA | Provider completes and app resumes authenticated session without browser-storage confusion | NOT VERIFIED |
-| 3 | Apple OAuth from installed PWA | Provider completes and app resumes authenticated session (private relay accepted) | NOT VERIFIED |
-| 4 | Open a selected publisher game, play and return | External context opened if supported; app return/resume/Paste control visible | NOT VERIFIED |
-| 5 | Tap Paste from clipboard | Explicit tap reads supported clipboard or shows permission/manual fallback; no automatic read | NOT VERIFIED |
-| 6 | Turn on airplane mode after visiting Today/catalog and reopen | Generic app shell loads with previously viewed safe game list; no fabricated result state | NOT VERIFIED |
-| 7 | Switch between two accounts on one device | No other account's game list, manual markers or copied text is displayed | NOT VERIFIED |
-| 8 | Reconnect and retry Today | Private status reloaded; no queued offline writes replayed | NOT VERIFIED |
+| 1 | Open Daydle in iPhone Safari and add to home screen | Standalone app opens with Daydle icon and Today page | PASS — owner-reported |
+| 2 | Google OAuth from installed PWA | Provider completes and app resumes authenticated session without browser-storage confusion | PASS — owner-reported |
+| 3 | Apple OAuth from installed PWA | Provider completes and app resumes authenticated session (private relay accepted) | PASS — owner-reported |
+| 4 | Open a selected publisher game, play and return | External context opened if supported; app return/resume/Paste control visible | PASS — owner-reported |
+| 5 | Tap Paste from clipboard | Explicit tap reads supported clipboard or shows permission/manual fallback; no automatic read | PASS — owner-reported |
+| 6 | Turn on airplane mode after visiting Today/catalog and reopen | Generic app shell loads with previously viewed safe game list; no fabricated result state | PASS — owner-reported |
+| 7 | Switch between two accounts on one device | No other account's game list, manual markers or copied text is displayed | PASS — owner-reported |
+| 8 | Reconnect and retry Today | Private status reloaded; no queued offline writes replayed | PASS — owner-reported |
 
 iOS installed PWAs may have isolated browser storage distinct from Safari tabs and do not capture arbitrary Safari URLs. No guarantee of automatic return is made. References: [web.dev PWA installation](https://web.dev/learn/pwa/installation/), [MDN service worker caching](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Caching).
 
-## Operational notes
+## Operational notes and completed release
 
-PR CI never deploys the PWA automatically. The owner **has explicitly authorized** a Phase 4-then-Phase 5 migration and Worker rollout, but no such hosted changes have yet occurred. Because the environment is restricted to `main`, Phase 5 must first be reviewed and merged by the owner; the separate merge prohibition remains in force. Then manually run [Release Phase 5 — schema-first production rollout](../.github/workflows/release-phase5.yml) from GitHub Actions on `main` (or `gh workflow run release-phase5.yml --ref main`), and approve the protected `production` job. The workflow verifies the exact migration history, dry-runs, applies pending approved migrations, verifies their presence, deploys the Worker and checks live URLs. Do not test as a completed release unless the workflow succeeds. Do not claim Phase 5 passed its real-device gate without observed iPhone evidence.
-
-### Release-first review exception
-
-This is the owner's single production environment, so physical iPhone PWA acceptance is impossible until a production deployment. The owner specifically authorized the production release first and will test afterward. For this phase only, PR #7 may be marked ready for human code review and manually merged with green CI; the phase remains unverified until the eight real-device checks pass. Protected production reviewer approval remains mandatory. This does not permit automatic merge or an unreviewed PR-triggered deployment.
+- The owner merged [PR #7](https://github.com/A13Xg/Daydle/pull/7) and [PR #10](https://github.com/A13Xg/Daydle/pull/10); [main CI](https://github.com/A13Xg/Daydle/actions/runs/43833255126) later passed following reference PR #11.
+- The authorized [release 43814332227](https://github.com/A13Xg/Daydle/actions/runs/43814332227) applied Phase 4/5 migrations and deployed Cloudflare Worker `daydle-app`. The final immediate smoke false negative occurred after deployment; later public probes passed and PR #10 hardened the validator.
+- The owner reported the eight physical-device checks above passed. Earlier interim notes are retained in [completedPhases/Phase5Exec.md](../completedPhases/Phase5Exec.md) for traceability.
+- This documentation closure does not authorize any further migration, production deployment or provider changes.

@@ -1,14 +1,14 @@
 # Daydle UI/UX Reference
 
-> **Reference material only. Nothing in this folder is a requirement.**
-> These screens and the design system are exploratory. They do **not** need to be implemented, matched or ported unless the owner explicitly asks for a specific screen or style in the current instruction.
+> **Owner-approved UI/UX design standard and example collection.**
+> Obsidian Arcade and these 13 screens define the intended visual direction for Phase 6.5. They do not independently authorize mockup-only features or serve as production React code.
 
 ## How to use this folder
 
-- **Default: ignore it.** Phase work follows [IDEA.md](../IDEA.md), [roadmap.md](../roadmap.md) and [AGENTS.md](../AGENTS.md). Those always win over anything here.
-- **Build from it only on explicit request**, for example "build the Today screen from the reference". Completing a phase or building a feature is not a request to copy these screens.
-- **Do not treat it as approved design.** Visual design is intentionally deferred in the product baseline. Do not adopt the palette, type or layout on your own initiative.
-- **Read-only snapshot.** Do not edit these files to track implementation.
+- **Visual authority:** apply DESIGN.md tokens, three shells, screen structure and component patterns when Phase 6.5 or later UI work calls for them.
+- **Functional authority:** [IDEA.md](../IDEA.md), [roadmap.md](../roadmap.md), and [AGENTS.md](../AGENTS.md) govern behavior and feature scope. Treat sample counters, rankings, friend requests, reactions and notification demos as unapproved.
+- **Implementation:** rebuild in React using bundled assets, tested state and accessibility behavior. Standalone Tailwind Play HTML and screenshots are references, not shippable code.
+- **Reference snapshot:** preserve the examples; change the design baseline only through a reviewed revision.
 
 ## What is here
 
@@ -34,7 +34,7 @@ The tab screens link to each other, so you can click through them in a browser.
 
 ## Platform: web and iOS from one codebase
 
-The product ships as a web app and also builds for iOS through Xcode (a `WKWebView` shell, such as Capacitor, around the same bundle). The mockups are written to that constraint: viewport and safe-area handling, 16px inputs, 44pt hit areas, touch-safe reordering, accessible controls and no hotlinked assets. The rules, and the App Store requirements they come from, are in `DESIGN.md`.
+The product currently ships as a web/PWA. Future iOS packaging may be explored separately, but is **not scoped or authorized now**. Preserve compatibility with a possible WKWebView wrapper when choosing web technologies. The mockups are written with that portability goal: viewport and safe-area handling, 16px inputs, 44pt hit areas, touch-safe reordering, accessible controls and no hotlinked assets. The rules, and the App Store requirements they come from, are in `DESIGN.md`.
 
 Two mockup-only shortcuts must **not** ship: the Tailwind Play CDN and the Google Fonts and Material Symbols links. The real app compiles Tailwind and bundles fonts and icons.
 
@@ -48,4 +48,4 @@ These are visible in the mockups but are **not** in `IDEA.md` or `roadmap.md`. T
 - **Blocking and reporting:** the baseline includes them; the mockups do not show them.
 - **Reactions:** "Cheer" and "Salute" are not in the baseline.
 - **Account screen:** it lists infrastructure, framework and monetization rows that are developer-facing, not user settings.
-- **Native apps:** `IDEA.md` lists native apps as an initial-release non-goal. The iOS/Xcode target above is a later step and needs a roadmap decision before work starts.
+- **Native apps:** not part of the current implementation roadmap. Avoid incompatible web architecture; do not begin native packaging, testing or release work until separately authorized.

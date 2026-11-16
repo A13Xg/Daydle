@@ -1,9 +1,9 @@
 # Phase 5 Execution Plan — Today experience, PWA, and external-game navigation
 
-**Status:** DEPLOYED / LIVE PUBLIC ENDPOINTS VERIFIED — physical iPhone installed-PWA acceptance still pending  
+**Status:** COMPLETE — owner-reported all eight real-iPhone Safari/installed-PWA acceptance checks PASS on November 16, 2026. Historical interim states below are superseded by the final closure record.  
 **Base:** reconciled `main` at `e076ccb3cfba8c3173442eb8ad77780727d8e309`; [Phase 4 PR #5](https://github.com/A13Xg/Daydle/pull/5) merged at `e0fcb2b`; main CI successful.  
 **Branch:** `phase/05-today-pwa` · **Release-candidate PR:** [#7](https://github.com/A13Xg/Daydle/pull/7).  
-**Sources:** [IDEA.md](IDEA.md) sections 5–8, [roadmap.md](roadmap.md#phase-5--today-experience-pwa-and-external-game-navigation), [AGENTS.md](AGENTS.md), [Phase 4 archive](completedPhases/Phase4Exec.md).
+**Sources:** [IDEA.md](../IDEA.md) sections 5–8, [roadmap.md](../roadmap.md#phase-5--today-experience-pwa-and-external-game-navigation), [AGENTS.md](../AGENTS.md), [Phase 4 archive](../completedPhases/Phase4Exec.md).
 
 ## Preflight and constraints
 
@@ -106,7 +106,7 @@ iOS home-screen apps do **not** guarantee external-tab return handling and use a
 ### Unverified material gates (post-release acceptance; not phase completion)
 
 - **Release authorization is now granted by the owner**, but no hosted migration or deployment has run. The protected, main-only release workflow has been prepared on PR #7; execution requires the source to be merged into `main` and the existing production environment reviewer approval. The existing production site must still be treated as running the old schema/frontend until a successful live release job.
-- No physical iPhone Safari or installed home-screen PWA was available to exercise OAuth, installation, real external publisher handoff/return, clipboard gesture/permission handling, offline reload or account-switch isolation. All eight device scenarios in [docs/pwa.md](docs/pwa.md) are **NOT VERIFIED**, not implicitly satisfied by browser API mocks or SW simulation.
+- No physical iPhone Safari or installed home-screen PWA was available to exercise OAuth, installation, real external publisher handoff/return, clipboard gesture/permission handling, offline reload or account-switch isolation. All eight device scenarios in [docs/pwa.md](../docs/pwa.md) are **NOT VERIFIED**, not implicitly satisfied by browser API mocks or SW simulation.
 - Signed-in hosted marker changes, OAuth and saved-game persistence could not be verified end-to-end without the authorized schema-first deployment.
 - There is no history UI or canonical parser/ingestion yet; those belong to Phase 7 and Phase 6 respectively. History cannot be pre-cached until such a view exists.
 - No guarantee that Safari routes external pages back to installed PWAs; UI provides explicit home-screen/tab switcher guidance.
@@ -115,7 +115,7 @@ iOS home-screen apps do **not** guarantee external-tab return handling and use a
 
 **Release-first acceptance exception:** The owner authorized a production rollout before performing physical-iPhone tests. The only production environment requires main-only deployment, so PR #7 may become **READY FOR HUMAN REVIEW** as a release candidate with green CI, while `Phase5Exec.md` stays active and Phase 5 remains NOT COMPLETE until real-device evidence. **No automatic merge, deployment, protected-review bypass, plan archival or Phase 6 start is authorized.** Owner must review/merge PR #7, then dispatch/approve the protected release, then test the iPhone.
 
-To unblock the **approved release**, first complete review and merge of PR #7 (required by the main-only production environment), then manually dispatch the new [Release Phase 5 — schema-first production rollout](.github/workflows/release-phase5.yml) on `main` and approve the protected production job. It fail-closes if remote migration history differs from exactly the reviewed Phase 2–5 chain, applies pending SQL before deploying, and verifies live PWA endpoints. Finally run the [eight real-iPhone acceptance scenarios](docs/pwa.md#manual-iphone-acceptance-matrix--not-verified) and record actual results. The Supabase integration was installed, but no direct database actions were exposed in this chat when the release was prepared.
+To unblock the **approved release**, first complete review and merge of PR #7 (required by the main-only production environment), then manually dispatch the new [Release Phase 5 — schema-first production rollout](../.github/workflows/release-phase5.yml) on `main` and approve the protected production job. It fail-closes if remote migration history differs from exactly the reviewed Phase 2–5 chain, applies pending SQL before deploying, and verifies live PWA endpoints. Finally run the [eight real-iPhone acceptance scenarios](../docs/pwa.md#manual-iphone-acceptance-matrix--not-verified) and record actual results. The Supabase integration was installed, but no direct database actions were exposed in this chat when the release was prepared.
 
 
 ### Release preparation performed after explicit authorization
@@ -150,4 +150,12 @@ To unblock the **approved release**, first complete review and merge of PR #7 (r
 - Its final smoke step failed because the first HTTP 200 response at `/api/v1/health` was **HTML**, not JSON. The script checked the status before parsing JSON and had no content-aware retry. The logs establish the mismatch, but do not definitively identify which Cloudflare edge/routing/cache condition produced the transient HTML.
 - [Fix PR #10](https://github.com/A13Xg/Daydle/pull/10) adds retries for the actual JSON/API/PWA contracts, checks `run_worker_first` in the generated build and verifies the deployed SW matches the production build. Logs omit response bodies and credentials.
 - A separate public-only GitHub CI run successfully fetched JSON health, JSON 404, manifest, service worker, Today/Games HTML and three PNG icons from the **live** domain; that check intentionally skips comparison to the locally built SW because unconfigured PR CI embeds different `VITE_*` values than the protected production build.
-- **Phase exit remains open** until the owner supplies real iPhone Safari/installed PWA evidence from [docs/pwa.md](docs/pwa.md). Keep this plan active; do not mark Phase 5 COMPLETE or begin Phase 6 merely because the server deploy succeeded.
+- **Phase exit remains open** until the owner supplies real iPhone Safari/installed PWA evidence from [docs/pwa.md](../docs/pwa.md). Keep this plan active; do not mark Phase 5 COMPLETE or begin Phase 6 merely because the server deploy succeeded.
+
+
+## Final disposition — owner acceptance November 16, 2026
+
+- **Eight of eight** real-device checks in [docs/pwa.md](../docs/pwa.md) were reported PASS by the owner. This is owner-attested manual acceptance, not a newly captured independent device test.
+- [PR #7](https://github.com/A13Xg/Daydle/pull/7) implemented Phase 5. The approved [release 43814332227](https://github.com/A13Xg/Daydle/actions/runs/43814332227) applied Phase 4/5 SQL and deployed the Cloudflare Worker; the post-deploy smoke issue was fixed in merged [PR #10](https://github.com/A13Xg/Daydle/pull/10) at `1ed806c`. [Main CI 43817391611](https://github.com/A13Xg/Daydle/actions/runs/43817391611) passed, as did [CI 43833255126](https://github.com/A13Xg/Daydle/actions/runs/43833255126) after PR #11.
+- No hosted operations were performed for this documentation closure. The read-only offline, private manual played marks and user-gesture clipboard rules remain unchanged.
+- **Phase 5 COMPLETE:** execution plan archived, Phase 6 next, Obsidian Arcade overhaul to be implemented in Phase 6.5.
