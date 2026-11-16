@@ -2,8 +2,18 @@ import { describe, expect, it } from "vitest";
 import { createElement, createRef } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { readFileSync } from "node:fs";
-import { ArcadeHeader, ArcadeTabBar, selectedTab, shellForPath, stackBackPath, stackTitle } from "../src/components/ArcadeShell";
-import { FeaturePendingPage, HowItWorksPage } from "../src/components/FeaturePendingPage";
+import {
+  ArcadeHeader,
+  ArcadeTabBar,
+  selectedTab,
+  shellForPath,
+  stackBackPath,
+  stackTitle,
+} from "../src/components/ArcadeShell";
+import {
+  FeaturePendingPage,
+  HowItWorksPage,
+} from "../src/components/FeaturePendingPage";
 
 function renderTab(path: string) {
   return renderToStaticMarkup(createElement(ArcadeTabBar, { pathname: path }));
@@ -41,12 +51,24 @@ describe("Obsidian Arcade route shells", () => {
   });
 
   it("renders five accessible tabs, one active at a time", () => {
-    for (const path of ["/today", "/games", "/statistics", "/friends", "/account"]) {
+    for (const path of [
+      "/today",
+      "/games",
+      "/statistics",
+      "/friends",
+      "/account",
+    ]) {
       const markup = renderTab(path);
       expect(markup).toContain('aria-label="Primary navigation"');
-      expect((markup.match(/class="tabbar-link"/g) ?? [])).toHaveLength(5);
-      expect((markup.match(/aria-current="page"/g) ?? [])).toHaveLength(1);
-      for (const label of ["Today", "Discover", "Statistics", "Friends", "Account"]) {
+      expect(markup.match(/class="tabbar-link"/g) ?? []).toHaveLength(5);
+      expect(markup.match(/aria-current="page"/g) ?? []).toHaveLength(1);
+      for (const label of [
+        "Today",
+        "Discover",
+        "Statistics",
+        "Friends",
+        "Account",
+      ]) {
         expect(markup).toContain(">" + label + "</span>");
       }
     }
@@ -101,7 +123,9 @@ describe("feature previews and static onboarding", () => {
   it.each(["statistics", "friends", "notifications"] as const)(
     "renders %s as a truthful future state without fake results",
     (feature) => {
-      const markup = renderToStaticMarkup(createElement(FeaturePendingPage, { feature }));
+      const markup = renderToStaticMarkup(
+        createElement(FeaturePendingPage, { feature }),
+      );
       expect(markup).toContain('href="/today"');
       expect(markup).not.toContain("Top 8%");
       expect(markup).not.toContain("14,280");
@@ -135,8 +159,12 @@ describe("dark-only offline design contract", () => {
     expect(html).not.toContain("user-scalable=no");
     expect(html).not.toContain("maximum-scale");
     expect(manifest.theme_color).toBe("#051424");
-    expect(readFileSync("public/fonts/PlusJakartaSans.ttf").length).toBeGreaterThan(10_000);
-    expect(readFileSync("public/fonts/OFL.txt", "utf8")).toContain("SIL OPEN FONT LICENSE");
+    expect(
+      readFileSync("public/fonts/PlusJakartaSans.ttf").length,
+    ).toBeGreaterThan(10_000);
+    expect(readFileSync("public/fonts/OFL.txt", "utf8")).toContain(
+      "SIL OPEN FONT LICENSE",
+    );
   });
 
   it("keeps PWA service-worker caching restricted to public assets", () => {

@@ -15,7 +15,10 @@ import {
   ArcadeTabBar,
   shellForPath,
 } from "./components/ArcadeShell";
-import { FeaturePendingPage, HowItWorksPage } from "./components/FeaturePendingPage";
+import {
+  FeaturePendingPage,
+  HowItWorksPage,
+} from "./components/FeaturePendingPage";
 
 type HealthStatus = "checking" | "ready" | "unavailable";
 
@@ -173,7 +176,8 @@ export default function App() {
       {shell !== "blank" && (
         <footer className="site-footer">
           <small>
-            Publisher games open externally. Manual play markers are not verified results.
+            Publisher games open externally. Manual play markers are not
+            verified results.
           </small>
           {health === "unavailable" && (
             <span role="alert" className="health-warning">

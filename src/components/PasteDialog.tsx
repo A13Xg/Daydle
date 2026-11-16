@@ -92,7 +92,12 @@ export function PasteDialog({ onClose }: { onClose: () => void }) {
           happens only when you tap the button below. You can always paste
           manually.
         </p>
-        <button type="button" className="paste-cta" onClick={() => void readNow()} disabled={reading}>
+        <button
+          type="button"
+          className="paste-cta"
+          onClick={() => void readNow()}
+          disabled={reading}
+        >
           {reading ? "Reading clipboard…" : "Paste from clipboard"}
         </button>
         <div className="field">

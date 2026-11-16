@@ -154,14 +154,20 @@ export function AccountPage({
   return (
     <section aria-labelledby="account-heading" className="panel account-panel">
       <div className="account-hero">
-        <span className="account-avatar" aria-hidden="true"><ArcadeIcon name="account" size={34} /></span>
+        <span className="account-avatar" aria-hidden="true">
+          <ArcadeIcon name="account" size={34} />
+        </span>
         <div>
           <p className="eyebrow">PLAYER PROFILE</p>
           <h1 id="account-heading">Your account</h1>
-          <p className="muted">Manage your identity and daily arcade preferences.</p>
+          <p className="muted">
+            Manage your identity and daily arcade preferences.
+          </p>
         </div>
       </div>
-      <p className="muted"><strong>Email:</strong> {user.email ?? "Email unavailable"}</p>
+      <p className="muted">
+        <strong>Email:</strong> {user.email ?? "Email unavailable"}
+      </p>
       {profileState.status === "loading" ? (
         <p role="status">Loading your profile…</p>
       ) : profileState.status === "error" ? (
@@ -230,7 +236,9 @@ export function AccountPage({
         </p>
       )}
       <div className="game-actions">
-        <a className="secondary-link" href="/how-it-works">How Daydle works</a>
+        <a className="secondary-link" href="/how-it-works">
+          How Daydle works
+        </a>
         <button type="button" onClick={() => void signOut()}>
           Sign out
         </button>

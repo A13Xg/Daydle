@@ -24,14 +24,6 @@ jobs:
         run: npm run typecheck
       - name: Lint
         run: npm run lint
-      - name: Temporary canonical formatting diagnostic
-        run: |
-          npx prettier --write src/App.tsx src/styles.css src/components/ArcadeIcon.tsx src/components/ArcadeShell.tsx src/components/FeaturePendingPage.tsx src/components/CatalogPage.tsx src/components/TodayPage.tsx src/components/AuthPage.tsx src/components/AccountPage.tsx src/components/GameDetailPage.tsx src/components/PasteDialog.tsx index.html tests/arcade-ui.test.ts tests/pwa.test.ts scripts/ui-smoke.mjs
-          node --input-type=module <<'ARCADE_FORMAT'
-          import { readFileSync } from 'node:fs';
-          const files = ["src/App.tsx","src/styles.css","src/components/ArcadeIcon.tsx","src/components/ArcadeShell.tsx","src/components/FeaturePendingPage.tsx","src/components/CatalogPage.tsx","src/components/TodayPage.tsx","src/components/AuthPage.tsx","src/components/AccountPage.tsx","src/components/GameDetailPage.tsx","src/components/PasteDialog.tsx","index.html","tests/arcade-ui.test.ts","tests/pwa.test.ts","scripts/ui-smoke.mjs"];
-          for (const path of files) console.log('ARCADE_FORMAT_JSON:' + JSON.stringify({path, content: readFileSync(path,'utf8')}));
-          ARCADE_FORMAT
       - name: Format check
         run: npm run format:check
       - name: Unit and API tests
