@@ -17,3 +17,22 @@ The `main` release failed before any remote SQL/deploy because the CLI-table par
 7. Run immutable frontend CI and two disposable PostgreSQL 17 databases; inspect patch, then mark PR ready. No direct production writes or unauthorized merge/dispatch.
 
 **Current live status:** Supabase Phases 2/3 recorded. Phases 4/5 not applied. Worker has not been redeployed by either failed run.
+
+## Direct production verification (read-only)
+
+Connected Supabase project: `Daydle Preview`, ref `xyjuriehmrkdqdmcxdso`, the same ref the protected workflow used. `list_migrations` and read-only SQL against `supabase_migrations.schema_migrations` both returned **exactly**:
+- `20261114050000` — `phase2_domain_security`
+- `20261114060000` — `phase3_auth_identity`
+
+The project exposes 18 Phase 2 RLS-enabled tables; the Phase 4 `public.set_my_games(uuid[])` function and `public.games.link_status` column, and the Phase 5 `public.user_game_day_marks` table, were confirmed **absent**. The second failed run used a parser expecting four local migration-table rows, but its CLI output was never preserved in logs. Its exact text-layout mismatch is unknown; the fact that the database is correctly migrated to Phase 3 is verified independently.
+
+## Implementation
+
+- Added `scripts/ops/check-hosted-migrations.mjs`, calling the documented `GET /v1/projects/{ref}/database/migrations` endpoint with the protected `SUPABASE_ACCESS_TOKEN`. It verifies four reviewed local SQL files and a contiguous, strictly versioned applied prefix, and compares names when present.
+- The protected release workflow now calls the structured check **before** `supabase db push --linked --dry-run` and **after** the approved `--yes` push with `--require-all-applied`. Removed human-formatted CLI history parsing and optional migration metadata repair from the deployment path entirely.
+- Authorization requirement: the production Supabase token must have **`database_migrations_read`** permission. HTTP 401/403 and malformed/unavailable structured API data fail closed with an actionable message. Do not create additional history entries or bypass scope validation.
+- No production writes were made from this PR. No changes to provider authentication or stored game data.
+
+## Verification and disposition
+
+Await final CI for this PR. The live release requires owner-reviewed merge and another protected GitHub Actions dispatch on `main`; real iPhone testing remains open until that run successfully migrates and deploys.

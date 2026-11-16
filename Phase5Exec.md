@@ -135,3 +135,10 @@ To unblock the **approved release**, first complete review and merge of PR #7 (r
 ### Recovery patch independently verified
 
 [Fix PR #8](https://github.com/A13Xg/Daydle/pull/8) has [passing CI](https://github.com/A13Xg/Daydle/actions/runs/43811905266): 98 tests/21 suites, two clean PostgreSQL databases and the exact read-only remote-schema probe exercised after Phase 3 and after Phase 5. This is verified **local** proof of the probe query and version guard behavior, **not** evidence that hosted migration history was repaired. The failed production release made no data changes. A new protected deployment run remains required before iPhone PWA testing.
+
+### Second production failure and direct Supabase root-cause confirmation
+
+- Owner merged [PR #8](https://github.com/A13Xg/Daydle/pull/8); the second [release run 43812374685](https://github.com/A13Xg/Daydle/actions/runs/43812374685) passed credentials and `supabase link` but failed with `Migration report did not contain exactly four expected local versions.` No hosted SQL or Cloudflare deployment ran.
+- Direct Supabase `list_migrations` and `execute_sql` verification confirmed that Phase 2 (`20261114050000`) and Phase 3 (`20261114060000`) already have valid migration-history records. All 18 Phase 2 public/private tables have RLS; Phase 4 catalog additions and Phase 5 day marks are absent.
+- [PR #9](https://github.com/A13Xg/Daydle/pull/9) switches to the documented Management API `GET /database/migrations` structured records and **does not** attempt metadata repair. It uses the same protected production credentials and requires `database_migrations_read` scope.
+- Phase 5 remains BLOCKED until a real successful hosted deployment followed by the physical iPhone tests.
