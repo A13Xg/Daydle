@@ -137,6 +137,7 @@ If review finds issues, keep or reopen the branch/PR, fix them, rerun gates, and
 9. Primary iOS Safari/PWA experience: user-gesture clipboard, best-effort external tab launch, focus/return action, read-only offline caches.
 10. Polished behavior, accessibility, errors/retries/empty states required; precise aesthetics remain deferred.
 11. Public beta can be deployed only after explicit user authorization. No production changes merely because a phase plan mentions them.
+12. Every GitHub Actions `uses:` reference is pinned to a full 40-character commit SHA (see *GitHub Actions supply-chain pinning*).
 
 ## Result reporting format
 
@@ -161,6 +162,13 @@ Be clear and economical; report concrete commits and links when available. Never
 - Do not connect PR CI to a live Supabase project, and do not invoke `supabase db push` or run migrations against hosted databases without explicit environment-specific deployment authorization.
 - Provider credentials may be stored in GitHub Environment secrets or Cloudflare Worker secrets without authorizing their use in CI or any live deployment. Restrict production credentials from pull-request workflows and prefer separately gated deployments.
 - Public profile tables and client-accessible results must never expose auth email, raw copied text, admin data, or unreleased puzzle performance, including through alternate aggregate, award or ranking routes.
+
+## GitHub Actions supply-chain pinning
+
+- Pin every third-party and first-party action in `.github/workflows/` to a full 40-character commit SHA, keeping the human-readable version as a trailing comment, for example `uses: actions/checkout@<40-char-sha> # v6.1.0`. Never use a mutable tag or branch (`@v6`, `@main`) in a workflow, including new workflows and copied snippets.
+- Resolve the SHA from the exact release tag (for example `gh api repos/OWNER/REPO/git/ref/tags/vX.Y.Z`); if the tag is annotated, dereference it to the commit. Do not trust a SHA copied from an unverified source, and do not bump major versions as part of pinning.
+- Update pinned SHAs only through a reviewed change (for example Dependabot `github-actions` PRs) and record the new version in the trailing comment.
+- Before opening or readying a PR that touches workflows, confirm that `grep -rn "uses:" .github/ | grep -v "@[0-9a-f]\{40\}"` returns nothing (local `./` actions excepted).
 
 ## Credential escalation without unnecessary deferral
 
