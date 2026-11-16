@@ -28,7 +28,11 @@ async function checkJson(response, validate, label) {
   if (response.status !== 200) {
     return `${label}: HTTP ${response.status}, expected 200`;
   }
-  if (!/\b(?:application\/json|application\/manifest\+json)\b/i.test(responseType(response))) {
+  if (
+    !/\b(?:application\/json|application\/manifest\+json)\b/i.test(
+      responseType(response),
+    )
+  ) {
     return `${label}: HTTP 200 but content-type ${responseType(response)}, expected JSON`;
   }
   let payload;
@@ -37,7 +41,9 @@ async function checkJson(response, validate, label) {
   } catch {
     return `${label}: JSON body could not be parsed`;
   }
-  return validate(payload) ? null : `${label}: JSON data did not match the release contract`;
+  return validate(payload)
+    ? null
+    : `${label}: JSON data did not match the release contract`;
 }
 
 export async function inspectHealth(response) {
@@ -53,12 +59,16 @@ export async function inspectHealth(response) {
 }
 
 export async function inspectMissingApi(response) {
-  if (response.status !== 404 || !/\bapplication\/json\b/i.test(responseType(response))) {
+  if (
+    response.status !== 404 ||
+    !/\bapplication\/json\b/i.test(responseType(response))
+  ) {
     return `unknown API: HTTP ${response.status}, content-type ${responseType(response)}, expected JSON 404`;
   }
   try {
     return (await response.json()).error === "not_found"
-      ? null : "unknown API: unexpected 404 JSON contract";
+      ? null
+      : "unknown API: unexpected 404 JSON contract";
   } catch {
     return "unknown API: 404 JSON parsing failed";
   }
@@ -78,7 +88,10 @@ export async function inspectManifest(response) {
 }
 
 export async function inspectServiceWorker(response, expectedSource) {
-  if (response.status !== 200 || !/(?:javascript|ecmascript)/i.test(responseType(response))) {
+  if (
+    response.status !== 200 ||
+    !/(?:javascript|ecmascript)/i.test(responseType(response))
+  ) {
     return `service worker: HTTP ${response.status}, content-type ${responseType(response)}`;
   }
   const actual = await response.text();
@@ -93,8 +106,12 @@ export async function inspectIcon(response, size) {
     return `icon ${size}: HTTP ${response.status}, content-type ${responseType(response)}`;
   }
   const buffer = Buffer.from(await response.arrayBuffer());
-  if (buffer.length < 24 || !buffer.subarray(0, 8).equals(PNG_MAGIC) ||
-      buffer.readUInt32BE(16) !== size || buffer.readUInt32BE(20) !== size) {
+  if (
+    buffer.length < 24 ||
+    !buffer.subarray(0, 8).equals(PNG_MAGIC) ||
+    buffer.readUInt32BE(16) !== size ||
+    buffer.readUInt32BE(20) !== size
+  ) {
     return `icon ${size}: invalid PNG signature or dimensions`;
   }
   return null;
@@ -106,7 +123,8 @@ export async function inspectPage(response, path) {
   }
   const html = await response.text();
   return /<html\b/i.test(html) && /Daydle/.test(html)
-    ? null : `${path}: invalid application shell`;
+    ? null
+    : `${path}: invalid application shell`;
 }
 
 export async function waitForEndpoint(
@@ -132,7 +150,9 @@ export async function waitForEndpoint(
       });
       last = (await inspect(response)) ?? "";
       if (!last) {
-        log(`PASS: ${new URL(url).pathname} has expected response (attempt ${attempt})`);
+        log(
+          `PASS: ${new URL(url).pathname} has expected response (attempt ${attempt})`,
+        );
         return;
       }
     } catch {
@@ -163,7 +183,10 @@ export async function verifyLiveRelease({
     ["/api/v1/health", inspectHealth],
     ["/api/v1/not-found", inspectMissingApi],
     ["/app.webmanifest", inspectManifest],
-    ["/sw.js", (response) => inspectServiceWorker(response, expectedServiceWorker)],
+    [
+      "/sw.js",
+      (response) => inspectServiceWorker(response, expectedServiceWorker),
+    ],
     ["/today", (response) => inspectPage(response, "/today")],
     ["/games", (response) => inspectPage(response, "/games")],
     ["/icons/icon-192.png", (response) => inspectIcon(response, 192)],
@@ -172,26 +195,42 @@ export async function verifyLiveRelease({
   ];
   for (const [path, inspect] of checks) {
     await waitForEndpoint(new URL(path, base).toString(), inspect, {
-      fetchImpl, pause, attempts, delayMs, log,
+      fetchImpl,
+      pause,
+      attempts,
+      delayMs,
+      log,
     });
   }
-  log("Verified: hosted API, current service worker version, PWA assets and routes.");
+  log(
+    "Verified: hosted API, current service worker version, PWA assets and routes.",
+  );
 }
 
-const invoked = process.argv[1] ? pathToFileURL(resolve(process.argv[1])).href : "";
+const invoked = process.argv[1]
+  ? pathToFileURL(resolve(process.argv[1])).href
+  : "";
 if (invoked === import.meta.url) {
   try {
-    const config = JSON.parse(readFileSync("dist/worker/wrangler.json", "utf8"));
+    const config = JSON.parse(
+      readFileSync("dist/worker/wrangler.json", "utf8"),
+    );
     assertWorkerRouting(config);
     if (process.argv.includes("--routing-only")) {
-      console.log("PASS: generated Worker routes API requests before SPA assets.");
+      console.log(
+        "PASS: generated Worker routes API requests before SPA assets.",
+      );
     } else {
       await verifyLiveRelease({
         expectedServiceWorker: readFileSync("dist/client/sw.js", "utf8"),
       });
     }
   } catch (error) {
-    console.error(error instanceof Error ? error.message : "Live release verification failed.");
+    console.error(
+      error instanceof Error
+        ? error.message
+        : "Live release verification failed.",
+    );
     process.exitCode = 1;
   }
 }

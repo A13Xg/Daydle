@@ -106,11 +106,12 @@ describe("live release verification after Cloudflare deployment", () => {
   });
 
   it("fails with an actionable diagnostic if an HTML API fallback persists", async () => {
-    const fetchImpl = vi.fn().mockImplementation(async () =>
-      new Response("<!doctype html><html>Daydle</html>", {
-        status: 200,
-        headers: TYPE_HTML,
-      }),
+    const fetchImpl = vi.fn().mockImplementation(
+      async () =>
+        new Response("<!doctype html><html>Daydle</html>", {
+          status: 200,
+          headers: TYPE_HTML,
+        }),
     );
     await expect(
       waitForEndpoint(BASE + "/api/v1/health", inspectHealth, {
