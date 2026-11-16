@@ -62,7 +62,12 @@ export function AuthPage({ client, signedIn }: AuthPageProps) {
 
   return (
     <section aria-labelledby="auth-title" className="panel auth-panel">
+      <div className="auth-hero-mark">
+        <img src="/arcade-emblem.svg" width="82" height="82" alt="" />
+      </div>
+      <p className="eyebrow">PLAY · TRACK · REPEAT</p>
       <h1 id="auth-title">Sign in to Daydle</h1>
+      <p className="lead">Master Your Daily Ritual.</p>
       <p>
         Continue with your Apple or Google account. The same buttons sign you in
         or create your account, so there is no password to remember.
