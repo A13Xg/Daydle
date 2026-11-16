@@ -122,7 +122,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 
 
 ## Phase 5 — Today experience, PWA, and external-game navigation
-**Main status:** NOT STARTED (unmerged). **Branch execution:** IMPLEMENTED / CI VERIFIED, **BLOCKED** on authorized hosted migration/deployment and real-iPhone Safari + installed-PWA acceptance — [draft PR #7](https://github.com/A13Xg/Daydle/pull/7), active [Phase5Exec.md](Phase5Exec.md) and [passing CI](https://github.com/A13Xg/Daydle/actions/runs/43803584212). **Dependencies:** 4.
+**Main status:** NOT STARTED (unmerged). **Branch execution:** IMPLEMENTED / CI VERIFIED, **BLOCKED** on authorized hosted migration/deployment and real-iPhone Safari + installed-PWA acceptance — [draft PR #7](https://github.com/A13Xg/Daydle/pull/7), active [Phase5Exec.md](Phase5Exec.md) and [passing CI](https://github.com/A13Xg/Daydle/actions/runs/43803934602). **Dependencies:** 4.
 
 **Automated gates completed on PR #7:**
 - [x] Today from selected games in order with private manual played markers distinct from verified results.

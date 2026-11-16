@@ -82,7 +82,7 @@ iOS home-screen apps do **not** guarantee external-tab return handling and use a
 
 ### Executed verification
 
-**Final immutable-source CI:** https://github.com/A13Xg/Daydle/actions/runs/43803584212 — both `validate` and `database-security` SUCCESS on final audited source.
+**Final immutable-source CI:** https://github.com/A13Xg/Daydle/actions/runs/43803934602 — both `validate` and `database-security` SUCCESS on final audited source.
 
 | Gate | Observed |
 |---|---|
@@ -101,7 +101,7 @@ iOS home-screen apps do **not** guarantee external-tab return handling and use a
 - Corrected service-worker ESLint global declarations and committed canonical Prettier formatting rather than leaving a CI mutating step. Final CI is non-mutating.
 - Added read-only offline support in existing `CatalogPage` as well as Today. Saving and reordering are prohibited when only cached data or no network is available.
 - Made the mobile Paste control persist in the viewport while the page scrolls. Clipboard text stays only in React memory until dialog closes; no network API is connected.
-- Reviewed PR file list and patch for credential/log/authorization leaks. No hosted account, project configuration, migration or Worker deployment was modified.
+- Cleared the in-memory Paste component when the authenticated user changes, preventing clipboard preview text from surviving an account switch. Also corrected wording for an unconfirmed manual-marker write. Reviewed PR file list and patch for credential/log/authorization leaks. No hosted account, project configuration, migration or Worker deployment was modified.
 
 ### Unverified material gates (must remain draft)
 
