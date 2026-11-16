@@ -262,7 +262,7 @@ export function HistoryPage({
       )}
       {notice && <p className="notice" role="status">{notice}</p>}
       <p className="muted history-retention">
-        Raw submitted share text expires within 90 days; saved structured results remain until deleted.
+        Raw submitted text has a 90-day expiry date; automated purge is scheduled for a later phase. Structured results remain until deleted.
         History and detailed results require a live authenticated connection.
       </p>
     </div>

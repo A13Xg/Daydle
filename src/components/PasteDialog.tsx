@@ -114,7 +114,7 @@ export function PasteDialog({ onClose, client = null, userId = null }: PasteDial
       setFeedback(null);
       setRetainConsent(false);
       setSampleGame("");
-      setNotice("Sample retained for parser review for up to 90 days. This is not a saved game result.");
+      setNotice("Sample retained with a 90-day expiry date. Automated cleanup is not active yet. This is not a saved result.");
     } catch (cause) {
       setNotice(resultErrorText(cause));
     } finally {
@@ -265,7 +265,7 @@ export function PasteDialog({ onClose, client = null, userId = null }: PasteDial
             </div>
             <label className="consent-line">
               <input type="checkbox" checked={retainConsent} onChange={(event) => setRetainConsent(event.target.checked)} />
-              Retain this raw sample for up to 90 days for authorized parser review
+              Assign a 90-day expiry to this sample for authorized review (automated deletion is not active yet)
             </label>
             <button type="button" disabled={!retainConsent || saving} onClick={() => void retainUnknown()}>
               Retain sample (not a saved result)
