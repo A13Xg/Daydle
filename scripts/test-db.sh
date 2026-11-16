@@ -35,6 +35,7 @@ for db in "${databases[@]}"; do
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/fixtures.sql
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/assertions.sql
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/auth-assertions.sql
+  psql -X -v ON_ERROR_STOP=1 -f tests/sql/catalog-assertions.sql
 done
 
-echo "PASS: All Daydle schema, RLS and auth identity tests passed on two clean databases."
+echo "PASS: All Daydle schema, RLS, auth identity and catalog tests passed on two clean databases."

@@ -6,22 +6,22 @@ INSERT INTO auth.users(id, email, raw_user_meta_data) VALUES
  ('33333333-3333-3333-3333-333333333333', 'three@example.invalid', '{}');
 
 INSERT INTO public.game_categories(id, slug, name) VALUES
- ('12121212-1212-1212-1212-121212121212', 'word', 'Word games');
+ ('50000000-0000-4000-8000-000000000001', 'word', 'Words') ON CONFLICT (slug) DO NOTHING;
 
+-- Wordle is seeded by Phase 4; fixture-only Demo remains here.
 INSERT INTO public.games(id, slug, name, canonical_url) VALUES
- ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'wordle', 'Wordle', 'https://www.nytimes.com/games/wordle/index.html'),
  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'demo', 'Demo', 'https://example.org/daily');
 
 INSERT INTO public.game_category_links(game_id, category_id) VALUES
- ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '12121212-1212-1212-1212-121212121212');
+ ('40000000-0000-4000-8000-000000000001', '50000000-0000-4000-8000-000000000001');
 
 INSERT INTO public.user_games(user_id, game_id, sort_order) VALUES
- ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 1);
+ ('11111111-1111-1111-1111-111111111111', '40000000-0000-4000-8000-000000000001', 1);
 
 INSERT INTO public.puzzles(id, game_id, puzzle_key, puzzle_date, released_at, reset_verified_at) VALUES
- ('cccccccc-cccc-cccc-cccc-cccccccccccc', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+ ('cccccccc-cccc-cccc-cccc-cccccccccccc', '40000000-0000-4000-8000-000000000001',
   'wordle-100', CURRENT_DATE, now() - interval '10 hours', NULL),
- ('dddddddd-dddd-dddd-dddd-dddddddddddd', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+ ('dddddddd-dddd-dddd-dddd-dddddddddddd', '40000000-0000-4000-8000-000000000001',
   'wordle-99', CURRENT_DATE - 1, now() - interval '48 hours', now() - interval '24 hours'),
  ('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
   'demo-1', CURRENT_DATE, now() - interval '1 hour', NULL);
@@ -29,17 +29,17 @@ INSERT INTO public.puzzles(id, game_id, puzzle_key, puzzle_date, released_at, re
 INSERT INTO public.game_results(id, user_id, game_id, puzzle_id, outcome, attempts, metrics, parser_version) VALUES
  ('f1111111-1111-1111-1111-111111111111',
   '11111111-1111-1111-1111-111111111111',
-  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+  '40000000-0000-4000-8000-000000000001',
   'cccccccc-cccc-cccc-cccc-cccccccccccc', 'win', 4, '{"guesses":4}', '1.0.0'),
  ('f2222222-2222-2222-2222-222222222222',
   '11111111-1111-1111-1111-111111111111',
-  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+  '40000000-0000-4000-8000-000000000001',
   'dddddddd-dddd-dddd-dddd-dddddddddddd', 'win', 3, '{"guesses":3}', '1.0.0');
 
 INSERT INTO public.raw_submissions(id, user_id, game_id, result_id, raw_share_text, disposition) VALUES
  ('91111111-1111-1111-1111-111111111111',
   '11111111-1111-1111-1111-111111111111',
-  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+  '40000000-0000-4000-8000-000000000001',
   'f1111111-1111-1111-1111-111111111111', 'Wordle 100 4/6', 'accepted');
 
 INSERT INTO public.raw_submissions(
