@@ -70,6 +70,7 @@ export async function submitShare(
   userId: string,
   text: string,
   replaceResultId?: string,
+  confirmedGameSlug?: string,
 ): Promise<SubmissionFeedback> {
   if (replaceResultId && !RESULT_ID_PATTERN.test(replaceResultId)) {
     throw new ResultApiError("invalid_replace_target", 422);
@@ -77,6 +78,7 @@ export async function submitShare(
   const { response, body } = await callResults(client, userId, RESULTS_PATH, "POST", {
     text,
     ...(replaceResultId ? { replaceResultId } : {}),
+    ...(confirmedGameSlug ? { confirmedGameSlug } : {}),
   });
   if (body && typeof body === "object" && "status" in body &&
     typeof body.status === "string" &&
