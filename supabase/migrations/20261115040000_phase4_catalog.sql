@@ -126,7 +126,7 @@ BEGIN
  IF NOT app_private.catalog_admin_allowed() THEN
    RAISE EXCEPTION 'Not authorized for catalog administration' USING ERRCODE='42501';
  END IF;
- names:=pg_catalog.coalesce(p_category_slugs,ARRAY[]::text[]);
+ names:=COALESCE(p_category_slugs,ARRAY[]::text[]);
  IF pg_catalog.cardinality(names)>20
     OR (SELECT count(*) FROM pg_catalog.unnest(names) s) <> (SELECT count(DISTINCT s) FROM pg_catalog.unnest(names) s)
     OR (SELECT count(*) FROM public.game_categories c WHERE c.slug=ANY(names)) <> pg_catalog.cardinality(names)
@@ -167,7 +167,7 @@ BEGIN
  IF account_id IS NULL THEN
    RAISE EXCEPTION 'Sign in to select games' USING ERRCODE='42501';
  END IF;
- ids:=pg_catalog.coalesce(p_game_ids, ARRAY[]::uuid[]);
+ ids:=COALESCE(p_game_ids, ARRAY[]::uuid[]);
  IF pg_catalog.cardinality(ids)>100
     OR pg_catalog.array_position(ids,NULL) IS NOT NULL
     OR (SELECT count(*) FROM pg_catalog.unnest(ids) s)<>(SELECT count(DISTINCT s) FROM pg_catalog.unnest(ids) s)
