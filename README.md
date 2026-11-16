@@ -42,7 +42,7 @@ Deployment and environment isolation are documented in [docs/deployment.md](docs
 - [AGENTS.md](AGENTS.md) — mandatory branch, draft PR, verification, and review protocol.
 - [completedPhases/](completedPhases/) — reviewed and verified execution plans for finished phases (currently Phases 1–3; Phase 3 is in review on its branch until PR #3 merges).
 - [scripts/ops/](scripts/ops/README.md) — PowerShell helpers for provisioning, secrets, provider setup, deployment and test-account cleanup. They contain no credentials.
-- [referenceFiles/](referenceFiles/readme.md) — optional UI/UX mockups and design-system variants. Reference only; nothing there needs to be implemented unless explicitly requested.
+- [referenceFiles/](referenceFiles/readme.md) — optional UI/UX mockups and one reference design system (web + iOS/Xcode guidance). Reference only; nothing there needs to be implemented unless explicitly requested.
 - A root-level `Phase#Exec.md` exists only while its phase is actively being implemented.
 
 Visual design details remain deferred, but accessible and polished interaction behavior is required.

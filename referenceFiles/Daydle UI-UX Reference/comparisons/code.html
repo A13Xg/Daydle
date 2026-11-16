@@ -1,103 +1,84 @@
-<!DOCTYPE html><html class="h-full bg-[#0B0F17] dark" lang="en"><head>
+<!DOCTYPE html>
+<html lang="en" class="dark h-full">
+<head>
 <meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
-<meta content="#0B0F17" name="theme-color">
-<title>Daydle - Comparisons</title>
-<link href="https://fonts.googleapis.com" rel="preconnect">
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            "on-background": "#dfe2ee",
-            "surface-container-low": "#131B2E",
-            "surface-container": "#1E2638",
-            "surface-container-high": "#262e42",
-            "surface-container-lowest": "#080c13",
-            "background": "#0B0F17",
-            "surface": "#0F131C",
-            "primary": "#3B82F6",
-            "primary-container": "#1d4ed8",
-            "on-surface": "#F9FAFB",
-            "on-surface-variant": "#94A3B8"
-          },
-          borderRadius: {
-            "DEFAULT": "1rem",
-            "lg": "1.5rem",
-            "xl": "2rem",
-            "full": "9999px"
-          },
-          fontFamily: {
-            sans: ["Plus Jakarta Sans", "sans-serif"],
-            body: ["Plus Jakarta Sans", "sans-serif"],
-            display: ["Bricolage Grotesque", "sans-serif"]
-          }
-        }
-      }
-    };
-  </script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daydle — Comparisons</title>
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#051424">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Daydle">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" type="image/svg+xml" href="../assets/daydle-emblem.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script id="tailwind-config">tailwind.config = {"darkMode":"class","theme":{"extend":{"colors":{"primary-fixed":"#d8e2ff","error":"#ffb4ab","surface-container-highest":"#273647","on-error-container":"#ffdad6","secondary":"#c0c1ff","primary-fixed-dim":"#adc6ff","error-container":"#93000a","on-secondary-fixed":"#07006c","secondary-fixed":"#e1e0ff","on-background":"#d4e4fa","on-tertiary-container":"#00311f","surface-dim":"#051424","on-primary-container":"#00285d","surface-container-low":"#0d1c2d","on-primary-fixed-variant":"#004395","background":"#051424","surface-tint":"#adc6ff","on-primary-fixed":"#001a42","surface-container-high":"#1c2b3c","on-tertiary-fixed":"#002113","primary":"#adc6ff","primary-container":"#4d8eff","on-secondary-fixed-variant":"#2f2ebe","on-tertiary":"#003824","inverse-primary":"#005ac2","surface-variant":"#273647","surface-container":"#122131","tertiary-fixed-dim":"#4edea3","on-tertiary-fixed-variant":"#005236","on-surface-variant":"#c2c6d6","inverse-surface":"#d4e4fa","inverse-on-surface":"#233143","secondary-container":"#3131c0","on-secondary-container":"#b0b2ff","on-error":"#690005","outline":"#8c909f","on-primary":"#002e6a","surface":"#051424","tertiary-fixed":"#6ffbbe","on-secondary":"#1000a9","on-surface":"#d4e4fa","tertiary-container":"#00a572","tertiary":"#4edea3","secondary-fixed-dim":"#c0c1ff","surface-bright":"#2c3a4c","outline-variant":"#424754","surface-container-lowest":"#010f1f","streak":"#f59e0b"},"borderRadius":{"DEFAULT":"1rem","lg":"2rem","xl":"3rem","full":"9999px","sm":"0.5rem","md":"1.5rem"},"spacing":{"space-md":"1rem","space-xl":"2.5rem","space-xs":"0.25rem","gutter":"1rem","margin-mobile":"1rem","space-sm":"0.5rem","margin":"2rem","space-lg":"1.5rem","gutter-mobile":"0.5rem"},"fontFamily":{"headline-lg":["Plus Jakarta Sans","system-ui","sans-serif"],"body-lg":["Plus Jakarta Sans","system-ui","sans-serif"],"label-sm":["Plus Jakarta Sans","system-ui","sans-serif"],"headline-md":["Plus Jakarta Sans","system-ui","sans-serif"],"title-md":["Plus Jakarta Sans","system-ui","sans-serif"],"headline-lg-mobile":["Plus Jakarta Sans","system-ui","sans-serif"],"headline-sm":["Plus Jakarta Sans","system-ui","sans-serif"],"display-lg":["Plus Jakarta Sans","system-ui","sans-serif"],"label-md":["Plus Jakarta Sans","system-ui","sans-serif"],"label-lg":["Plus Jakarta Sans","system-ui","sans-serif"],"body-md":["Plus Jakarta Sans","system-ui","sans-serif"],"sans":["Plus Jakarta Sans","system-ui","sans-serif"],"display-md":["Plus Jakarta Sans","system-ui","sans-serif"],"display-lg-mobile":["Plus Jakarta Sans","system-ui","sans-serif"],"title-sm":["Plus Jakarta Sans","system-ui","sans-serif"],"body-sm":["Plus Jakarta Sans","system-ui","sans-serif"]},"fontSize":{"headline-lg":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-lg":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.05em","fontWeight":"700"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"700"}],"title-md":["18px",{"lineHeight":"24px","fontWeight":"600"}],"headline-lg-mobile":["28px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-sm":["20px",{"lineHeight":"28px","fontWeight":"600"}],"display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.03em","fontWeight":"800"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"display-md":["28px",{"lineHeight":"32px","letterSpacing":"-0.02em","fontWeight":"700"}],"display-lg-mobile":["32px",{"lineHeight":"36px","letterSpacing":"-0.025em","fontWeight":"800"}],"title-sm":["16px",{"lineHeight":"20px","fontWeight":"700"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"500"}]},"minHeight":{"dvh":"100dvh"}}},"future":{"hoverOnlyWhenSupported":true}};</script>
 <style>
-    @layer base {
-      html, body {
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        min-height: 100%;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        background-color: #0B0F17;
-        color: #F9FAFB;
-      }
-      .pb-safe { padding-bottom: max(env(safe-area-inset-bottom, 16px), 16px); }
-      .pt-safe { padding-top: max(env(safe-area-inset-top, 0px), 0px); }
-    }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  </style>
-<meta content="mobile_tab" name="shell-type">
+:root{color-scheme:dark}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:transparent;background:#051424}
+body{margin:0;background:#051424;color:#d4e4fa;overscroll-behavior-y:none;-webkit-font-smoothing:antialiased}
+a,button,[role=button],[role=switch],summary,label{touch-action:manipulation}
+button,[role=button],[role=switch]{-webkit-touch-callout:none}
+input,textarea,select{font-size:max(16px,1em)!important}
+.pt-safe{padding-top:env(safe-area-inset-top,0px)}
+.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px)}
+.material-symbols-outlined{-webkit-user-select:none;user-select:none}
+.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+.no-scrollbar::-webkit-scrollbar{display:none}
+:focus-visible{outline:2px solid #adc6ff!important;outline-offset:2px}
+/* 44pt minimum hit area (Apple HIG) without changing visuals: invisible pseudo-element grows the target. */
+:where(button,[role=button],[role=switch],a[href]:not(p a),summary,.hit-44){position:relative}
+:where(button,[role=button],[role=switch],a[href]:not(p a),summary,.hit-44)::after{content:"";position:absolute;top:min(0px,calc((100% - 44px)/2));bottom:min(0px,calc((100% - 44px)/2));left:min(0px,calc((100% - 44px)/2));right:min(0px,calc((100% - 44px)/2))}
+input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{min-height:44px}
+@keyframes fade-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.animate-fade-in{animation:fade-in .25s ease-out both}
+@media (hover:none){::-webkit-scrollbar{display:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
 </head>
-<body class="bg-[#0B0F17] text-[#F9FAFB] antialiased min-h-screen flex flex-col font-sans">
+<body class="bg-background font-body-md text-on-surface antialiased min-h-dvh flex flex-col selection:bg-primary-container selection:text-on-primary-container">
 <!-- Fixed Top Header -->
-<header class="fixed top-0 w-full z-50 pt-safe bg-[#0F131C]/90 backdrop-blur-xl border-b border-white/[0.08] shadow-md">
-<div class="h-16 px-4 flex items-center justify-between gap-3"><div class="flex items-center gap-3"><img alt="Daydle Logo" class="h-8 w-8 object-contain rounded-lg shadow-sm" src="https://lh3.googleusercontent.com/aida/ALJJyrAOZlYz-Avgx9d9KMHSP5Al6qJ7_lMvHgQkwM4wdtOuTgT62n51V9oDY4C45XsOvJunwQtVR1rCNMxYF0Wp8Kq7h3oeZKN3srfUXUABUbewhbXglupOq3hl4qoLh-l33HRkxhm4sNyDHMUJ7j2uMilmNmq6QQGcp__ViKAdOAiNMLGFt9ZfU0JiFBg7wChjBfX8IptuEA6gCSrAOlRodgp0LBMsWblLS6QX-RuzvtFzHg"><div class="flex items-center gap-2"><span class="font-display font-extrabold text-[20px] text-white tracking-tight">Daydle</span><span class="px-2 py-0.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 font-bold text-[10px] tracking-wider uppercase">Comparisons</span></div></div><div class="flex items-center gap-2"><button aria-label="Search puzzles" class="w-9 h-9 flex items-center justify-center rounded-full text-slate-300 hover:text-white hover:bg-white/10 active:scale-95 transition-all" type="button"><span class="material-symbols-outlined text-[20px]">search</span></button><button aria-label="Notifications" class="relative w-9 h-9 flex items-center justify-center rounded-full text-slate-300 hover:text-white hover:bg-white/10 active:scale-95 transition-all" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#f97316] ring-2 ring-[#0F131C]"></span></button><a class="w-9 h-9 flex items-center justify-center rounded-full p-0.5 hover:ring-2 hover:ring-blue-500/40 active:scale-95 transition-all ml-0.5" data-path="account" href="#"><img alt="User profile" class="w-8 h-8 rounded-full object-cover ring-1 ring-white/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAinkPCcZO0B65NKKnV-sQsV0NgsyPJZyBAYXz8r4YHWbok_vT7T7dh4yZ4wgqj-H_EKCerqhuiuRR0aZJeeL3H1Cf0h5YCRi4KVX_SI5Q4ucOkL773Hw739F6AymfK2KGSRWDKoUwaiFOQ_bmcCaJKN6bwWXFuZlsGyeSSKSiL7K6dfyOLSVodgFSWZle_mm8dcwh-tF4Q8W4GRjQy3Y369mXdLApPze8IediTVnws"></a></div></div>
+<header class="fixed top-0 w-full z-50 pt-safe bg-surface/90 backdrop-blur-xl border-b border-white/[0.08] shadow-md">
+<div class="h-16 px-4 flex items-center justify-between gap-3"><div class="flex items-center gap-3"><img loading="lazy" decoding="async" alt="Daydle Logo" class="h-8 w-8 object-contain rounded-lg shadow-sm" src="../assets/daydle-emblem.svg"><div class="flex items-center gap-2"><span class="font-headline-md font-extrabold text-[20px] text-white tracking-tight">Daydle</span><span class="px-2 py-0.5 rounded-full bg-primary-container/20 border border-primary/30 text-primary font-bold text-[11px] tracking-wider uppercase">Comparisons</span></div></div><div class="flex items-center gap-2"><button aria-label="Search puzzles" class="w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant hover:text-white hover:bg-white/10 active:scale-95 transition-all" type="button"><span aria-hidden="true" class="material-symbols-outlined text-[20px]">search</span></button><button aria-label="Notifications" class="relative w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant hover:text-white hover:bg-white/10 active:scale-95 transition-all" type="button"><span aria-hidden="true" class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#f97316] ring-2 ring-surface"></span></button><a class="w-9 h-9 flex items-center justify-center rounded-full p-0.5 hover:ring-2 hover:ring-primary/40 active:scale-95 transition-all ml-0.5" href="../account/code.html"><img loading="lazy" decoding="async" alt="User profile" class="w-8 h-8 rounded-full object-cover ring-1 ring-white/20" src="../assets/avatar-1.svg"></a></div></div>
 </header>
 <!-- Main Content Body -->
-<main class="flex-1 flex flex-col relative w-full pt-[76px] pb-28">
+<main class="flex-1 flex flex-col relative w-full pt-[calc(76px+env(safe-area-inset-top))] pb-[calc(7rem+env(safe-area-inset-bottom))]">
 <!-- Search & Filters Bar -->
 <div class="px-4 pt-2 pb-3 flex flex-col gap-2.5">
-<div class="flex items-center gap-2 bg-[#131B2E] rounded-full p-1.5 pl-2.5 border border-white/[0.08] shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/30 transition-all">
-<button class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#1E2638] hover:bg-[#262e42] text-[#F9FAFB] font-semibold text-xs border border-white/[0.06] transition-colors shrink-0" type="button">
-<span class="material-symbols-outlined text-[16px] text-blue-400" style="font-variation-settings: 'FILL' 1;">extension</span>
+<div class="flex items-center gap-2 bg-surface-container-low rounded-full p-1.5 pl-2.5 border border-white/[0.08] shadow-sm focus-within:border-primary-container focus-within:ring-2 focus-within:ring-primary/40 transition-all">
+<button class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-semibold text-xs border border-white/[0.06] transition-colors shrink-0" type="button">
+<span aria-hidden="true" class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">extension</span>
 <span>All Games</span>
-<span class="material-symbols-outlined text-[16px] text-slate-400">arrow_drop_down</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[16px] text-on-surface-variant">arrow_drop_down</span>
 </button>
 <div class="flex-1 flex items-center min-w-0 pr-1">
-<input class="w-full bg-transparent text-sm font-medium text-[#F9FAFB] placeholder:text-slate-500 focus:outline-none min-w-0 border-none p-0 focus:ring-0" placeholder="Search friends, games, or scoreboards" type="text">
+<input class="w-full bg-transparent text-sm font-medium text-on-surface placeholder:text-outline focus:outline-none min-w-0 border-none p-0 focus:ring-0" placeholder="Search friends, games, or scoreboards" aria-label="Search friends, games or scoreboards" enterkeyhint="search" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" type="search">
 </div>
-<button aria-label="Filters applied" class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white font-bold text-xs shadow-md shadow-blue-600/30 hover:bg-blue-500 active:scale-95 transition-all shrink-0" type="button">
+<button aria-label="Filters, 2 applied" class="flex items-center justify-center w-8 h-8 rounded-full bg-primary-container text-on-primary-container font-bold text-xs shadow-md shadow-blue-600/30 hover:bg-primary-container active:scale-95 transition-all shrink-0" type="button">
           2
         </button>
 </div>
 <!-- Subheader Toolbar -->
 <div class="flex items-center justify-between gap-2 overflow-x-auto no-scrollbar py-0.5">
 <div class="flex items-center gap-2 shrink-0">
-<span class="text-xs font-semibold text-slate-300 bg-[#1E2638]/70 backdrop-blur-sm px-3 py-1 rounded-full border border-white/[0.08]">8 active games</span>
-<div class="flex items-center gap-1.5 px-2.5 py-1 bg-blue-950/50 border border-blue-500/30 text-blue-300 rounded-full font-medium text-xs">
-<span class="material-symbols-outlined text-[14px] text-blue-400" style="font-variation-settings: 'FILL' 1;">tune</span>
+<span class="text-xs font-semibold text-on-surface-variant bg-surface-container-high/70 backdrop-blur-sm px-3 py-1 rounded-full border border-white/[0.08]">8 active games</span>
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-primary-container/15 border border-primary/30 text-primary rounded-full font-medium text-xs">
+<span aria-hidden="true" class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">tune</span>
 <span>Shared Games · Today · Public</span>
 </div>
 </div>
 <div class="flex items-center gap-1.5 shrink-0">
-<button class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#131B2E] border border-white/[0.08] text-slate-300 hover:text-white hover:bg-[#1E2638] text-xs font-semibold shadow-xs active:scale-95 transition-all" type="button">
-<span class="material-symbols-outlined text-[15px] text-amber-400" style="font-variation-settings: 'FILL' 1;">leaderboard</span>
+<button class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-low border border-white/[0.08] text-on-surface-variant hover:text-white hover:bg-surface-container-high text-xs font-semibold shadow-sm active:scale-95 transition-all" type="button">
+<span aria-hidden="true" class="material-symbols-outlined text-[15px] text-streak" style="font-variation-settings: 'FILL' 1;">leaderboard</span>
 <span>Rankings</span>
 </button>
-<button class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-600 text-white hover:bg-blue-500 text-xs font-semibold shadow-xs active:scale-95 transition-all" type="button">
-<span class="material-symbols-outlined text-[15px]">compare_arrows</span>
+<button class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary-container text-on-primary-container hover:bg-primary-container text-xs font-semibold shadow-sm active:scale-95 transition-all" type="button">
+<span aria-hidden="true" class="material-symbols-outlined text-[15px]">compare_arrows</span>
 <span>Compare</span>
 </button>
 </div>
@@ -105,37 +86,37 @@
 </div>
 <!-- Spoiler Shield Banner -->
 <div class="px-4 pb-3">
-<div class="flex items-center gap-3 p-3 rounded-xl bg-[#131B2E] border border-white/[0.08] shadow-sm backdrop-blur-sm"><div class="w-8 h-8 rounded-full bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 shrink-0 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">lock</span></div><div class="flex-1 min-w-0"><div class="flex items-center gap-2"><span class="text-xs font-bold text-[#F9FAFB]">Spoiler Shield Active</span><span class="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[10px] font-bold uppercase tracking-wider">Live</span></div><p class="text-xs text-[#94A3B8] font-medium leading-tight mt-0.5">Current puzzle results remain hidden until you finish your turn.</p></div></div>
+<div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low border border-white/[0.08] shadow-sm backdrop-blur-sm"><div class="w-8 h-8 rounded-full bg-tertiary-container/20 border border-tertiary/30 text-tertiary shrink-0 flex items-center justify-center"><span aria-hidden="true" class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">lock</span></div><div class="flex-1 min-w-0"><div class="flex items-center gap-2"><span class="text-xs font-bold text-on-surface">Spoiler Shield Active</span><span class="px-2 py-0.5 rounded-full bg-tertiary-container/20 border border-tertiary/30 text-tertiary text-[11px] font-bold uppercase tracking-wider">Live</span></div><p class="text-xs text-on-surface-variant font-medium leading-tight mt-0.5">Current puzzle results remain hidden until you finish your turn.</p></div></div>
 </div>
 <!-- Head-to-Head Rivalry Spotlight Card -->
 <div class="px-4 pb-4">
-<div class="bg-[#131B2E] rounded-2xl border border-white/[0.08] p-4 shadow-sm flex flex-col gap-3">
+<div class="bg-surface-container-low rounded-2xl border border-white/[0.08] p-4 shadow-sm flex flex-col gap-3">
 <div class="flex items-center justify-between">
 <div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-amber-400 text-[20px]" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
-<span class="text-sm font-bold text-[#F9FAFB]">Daily Rivalry Spotlight</span>
+<span aria-hidden="true" class="material-symbols-outlined text-streak text-[20px]" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+<span class="text-sm font-bold text-on-surface">Daily Rivalry Spotlight</span>
 </div>
-<span class="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Wordle Streak</span>
+<span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wide">Wordle Streak</span>
 </div>
 <div class="flex flex-col gap-1.5">
 <div class="flex items-center justify-between text-xs font-bold">
-<span class="text-blue-400 flex items-center gap-1">
-<span class="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_6px_rgba(59,130,246,0.6)]"></span> You (18 wins)
+<span class="text-primary flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary-container shadow-[0_0_6px_rgba(59,130,246,0.6)]"></span> You (18 wins)
             </span>
-<span class="text-amber-400 flex items-center gap-1">
-              Alex (15 wins) <span class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.6)]"></span>
+<span class="text-streak flex items-center gap-1">
+              Alex (15 wins) <span class="w-2 h-2 rounded-full bg-streak shadow-[0_0_6px_rgba(245,158,11,0.6)]"></span>
 </span>
 </div>
-<div class="h-3.5 w-full rounded-full bg-[#0B0F17] border border-white/[0.08] flex overflow-hidden p-0.5 gap-0.5">
-<div class="h-full bg-gradient-to-r from-blue-600 to-blue-500 rounded-l-full shadow-xs" style="width: 55%;" title="You: 55%"></div>
-<div class="h-full bg-gradient-to-r from-amber-500 to-amber-400 rounded-r-full shadow-xs" style="width: 45%;" title="Alex: 45%"></div>
+<div class="h-3.5 w-full rounded-full bg-background border border-white/[0.08] flex overflow-hidden p-0.5 gap-0.5">
+<div class="h-full bg-gradient-to-r from-blue-600 to-blue-500 rounded-l-full shadow-sm" style="width: 55%;" title="You: 55%"></div>
+<div class="h-full bg-gradient-to-r from-amber-500 to-amber-400 rounded-r-full shadow-sm" style="width: 45%;" title="Alex: 45%"></div>
 </div>
 </div>
 <div class="flex items-center justify-between pt-1 text-xs border-t border-white/[0.06]">
-<span class="text-[#94A3B8] font-medium">Next round locks at midnight</span>
-<button class="text-blue-400 hover:text-blue-300 font-bold flex items-center gap-0.5 text-xs hover:underline" type="button">
+<span class="text-on-surface-variant font-medium">Next round locks at midnight</span>
+<button class="text-primary hover:text-primary font-bold flex items-center gap-0.5 text-xs hover:underline" type="button">
 <span>View rivalry history</span>
-<span class="material-symbols-outlined text-[15px]">chevron_right</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[15px]">chevron_right</span>
 </button>
 </div>
 </div>
@@ -144,243 +125,243 @@
 <div class="px-4 flex flex-col gap-4">
 <div class="flex items-center justify-between">
 <div class="flex items-center gap-2">
-<span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.6)]"></span>
-<h2 class="text-base font-bold text-[#F9FAFB]">Today's Matchups &amp; Results</h2>
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary shadow-[0_0_6px_rgba(52,211,153,0.6)]"></span>
+<h2 class="text-base font-bold text-on-surface">Today's Matchups &amp; Results</h2>
 </div>
-<span class="text-xs font-semibold text-slate-400 bg-[#131B2E] border border-white/[0.08] px-2 py-0.5 rounded-full">3 Boards</span>
+<span class="text-xs font-semibold text-on-surface-variant bg-surface-container-low border border-white/[0.08] px-2 py-0.5 rounded-full">3 Boards</span>
 </div>
 <!-- Card 1: Wordle #1624 Multi-Player Comparison -->
-<div class="bg-[#131B2E] rounded-2xl border border-white/[0.08] p-4 shadow-sm flex flex-col gap-3.5">
+<div class="bg-surface-container-low rounded-2xl border border-white/[0.08] p-4 shadow-sm flex flex-col gap-3.5">
 <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
 <div class="flex items-center gap-2.5">
-<div class="w-8 h-8 rounded-xl bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-sm">
+<div class="w-8 h-8 rounded-xl bg-tertiary-container/20 border border-tertiary/30 flex items-center justify-center text-tertiary font-bold text-sm">
               W
             </div>
 <div>
-<h3 class="text-sm font-bold text-[#F9FAFB]">Wordle #1624</h3>
-<p class="text-[11px] font-medium text-[#94A3B8]">Today's Shared Challenge</p>
+<h3 class="text-sm font-bold text-on-surface">Wordle #1624</h3>
+<p class="text-[11px] font-medium text-on-surface-variant">Today's Shared Challenge</p>
 </div>
 </div>
-<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-950/50 border border-emerald-500/30 text-emerald-300 font-bold text-xs">
-<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-tertiary-container/20 border border-tertiary/30 text-tertiary font-bold text-xs">
+<span aria-hidden="true" class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
             Completed
           </span>
 </div>
 <!-- Participants Row / Comparison -->
 <div class="flex flex-col gap-2.5">
 <!-- User (Alex Rivera) row -->
-<div class="p-2.5 rounded-xl bg-[#1E2638] border border-white/[0.08] flex items-center justify-between">
+<div class="p-2.5 rounded-xl bg-surface-container-high border border-white/[0.08] flex items-center justify-between">
 <div class="flex items-center gap-2 min-w-0">
-<img alt="Alex Rivera" class="w-7 h-7 rounded-full object-cover ring-1 ring-white/20 shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDL2HkDvDTWV4Fnp6Z2uxJHTvyd0LveauseJ-I0NbaboVvzF0UyLWtJlgpvOo-bYWCDQ7wlWj4-n2AUpFknJgWpvWPnJPpLp_2_CxclX9opRZ9-NEOys2SOQp6b1vuh1q7ba0WS1SZgUA1BZscPAsL08J9kMlbTYO0cEAuMaJNazWDOWP6sEnI8Kk6IQCfee_Z0_4em9rE22tkVLLzcgbF61HHmgB9O3FV0cgYTj1CW">
+<img loading="lazy" decoding="async" alt="" class="w-7 h-7 rounded-full object-cover ring-1 ring-white/20 shrink-0" src="../assets/avatar-2.svg">
 <div class="min-w-0">
 <div class="flex items-center gap-1.5">
-<span class="text-xs font-bold text-[#F9FAFB] truncate">You (Alex)</span>
-<span class="text-[10px] font-bold text-blue-300 bg-blue-900/60 border border-blue-400/30 px-1 rounded">1st</span>
+<span class="text-xs font-bold text-on-surface truncate">You (Alex)</span>
+<span class="text-[11px] font-bold text-primary bg-primary-container/15 border border-primary/30 px-1 rounded">1st</span>
 </div>
-<span class="text-[11px] font-medium text-[#94A3B8]">1m 42s</span>
+<span class="text-[11px] font-medium text-on-surface-variant">1m 42s</span>
 </div>
 </div>
 <div class="flex items-center gap-2">
 <div class="flex flex-col items-end">
-<span class="text-sm font-extrabold text-emerald-400">3/6</span>
-<span class="text-[10px] font-semibold text-slate-400 uppercase">guesses</span>
+<span class="text-sm font-extrabold text-tertiary">3/6</span>
+<span class="text-[11px] font-semibold text-on-surface-variant uppercase">guesses</span>
 </div>
-<button aria-label="Cheer" class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-600/20 text-blue-300 hover:bg-blue-600/30 border border-blue-500/30 font-bold text-xs transition-colors" type="button">
+<button aria-label="Cheer" class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary-container/20 text-primary hover:bg-primary-container/30 border border-primary/30 font-bold text-xs transition-colors" type="button">
 <span>Cheer</span>
-<span class="material-symbols-outlined text-[14px]">celebration</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[14px]">celebration</span>
 </button>
 </div>
 </div>
 <!-- Jordan Lee row -->
-<div class="p-2.5 rounded-xl bg-[#1E2638]/70 border border-white/[0.06] flex items-center justify-between">
+<div class="p-2.5 rounded-xl bg-surface-container-high/70 border border-white/[0.06] flex items-center justify-between">
 <div class="flex items-center gap-2 min-w-0">
-<img alt="Jordan Lee" class="w-7 h-7 rounded-full object-cover ring-1 ring-white/20 shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDm6MrpYR4Dt_ny5r3yP2w4xzc_Oex4yuhVBpU1bYzS7c0nCRx-k2w_Wryk7Cjg3SjlbLUimPZnwtit3iRHsSeLlyY5aexNuQn4nXVCUtKgkGbvCvhv3p5-bA30didTwQ4PjRLdzIA2iX77bCRRPB3oto4K1GvWqjjqpG5iMZ9zEVOIPQ0QPYqt7lrwQh91vYcevK8EbeMsWqH7tcO96chX9r0wcq47_k7mVD31PZVq">
+<img loading="lazy" decoding="async" alt="" class="w-7 h-7 rounded-full object-cover ring-1 ring-white/20 shrink-0" src="../assets/avatar-3.svg">
 <div class="min-w-0">
-<span class="text-xs font-bold text-[#F9FAFB] truncate block">Jordan Lee</span>
-<span class="text-[11px] font-medium text-[#94A3B8]">2m 15s</span>
+<span class="text-xs font-bold text-on-surface truncate block">Jordan Lee</span>
+<span class="text-[11px] font-medium text-on-surface-variant">2m 15s</span>
 </div>
 </div>
 <div class="flex items-center gap-2">
 <div class="flex flex-col items-end">
-<span class="text-sm font-bold text-slate-200">4/6</span>
-<span class="text-[10px] font-semibold text-slate-400 uppercase">guesses</span>
+<span class="text-sm font-bold text-on-surface">4/6</span>
+<span class="text-[11px] font-semibold text-on-surface-variant uppercase">guesses</span>
 </div>
-<button class="flex items-center gap-1 px-2 py-1 rounded-full text-slate-400 hover:text-white hover:bg-white/10 font-semibold text-xs transition-colors" type="button">
-<span class="material-symbols-outlined text-[15px]">visibility</span>
+<button class="flex items-center gap-1 px-2 py-1 rounded-full text-on-surface-variant hover:text-white hover:bg-white/10 font-semibold text-xs transition-colors" type="button" aria-label="Show board">
+<span aria-hidden="true" class="material-symbols-outlined text-[15px]">visibility</span>
 </button>
 </div>
 </div>
 <!-- Taylor Brooks (Spoiler Locked) row -->
-<div class="p-2.5 rounded-xl bg-amber-950/20 border border-amber-500/30 flex items-center justify-between">
+<div class="p-2.5 rounded-xl bg-streak/10 border border-streak/30 flex items-center justify-between">
 <div class="flex items-center gap-2 min-w-0">
-<img alt="Taylor Brooks" class="w-7 h-7 rounded-full object-cover ring-1 ring-white/20 shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtYMTLpjxZvJ42zl-KG4bxFAHWx3vFGXoyRvsBGMnD1xJxPDHxZJ1DKmS0wwBCgZwfztgE-yrjG3LIHLuoEMOGEsSSFupMxlpuLBNYYq6xdz2IiENSX30OvDFBppeUYK74xDsFXQT1_pebeAhm9avtMJim44IAnmsD3huuXnJAYygYyXzgObTQWIMhsB6a7Eek4AY-tqvg0vnqB-f1X493H8OtKDLkvMzHD45suLFI">
+<img loading="lazy" decoding="async" alt="" class="w-7 h-7 rounded-full object-cover ring-1 ring-white/20 shrink-0" src="../assets/avatar-4.svg">
 <div class="min-w-0">
-<span class="text-xs font-bold text-[#F9FAFB] truncate block">Taylor Brooks</span>
-<span class="text-[11px] font-medium text-amber-300/90 flex items-center gap-1">
-<span class="material-symbols-outlined text-[13px]" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="text-xs font-bold text-on-surface truncate block">Taylor Brooks</span>
+<span class="text-[11px] font-medium text-streak/90 flex items-center gap-1">
+<span aria-hidden="true" class="material-symbols-outlined text-[13px]" style="font-variation-settings: 'FILL' 1;">lock</span>
                   Result hidden until you finish
                 </span>
 </div>
 </div>
-<span class="px-2 py-1 rounded-full bg-amber-950/60 text-amber-300 font-bold text-[11px] shrink-0 border border-amber-400/40">
+<span class="px-2 py-1 rounded-full bg-streak/10 text-streak font-bold text-[11px] shrink-0 border border-streak/40">
               Spoiler Locked
             </span>
 </div>
 </div>
 <!-- Grid Preview Visualization -->
-<div class="p-2.5 rounded-xl bg-[#080C13] border border-white/[0.06] flex flex-col items-center justify-center gap-1">
+<div class="p-2.5 rounded-xl bg-surface-container-lowest border border-white/[0.06] flex flex-col items-center justify-center gap-1">
 <div class="flex gap-1.5">
-<span class="w-4 h-4 rounded-xs bg-slate-700/60 border border-slate-600/40"></span>
-<span class="w-4 h-4 rounded-xs bg-amber-500"></span>
-<span class="w-4 h-4 rounded-xs bg-slate-700/60 border border-slate-600/40"></span>
-<span class="w-4 h-4 rounded-xs bg-slate-700/60 border border-slate-600/40"></span>
-<span class="w-4 h-4 rounded-xs bg-slate-700/60 border border-slate-600/40"></span>
+<span class="w-4 h-4 rounded-[2px] bg-surface-container-highest/60 border border-outline-variant/40"></span>
+<span class="w-4 h-4 rounded-[2px] bg-streak"></span>
+<span class="w-4 h-4 rounded-[2px] bg-surface-container-highest/60 border border-outline-variant/40"></span>
+<span class="w-4 h-4 rounded-[2px] bg-surface-container-highest/60 border border-outline-variant/40"></span>
+<span class="w-4 h-4 rounded-[2px] bg-surface-container-highest/60 border border-outline-variant/40"></span>
 </div>
 <div class="flex gap-1.5">
-<span class="w-4 h-4 rounded-xs bg-emerald-500"></span>
-<span class="w-4 h-4 rounded-xs bg-slate-700/60 border border-slate-600/40"></span>
-<span class="w-4 h-4 rounded-xs bg-emerald-500"></span>
-<span class="w-4 h-4 rounded-xs bg-amber-500"></span>
-<span class="w-4 h-4 rounded-xs bg-slate-700/60 border border-slate-600/40"></span>
+<span class="w-4 h-4 rounded-[2px] bg-tertiary-container"></span>
+<span class="w-4 h-4 rounded-[2px] bg-surface-container-highest/60 border border-outline-variant/40"></span>
+<span class="w-4 h-4 rounded-[2px] bg-tertiary-container"></span>
+<span class="w-4 h-4 rounded-[2px] bg-streak"></span>
+<span class="w-4 h-4 rounded-[2px] bg-surface-container-highest/60 border border-outline-variant/40"></span>
 </div>
 <div class="flex gap-1.5">
-<span class="w-4 h-4 rounded-xs bg-emerald-500"></span>
-<span class="w-4 h-4 rounded-xs bg-emerald-500"></span>
-<span class="w-4 h-4 rounded-xs bg-emerald-500"></span>
-<span class="w-4 h-4 rounded-xs bg-emerald-500"></span>
-<span class="w-4 h-4 rounded-xs bg-emerald-500"></span>
+<span class="w-4 h-4 rounded-[2px] bg-tertiary-container"></span>
+<span class="w-4 h-4 rounded-[2px] bg-tertiary-container"></span>
+<span class="w-4 h-4 rounded-[2px] bg-tertiary-container"></span>
+<span class="w-4 h-4 rounded-[2px] bg-tertiary-container"></span>
+<span class="w-4 h-4 rounded-[2px] bg-tertiary-container"></span>
 </div>
 </div>
 <div class="flex items-center justify-between pt-1">
-<span class="text-xs text-[#94A3B8] font-medium">12 min ago</span>
-<button class="flex items-center gap-1 text-xs font-bold text-blue-400 hover:text-blue-300" type="button">
+<span class="text-xs text-on-surface-variant font-medium">12 min ago</span>
+<button class="flex items-center gap-1 text-xs font-bold text-primary hover:text-primary" type="button">
 <span>Replay Board</span>
-<span class="material-symbols-outlined text-[15px]">play_circle</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[15px]">play_circle</span>
 </button>
 </div>
 </div>
 <!-- Card 2: Connections #892 -->
-<div class="bg-[#131B2E] rounded-2xl border border-white/[0.08] p-4 shadow-sm flex flex-col gap-3.5">
+<div class="bg-surface-container-low rounded-2xl border border-white/[0.08] p-4 shadow-sm flex flex-col gap-3.5">
 <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
 <div class="flex items-center gap-2.5">
 <div class="w-8 h-8 rounded-xl bg-purple-950/60 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-sm">
               C
             </div>
 <div>
-<h3 class="text-sm font-bold text-[#F9FAFB]">Connections #892</h3>
-<p class="text-[11px] font-medium text-[#94A3B8]">4 Group Word Association</p>
+<h3 class="text-sm font-bold text-on-surface">Connections #892</h3>
+<p class="text-[11px] font-medium text-on-surface-variant">4 Group Word Association</p>
 </div>
 </div>
-<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-950/50 border border-orange-500/30 text-orange-300 font-bold text-xs">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-streak/10 border border-streak/30 text-streak font-bold text-xs">
             1 mistake
           </span>
 </div>
 <!-- Participants -->
 <div class="flex flex-col gap-2">
-<div class="p-2.5 rounded-xl bg-[#1E2638] border border-white/[0.08] flex items-center justify-between">
+<div class="p-2.5 rounded-xl bg-surface-container-high border border-white/[0.08] flex items-center justify-between">
 <div class="flex items-center gap-2 min-w-0">
-<img alt="Jordan Lee" class="w-7 h-7 rounded-full object-cover ring-1 ring-white/20 shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDm6MrpYR4Dt_ny5r3yP2w4xzc_Oex4yuhVBpU1bYzS7c0nCRx-k2w_Wryk7Cjg3SjlbLUimPZnwtit3iRHsSeLlyY5aexNuQn4nXVCUtKgkGbvCvhv3p5-bA30didTwQ4PjRLdzIA2iX77bCRRPB3oto4K1GvWqjjqpG5iMZ9zEVOIPQ0QPYqt7lrwQh91vYcevK8EbeMsWqH7tcO96chX9r0wcq47_k7mVD31PZVq">
+<img loading="lazy" decoding="async" alt="" class="w-7 h-7 rounded-full object-cover ring-1 ring-white/20 shrink-0" src="../assets/avatar-5.svg">
 <div class="min-w-0">
-<span class="text-xs font-bold text-[#F9FAFB] truncate block">Solved with 1 mistake</span>
-<span class="text-[11px] text-[#94A3B8] font-medium">Jordan Lee · 4/4 Groups</span>
+<span class="text-xs font-bold text-on-surface truncate block">Solved with 1 mistake</span>
+<span class="text-[11px] text-on-surface-variant font-medium">Jordan Lee · 4/4 Groups</span>
 </div>
 </div>
-<div class="flex items-center gap-1 text-orange-400 font-bold text-xs bg-orange-950/50 px-2 py-1 rounded-full border border-orange-500/30">
-<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<div class="flex items-center gap-1 text-streak font-bold text-xs bg-streak/10 px-2 py-1 rounded-full border border-streak/30">
+<span aria-hidden="true" class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
 <span>14 streak</span>
 </div>
 </div>
-<div class="p-2.5 rounded-xl bg-amber-950/20 border border-amber-500/30 flex items-center justify-between">
+<div class="p-2.5 rounded-xl bg-streak/10 border border-streak/30 flex items-center justify-between">
 <div class="flex items-center gap-2 min-w-0">
-<img alt="Morgan Vance" class="w-7 h-7 rounded-full object-cover ring-1 ring-white/20 shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlgpgvZsb2TbvAMOl2JdwV4JXiPQWfFUbqtqLgBj2bYFNJkHcPpqaAXtV3Jbr16deIbAe4JXTtrlcIbKKfxFcBWIaAHcvjQLtxBt7rZJBVgxFfB4U7abg0IvX-aG2o1X6XrqYepcOjw3-NAtyh3Ow2sxa60Wx5HuL5HPvuCW7ZRfPl0jeOh-6JlqojaIk-CihCy1JAC18-XyN5C-W0h-Xg6l9ZYndBbFZ8H50Ot47E">
+<img loading="lazy" decoding="async" alt="" class="w-7 h-7 rounded-full object-cover ring-1 ring-white/20 shrink-0" src="../assets/avatar-1.svg">
 <div class="min-w-0">
-<span class="text-xs font-bold text-[#F9FAFB] truncate block">Morgan Vance</span>
-<span class="text-[11px] font-medium text-amber-300/90">Result hidden until you finish</span>
+<span class="text-xs font-bold text-on-surface truncate block">Morgan Vance</span>
+<span class="text-[11px] font-medium text-streak/90">Result hidden until you finish</span>
 </div>
 </div>
-<span class="px-2 py-1 rounded-full bg-amber-950/60 text-amber-300 font-bold text-[11px] border border-amber-400/40">
+<span class="px-2 py-1 rounded-full bg-streak/10 text-streak font-bold text-[11px] border border-streak/40">
               Spoiler Locked
             </span>
 </div>
 </div>
 <!-- Connections Grid Result Blocks -->
-<div class="grid grid-cols-4 gap-1.5 p-2 rounded-xl bg-[#080C13] border border-white/[0.06]">
-<div class="h-6 rounded bg-amber-500/20 border border-amber-400/30 flex items-center justify-center text-xs">🟨</div>
-<div class="h-6 rounded bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-xs">🟩</div>
-<div class="h-6 rounded bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-xs">🟦</div>
+<div class="grid grid-cols-4 gap-1.5 p-2 rounded-xl bg-surface-container-lowest border border-white/[0.06]">
+<div class="h-6 rounded bg-streak/20 border border-streak/40 flex items-center justify-center text-xs">🟨</div>
+<div class="h-6 rounded bg-tertiary-container/20 border border-tertiary/30 flex items-center justify-center text-xs">🟩</div>
+<div class="h-6 rounded bg-primary-container/20 border border-primary/30 flex items-center justify-center text-xs">🟦</div>
 <div class="h-6 rounded bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-xs">🟪</div>
 </div>
 <div class="flex items-center justify-between pt-1">
-<span class="text-xs text-[#94A3B8] font-medium">45 min ago</span>
-<button class="flex items-center gap-1 text-xs font-bold text-blue-400 hover:text-blue-300" type="button">
+<span class="text-xs text-on-surface-variant font-medium">45 min ago</span>
+<button class="flex items-center gap-1 text-xs font-bold text-primary hover:text-primary" type="button">
 <span>Replay Board</span>
-<span class="material-symbols-outlined text-[15px]">visibility</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[15px]">visibility</span>
 </button>
 </div>
 </div>
 <!-- Card 3: Strands #254 -->
-<div class="bg-[#131B2E] rounded-2xl border border-white/[0.08] p-4 shadow-sm flex flex-col gap-3">
+<div class="bg-surface-container-low rounded-2xl border border-white/[0.08] p-4 shadow-sm flex flex-col gap-3">
 <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
 <div class="flex items-center gap-2.5">
-<div class="w-8 h-8 rounded-xl bg-blue-950/60 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm">
+<div class="w-8 h-8 rounded-xl bg-primary-container/15 border border-primary/30 flex items-center justify-center text-primary font-bold text-sm">
               S
             </div>
 <div>
-<h3 class="text-sm font-bold text-[#F9FAFB]">Strands #254</h3>
-<p class="text-[11px] font-medium text-[#94A3B8]">Theme: Secret Codes</p>
+<h3 class="text-sm font-bold text-on-surface">Strands #254</h3>
+<p class="text-[11px] font-medium text-on-surface-variant">Theme: Secret Codes</p>
 </div>
 </div>
-<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-950/50 border border-amber-500/30 text-amber-300 font-bold text-xs">
-<span class="material-symbols-outlined text-[13px]">schedule</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-streak/10 border border-streak/30 text-streak font-bold text-xs">
+<span aria-hidden="true" class="material-symbols-outlined text-[13px]">schedule</span>
             Until Reset
           </span>
 </div>
-<div class="p-4 rounded-xl bg-[#1E2638] border border-white/[0.08] flex flex-col items-center justify-center text-center gap-2">
-<div class="w-10 h-10 rounded-full bg-amber-950/60 border border-amber-500/30 text-amber-400 flex items-center justify-center">
-<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">visibility_off</span>
+<div class="p-4 rounded-xl bg-surface-container-high border border-white/[0.08] flex flex-col items-center justify-center text-center gap-2">
+<div class="w-10 h-10 rounded-full bg-streak/10 border border-streak/30 text-streak flex items-center justify-center">
+<span aria-hidden="true" class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">visibility_off</span>
 </div>
 <div>
-<h4 class="text-xs font-bold text-[#F9FAFB]">In progress / Spoiler Locked until reset</h4>
-<p class="text-[11px] font-medium text-[#94A3B8] mt-0.5">Automatic unlock in 6h 24m or play now</p>
+<h4 class="text-xs font-bold text-on-surface">In progress / Spoiler Locked until reset</h4>
+<p class="text-[11px] font-medium text-on-surface-variant mt-0.5">Automatic unlock in 6h 24m or play now</p>
 </div>
-<button class="mt-1 px-4 py-1.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-600/30 active:scale-95 transition-all flex items-center gap-1.5" type="button">
+<button class="mt-1 px-4 py-1.5 rounded-full bg-primary-container hover:bg-primary-container text-on-primary-container font-bold text-xs shadow-md shadow-blue-600/30 active:scale-95 transition-all flex items-center gap-1.5" type="button">
 <span>Play Strands Now</span>
-<span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[15px]">arrow_forward</span>
 </button>
 </div>
 <div class="flex items-center justify-between pt-1">
-<span class="text-xs text-[#94A3B8] font-medium">Completed by 4 friends today</span>
-<button class="flex items-center gap-1 text-xs font-semibold text-slate-400 hover:text-white" type="button">
+<span class="text-xs text-on-surface-variant font-medium">Completed by 4 friends today</span>
+<button class="flex items-center gap-1 text-xs font-semibold text-on-surface-variant hover:text-white" type="button">
 <span>Rules</span>
-<span class="material-symbols-outlined text-[14px]">info</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[14px]">info</span>
 </button>
 </div>
 </div>
 </div>
 </main>
 <!-- Persistent 5-Tab Bottom Navigation -->
-<nav class="fixed bottom-0 w-full z-50 pb-safe bg-[#0F131C]/90 backdrop-blur-xl border-t border-white/[0.08] shadow-2xl">
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl border-t border-white/[0.08] shadow-2xl">
 <div class="flex justify-around items-center h-16 px-2 max-w-lg mx-auto">
-<a class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-xl text-slate-400 hover:text-white transition-colors active:scale-95" data-path="today" href="#">
-<span class="material-symbols-outlined text-[22px]">calendar_today</span>
-<span class="text-[10px] font-semibold">Today</span>
+<a class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-xl text-on-surface-variant hover:text-white transition-colors active:scale-95" href="../today/code.html">
+<span aria-hidden="true" class="material-symbols-outlined text-[22px]">calendar_today</span>
+<span class="text-[11px] font-semibold">Today</span>
 </a>
-<a class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-xl text-slate-400 hover:text-white transition-colors active:scale-95" data-path="discover" href="#">
-<span class="material-symbols-outlined text-[22px]">explore</span>
-<span class="text-[10px] font-semibold">Discover</span>
+<a class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-xl text-on-surface-variant hover:text-white transition-colors active:scale-95" href="../discover/code.html">
+<span aria-hidden="true" class="material-symbols-outlined text-[22px]">explore</span>
+<span class="text-[11px] font-semibold">Discover</span>
 </a>
-<a class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-xl text-slate-400 hover:text-white transition-colors active:scale-95" data-path="statistics" href="#">
-<span class="material-symbols-outlined text-[22px]">bar_chart</span>
-<span class="text-[10px] font-semibold">Stats</span>
+<a class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-xl text-on-surface-variant hover:text-white transition-colors active:scale-95" href="../statistics/code.html">
+<span aria-hidden="true" class="material-symbols-outlined text-[22px]">bar_chart</span>
+<span class="text-[11px] font-semibold">Stats</span>
 </a>
 <!-- Active Friends Tab -->
-<a aria-current="page" class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-xl text-blue-400 font-bold transition-colors active:scale-95" data-path="friends" href="#">
-<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">group</span>
-<span class="text-[10px] font-bold">Friends</span>
+<a aria-current="page" class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-xl text-primary font-bold transition-colors active:scale-95" href="../friends/code.html">
+<span aria-hidden="true" class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="text-[11px] font-bold">Friends</span>
 </a>
-<a class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-xl text-slate-400 hover:text-white transition-colors active:scale-95" data-path="account" href="#">
-<span class="material-symbols-outlined text-[22px]">person</span>
-<span class="text-[10px] font-semibold">Account</span>
+<a class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-xl text-on-surface-variant hover:text-white transition-colors active:scale-95" href="../account/code.html">
+<span aria-hidden="true" class="material-symbols-outlined text-[22px]">person</span>
+<span class="text-[11px] font-semibold">Account</span>
 </a>
 </div>
 </nav>

@@ -1,163 +1,73 @@
-<!DOCTYPE html><html class="h-full bg-background dark" lang="en"><head>
+<!DOCTYPE html>
+<html lang="en" class="dark h-full">
+<head>
 <meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
-<meta content="#0B0F17" name="theme-color">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            "on-background": "#F9FAFB",
-            "surface-container-low": "#131B2E",
-            "on-error": "#690005",
-            "primary-fixed": "#D8E2FF",
-            "error-container": "#93000A",
-            "on-tertiary": "#003824",
-            "secondary-fixed": "#FFDBD0",
-            "surface-container": "#1E2638",
-            "surface-tint": "#ADC6FF",
-            "on-secondary-fixed-variant": "#004883",
-            "primary-container": "#3B82F6",
-            "secondary-fixed-dim": "#A4C9FF",
-            "tertiary": "#4EDEA3",
-            "surface-container-lowest": "#0B0F17",
-            "background": "#0B0F17",
-            "surface-container-highest": "#28344E",
-            "surface-dim": "#0B0F17",
-            "on-tertiary-fixed-variant": "#005236",
-            "inverse-on-surface": "#101B31",
-            "inverse-surface": "#F9FAFB",
-            "on-secondary-container": "#D6E5FF",
-            "on-primary": "#FFFFFF",
-            "on-surface": "#F9FAFB",
-            "on-error-container": "#FFDAD6",
-            "on-primary-fixed-variant": "#004395",
-            "error": "#FFB4AB",
-            "on-secondary": "#00315D",
-            "tertiary-fixed": "#6FFBBE",
-            "inverse-primary": "#005AC2",
-            "surface": "#0F131C",
-            "primary": "#3B82F6",
-            "on-primary-container": "#FFFFFF",
-            "on-tertiary-container": "#00311F",
-            "on-surface-variant": "#94A3B8",
-            "outline-variant": "#28354B",
-            "primary-fixed-dim": "#ADC6FF",
-            "outline": "#475569",
-            "on-secondary-fixed": "#001C39",
-            "on-primary-fixed": "#001A42",
-            "tertiary-container": "#10B981",
-            "tertiary-fixed-dim": "#4EDEA3",
-            "surface-container-high": "#232D42",
-            "surface-bright": "#353942",
-            "secondary-container": "#F97316",
-            "on-tertiary-fixed": "#002113",
-            "secondary": "#A4C9FF",
-            "surface-variant": "#1E2638"
-          },
-          borderRadius: {
-            "DEFAULT": "1rem",
-            "lg": "2rem",
-            "xl": "3rem",
-            "full": "9999px"
-          },
-          spacing: {
-            "gutter-mobile": "0.75rem",
-            "space-sm": "0.5rem",
-            "space-md": "1rem",
-            "space-xl": "2rem",
-            "margin-mobile": "1rem",
-            "margin": "1.25rem",
-            "gutter": "1rem",
-            "space-lg": "1.5rem",
-            "space-xs": "0.25rem"
-          },
-          fontFamily: {
-            "display-lg": ["Plus Jakarta Sans", "sans-serif"],
-            "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
-            "headline-md": ["Plus Jakarta Sans", "sans-serif"],
-            "display-md": ["Plus Jakarta Sans", "sans-serif"],
-            "display-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
-            "title-sm": ["Plus Jakarta Sans", "sans-serif"],
-            "body-lg": ["Plus Jakarta Sans", "sans-serif"],
-            "body-md": ["Plus Jakarta Sans", "sans-serif"],
-            "body-sm": ["Plus Jakarta Sans", "sans-serif"],
-            "label-lg": ["Plus Jakarta Sans", "sans-serif"],
-            "label-md": ["Plus Jakarta Sans", "sans-serif"],
-            "label-sm": ["Plus Jakarta Sans", "sans-serif"]
-          },
-          fontSize: {
-            "display-lg": ["40px", { lineHeight: "44px", letterSpacing: "-0.03em", fontWeight: "800" }],
-            "display-lg-mobile": ["32px", { lineHeight: "36px", letterSpacing: "-0.025em", fontWeight: "800" }],
-            "display-md": ["28px", { lineHeight: "32px", letterSpacing: "-0.02em", fontWeight: "700" }],
-            "headline-lg": ["24px", { lineHeight: "28px", letterSpacing: "-0.015em", fontWeight: "700" }],
-            "headline-md": ["20px", { lineHeight: "24px", fontWeight: "700" }],
-            "title-sm": ["16px", { lineHeight: "20px", fontWeight: "700" }],
-            "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
-            "body-md": ["14px", { lineHeight: "20px", fontWeight: "500" }],
-            "body-sm": ["12px", { lineHeight: "16px", fontWeight: "500" }],
-            "label-lg": ["14px", { lineHeight: "18px", letterSpacing: "0.01em", fontWeight: "700" }],
-            "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "700" }],
-            "label-sm": ["10px", { lineHeight: "12px", letterSpacing: "0.04em", fontWeight: "800" }]
-          }
-        }
-      }
-    };
-  </script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daydle — Today</title>
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#051424">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Daydle">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" type="image/svg+xml" href="../assets/daydle-emblem.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script id="tailwind-config">tailwind.config = {"darkMode":"class","theme":{"extend":{"colors":{"primary-fixed":"#d8e2ff","error":"#ffb4ab","surface-container-highest":"#273647","on-error-container":"#ffdad6","secondary":"#c0c1ff","primary-fixed-dim":"#adc6ff","error-container":"#93000a","on-secondary-fixed":"#07006c","secondary-fixed":"#e1e0ff","on-background":"#d4e4fa","on-tertiary-container":"#00311f","surface-dim":"#051424","on-primary-container":"#00285d","surface-container-low":"#0d1c2d","on-primary-fixed-variant":"#004395","background":"#051424","surface-tint":"#adc6ff","on-primary-fixed":"#001a42","surface-container-high":"#1c2b3c","on-tertiary-fixed":"#002113","primary":"#adc6ff","primary-container":"#4d8eff","on-secondary-fixed-variant":"#2f2ebe","on-tertiary":"#003824","inverse-primary":"#005ac2","surface-variant":"#273647","surface-container":"#122131","tertiary-fixed-dim":"#4edea3","on-tertiary-fixed-variant":"#005236","on-surface-variant":"#c2c6d6","inverse-surface":"#d4e4fa","inverse-on-surface":"#233143","secondary-container":"#3131c0","on-secondary-container":"#b0b2ff","on-error":"#690005","outline":"#8c909f","on-primary":"#002e6a","surface":"#051424","tertiary-fixed":"#6ffbbe","on-secondary":"#1000a9","on-surface":"#d4e4fa","tertiary-container":"#00a572","tertiary":"#4edea3","secondary-fixed-dim":"#c0c1ff","surface-bright":"#2c3a4c","outline-variant":"#424754","surface-container-lowest":"#010f1f","streak":"#f59e0b"},"borderRadius":{"DEFAULT":"1rem","lg":"2rem","xl":"3rem","full":"9999px","sm":"0.5rem","md":"1.5rem"},"spacing":{"space-md":"1rem","space-xl":"2.5rem","space-xs":"0.25rem","gutter":"1rem","margin-mobile":"1rem","space-sm":"0.5rem","margin":"2rem","space-lg":"1.5rem","gutter-mobile":"0.5rem"},"fontFamily":{"headline-lg":["Plus Jakarta Sans","system-ui","sans-serif"],"body-lg":["Plus Jakarta Sans","system-ui","sans-serif"],"label-sm":["Plus Jakarta Sans","system-ui","sans-serif"],"headline-md":["Plus Jakarta Sans","system-ui","sans-serif"],"title-md":["Plus Jakarta Sans","system-ui","sans-serif"],"headline-lg-mobile":["Plus Jakarta Sans","system-ui","sans-serif"],"headline-sm":["Plus Jakarta Sans","system-ui","sans-serif"],"display-lg":["Plus Jakarta Sans","system-ui","sans-serif"],"label-md":["Plus Jakarta Sans","system-ui","sans-serif"],"label-lg":["Plus Jakarta Sans","system-ui","sans-serif"],"body-md":["Plus Jakarta Sans","system-ui","sans-serif"],"sans":["Plus Jakarta Sans","system-ui","sans-serif"],"display-md":["Plus Jakarta Sans","system-ui","sans-serif"],"display-lg-mobile":["Plus Jakarta Sans","system-ui","sans-serif"],"title-sm":["Plus Jakarta Sans","system-ui","sans-serif"],"body-sm":["Plus Jakarta Sans","system-ui","sans-serif"]},"fontSize":{"headline-lg":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-lg":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.05em","fontWeight":"700"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"700"}],"title-md":["18px",{"lineHeight":"24px","fontWeight":"600"}],"headline-lg-mobile":["28px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-sm":["20px",{"lineHeight":"28px","fontWeight":"600"}],"display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.03em","fontWeight":"800"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"display-md":["28px",{"lineHeight":"32px","letterSpacing":"-0.02em","fontWeight":"700"}],"display-lg-mobile":["32px",{"lineHeight":"36px","letterSpacing":"-0.025em","fontWeight":"800"}],"title-sm":["16px",{"lineHeight":"20px","fontWeight":"700"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"500"}]},"minHeight":{"dvh":"100dvh"}}},"future":{"hoverOnlyWhenSupported":true}};</script>
 <style>
-    @layer base {
-      html, body {
-        width: 100vw;
-        margin: 0;
-        padding: 0;
-        min-height: 100%;
-        background-color: #0B0F17;
-        color: #F9FAFB;
-      }
-      .pb-safe {
-        padding-bottom: env(safe-area-inset-bottom, 16px);
-      }
-      .pt-safe {
-        padding-top: env(safe-area-inset-top, 0px);
-      }
-    }
-    ::-webkit-scrollbar {
-      display: none;
-    }
-  </style>
-<meta content="mobile_tab" name="shell-type">
+:root{color-scheme:dark}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:transparent;background:#051424}
+body{margin:0;background:#051424;color:#d4e4fa;overscroll-behavior-y:none;-webkit-font-smoothing:antialiased}
+a,button,[role=button],[role=switch],summary,label{touch-action:manipulation}
+button,[role=button],[role=switch]{-webkit-touch-callout:none}
+input,textarea,select{font-size:max(16px,1em)!important}
+.pt-safe{padding-top:env(safe-area-inset-top,0px)}
+.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px)}
+.material-symbols-outlined{-webkit-user-select:none;user-select:none}
+.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+.no-scrollbar::-webkit-scrollbar{display:none}
+:focus-visible{outline:2px solid #adc6ff!important;outline-offset:2px}
+/* 44pt minimum hit area (Apple HIG) without changing visuals: invisible pseudo-element grows the target. */
+:where(button,[role=button],[role=switch],a[href]:not(p a),summary,.hit-44){position:relative}
+:where(button,[role=button],[role=switch],a[href]:not(p a),summary,.hit-44)::after{content:"";position:absolute;top:min(0px,calc((100% - 44px)/2));bottom:min(0px,calc((100% - 44px)/2));left:min(0px,calc((100% - 44px)/2));right:min(0px,calc((100% - 44px)/2))}
+input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{min-height:44px}
+@keyframes fade-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.animate-fade-in{animation:fade-in .25s ease-out both}
+@media (hover:none){::-webkit-scrollbar{display:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
 </head>
-<body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col" style="font-family: &quot;Plus Jakarta Sans&quot;, sans-serif;">
+<body class="bg-background font-body-md text-on-surface antialiased min-h-dvh flex flex-col selection:bg-primary-container selection:text-on-primary-container">
 <!-- Fixed App Header -->
-<header class="fixed top-0 w-full z-50 pt-safe bg-[#0B0F17]/90 backdrop-blur-xl border-b border-white/[0.08] shadow-sm">
+<header class="fixed top-0 w-full z-50 pt-safe bg-background/90 backdrop-blur-xl border-b border-white/[0.08] shadow-sm">
 <div class="h-16 px-4 flex items-center justify-between gap-3 max-w-lg mx-auto">
-<div class="flex items-center gap-2.5"><div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary to-[#38bdf8] flex items-center justify-center text-white shadow-sm ring-2 ring-primary/20 shrink-0"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M19.439 7.85c0-1.571-.806-2.528-2.03-2.528a2.53 2.53 0 0 0-2.478 2.008 2.518 2.518 0 0 1-2.431 1.954c-1.397 0-2.53-1.133-2.53-2.53a2.53 2.53 0 0 1 2.008-2.478c0-1.224-.957-2.03-2.528-2.03-1.572 0-2.613.882-2.739 2.277C4.646 5.534 3 7.558 3 10.02c0 2.463 1.646 4.488 3.711 4.997.126 1.395 1.167 2.277 2.739 2.277 1.571 0 2.528-.806 2.528-2.03a2.53 2.53 0 0 1-2.008-2.478 2.53 2.53 0 0 1 2.53-2.53c1.396 0 2.518.887 2.431 1.954a2.53 2.53 0 0 0 2.478 2.008c1.224 0 2.03-.957 2.03-2.528 0-1.572-.882-2.613-2.277-2.739C20.67 11.458 21 10.767 21 10.02c0-.747-.33-1.438-.838-1.91 1.395-.126 2.277-1.167 2.277-2.739z"></path></svg></div><div class="flex items-center gap-2"><span class="font-headline-md text-[20px] leading-tight text-white tracking-tight font-extrabold">Daydle</span><span class="px-1.5 py-0.5 rounded bg-primary/15 text-[#38bdf8] border border-primary/30 font-label-sm text-[10px] tracking-wider uppercase font-extrabold leading-none">DAILY HUB</span></div></div>
+<div class="flex items-center gap-2.5"><div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary to-[#38bdf8] flex items-center justify-center text-white shadow-sm ring-2 ring-primary/20 shrink-0"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M19.439 7.85c0-1.571-.806-2.528-2.03-2.528a2.53 2.53 0 0 0-2.478 2.008 2.518 2.518 0 0 1-2.431 1.954c-1.397 0-2.53-1.133-2.53-2.53a2.53 2.53 0 0 1 2.008-2.478c0-1.224-.957-2.03-2.528-2.03-1.572 0-2.613.882-2.739 2.277C4.646 5.534 3 7.558 3 10.02c0 2.463 1.646 4.488 3.711 4.997.126 1.395 1.167 2.277 2.739 2.277 1.571 0 2.528-.806 2.528-2.03a2.53 2.53 0 0 1-2.008-2.478 2.53 2.53 0 0 1 2.53-2.53c1.396 0 2.518.887 2.431 1.954a2.53 2.53 0 0 0 2.478 2.008c1.224 0 2.03-.957 2.03-2.528 0-1.572-.882-2.613-2.277-2.739C20.67 11.458 21 10.767 21 10.02c0-.747-.33-1.438-.838-1.91 1.395-.126 2.277-1.167 2.277-2.739z"></path></svg></div><div class="flex items-center gap-2"><span class="font-headline-md text-[20px] leading-tight text-white tracking-tight font-extrabold">Daydle</span><span class="px-1.5 py-0.5 rounded bg-primary/15 text-[#38bdf8] border border-primary/30 font-label-sm text-[11px] tracking-wider uppercase font-extrabold leading-none">DAILY HUB</span></div></div>
 <div class="flex items-center gap-1">
 <button aria-label="Search puzzles" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container active:scale-95 transition-all" type="button">
-<span class="material-symbols-outlined text-[22px]">search</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[22px]">search</span>
 </button>
 <button aria-label="Notifications" class="relative w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container active:scale-95 transition-all" type="button">
-<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[22px]">notifications</span>
 <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-secondary-container ring-2 ring-surface"></span>
 </button>
-<a class="w-10 h-10 flex items-center justify-center rounded-full p-0.5 hover:ring-2 hover:ring-primary/40 active:scale-95 transition-all ml-0.5" data-path="account" href="#">
-<img alt="User avatar" class="w-8 h-8 rounded-full object-cover ring-1 ring-white/10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAinkPCcZO0B65NKKnV-sQsV0NgsyPJZyBAYXz8r4YHWbok_vT7T7dh4yZ4wgqj-H_EKCerqhuiuRR0aZJeeL3H1Cf0h5YCRi4KVX_SI5Q4ucOkL773Hw739F6AymfK2KGSRWDKoUwaiFOQ_bmcCaJKN6bwWXFuZlsGyeSSKSiL7K6dfyOLSVodgFSWZle_mm8dcwh-tF4Q8W4GRjQy3Y369mXdLApPze8IediTVnws">
+<a class="w-10 h-10 flex items-center justify-center rounded-full p-0.5 hover:ring-2 hover:ring-primary/40 active:scale-95 transition-all ml-0.5" href="../account/code.html">
+<img loading="lazy" decoding="async" alt="User avatar" class="w-8 h-8 rounded-full object-cover ring-1 ring-white/10" src="../assets/avatar-1.svg">
 </a>
 </div>
 </div>
 </header>
 <!-- Main Scrollable Screen Content -->
-<main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-background">
+<main class="flex-1 flex flex-col relative w-full pt-[calc(4rem+env(safe-area-inset-top))] pb-[calc(6rem+env(safe-area-inset-bottom))] bg-background">
 <div class="flex flex-col w-full max-w-lg mx-auto px-4 pt-4 pb-20">
 <!-- Date Banner & Sync indicator -->
 <div class="flex items-center justify-between mb-2">
-<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#131B2E]/90 backdrop-blur-md border border-white/[0.08] text-on-surface shadow-xs"><span class="w-2 h-2 rounded-full bg-[#38bdf8] ring-4 ring-[#38bdf8]/20 animate-pulse"></span><span class="font-label-sm text-[11px] font-bold text-white tracking-wide">Sunday, November 15, 2026</span></div>
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low/90 backdrop-blur-md border border-white/[0.08] text-on-surface shadow-sm"><span class="w-2 h-2 rounded-full bg-[#38bdf8] ring-4 ring-[#38bdf8]/20 animate-pulse"></span><span class="font-label-sm text-[11px] font-bold text-white tracking-wide">Sunday, November 15, 2026</span></div>
 <div class="flex items-center gap-1 text-on-surface-variant font-label-sm text-[11px]">
-<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[14px]">schedule</span>
 <span>Resets in 8h 14m</span>
 </div>
 </div>
@@ -174,17 +84,17 @@
 <span class="shrink-0 px-2.5 py-1 rounded-full bg-surface-container border border-white/[0.08] text-primary font-label-sm font-extrabold text-[11px]">2 / 6 Done</span>
 </div>
 <!-- Progress bar -->
-<div class="relative w-full bg-[#1E2638] h-2.5 rounded-full overflow-hidden mb-3.5 border border-white/[0.04]">
+<div class="relative w-full bg-surface-container-high h-2.5 rounded-full overflow-hidden mb-3.5 border border-white/[0.04]">
 <div class="bg-primary h-full rounded-full transition-all duration-700 ease-out shadow-[0_0_8px_rgba(59,130,246,0.5)]" style="width: 33.33%;"></div>
 </div>
 <!-- CTA Buttons -->
 <div class="flex items-center gap-2 pt-0.5">
-<button class="flex-1 inline-flex items-center justify-center gap-1.5 h-11 px-4 rounded-full bg-primary text-white font-label-md shadow-[0_3px_0_0_#1d4ed8] active:translate-y-[2px] active:shadow-none transition-all font-semibold" type="button">
-<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+<button class="flex-1 inline-flex items-center justify-center gap-1.5 h-11 px-4 rounded-full bg-primary-container text-on-primary-container font-label-md shadow-[0_3px_0_0_#005ac2] active:translate-y-[2px] active:shadow-none transition-all font-semibold" type="button">
+<span aria-hidden="true" class="material-symbols-outlined text-[18px]">play_arrow</span>
 <span>Launch All</span>
 </button>
 <button class="inline-flex items-center justify-center gap-1.5 h-11 px-4 rounded-full bg-surface-container text-white font-label-md border border-white/[0.1] hover:bg-surface-container-high active:translate-y-[1px] transition-all font-semibold" id="pasteTrigger" type="button">
-<span class="material-symbols-outlined text-[18px]">content_paste</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[18px]">content_paste</span>
 <span>Paste Result</span>
 </button>
 </div>
@@ -193,47 +103,47 @@
 <!-- Stat Tiles (2x2 Grid) -->
 <div class="grid grid-cols-2 gap-3 mb-6">
 <!-- Tile 1: Active Streak -->
-<div class="p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-xs flex flex-col justify-between">
+<div class="p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-sm flex flex-col justify-between">
 <div class="flex items-center justify-between text-secondary mb-1.5">
 <span class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant font-bold">Active Streak</span>
 <span class="text-base leading-none">🔥</span>
 </div>
-<div class="font-display-md text-[26px] leading-tight text-white font-extrabold mb-1">14 Days</div>
+<div class="font-headline-md text-[26px] leading-tight text-white font-extrabold mb-1">14 Days</div>
 <div class="flex items-center gap-1 text-tertiary font-label-sm text-[11px] font-semibold">
-<span class="material-symbols-outlined text-[13px]">north</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[13px]">north</span>
 <span>+2 vs previous run</span>
 </div>
 </div>
 <!-- Tile 2: Games Tracked -->
-<div class="p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-xs flex flex-col justify-between">
+<div class="p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-sm flex flex-col justify-between">
 <div class="flex items-center justify-between text-primary mb-1.5">
 <span class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant font-bold">Games Tracked</span>
-<span class="material-symbols-outlined text-[18px]">sports_esports</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[18px]">sports_esports</span>
 </div>
-<div class="font-display-md text-[26px] leading-tight text-white font-extrabold mb-1">6</div>
+<div class="font-headline-md text-[26px] leading-tight text-white font-extrabold mb-1">6</div>
 <div class="text-on-surface-variant font-label-sm text-[11px]">
 <span>0 active today of 42 total</span>
 </div>
 </div>
 <!-- Tile 3: Success Rate -->
-<div class="p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-xs flex flex-col justify-between">
+<div class="p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-sm flex flex-col justify-between">
 <div class="flex items-center justify-between text-tertiary mb-1.5">
 <span class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant font-bold">Success Rate</span>
-<span class="material-symbols-outlined text-[18px]">trending_up</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[18px]">trending_up</span>
 </div>
-<div class="font-display-md text-[26px] leading-tight text-white font-extrabold mb-1">94%</div>
+<div class="font-headline-md text-[26px] leading-tight text-white font-extrabold mb-1">94%</div>
 <div class="flex items-center gap-1 text-tertiary font-label-sm text-[11px] font-semibold">
-<span class="material-symbols-outlined text-[13px]">arrow_upward</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[13px]">arrow_upward</span>
 <span>+3.5% past 30 days</span>
 </div>
 </div>
 <!-- Tile 4: Friend Rank -->
-<div class="p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-xs flex flex-col justify-between">
+<div class="p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-sm flex flex-col justify-between">
 <div class="flex items-center justify-between text-[#F97316] mb-1.5">
 <span class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant font-bold">Friend Rank</span>
-<span class="material-symbols-outlined text-[18px]">emoji_events</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[18px]">emoji_events</span>
 </div>
-<div class="font-display-md text-[26px] leading-tight text-white font-extrabold mb-1">#2</div>
+<div class="font-headline-md text-[26px] leading-tight text-white font-extrabold mb-1">#2</div>
 <div class="text-on-surface-variant font-label-sm text-[11px]">
 <span>in DAYDL group</span>
 </div>
@@ -246,168 +156,168 @@
 <span class="w-5 h-5 rounded-full bg-primary/20 text-primary text-[11px] font-extrabold flex items-center justify-center border border-primary/30">6</span>
 </div>
 <button class="inline-flex items-center gap-1 text-primary font-label-md text-[13px] px-2.5 py-1 rounded-full hover:bg-surface-container-low active:scale-95 transition-all font-semibold" type="button">
-<span class="material-symbols-outlined text-[17px]">tune</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[17px]">tune</span>
 <span>Edit lineup</span>
 </button>
 </div>
 <!-- 6 Games Stack -->
 <div class="flex flex-col gap-2.5">
 <!-- 1. Wordle (Completed) -->
-<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-xs">
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-sm">
 <div class="flex items-center gap-3 min-w-0">
-<div class="w-11 h-11 rounded-xl bg-tertiary-container text-white flex items-center justify-center font-headline-md text-lg font-bold shrink-0 shadow-xs">
+<div class="w-11 h-11 rounded-xl bg-tertiary-container text-white flex items-center justify-center font-headline-md text-lg font-bold shrink-0 shadow-sm">
               W
             </div>
 <div class="flex flex-col min-w-0">
 <div class="flex items-center gap-2">
 <span class="font-title-sm text-title-sm text-white truncate">Wordle</span>
 <span class="px-2 py-0.5 rounded-full bg-tertiary/15 text-tertiary border border-tertiary/20 font-label-sm text-[11px] font-bold flex items-center gap-0.5">
-<span class="material-symbols-outlined text-[13px]">check</span> Done
+<span aria-hidden="true" class="material-symbols-outlined text-[13px]">check</span> Done
                 </span>
 </div>
 <span class="font-body-sm text-[12px] text-on-surface-variant truncate">Puzzle #1,610 · Solved in 3/6 · Streak 22</span>
 </div>
 </div>
 <button aria-label="Share Wordle Result" class="shrink-0 w-9 h-9 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center hover:bg-surface-container-high hover:text-white border border-white/[0.06] active:scale-90 transition-all ml-2" type="button">
-<span class="material-symbols-outlined text-[18px]">share</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[18px]">share</span>
 </button>
 </div>
 <!-- 2. Connections (Completed) -->
-<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-xs">
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-sm">
 <div class="flex items-center gap-3 min-w-0">
-<div class="w-11 h-11 rounded-xl bg-secondary-container text-white flex items-center justify-center font-headline-md text-lg font-bold shrink-0 shadow-xs">
+<div class="w-11 h-11 rounded-xl bg-secondary-container text-white flex items-center justify-center font-headline-md text-lg font-bold shrink-0 shadow-sm">
               C
             </div>
 <div class="flex flex-col min-w-0">
 <div class="flex items-center gap-2">
 <span class="font-title-sm text-title-sm text-white truncate">Connections</span>
 <span class="px-2 py-0.5 rounded-full bg-tertiary/15 text-tertiary border border-tertiary/20 font-label-sm text-[11px] font-bold flex items-center gap-0.5">
-<span class="material-symbols-outlined text-[13px]">check</span> Done
+<span aria-hidden="true" class="material-symbols-outlined text-[13px]">check</span> Done
                 </span>
 </div>
 <span class="font-body-sm text-[12px] text-on-surface-variant truncate">Group #884 · Zero mistakes · Streak 14</span>
 </div>
 </div>
 <button aria-label="Share Connections Result" class="shrink-0 w-9 h-9 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center hover:bg-surface-container-high hover:text-white border border-white/[0.06] active:scale-90 transition-all ml-2" type="button">
-<span class="material-symbols-outlined text-[18px]">share</span>
+<span aria-hidden="true" class="material-symbols-outlined text-[18px]">share</span>
 </button>
 </div>
 <!-- 3. Mini Crossword (Pending) -->
-<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-xs">
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-sm">
 <div class="flex items-center gap-3 min-w-0">
-<div class="w-11 h-11 rounded-xl bg-[#28354B] text-primary flex items-center justify-center font-headline-md text-lg font-bold shrink-0 border border-white/[0.06]">
+<div class="w-11 h-11 rounded-xl bg-surface-container-highest text-primary flex items-center justify-center font-headline-md text-lg font-bold shrink-0 border border-white/[0.06]">
               M
             </div>
 <div class="flex flex-col min-w-0">
 <div class="flex items-center gap-2">
 <span class="font-title-sm text-title-sm text-white truncate">Mini Crossword</span>
-<span class="px-2 py-0.5 rounded-full bg-[#3B2820] text-[#FFB59E] border border-[#FFB59E]/20 font-label-sm text-[10px] font-bold">
+<span class="px-2 py-0.5 rounded-full bg-streak/15 text-streak border border-streak/20 font-label-sm text-[11px] font-bold">
                   Pending
                 </span>
 </div>
 <span class="font-body-sm text-[12px] text-on-surface-variant truncate">Sunday Edition · Deterministic parser ready</span>
 </div>
 </div>
-<button class="shrink-0 h-8 px-3.5 rounded-full bg-primary text-white font-label-md text-[12px] font-semibold flex items-center gap-1 shadow-sm active:scale-95 transition-all ml-2" type="button">
-<span class="material-symbols-outlined text-[15px]">play_arrow</span>
+<button class="shrink-0 h-8 px-3.5 rounded-full bg-primary-container text-on-primary-container font-label-md text-[12px] font-semibold flex items-center gap-1 shadow-sm active:scale-95 transition-all ml-2" type="button">
+<span aria-hidden="true" class="material-symbols-outlined text-[15px]">play_arrow</span>
 <span>Play</span>
 </button>
 </div>
 <!-- 4. Wordgrid (Pending) -->
-<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-xs">
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-sm">
 <div class="flex items-center gap-3 min-w-0">
-<div class="w-11 h-11 rounded-xl bg-[#28354B] text-primary flex items-center justify-center font-headline-md text-lg font-bold shrink-0 border border-white/[0.06]">
+<div class="w-11 h-11 rounded-xl bg-surface-container-highest text-primary flex items-center justify-center font-headline-md text-lg font-bold shrink-0 border border-white/[0.06]">
               G
             </div>
 <div class="flex flex-col min-w-0">
 <div class="flex items-center gap-2">
 <span class="font-title-sm text-title-sm text-white truncate">Wordgrid</span>
-<span class="px-2 py-0.5 rounded-full bg-[#3B2820] text-[#FFB59E] border border-[#FFB59E]/20 font-label-sm text-[10px] font-bold">
+<span class="px-2 py-0.5 rounded-full bg-streak/15 text-streak border border-streak/20 font-label-sm text-[11px] font-bold">
                   Pending
                 </span>
 </div>
 <span class="font-body-sm text-[12px] text-on-surface-variant truncate">Grid #412 · Automatic recognition active</span>
 </div>
 </div>
-<button class="shrink-0 h-8 px-3.5 rounded-full bg-primary text-white font-label-md text-[12px] font-semibold flex items-center gap-1 shadow-sm active:scale-95 transition-all ml-2" type="button">
-<span class="material-symbols-outlined text-[15px]">play_arrow</span>
+<button class="shrink-0 h-8 px-3.5 rounded-full bg-primary-container text-on-primary-container font-label-md text-[12px] font-semibold flex items-center gap-1 shadow-sm active:scale-95 transition-all ml-2" type="button">
+<span aria-hidden="true" class="material-symbols-outlined text-[15px]">play_arrow</span>
 <span>Play</span>
 </button>
 </div>
 <!-- 5. Strands (Pending) -->
-<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-xs">
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-sm">
 <div class="flex items-center gap-3 min-w-0">
-<div class="w-11 h-11 rounded-xl bg-[#28354B] text-primary flex items-center justify-center font-headline-md text-lg font-bold shrink-0 border border-white/[0.06]">
+<div class="w-11 h-11 rounded-xl bg-surface-container-highest text-primary flex items-center justify-center font-headline-md text-lg font-bold shrink-0 border border-white/[0.06]">
               S
             </div>
 <div class="flex flex-col min-w-0">
 <div class="flex items-center gap-2">
 <span class="font-title-sm text-title-sm text-white truncate">Strands</span>
-<span class="px-2 py-0.5 rounded-full bg-[#3B2820] text-[#FFB59E] border border-[#FFB59E]/20 font-label-sm text-[10px] font-bold">
+<span class="px-2 py-0.5 rounded-full bg-streak/15 text-streak border border-streak/20 font-label-sm text-[11px] font-bold">
                   Pending
                 </span>
 </div>
 <span class="font-body-sm text-[12px] text-on-surface-variant truncate">Themed puzzle #254</span>
 </div>
 </div>
-<button class="shrink-0 h-8 px-3.5 rounded-full bg-primary text-white font-label-md text-[12px] font-semibold flex items-center gap-1 shadow-sm active:scale-95 transition-all ml-2" type="button">
-<span class="material-symbols-outlined text-[15px]">play_arrow</span>
+<button class="shrink-0 h-8 px-3.5 rounded-full bg-primary-container text-on-primary-container font-label-md text-[12px] font-semibold flex items-center gap-1 shadow-sm active:scale-95 transition-all ml-2" type="button">
+<span aria-hidden="true" class="material-symbols-outlined text-[15px]">play_arrow</span>
 <span>Play</span>
 </button>
 </div>
 <!-- 6. Worldle (Pending) -->
-<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-xs">
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-sm">
 <div class="flex items-center gap-3 min-w-0">
-<div class="w-11 h-11 rounded-xl bg-[#28354B] text-tertiary flex items-center justify-center font-headline-md text-lg font-bold shrink-0 border border-white/[0.06]">
+<div class="w-11 h-11 rounded-xl bg-surface-container-highest text-tertiary flex items-center justify-center font-headline-md text-lg font-bold shrink-0 border border-white/[0.06]">
               🌎
             </div>
 <div class="flex flex-col min-w-0">
 <div class="flex items-center gap-2">
 <span class="font-title-sm text-title-sm text-white truncate">Worldle</span>
-<span class="px-2 py-0.5 rounded-full bg-[#3B2820] text-[#FFB59E] border border-[#FFB59E]/20 font-label-sm text-[10px] font-bold">
+<span class="px-2 py-0.5 rounded-full bg-streak/15 text-streak border border-streak/20 font-label-sm text-[11px] font-bold">
                   Pending
                 </span>
 </div>
 <span class="font-body-sm text-[12px] text-on-surface-variant truncate">Country silhouette</span>
 </div>
 </div>
-<button class="shrink-0 h-8 px-3.5 rounded-full bg-primary text-white font-label-md text-[12px] font-semibold flex items-center gap-1 shadow-sm active:scale-95 transition-all ml-2" type="button">
-<span class="material-symbols-outlined text-[15px]">play_arrow</span>
+<button class="shrink-0 h-8 px-3.5 rounded-full bg-primary-container text-on-primary-container font-label-md text-[12px] font-semibold flex items-center gap-1 shadow-sm active:scale-95 transition-all ml-2" type="button">
+<span aria-hidden="true" class="material-symbols-outlined text-[15px]">play_arrow</span>
 <span>Play</span>
 </button>
 </div>
 </div>
 <!-- Feedback Toast on Paste -->
-<div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-2" id="pasteFeedback">
+<div class="fixed top-[calc(4rem+env(safe-area-inset-top)+0.75rem)] left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-2" id="pasteFeedback" role="status" aria-live="polite">
 <div class="bg-surface-container-high text-white border border-white/10 px-4 py-2 rounded-full shadow-lg flex items-center gap-2 font-label-md text-[12px]">
-<span class="material-symbols-outlined text-tertiary text-[18px]">check_circle</span>
+<span aria-hidden="true" class="material-symbols-outlined text-tertiary text-[18px]">check_circle</span>
 <span>Result scanned and parsed successfully!</span>
 </div>
 </div>
 </div>
 </main>
 <!-- Bottom Navigation Bar (5 tabs) -->
-<nav class="fixed bottom-0 w-full z-50 pb-safe bg-[#0B0F17]/90 backdrop-blur-xl border-t border-white/[0.08] shadow-[0_-2px_16px_rgba(0,0,0,0.5)]" data-active-classes="text-primary font-bold">
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-background/90 backdrop-blur-xl border-t border-white/[0.08] shadow-[0_-2px_16px_rgba(0,0,0,0.5)]" data-active-classes="text-primary font-bold">
 <div class="flex justify-around items-center h-16 px-2 max-w-lg mx-auto">
-<a aria-current="page" class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-full transition-all active:scale-90 text-primary font-bold" data-path="today" href="#">
-<span class="material-symbols-outlined text-[24px]">calendar_today</span>
-<span class="font-label-sm text-[10px]">Today</span>
+<a aria-current="page" class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-full transition-all active:scale-90 text-primary font-bold" href="../today/code.html">
+<span aria-hidden="true" class="material-symbols-outlined text-[24px]">calendar_today</span>
+<span class="font-label-sm text-[11px]">Today</span>
 </a>
-<a class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-full text-on-surface-variant hover:text-white transition-all active:scale-90" data-path="discover" href="#">
-<span class="material-symbols-outlined text-[24px]">explore</span>
-<span class="font-label-sm text-[10px]">Discover</span>
+<a class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-full text-on-surface-variant hover:text-white transition-all active:scale-90" href="../discover/code.html">
+<span aria-hidden="true" class="material-symbols-outlined text-[24px]">explore</span>
+<span class="font-label-sm text-[11px]">Discover</span>
 </a>
-<a class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-full text-on-surface-variant hover:text-white transition-all active:scale-90" data-path="statistics" href="#">
-<span class="material-symbols-outlined text-[24px]">bar_chart</span>
-<span class="font-label-sm text-[10px]">Stats</span>
+<a class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-full text-on-surface-variant hover:text-white transition-all active:scale-90" href="../statistics/code.html">
+<span aria-hidden="true" class="material-symbols-outlined text-[24px]">bar_chart</span>
+<span class="font-label-sm text-[11px]">Stats</span>
 </a>
-<a class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-full text-on-surface-variant hover:text-white transition-all active:scale-90" data-path="friends" href="#">
-<span class="material-symbols-outlined text-[24px]">group</span>
-<span class="font-label-sm text-[10px]">Friends</span>
+<a class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-full text-on-surface-variant hover:text-white transition-all active:scale-90" href="../friends/code.html">
+<span aria-hidden="true" class="material-symbols-outlined text-[24px]">group</span>
+<span class="font-label-sm text-[11px]">Friends</span>
 </a>
-<a class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-full text-on-surface-variant hover:text-white transition-all active:scale-90" data-path="account" href="#">
-<span class="material-symbols-outlined text-[24px]">person</span>
-<span class="font-label-sm text-[10px]">Account</span>
+<a class="flex flex-col items-center justify-center gap-1 w-14 h-12 rounded-full text-on-surface-variant hover:text-white transition-all active:scale-90" href="../account/code.html">
+<span aria-hidden="true" class="material-symbols-outlined text-[24px]">person</span>
+<span class="font-label-sm text-[11px]">Account</span>
 </a>
 </div>
 </nav>

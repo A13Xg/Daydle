@@ -1,52 +1,51 @@
 # Daydle UI/UX Reference
 
 > **Reference material only. Nothing in this folder is a requirement.**
-> These screens and design systems are exploratory mockups. They exist so a future design pass has something to look at. They do **not** need to be implemented, matched, or ported unless the owner explicitly asks for a specific screen or style in the current instruction.
+> These screens and the design system are exploratory. They do **not** need to be implemented, matched or ported unless the owner explicitly asks for a specific screen or style in the current instruction.
 
 ## How to use this folder
 
-- **Default: ignore it.** Phase work follows [IDEA.md](../IDEA.md), [roadmap.md](../roadmap.md) and [AGENTS.md](../AGENTS.md). Those documents take precedence over anything here.
-- **Implement from it only on explicit request**, for example "build the Today screen from the reference" or "adopt the Obsidian Arcade theme". A request to build a feature or complete a phase is not a request to copy these screens.
-- **Do not treat it as approved design.** Visual design is intentionally deferred (see AGENTS.md and IDEA.md). Do not choose a palette, typography or layout system from here on your own initiative.
-- **Mockups may conflict with the product baseline.** If a screen shows a feature, flow, data field or social behavior that differs from IDEA.md, roadmap.md or the implemented app, the baseline wins. Examples include names, counts or features shown in the mockups that the app does not offer, and sample data such as "14,280 Live" or invite codes.
-- **Do not edit these files to track implementation.** Treat them as a read-only snapshot.
+- **Default: ignore it.** Phase work follows [IDEA.md](../IDEA.md), [roadmap.md](../roadmap.md) and [AGENTS.md](../AGENTS.md). Those always win over anything here.
+- **Build from it only on explicit request**, for example "build the Today screen from the reference". Completing a phase or building a feature is not a request to copy these screens.
+- **Do not treat it as approved design.** Visual design is intentionally deferred in the product baseline. Do not adopt the palette, type or layout on your own initiative.
+- **Read-only snapshot.** Do not edit these files to track implementation.
 
 ## What is here
 
-All design material lives in `Daydle UI-UX Reference/`.
+Everything lives in `Daydle UI-UX Reference/`.
 
-### Screens
-
-Each screen folder holds two files: `code.html` (a standalone HTML/Tailwind mockup that loads Tailwind and fonts from CDNs) and `screen.png` (a rendered screenshot). The mockups are static; they have no real data, routing or application logic.
-
-| Folder | Screen |
+| Path | Contents |
 |---|---|
-| `welcome_auth/` | Welcome and sign-in |
-| `profile_setup/` | Onboarding: profile setup |
-| `how_it_works/` | Onboarding: how it works |
-| `today/` | Today: daily dashboard |
-| `discover/` | Discover: game catalog |
-| `statistics/` | Statistics |
-| `friends/` | Friends |
-| `account/` | Account and settings |
-| `paste_results/` | Paste results sheet |
-| `lineup_editor/` | Lineup editor |
-| `celebration/` | Completion celebration |
-| `notifications/` | Notifications |
-| `comparisons/` | Head-to-head comparisons |
+| `DESIGN.md` | The one design system (**Obsidian Arcade**): tokens, rules, components, and the web + iOS (Xcode) and App Store guidance. Start here. |
+| `assets/` | Local emblem and placeholder avatars used by the mockups. |
+| `<screen>/code.html` | A standalone mockup, built from the `DESIGN.md` tokens. |
+| `<screen>/screen.png` | 393 x 852 @2x render of the top of that screen on an emulated iPhone (59px top and 34px bottom safe area). |
 
-### Design-system variants
+| Screen | Shell | Screen | Shell |
+|---|---|---|---|
+| `welcome_auth` | blank | `statistics` | tab |
+| `profile_setup` | stack | `friends` | tab |
+| `how_it_works` | stack | `account` | tab |
+| `today` | tab | `paste_results` | stack |
+| `discover` | tab | `lineup_editor`, `celebration`, `notifications` | stack |
+| `comparisons` | tab | | |
 
-Three alternative visual directions, each as a single `DESIGN.md` with front-matter tokens (colors, typography, spacing) and written style guidance. They are **alternatives to choose between, not layers to combine**, and none has been selected.
+The tab screens link to each other, so you can click through them in a browser.
 
-| Folder | Theme |
-|---|---|
-| `obsidian_arcade/` | Dark theme (deep navy background, electric-blue accents) |
-| `luminous_modernity/` | Alternative theme |
-| `daydle_zest/` | Light theme (blue primary with warm secondary accents) |
+## Platform: web and iOS from one codebase
 
-## Notes for whoever picks this up later
+The product ships as a web app and also builds for iOS through Xcode (a `WKWebView` shell, such as Capacitor, around the same bundle). The mockups are written to that constraint: viewport and safe-area handling, 16px inputs, 44pt hit areas, touch-safe reordering, accessible controls and no hotlinked assets. The rules, and the App Store requirements they come from, are in `DESIGN.md`.
 
-- The mockups were produced by a design tool and reference a few concepts that are not part of the product baseline (for example "syndicate", "arcade" branding and "Launch All" sequencing). Confirm each one against IDEA.md before building it.
-- The HTML relies on CDN-hosted Tailwind and web fonts. Re-implement in the app's own stack (React/TypeScript/Vite) rather than copying the markup.
-- Accessibility, error, empty, loading and offline states are not fully shown here but remain required by the product baseline.
+Two mockup-only shortcuts must **not** ship: the Tailwind Play CDN and the Google Fonts and Material Symbols links. The real app compiles Tailwind and bundles fonts and icons.
+
+## Where the mockups differ from the product baseline
+
+These are visible in the mockups but are **not** in `IDEA.md` or `roadmap.md`. Treat each as a decision for the owner, not a to-do:
+
+- **Friend requests:** `friends` shows a "Requests" tab. The baseline defines instant, mutual friendship with no acceptance step.
+- **Rankings and counts:** "Global Streak", "Division" and group rank copy, and the live "14,280" counter, imply global or invented numbers. The baseline excludes a global cross-game leaderboard and forbids a fabricated universal score. Only the welcome screen’s live counter is marked `SAMPLE DATA`; other invented figures (percentile ranks such as "Top 8%", "Division") are not, and should be treated as sample copy.
+- **Notifications and auto-launch:** the `notifications` screen, "Morning Drop Alert", "Launch All" and "Auto-Launch" need push notifications and multi-site launching, which the baseline does not specify. Browsers and `WKWebView` block more than one external launch per tap.
+- **Blocking and reporting:** the baseline includes them; the mockups do not show them.
+- **Reactions:** "Cheer" and "Salute" are not in the baseline.
+- **Account screen:** it lists infrastructure, framework and monetization rows that are developer-facing, not user settings.
+- **Native apps:** `IDEA.md` lists native apps as an initial-release non-goal. The iOS/Xcode target above is a later step and needs a roadmap decision before work starts.
