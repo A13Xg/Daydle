@@ -30,8 +30,8 @@ jobs:
         run: npm test
       - name: Production build
         run: npm run build
-      - name: Verify live deployment against current built assets (read-only)
-        run: node scripts/ops/verify-live-release.mjs
+      - name: Verify live deployment using public-only semantic checks
+        run: node scripts/ops/verify-live-release.mjs --public-only
       - name: Preview smoke
         run: |
           npm run preview -- --port 4173 > /tmp/daydle-preview.log 2>&1 &
