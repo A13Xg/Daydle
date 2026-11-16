@@ -9,8 +9,16 @@ describe("Today's local calendar and manual markers", () => {
   });
 
   it("rejects nonexistent and malformed local dates", () => {
-    for (const invalid of ["2026-02-30", "2025-02-29", "2026-13-01",
-      "2026-00-01", "2026-1-2", "1999-12-31", null, "2026-11-15T00:00:00Z"]) {
+    for (const invalid of [
+      "2026-02-30",
+      "2025-02-29",
+      "2026-13-01",
+      "2026-00-01",
+      "2026-1-2",
+      "1999-12-31",
+      null,
+      "2026-11-15T00:00:00Z",
+    ]) {
       expect(isLocalDay(invalid)).toBe(false);
     }
     expect(isLocalDay("2028-02-29")).toBe(true);

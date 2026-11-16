@@ -13,7 +13,11 @@ import { PasteDialog } from "./components/PasteDialog";
 type HealthStatus = "checking" | "ready" | "unavailable";
 
 function sessionStorageAvailable(): Storage | undefined {
-  try { return window.sessionStorage; } catch { return undefined; }
+  try {
+    return window.sessionStorage;
+  } catch {
+    return undefined;
+  }
 }
 
 export default function App() {
@@ -33,7 +37,9 @@ export default function App() {
     const controller = new AbortController();
     fetchHealth(controller.signal).then(
       () => setHealth("ready"),
-      () => { if (!controller.signal.aborted) setHealth("unavailable"); },
+      () => {
+        if (!controller.signal.aborted) setHealth("unavailable");
+      },
     );
     return () => controller.abort();
   }, [healthRetry]);
@@ -66,33 +72,61 @@ export default function App() {
 
   return (
     <div className="app">
-      <a className="skip-link" href="#main">Skip to content</a>
+      <a className="skip-link" href="#main">
+        Skip to content
+      </a>
       <header className="site-header">
-        <a href="/today" className="brand">Daydle</a>
+        <a href="/today" className="brand">
+          Daydle
+        </a>
         <nav aria-label="Primary navigation">
-          <a href="/today" aria-current={pathname === "/" || pathname === "/today" ? "page" : undefined}>
+          <a
+            href="/today"
+            aria-current={
+              pathname === "/" || pathname === "/today" ? "page" : undefined
+            }
+          >
             Today
           </a>
-          <a href="/games" aria-current={pathname.startsWith("/games") ? "page" : undefined}>Games</a>
+          <a
+            href="/games"
+            aria-current={pathname.startsWith("/games") ? "page" : undefined}
+          >
+            Games
+          </a>
           <a href={authenticated ? "/account" : "/auth"}>
             {authenticated ? "Account" : "Sign in"}
           </a>
         </nav>
-        <button type="button" className="paste-global" onClick={openPaste} ref={pasteTrigger}>
+        <button
+          type="button"
+          className="paste-global"
+          onClick={openPaste}
+          ref={pasteTrigger}
+        >
           Paste Results
         </button>
       </header>
 
       {returnPrompt && !pasteOpen && (
         <aside className="return-banner" role="status">
-          <p>Back from a game? Open Paste Results when you're ready.
-            Clipboard access requires a separate tap.</p>
+          <p>
+            Back from a game? Open Paste Results when you're ready. Clipboard
+            access requires a separate tap.
+          </p>
           <div>
-            <button type="button" onClick={openPaste}>Paste Results</button>
-            <button type="button" onClick={() => {
-              clearPublisherLaunch(sessionStorageAvailable());
-              setReturnPrompt(false);
-            }}>Dismiss</button>
+            <button type="button" onClick={openPaste}>
+              Paste Results
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                clearPublisherLaunch(sessionStorageAvailable());
+                setReturnPrompt(false);
+              }}
+            >
+              Dismiss
+            </button>
           </div>
         </aside>
       )}
@@ -125,14 +159,23 @@ export default function App() {
         )}
       </main>
       <footer className="site-footer">
-        <small>Daydle opens games on their publisher sites. Played markers are manual,
-          not verified results.</small>
+        <small>
+          Daydle opens games on their publisher sites. Played markers are
+          manual, not verified results.
+        </small>
         {health === "unavailable" && (
-          <span role="alert"> Daydle API unavailable.
-            <button type="button" onClick={() => {
-              setHealth("checking");
-              setHealthRetry((n) => n + 1);
-            }}>Retry</button>
+          <span role="alert">
+            {" "}
+            Daydle API unavailable.
+            <button
+              type="button"
+              onClick={() => {
+                setHealth("checking");
+                setHealthRetry((n) => n + 1);
+              }}
+            >
+              Retry
+            </button>
           </span>
         )}
       </footer>

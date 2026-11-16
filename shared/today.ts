@@ -7,12 +7,18 @@ export function localDayString(date: Date): string {
 }
 
 export function isLocalDay(value: unknown): value is string {
-  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value))
+    return false;
   const [year, month, day] = value.split("-").map(Number);
-  if (year === undefined || month === undefined || day === undefined) return false;
+  if (year === undefined || month === undefined || day === undefined)
+    return false;
   const check = new Date(year, month - 1, day);
-  return check.getFullYear() === year && check.getMonth() + 1 === month &&
-    check.getDate() === day && year >= 2000;
+  return (
+    check.getFullYear() === year &&
+    check.getMonth() + 1 === month &&
+    check.getDate() === day &&
+    year >= 2000
+  );
 }
 
 export function manualPlayedLabel(marked: boolean, available: boolean): string {

@@ -6,7 +6,9 @@ function validateDay(day: string): void {
 }
 
 export async function loadManualPlayed(
-  client: SupabaseClient, userId: string, day: string,
+  client: SupabaseClient,
+  userId: string,
+  day: string,
 ): Promise<string[]> {
   validateDay(day);
   const { data, error } = await client
@@ -15,7 +17,8 @@ export async function loadManualPlayed(
     .eq("user_id", userId)
     .eq("local_date", day);
   if (error) throw new Error("Could not load your manual played status.");
-  if (!Array.isArray(data)) throw new Error("Manual played status was incomplete.");
+  if (!Array.isArray(data))
+    throw new Error("Manual played status was incomplete.");
   return data.map((row: { game_id: string }) => row.game_id);
 }
 
@@ -45,8 +48,11 @@ export async function updateManualPlayed(
 
 /** Network uncertainty is not proof of rollback: always reconcile. */
 export async function updateAndReconcilePlayed(
-  client: SupabaseClient, userId: string, gameId: string,
-  day: string, mark: boolean,
+  client: SupabaseClient,
+  userId: string,
+  gameId: string,
+  day: string,
+  mark: boolean,
 ): Promise<{ ids: string[]; confirmed: boolean }> {
   let confirmed = true;
   try {

@@ -5,21 +5,33 @@ import { runInNewContext } from "node:vm";
 
 function worker() {
   const listeners = new Map<string, (event: unknown) => void>();
-  const cache = { addAll: vi.fn(), match: vi.fn().mockResolvedValue(
-    new Response("<html>generic public shell</html>", {
-      headers: { "content-type": "text/html" },
-    })),
-    put: vi.fn() };
-  const caches = { open: vi.fn().mockResolvedValue(cache),
-    keys: vi.fn().mockResolvedValue([]), delete: vi.fn() };
+  const cache = {
+    addAll: vi.fn(),
+    match: vi.fn().mockResolvedValue(
+      new Response("<html>generic public shell</html>", {
+        headers: { "content-type": "text/html" },
+      }),
+    ),
+    put: vi.fn(),
+  };
+  const caches = {
+    open: vi.fn().mockResolvedValue(cache),
+    keys: vi.fn().mockResolvedValue([]),
+    delete: vi.fn(),
+  };
   const self = {
     location: { origin: "https://daydle.example" },
-    addEventListener: (name: string, fn: (event: unknown) => void) => listeners.set(name, fn),
+    addEventListener: (name: string, fn: (event: unknown) => void) =>
+      listeners.set(name, fn),
     skipWaiting: vi.fn().mockResolvedValue(undefined),
     clients: { claim: vi.fn().mockResolvedValue(undefined) },
   };
-  const context = { self, caches, URL, Response, fetch: vi.fn().mockRejectedValue(
-    new Error("offline")),
+  const context = {
+    self,
+    caches,
+    URL,
+    Response,
+    fetch: vi.fn().mockRejectedValue(new Error("offline")),
   };
   const template = readFileSync("scripts/sw-template.js", "utf8").replace(
     "/*__DAYDLE_PWA_CONFIG__*/",
@@ -34,13 +46,18 @@ describe("offline install and security boundaries", () => {
     const manifest = JSON.parse(readFileSync("public/app.webmanifest", "utf8"));
     expect(manifest.start_url).toBe("/today");
     expect(manifest.display).toBe("standalone");
-    expect(manifest.icons.some((icon: { purpose: string }) =>
-      icon.purpose === "maskable")).toBe(true);
+    expect(
+      manifest.icons.some(
+        (icon: { purpose: string }) => icon.purpose === "maskable",
+      ),
+    ).toBe(true);
 
     execFileSync(process.execPath, ["scripts/generate-icons.mjs"]);
     for (const [name, size] of [
-      ["icon-192.png", 192], ["icon-512.png", 512],
-      ["icon-maskable-512.png", 512], ["apple-touch-icon.png", 180],
+      ["icon-192.png", 192],
+      ["icon-512.png", 512],
+      ["icon-maskable-512.png", 512],
+      ["apple-touch-icon.png", 180],
     ] as const) {
       const png = readFileSync("public/icons/" + name);
       expect(png.subarray(0, 8)).toEqual(
@@ -66,7 +83,8 @@ describe("offline install and security boundaries", () => {
     ]) {
       const respondWith = vi.fn();
       onFetch?.({
-        request: { method, mode, url, headers: new Headers() }, respondWith,
+        request: { method, mode, url, headers: new Headers() },
+        respondWith,
       });
       expect(respondWith).not.toHaveBeenCalled();
     }
@@ -78,9 +96,13 @@ describe("offline install and security boundaries", () => {
     for (const name of ["authorization", "apikey"]) {
       const respondWith = vi.fn();
       onFetch?.({
-        request: { method: "GET", mode: "cors",
+        request: {
+          method: "GET",
+          mode: "cors",
           url: "https://daydle.example/assets/secret.js",
-          headers: new Headers([[name, "sensitive"]]) }, respondWith,
+          headers: new Headers([[name, "sensitive"]]),
+        },
+        respondWith,
       });
       expect(respondWith).not.toHaveBeenCalled();
     }
@@ -90,13 +112,20 @@ describe("offline install and security boundaries", () => {
     const { listeners, cache } = worker();
     let responsePromise: Promise<Response> | undefined;
     listeners.get("fetch")?.({
-      request: { method: "GET", mode: "navigate",
+      request: {
+        method: "GET",
+        mode: "navigate",
         url: "https://daydle.example/games/wordle",
-        headers: new Headers() },
-      respondWith: (p: Promise<Response>) => { responsePromise = p; },
+        headers: new Headers(),
+      },
+      respondWith: (p: Promise<Response>) => {
+        responsePromise = p;
+      },
     });
     expect(responsePromise).toBeDefined();
-    expect(await (await responsePromise)?.text()).toContain("generic public shell");
+    expect(await (await responsePromise)?.text()).toContain(
+      "generic public shell",
+    );
     expect(cache.match).toHaveBeenCalledWith("/index.html");
   });
 });
