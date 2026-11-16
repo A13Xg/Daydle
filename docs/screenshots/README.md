@@ -17,3 +17,5 @@ Captured from the **compiled Daydle React/Vite application**, not from reference
 - Corrected mobile nav/brand labels to be at least 11px and restored minimum 44×44px header icon targets; browser checks assert geometry and typography at 320/393/1024px.
 
 **Limitations:** CI has no Supabase project configuration, so these screenshots cannot demonstrate signed-in games, provider callback, or private user data. Physical iPhone Safari/home-screen PWA acceptance is **owner-deferred and NOT VERIFIED**; real-device testing remains required before release. Images are source-only documentation, excluded from the production/PWA bundle and precache.
+
+**Verification:** [Final clean CI #43949077483](https://github.com/A13Xg/Daydle/actions/runs/43949077483) passed 196 unit/API/UI tests, 16 Chromium route/viewport checks, build/smoke, TypeScript/lint/format and two PostgreSQL security jobs after removing temporary capture/format instrumentation.
