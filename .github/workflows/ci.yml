@@ -24,6 +24,13 @@ jobs:
         run: npm run typecheck
       - name: Lint
         run: npm run lint
+      - name: Temporary canonical formatting diagnostic
+        run: |
+          npx prettier --write src/components/TodayPage.tsx src/components/FeaturePendingPage.tsx src/styles.css
+          node --input-type=module <<'DAYDLE_FORMAT'
+          import { readFileSync } from 'node:fs';
+          for (const path of ["src/components/TodayPage.tsx","src/components/FeaturePendingPage.tsx","src/styles.css"]) console.log('ARCADE_FORMAT_JSON:' + JSON.stringify({path,content:readFileSync(path,'utf8')}));
+          DAYDLE_FORMAT
       - name: Format check
         run: npm run format:check
       - name: Unit and API tests
