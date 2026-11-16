@@ -187,7 +187,7 @@ BEGIN
  INSERT INTO public.user_games(user_id,game_id,sort_order)
  SELECT account_id,t.id,(t.ordinality-1)::integer
  FROM pg_catalog.unnest(ids) WITH ORDINALITY AS t(id,ordinality)
- ON CONFLICT (user_id,game_id) DO UPDATE SET sort_order=EXCLUDED.sort_order;
+ ON CONFLICT ON CONSTRAINT user_games_pkey DO UPDATE SET sort_order=EXCLUDED.sort_order;
 
  RETURN QUERY
  SELECT ug.game_id,ug.sort_order FROM public.user_games ug
