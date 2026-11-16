@@ -53,3 +53,9 @@ Provisioning was executed on 2026-11-14 with the helpers in [scripts/ops](../scr
 - SPA paths return `index.html`. Static assets remain cacheable according to Cloudflare's asset routing.
 - CI runs dependency install, TS, lint, formatting, tests, build and preview smoke. CI **does not deploy**.
 - Never log or echo credentials, raw share text, or private user data.
+
+## Phase 5 schema-first PWA release guardrail
+
+Phase 5 adds `public.user_game_day_marks` (owner-private RLS) and a generated offline app shell. The current production app may still run an earlier schema. Before any owner-approved Phase 5 Worker deploy, apply the Phase 4 catalog migration if still pending, followed by the Phase 5 marks migration, and verify their RLS and catalog API compatibility. Build generates PNG icons before Vite and emits `dist/client/sw.js` after the Vite output; do not deploy a build lacking manifest/icons/service worker.
+
+The service worker never intercepts Supabase or authenticated API traffic and cannot save results offline. The iOS installed-PWA OAuth/clipboard/return scenario is a manual evidence gate. See [docs/pwa.md](pwa.md).

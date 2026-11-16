@@ -1,3 +1,4 @@
+/* global self, caches, fetch, Response, URL, CACHE_NAME, PRECACHE_URLS */
 /* Daydle service worker — this template is emitted with a build-specific
    cache key and the actual hashed Vite static asset list. Do not serve raw
    template files directly. All authenticated/network data bypasses Cache API. */
