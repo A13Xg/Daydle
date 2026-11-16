@@ -33,12 +33,16 @@ export const connectionsParser: ShareParser = {
         mistakes++;
       }
     }
-    const won = groups.size === 4 && mistakes <= 3 &&
+    const won =
+      groups.size === 4 &&
+      mistakes <= 3 &&
       rows.length === groups.size + mistakes &&
       countTiles(rows.at(-1)!, COLORS)!.every(
         (tile) => tile === Array.from(rows.at(-1)!)[0],
       );
-    const lost = groups.size < 4 && mistakes === 4 &&
+    const lost =
+      groups.size < 4 &&
+      mistakes === 4 &&
       rows.length === groups.size + mistakes &&
       !countTiles(rows.at(-1)!, COLORS)!.every(
         (tile) => tile === Array.from(rows.at(-1)!)[0],

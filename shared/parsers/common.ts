@@ -14,7 +14,14 @@ export function parseUSDate(
   const month = Number(monthText);
   const day = Number(dayText);
   const year = Number(yearText);
-  if (year < 2000 || year > 2100 || month < 1 || month > 12 || day < 1 || day > 31)
+  if (
+    year < 2000 ||
+    year > 2100 ||
+    month < 1 ||
+    month > 12 ||
+    day < 1 ||
+    day > 31
+  )
     return null;
   const date = new Date(Date.UTC(year, month - 1, day));
   if (
@@ -23,11 +30,21 @@ export function parseUSDate(
     date.getUTCDate() !== day
   )
     return null;
-  return String(year) + "-" + String(month).padStart(2, "0") + "-" +
-    String(day).padStart(2, "0");
+  return (
+    String(year) +
+    "-" +
+    String(month).padStart(2, "0") +
+    "-" +
+    String(day).padStart(2, "0")
+  );
 }
 
-export function countTiles(line: string, allowed: ReadonlySet<string>): string[] | null {
+export function countTiles(
+  line: string,
+  allowed: ReadonlySet<string>,
+): string[] | null {
   const tiles = Array.from(line.replace(/\s/gu, ""));
-  return tiles.length > 0 && tiles.every((tile) => allowed.has(tile)) ? tiles : null;
+  return tiles.length > 0 && tiles.every((tile) => allowed.has(tile))
+    ? tiles
+    : null;
 }

@@ -7,7 +7,8 @@ export type ParserErrorCode =
   | "control_character"
   | "invalid_format";
 
-export type ParserMetric = string | number | boolean | readonly (number | null)[];
+export type ParserMetric =
+  string | number | boolean | readonly (number | null)[];
 
 export interface ParsedShare {
   gameSlug: string;

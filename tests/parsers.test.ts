@@ -25,11 +25,9 @@ const CONNECTIONS_WIN = [
   "🟩🟩🟩🟩",
 ].join("\n");
 
-const STRANDS = [
-  "Strands #985",
-  "“Not a good sign”",
-  "🔵🔵💡🟡🔵🔵🔵",
-].join("\n");
+const STRANDS = ["Strands #985", "“Not a good sign”", "🔵🔵💡🟡🔵🔵🔵"].join(
+  "\n",
+);
 
 const MINI = [
   "I solved the 4/28/2025 New York Times",
@@ -60,7 +58,9 @@ describe("parser registry contracts", () => {
   });
 
   it("normalizes CRLF, NBSP, BOM and emoji presentation safely", () => {
-    const normalized = normalizeShare("\ufeffWordle\u00a0123 1/6\r\n🟩️🟩️🟩️🟩️🟩️");
+    const normalized = normalizeShare(
+      "\ufeffWordle\u00a0123 1/6\r\n🟩️🟩️🟩️🟩️🟩️",
+    );
     expect(normalized).toEqual({
       status: "valid",
       lines: ["Wordle 123 1/6", "🟩🟩🟩🟩🟩"],
@@ -74,7 +74,10 @@ describe("parser registry contracts", () => {
     { input: "x".repeat(MAX_SHARE_LENGTH + 1), code: "too_long" },
     { input: "Wordle 1 1/6\n🟩\u0000", code: "control_character" },
     { input: "Wordle 1 1/6\n🟩\u007f", code: "control_character" },
-    { input: Array.from({ length: MAX_SHARE_LINES + 1 }, () => "x").join("\n"), code: "too_many_lines" },
+    {
+      input: Array.from({ length: MAX_SHARE_LINES + 1 }, () => "x").join("\n"),
+      code: "too_many_lines",
+    },
   ])("rejects bounded or invalid input ($code)", ({ input, code }) => {
     expect(parseShare(input)).toEqual({
       status: "invalid",
@@ -84,9 +87,13 @@ describe("parser registry contracts", () => {
   });
 
   it("does not infer results from free-form text or stray grids", () => {
-    expect(parseShare("I played Wordle yesterday\n🟩🟩🟩🟩🟩")).toEqual({ status: "unknown" });
+    expect(parseShare("I played Wordle yesterday\n🟩🟩🟩🟩🟩")).toEqual({
+      status: "unknown",
+    });
     expect(parseShare("Puzzle #687\n🟩🟩🟩🟩")).toEqual({ status: "unknown" });
-    expect(parseShare("<script>alert(1)</script>")).toEqual({ status: "unknown" });
+    expect(parseShare("<script>alert(1)</script>")).toEqual({
+      status: "unknown",
+    });
   });
 
   it("rejects mixed shares rather than submitting two results", () => {
@@ -131,14 +138,22 @@ describe("Wordle", () => {
 
   it("accepts historical white-square presentation and a one-guess solve", () => {
     const response = parseShare("Wordle 196 1/6\r\n🟩️🟩️🟩️🟩️🟩️");
-    expect(response).toMatchObject({ status: "parsed", result: { attempts: 1, outcome: "win" } });
+    expect(response).toMatchObject({
+      status: "parsed",
+      result: { attempts: 1, outcome: "win" },
+    });
   });
 
   it("accepts six-guess loss without claiming a solved board", () => {
     const response = parseShare(
-      ["Wordle 197 X/6", ...Array.from({ length: 6 }, () => "⬜⬜⬜🟨⬛")].join("\n"),
+      ["Wordle 197 X/6", ...Array.from({ length: 6 }, () => "⬜⬜⬜🟨⬛")].join(
+        "\n",
+      ),
     );
-    expect(response).toMatchObject({ status: "parsed", result: { outcome: "loss", attempts: 6 } });
+    expect(response).toMatchObject({
+      status: "parsed",
+      result: { outcome: "loss", attempts: 6 },
+    });
   });
 
   it.each([
@@ -170,14 +185,16 @@ describe("Connections", () => {
   });
 
   it("recognizes loss after four incorrect guesses", () => {
-    const response = parseShare([
-      "Connections",
-      "Puzzle #688",
-      "🟨🟩🟦🟪",
-      "🟪🟩🟦🟨",
-      "🟦🟨🟩🟪",
-      "🟩🟦🟪🟨",
-    ].join("\n"));
+    const response = parseShare(
+      [
+        "Connections",
+        "Puzzle #688",
+        "🟨🟩🟦🟪",
+        "🟪🟩🟦🟨",
+        "🟦🟨🟩🟪",
+        "🟩🟦🟪🟨",
+      ].join("\n"),
+    );
     expect(response).toMatchObject({
       status: "parsed",
       result: { outcome: "loss", metrics: { mistakes: 4, solvedGroups: 0 } },
@@ -216,7 +233,10 @@ describe("Strands", () => {
     "Strands #985\n🟡🔵",
     "Strands #985\n🟡🔵🔵🔵X",
   ])("rejects invalid Strands glyph sequences", (input) => {
-    expect(parseShare(input)).toMatchObject({ status: "invalid", gameSlug: "strands" });
+    expect(parseShare(input)).toMatchObject({
+      status: "invalid",
+      gameSlug: "strands",
+    });
   });
 });
 
@@ -236,8 +256,14 @@ describe("NYT Mini Crossword", () => {
   });
 
   it("handles leap day and an hours/minutes/seconds clock", () => {
-    expect(parseShare("I solved the 2/29/2024 New York Times Mini Crossword in 1:02:03!"))
-      .toMatchObject({ status: "parsed", result: { completionTimeMs: 3723000 } });
+    expect(
+      parseShare(
+        "I solved the 2/29/2024 New York Times Mini Crossword in 1:02:03!",
+      ),
+    ).toMatchObject({
+      status: "parsed",
+      result: { completionTimeMs: 3723000 },
+    });
   });
 
   it.each([
@@ -269,24 +295,35 @@ describe("Daily Quordle", () => {
     const result = parseShare("Daily Quordle 1191\n3️⃣5️⃣\n6️⃣9️⃣\n🟩🟩🟩🟩");
     expect(result).toMatchObject({
       status: "parsed",
-      result: { outcome: "win", metrics: { boardAttempts: [3, 5, 6, 9], failedBoards: 0 } },
+      result: {
+        outcome: "win",
+        metrics: { boardAttempts: [3, 5, 6, 9], failedBoards: 0 },
+      },
     });
   });
 
   it.each([
-    "Daily Quordle 1191\n3️⃣5️⃣\n6️⃣9️⃣", 
+    "Daily Quordle 1191\n3️⃣5️⃣\n6️⃣9️⃣",
     "Daily Quordle 1191\n3️⃣5️⃣\n6️⃣0️⃣",
     "Daily Quordle 1191\n3️⃣5️⃣\n6️⃣9️⃣\nunknown metadata",
     "Daily Quordle 0\n3️⃣5️⃣\n6️⃣9️⃣",
   ])("rejects ambiguous or unsupported matrix variants", (input) => {
     const response = parseShare(input);
-    if (input.includes("0️⃣") || input.includes("unknown") || input.includes(" 0\n")) {
+    if (
+      input.includes("0️⃣") ||
+      input.includes("unknown") ||
+      input.includes(" 0\n")
+    ) {
       expect(response.status).not.toBe("parsed");
     }
   });
 
   it("does not confuse Sequence/Extreme share headers with classic Daily", () => {
-    expect(parseShare("Daily Sequence Quordle 1190\n3️⃣5️⃣\n6️⃣9️⃣")).toEqual({ status: "unknown" });
-    expect(parseShare("🥵Daily Extreme 273\n3️⃣5️⃣\n6️⃣9️⃣")).toEqual({ status: "unknown" });
+    expect(parseShare("Daily Sequence Quordle 1190\n3️⃣5️⃣\n6️⃣9️⃣")).toEqual({
+      status: "unknown",
+    });
+    expect(parseShare("🥵Daily Extreme 273\n3️⃣5️⃣\n6️⃣9️⃣")).toEqual({
+      status: "unknown",
+    });
   });
 });

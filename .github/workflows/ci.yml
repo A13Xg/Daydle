@@ -24,24 +24,6 @@ jobs:
         run: npm run typecheck
       - name: Lint
         run: npm run lint
-      - name: Temporary canonical formatting diagnostic
-        run: |
-          npx prettier --write shared/parsers tests/parsers.test.ts
-          node --input-type=module <<'FORMAT_FILES'
-          import { readFileSync } from 'node:fs';
-          import { readdirSync } from 'node:fs';
-          function visit(directory) {
-            for (const entry of readdirSync(directory, { withFileTypes: true })) {
-              const path = directory + '/' + entry.name;
-              if (entry.isDirectory()) visit(path);
-              else if (path.endsWith('.ts')) {
-                console.log('FORMAT_JSON:' + JSON.stringify({ path, content: readFileSync(path, 'utf8') }));
-              }
-            }
-          }
-          visit('shared/parsers');
-          console.log('FORMAT_JSON:' + JSON.stringify({ path: 'tests/parsers.test.ts', content: readFileSync('tests/parsers.test.ts', 'utf8') }));
-          FORMAT_FILES
       - name: Format check
         run: npm run format:check
       - name: Unit and API tests

@@ -11,9 +11,13 @@ const LINKS = new Set([
 
 function boardPair(line: string): (number | null)[] | null {
   const items = line.match(TOKEN);
-  if (!items || items.length !== 2 || items.join("") !== line.replace(/\s/gu, ""))
+  if (
+    !items ||
+    items.length !== 2 ||
+    items.join("") !== line.replace(/\s/gu, "")
+  )
     return null;
-  return items.map((item) => item === "🟥" ? null : Number(item[0]));
+  return items.map((item) => (item === "🟥" ? null : Number(item[0])));
 }
 
 export const quordleParser: ShareParser = {
@@ -34,7 +38,8 @@ export const quordleParser: ShareParser = {
     const boardAttempts = [...top, ...bottom];
     if (boardAttempts.length !== 4) return null;
     const extras = lines.slice(3);
-    if (!extras.every((line) => LINKS.has(line) || PROGRESS.test(line))) return null;
+    if (!extras.every((line) => LINKS.has(line) || PROGRESS.test(line)))
+      return null;
     const failedBoards = boardAttempts.filter((n) => n === null).length;
     return {
       gameSlug: "quordle",

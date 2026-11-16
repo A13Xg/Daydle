@@ -21,7 +21,8 @@ export const wordleParser: ShareParser = {
     const isLoss = match[2]!.toUpperCase() === "X";
     const attempts = isLoss ? 6 : Number(match[2]);
     const rows = lines.slice(1).filter((line) => line.length > 0);
-    if (rows.at(-1)?.startsWith("https://www.nytimes.com/games/wordle/")) rows.pop();
+    if (rows.at(-1)?.startsWith("https://www.nytimes.com/games/wordle/"))
+      rows.pop();
     if (rows.length !== attempts) return null;
 
     const parsed = rows.map((row) => countTiles(row, TILES));
