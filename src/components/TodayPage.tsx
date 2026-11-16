@@ -193,14 +193,18 @@ export function TodayPage({
 
   if (!userId)
     return (
-      <section className="panel" aria-labelledby="today-title">
-        <h1 id="today-title">Today</h1>
-        <p>Choose your daily games, then return here to track your play.</p>
-        <p>
-          <a href="/auth">Sign in with Apple or Google</a> to see your saved
-          games.
-        </p>
-        <a href="/games">Browse games without signing in</a>
+      <section className="panel today-welcome" aria-labelledby="today-title">
+        <div className="welcome-mark" aria-hidden="true">
+          <img src="/arcade-emblem.svg" width="72" height="72" alt="" />
+        </div>
+        <p className="eyebrow">WELCOME TO THE ARCADE</p>
+        <h1 id="today-title">Your daily games. One place.</h1>
+        <p className="lead">Find your favorite puzzles, build a daily lineup, and come back whenever you want to play.</p>
+        <div className="welcome-actions">
+          <a className="action-link" href="/auth">Sign in with Apple or Google</a>
+          <a className="secondary-link" href="/games">Browse games without signing in</a>
+        </div>
+        <p className="muted welcome-note">Play at each publisher. Participation is optional. Results are not saved yet.</p>
       </section>
     );
 

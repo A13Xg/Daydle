@@ -11,7 +11,7 @@ export function FeaturePendingPage({
       icon: "statistics" as const,
       heading: "Every puzzle tells a story.",
       description:
-        "Game-specific stats, activity streaks and achievements will appear here after result saving is available. No results or rankings are fabricated.",
+        "After result saving becomes available, this space will show your game-by-game progress, streaks, and achievements.",
     },
     friends: {
       title: "Friends & rivalry",
