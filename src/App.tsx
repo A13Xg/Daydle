@@ -75,7 +75,11 @@ export default function App() {
               Daydle's account foundation is taking shape. Game discovery, daily
               results and friends will be added in subsequent phases.
             </p>
-            <p><a className="action-link" href="/games">Explore daily games</a></p>
+            <p>
+              <a className="action-link" href="/games">
+                Explore daily games
+              </a>
+            </p>
             <section aria-labelledby="foundation-heading" className="panel">
               <h2 id="foundation-heading">Environment readiness</h2>
               <dl className="statuses">

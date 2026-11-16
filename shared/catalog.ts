@@ -32,13 +32,16 @@ export interface CatalogFilters {
   showArchived: boolean;
 }
 
-export function safePublisherUrl(input: string | null | undefined): string | null {
+export function safePublisherUrl(
+  input: string | null | undefined,
+): string | null {
   if (typeof input !== "string" || input.length > 2048) return null;
   try {
     const url = new URL(input);
     if (url.protocol !== "https:" || url.username || url.password) return null;
     if (!/^([a-z0-9-]+\.)+[a-z]{2,}$/i.test(url.hostname)) return null;
-    if (url.hostname === "localhost" || url.hostname.endsWith(".localhost")) return null;
+    if (url.hostname === "localhost" || url.hostname.endsWith(".localhost"))
+      return null;
     return url.href;
   } catch {
     return null;
@@ -46,25 +49,38 @@ export function safePublisherUrl(input: string | null | undefined): string | nul
 }
 
 export function canLaunchGame(game: CatalogGame): boolean {
-  return game.status === "active" &&
+  return (
+    game.status === "active" &&
     game.linkStatus !== "broken" &&
-    safePublisherUrl(game.canonicalUrl) !== null;
+    safePublisherUrl(game.canonicalUrl) !== null
+  );
 }
 
 export function canAddGame(game: CatalogGame): boolean {
   return canLaunchGame(game);
 }
 
-export function filterCatalog(games: CatalogGame[], filters: CatalogFilters): CatalogGame[] {
+export function filterCatalog(
+  games: CatalogGame[],
+  filters: CatalogFilters,
+): CatalogGame[] {
   const query = filters.query.trim().toLowerCase();
   return games.filter((game) => {
     if (!filters.showArchived && game.status !== "active") return false;
-    if (filters.category && !game.categorySlugs.includes(filters.category)) return false;
-    if (filters.support === "supported" && game.parserStatus !== "supported") return false;
-    if (filters.support === "unsupported" && game.parserStatus === "supported") return false;
+    if (filters.category && !game.categorySlugs.includes(filters.category))
+      return false;
+    if (filters.support === "supported" && game.parserStatus !== "supported")
+      return false;
+    if (filters.support === "unsupported" && game.parserStatus === "supported")
+      return false;
     if (!query) return true;
-    return [game.name, game.description, game.publisher ?? "", game.slug, ...game.categorySlugs]
-      .some((field) => field.toLowerCase().includes(query));
+    return [
+      game.name,
+      game.description,
+      game.publisher ?? "",
+      game.slug,
+      ...game.categorySlugs,
+    ].some((field) => field.toLowerCase().includes(query));
   });
 }
 
@@ -82,9 +98,11 @@ export function moveSelection(
 }
 
 export function parserSupportLabel(status: ParserSupport): string {
-  return status === "supported" ? "Results supported" :
-    status === "experimental" ? "Experimental results" :
-      "Results not supported yet";
+  return status === "supported"
+    ? "Results supported"
+    : status === "experimental"
+      ? "Experimental results"
+      : "Results not supported yet";
 }
 
 export function gameAvailabilityLabel(game: CatalogGame): string {
