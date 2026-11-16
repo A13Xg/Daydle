@@ -158,7 +158,9 @@ describe("feature previews and static onboarding", () => {
     expect(markup).toContain("Build your lineup");
     expect(markup).toContain("Play at the publisher");
     expect(markup).toContain("Bring your share text");
-    expect(markup).toContain("nothing uploads yet");
+    expect(markup).toContain("Supported formats are recognized");
+    expect(markup).toContain("separate consent");
+    expect(markup).not.toContain("nothing uploads yet");
     expect(markup).not.toContain("OCR");
   });
 });

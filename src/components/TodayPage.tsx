@@ -217,8 +217,7 @@ export function TodayPage({
             </a>
           </div>
           <p className="muted welcome-note">
-            Your lineup and manual played marks stay private. Result saving is
-            coming in a later phase.
+            Your lineup and manual played marks stay private. Signed-in players can save recognized share results to History.
           </p>
         </header>
         <section className="today-guest-grid" aria-label="How Daydle works">
@@ -375,7 +374,7 @@ export function TodayPage({
                           )}
                         </span>
                         <small>
-                          {gameAvailabilityLabel(game)} · Scores not saved yet
+                          {gameAvailabilityLabel(game)} · Results appear in History after submission
                         </small>
                       </div>
                     </div>
@@ -427,7 +426,7 @@ export function TodayPage({
           Publisher games may open in a Safari tab or another browser context.
           Return to Daydle from the tab switcher or home screen, then choose
           <strong> Paste Results</strong>. The text can be pasted manually;
-          result parsing and saving will be enabled in a later phase.
+          supported results can be submitted to your private History after an explicit action.
         </p>
         <p className="muted">
           On iPhone Safari, Share → Add to Home Screen installs Daydle. An
