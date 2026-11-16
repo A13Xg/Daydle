@@ -256,8 +256,8 @@ AS $$
    JOIN public.puzzles p ON p.id=r.puzzle_id
    WHERE r.user_id=p_user AND (p_game IS NULL OR g.slug=p_game)
    ORDER BY r.submitted_at DESC,r.id DESC
-   LIMIT pg_catalog.least(pg_catalog.greatest(COALESCE(p_limit,20),1),50)
-   OFFSET pg_catalog.least(pg_catalog.greatest(COALESCE(p_offset,0),0),5000)
+   LIMIT least(greatest(COALESCE(p_limit,20),1),50)
+   OFFSET least(greatest(COALESCE(p_offset,0),0),5000)
  ) rows;
 $$;
 REVOKE ALL ON FUNCTION public.my_result_history(uuid,text,integer,integer)
