@@ -153,7 +153,7 @@ describe("live release verification after Cloudflare deployment", () => {
     const matching = new Response(SW, {
       headers: { "content-type": "text/javascript" },
     });
-    const stale = new Response("old-release", {
+    const stale = new Response('const CACHE_NAME = "daydle-shell-bbbbbbbbbbbbbbbb";', {
       headers: { "content-type": "text/javascript" },
     });
     expect(await inspectServiceWorker(matching, SW)).toBeNull();
@@ -206,7 +206,7 @@ describe("live release verification after Cloudflare deployment", () => {
   it("fails if a PWA asset never reaches the expected version", async () => {
     const fetchImpl = vi.fn(async (url: string) => {
       if (new URL(url).pathname === "/sw.js") {
-        return new Response("older-cache", {
+        return new Response('const CACHE_NAME = "daydle-shell-bbbbbbbbbbbbbbbb";', {
           headers: { "content-type": "text/javascript" },
         });
       }
