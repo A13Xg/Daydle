@@ -26,6 +26,7 @@ export function PasteDialog({ onClose, client = null, userId = null }: PasteDial
   const [feedback, setFeedback] = useState<SubmissionFeedback | null>(null);
   const [retainConsent, setRetainConsent] = useState(false);
   const [sampleGame, setSampleGame] = useState("");
+  const [confirmedGame, setConfirmedGame] = useState("");
   const area = useRef<HTMLTextAreaElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
 
@@ -39,6 +40,7 @@ export function PasteDialog({ onClose, client = null, userId = null }: PasteDial
     setNotice("");
     setFeedback(null);
     setRetainConsent(false);
+    setConfirmedGame("");
     const result = await readClipboardByGesture(navigator.clipboard);
     if (result.status === "success") {
       setValue(result.text);
@@ -56,12 +58,12 @@ export function PasteDialog({ onClose, client = null, userId = null }: PasteDial
     area.current?.focus();
   }
 
-  async function submit(replaceResultId?: string) {
+  async function submit(replaceResultId?: string, confirmedGameSlug?: string) {
     if (!client || !userId || saving || validateManualPaste(value).status !== "success") return;
     setSaving(true);
     setNotice("");
     try {
-      const decision = await submitShare(client, userId, value, replaceResultId);
+      const decision = await submitShare(client, userId, value, replaceResultId, confirmedGameSlug);
       setFeedback(decision);
       switch (decision.status) {
         case "saved":
@@ -189,6 +191,7 @@ export function PasteDialog({ onClose, client = null, userId = null }: PasteDial
               setValue(event.target.value);
               setFeedback(null);
               setRetainConsent(false);
+              setConfirmedGame("");
               setNotice("");
             }}
             maxLength={MAX_PASTE_CHARS + 1}
@@ -222,6 +225,27 @@ export function PasteDialog({ onClose, client = null, userId = null }: PasteDial
             <a href="/history">Review history</a>
             <button type="button" disabled={!canSubmit} onClick={() => void submit(feedback.id)}>
               Replace existing result
+            </button>
+          </div>
+        )}
+        {feedback?.status === "ambiguous" && client && userId && (
+          <div className="panel paste-unknown">
+            <p>Confirm which game produced this share. Daydle will parse it again on the server; manually entered scores are not accepted.</p>
+            <div className="field">
+              <label htmlFor="confirm-share-game">Detected game</label>
+              <select
+                id="confirm-share-game"
+                value={confirmedGame}
+                onChange={(event) => setConfirmedGame(event.target.value)}
+              >
+                <option value="">Choose a game</option>
+                {feedback.gameSlugs.map((slug) => (
+                  <option key={slug} value={slug}>{slug}</option>
+                ))}
+              </select>
+            </div>
+            <button type="button" disabled={!confirmedGame || !canSubmit} onClick={() => void submit(undefined, confirmedGame)}>
+              Confirm game and save
             </button>
           </div>
         )}
