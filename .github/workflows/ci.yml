@@ -24,6 +24,17 @@ jobs:
         run: npm run typecheck
       - name: Lint
         run: npm run lint
+      - name: Temporary Phase 7 copy polish formatting
+        run: |
+          npx prettier --write src/components/TodayPage.tsx src/components/FeaturePendingPage.tsx
+          node --input-type=module <<'PHASE7_COPY'
+          import { readFileSync } from 'node:fs';
+          for(const path of ["src/components/TodayPage.tsx","src/components/FeaturePendingPage.tsx"]) {
+            const encoded = readFileSync(path).toString('base64');
+            const chunks=encoded.match(/.{1,760}/g) ?? [];
+            chunks.forEach((chunk,index)=>console.log('PHASE7_COPY_CHUNK:'+JSON.stringify({path,index,total:chunks.length,chunk})));
+          }
+          PHASE7_COPY
       - name: Format check
         run: npm run format:check
       - name: Unit and API tests
