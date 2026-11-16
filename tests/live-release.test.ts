@@ -160,6 +160,19 @@ describe("live release verification after Cloudflare deployment", () => {
     expect(await inspectServiceWorker(stale, SW)).toMatch(/differs/);
   });
 
+  it("supports public-only SW validation without embedding production VITE variables", async () => {
+    const headers = { "content-type": "text/javascript" };
+    expect(
+      await inspectServiceWorker(new Response(SW, { headers }), undefined),
+    ).toBeNull();
+    expect(
+      await inspectServiceWorker(
+        new Response("const CACHE_NAME = 'unknown';", { headers }),
+        undefined,
+      ),
+    ).toMatch(/invalid or unconfigured/);
+  });
+
   it("checks actual PNG signature and dimensions", async () => {
     expect(await inspectIcon(png(192), 192)).toBeNull();
     expect(await inspectIcon(png(512), 192)).toMatch(/dimensions/);
