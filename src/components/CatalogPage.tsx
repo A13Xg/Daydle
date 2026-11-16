@@ -177,7 +177,7 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
           <select id="catalog-category" value={filters.category}
             onChange={(event) => setFilters((f) => ({ ...f, category: event.target.value }))}>
             <option value="">All categories</option>
-            {data.categories.map((category) =>
+            {(data?.categories ?? []).map((category) =>
               <option key={category.id} value={category.slug}>{category.name}</option>)}
           </select></div>
         <div className="field"><label htmlFor="catalog-support">Result tracking</label>
