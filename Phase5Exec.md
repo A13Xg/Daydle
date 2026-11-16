@@ -131,3 +131,7 @@ To unblock the **approved release**, first complete review and merge of PR #7 (r
 - Owner dispatched [production run 43810002170](https://github.com/A13Xg/Daydle/actions/runs/43810002170). Environment credentials and `supabase link` succeeded; strict Phase 2/3 migration-history preflight failed. **No remote SQL migration, Worker deployment or PWA smoke test ran.**
 - [Fix PR #8](https://github.com/A13Xg/Daydle/pull/8) implements version-only history diagnostics and conditional `migration repair` **only after** a read-only verification of existing Phase 2/3 RLS tables, policies, functions, and signup trigger. Missing/invalid schema, extra versions, later untracked objects or insufficient token scope halt before writes. See `ReleaseFixPlan.md`.
 - After the fix is reviewed/merged, owner reruns the protected main release. Real hosted checks and all iOS installed-PWA acceptance remain NOT VERIFIED until successful evidence exists.
+
+### Recovery patch independently verified
+
+[Fix PR #8](https://github.com/A13Xg/Daydle/pull/8) has [passing CI](https://github.com/A13Xg/Daydle/actions/runs/43811905266): 98 tests/21 suites, two clean PostgreSQL databases and the exact read-only remote-schema probe exercised after Phase 3 and after Phase 5. This is verified **local** proof of the probe query and version guard behavior, **not** evidence that hosted migration history was repaired. The failed production release made no data changes. A new protected deployment run remains required before iPhone PWA testing.

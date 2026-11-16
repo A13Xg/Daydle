@@ -33,3 +33,13 @@
 **Remote history reality:** The initial failed job did not retain or print the remote version list. Until the next protected run, missing historical entries are **one supported explanation, not a confirmed fact**. The repaired workflow will show sanitized version-only evidence and refuse unexpected conditions.
 
 **Release limitations:** No authenticated hosted SQL probe, history repair, migration push or Cloudflare deploy can run in PR CI. The user must review/merge this patch and re-dispatch the protected production workflow. Preserve the live iPhone test gate after a successful deployment.
+
+## Final local verification and review outcome
+
+- **[CI run 43811905266](https://github.com/A13Xg/Daydle/actions/runs/43811905266): both `validate` and `database-security` PASS.**
+- Locked install, strict TypeScript, lint, formatting, Vite/Worker build, Daydle PWA HTTP smoke: PASS.
+- **98 tests / 21 Vitest suites passed.**
+- Two isolated PostgreSQL 17 databases replayed Phase 2–5. Each executed the exact production read-only schema probe **both after Phase 3** (expected flags: `true,true,true,true,true,true,false,false`) and after Phase 5 (all true), and passed all existing role, RLS, concurrency and manual-marker assertions.
+- PR review checked for committed credentials, dynamic code execution, unauthorized release on PR and misleading production success claims; none were found.
+- **Live outcome remains NOT VERIFIED:** The protected workflow cannot be dispatched through this GitHub integration and fix PR #8 is unmerged. The operator must merge the reviewed PR, re-dispatch the main-only production release and approve the protected environment. Depending on actual remote version records it may verify the existing baseline immediately or repair metadata only if the strong read-only schema preconditions pass; any discrepancy stops.
+- Keep this incident plan available until the production job succeeds. Do not mark Phase 5 deployed or ready for real iPhone testing based on CI alone.
