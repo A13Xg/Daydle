@@ -1,0 +1,138 @@
+name: Release Phase 5 — schema-first production rollout
+
+# Manual, main-only release. Existing "production" environment reviewer and
+# deployment-branch policy protect every step that can access credentials.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 30
+    steps:
+      - name: Require merged main source
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/main"
+          echo "Releasing reviewed main commit $GITHUB_SHA"
+
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install locked dependencies and preflight checks
+        run: |
+          set -euo pipefail
+          npm ci --no-audit --no-fund
+          npm run typecheck
+          npm run lint
+          npm run format:check
+          npm test
+
+      - name: Validate production account and secrets before writes
+        env:
+          SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          for field in SUPABASE_PROJECT_ID SUPABASE_ACCESS_TOKEN SUPABASE_DB_PASSWORD VITE_SUPABASE_URL VITE_SUPABASE_PUBLISHABLE_KEY CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN; do
+            if [[ -z "$(printenv "$field")" ]]; then
+              echo "Required production configuration missing: $field" >&2
+              exit 1
+            fi
+          done
+          [[ "$SUPABASE_PROJECT_ID" =~ ^[a-z0-9]{20}$ ]] || { echo "Invalid project reference" >&2; exit 1; }
+          [[ "$VITE_SUPABASE_URL" == "https://$SUPABASE_PROJECT_ID.supabase.co" ]] || {
+            echo "Supabase project reference does not match browser URL" >&2
+            exit 1
+          }
+          [[ "$VITE_SUPABASE_PUBLISHABLE_KEY" == sb_publishable_* ]] || {
+            echo "Invalid public key format" >&2
+            exit 1
+          }
+
+      - uses: supabase/setup-cli@v3
+        with:
+          version: 2.117.0
+
+      - name: Link and check remote migration history
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          supabase link --project-ref "$SUPABASE_PROJECT_ID"
+          supabase migration list --linked > "$RUNNER_TEMP/daydle-before.txt"
+          node scripts/ops/verify-migration-plan.mjs "$RUNNER_TEMP/daydle-before.txt"
+          supabase db push --linked --dry-run
+
+      - name: Apply reviewed migrations only
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+          supabase db push --linked --yes
+          supabase migration list --linked > "$RUNNER_TEMP/daydle-after.txt"
+          node scripts/ops/verify-migration-plan.mjs "$RUNNER_TEMP/daydle-after.txt" --require-all-applied
+
+      - name: Build production PWA using public project configuration
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: npm run build
+
+      - name: Deploy Daydle Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx --no-install wrangler deploy
+
+      - name: Verify live health, Today and PWA assets
+        run: |
+          set -euo pipefail
+          base="https://daydle.agoodman.io"
+          for attempt in $(seq 1 12); do
+            if curl --fail --silent --show-error --max-time 15 "$base/api/v1/health" -o "$RUNNER_TEMP/daydle-health.json"; then
+              break
+            fi
+            if [[ "$attempt" -eq 12 ]]; then echo "Health check failed" >&2; exit 1; fi
+            sleep 10
+          done
+          node -e '
+            const health = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"));
+            if(health.status!=="ok" || health.service!=="daydle-api") process.exit(1);
+          ' "$RUNNER_TEMP/daydle-health.json"
+
+          curl --fail --silent --show-error --max-time 15 "$base/app.webmanifest" -o "$RUNNER_TEMP/daydle-manifest.json"
+          node -e '
+            const manifest = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"));
+            if(manifest.start_url!=="/today" || manifest.display!=="standalone") process.exit(1);
+          ' "$RUNNER_TEMP/daydle-manifest.json"
+
+          curl --fail --silent --show-error --max-time 15 "$base/sw.js" -o "$RUNNER_TEMP/daydle-sw.js"
+          grep -q "daydle-shell-" "$RUNNER_TEMP/daydle-sw.js"
+          for path in /today /games /icons/icon-192.png /icons/icon-512.png /icons/apple-touch-icon.png; do
+            curl --fail --silent --show-error --max-time 15 "$base$path" -o /dev/null
+          done
+          echo "Hosted Phase 5 release: migration history and app/PWA endpoints verified."
