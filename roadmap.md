@@ -28,7 +28,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 1 | Application skeleton, tooling, and deploy baselines | 0 | COMPLETE — [PR #1](https://github.com/A13Xg/Daydle/pull/1), merge `b91a6e8` |
 | 2 | Domain model, persistence, and security foundations | 1 | COMPLETE — [PR #2](https://github.com/A13Xg/Daydle/pull/2), merge `b4a1140` |
 | 3 | Authentication, onboarding, and account identity | 2 | COMPLETE with owner-approved scope changes — [PR #3](https://github.com/A13Xg/Daydle/pull/3), merge `bff7b89`, evidence in [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md) |
-| 4 | Game catalog, selection, and discovery | 3 | NOT STARTED |
+| 4 | Game catalog, selection, and discovery | 3 | IN REVIEW — [PR #5](https://github.com/A13Xg/Daydle/pull/5) |
 | 5 | Today experience, PWA, and external-game navigation | 4 | NOT STARTED |
 | 6 | Deterministic parser registry and initial game coverage | 5 | NOT STARTED |
 | 7 | Result ingestion, history, and correction lifecycle | 6 | NOT STARTED |
@@ -99,7 +99,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Signup-to-profile flow passes tests on primary target, identity rules verified, unauthorized access rejected, recovery/callback handling validated.
 
 ## Phase 4 — Game catalog, selection, and discovery
-**Status:** NOT STARTED. **Dependencies:** 3.
+**Status:** IN REVIEW on branch [PR #5](https://github.com/A13Xg/Daydle/pull/5); see [completedPhases/Phase4Exec.md](completedPhases/Phase4Exec.md) and [passing CI](https://github.com/A13Xg/Daydle/actions/runs/43782554508). Main remains NOT STARTED until PR merge reconciliation. **Dependencies:** 3.
 
 **Purpose:** Make a broad external-game catalog browseable while supporting only a smaller initial set of parsers.
 

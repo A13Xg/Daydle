@@ -1,6 +1,6 @@
 # Phase 4 Execution Plan — Game catalog, selection, and discovery
 
-**State:** REVIEWED / IMPLEMENTATION IN PROGRESS · **Base:** `main` at `d4644ceb4a5bc8e41258d40eefd30f118c2e425d` · **Branch:** `phase/04-game-catalog` · **Draft PR:** [#5](https://github.com/A13Xg/Daydle/pull/5).
+**State:** VERIFIED / IN REVIEW · **Base:** `main` at `d4644ceb4a5bc8e41258d40eefd30f118c2e425d` · **Branch:** `phase/04-game-catalog` · **Draft PR:** [#5](https://github.com/A13Xg/Daydle/pull/5).
 
 ## Preflight
 
@@ -8,7 +8,7 @@ Verified latest main at `d4644ce`, Phases 0–3 COMPLETE, prior PR #3 merged, pa
 
 ## Product and scope
 
-- Curated **12 distinct external daily games** spanning word, connections, geography, numbers, movies, and crosswords. Store publisher URLs/attribution in canonical tables (never embed games, scrape accounts, or assume universal share support). Sources referenced in [docs/catalog.md](docs/catalog.md).
+- Curated **12 distinct external daily games** spanning word, connections, geography, numbers, movies, and crosswords. Store publisher URLs/attribution in canonical tables (never embed games, scrape accounts, or assume universal share support). Sources referenced in [docs/catalog.md](../docs/catalog.md).
 - Seed stable slug + deterministic UUID identity, category associations, existing schedule/cadence fields. **All games remain `parser_status=unsupported`** until actual Phase 6 fixtures/parsers exist. An externally playable game is not a parseable Daydle game. Some games may require publisher subscriptions.
 - Add explicit `link_status` (`verified`, `unverified`, `broken`) and `link_checked_at`; show broken/retired links as unavailable and display last verification status honestly. Metadata does not imply live monitoring.
 - Public `/games` with search (game/publisher/description), category, parser support, active status; show sensible empty states, data-loading/error/retry; structured public `/games/:slug` detail with publisher information and safe external launch link; keyboard-accessible controls and responsive mobile behavior. Do not turn all unsupported games into fake working parser claims.
@@ -46,13 +46,13 @@ Verified latest main at `d4644ce`, Phases 0–3 COMPLETE, prior PR #3 merged, pa
 
 ## Acceptance matrix
 
-- [ ] 12 linkable catalog entries and categories seeded in both clean databases with stable IDs/slugs, without claiming parser support.
-- [ ] URLs validated at DB and browser; new-tab links use `rel=noopener noreferrer`; broken/retired games cannot be newly selected or launched.
-- [ ] Public browse/detail, search/category/filter, signed-in add/remove/reorder with honest loading/error/empty states.
-- [ ] Selection updates persist through mock and transactional DB API tests, no stale cross-user display on auth change.
-- [ ] Anon/nonadmin cannot mutate catalog and cannot alter other users' games; authenticated admin's scoped RPC and own selected games work.
-- [ ] Existing auth flows, Worker health, RLS, PostgreSQL fixture and frontend CI remain green.
-- [ ] No real production preview/deployment or secret use; no code attribution or unreviewed rollout.
+- [x] 12 linkable catalog entries and categories seeded in both clean databases with stable IDs/slugs, without claiming parser support.
+- [x] URLs validated at DB and browser; new-tab links use `rel=noopener noreferrer`; broken/retired games cannot be newly selected or launched.
+- [x] Public browse/detail, search/category/filter, signed-in add/remove/reorder with honest loading/error/empty states.
+- [x] Selection updates persist through mock and transactional DB API tests, no stale cross-user display on auth change.
+- [x] Anon/nonadmin cannot mutate catalog and cannot alter other users' games; authenticated admin's scoped RPC and own selected games work.
+- [x] Existing auth flows, Worker health, RLS, PostgreSQL fixture and frontend CI remain green.
+- [x] No real production preview/deployment or secret use; no code attribution or unreviewed rollout.
 
 ## Risks and self-review
 
@@ -66,4 +66,52 @@ Verified latest main at `d4644ce`, Phases 0–3 COMPLETE, prior PR #3 merged, pa
 
 ## Executed results
 
-**Pending.** Record actual commands, CI links, audit fixes, remaining external verification, and branch/PR state before archival.
+**Phase branch:** `phase/04-game-catalog` · **PR:** [#5](https://github.com/A13Xg/Daydle/pull/5) · **Review state:** ready for human review, not merged or deployed.
+
+### Implemented
+
+- Forward SQL migration `20261115040000_phase4_catalog.sql` adds 12 curated publisher destinations, six categories, stable game IDs and slug links, explicit `link_status` metadata and no false parser-support claims.
+- DB-safe HTTPS URL checks, existing historical game-ID preservation, retired/broken availability handling.
+- Protected `admin_save_game`, `admin_set_game_categories` and `admin_retire_game` functions with an internal administrative-membership check and no open catalog write grants.
+- Atomic `set_my_games(uuid[])` stores an owner's ordered favorites with bounded valid input, single transaction and per-account advisory lock; direct user_games DML was revoked from browser roles.
+- Typed shared catalog search/filter/URL validator and Supabase API adapter. React `/games` and `/games/:slug` routes include public discovery, search, category/support/archived filters, game detail, publisher links, signed-in add/remove/reorder, no-account and error/empty/loading/disabled/retry states.
+- Archived/broken favorites remain visible with honest availability labels. External links use safe new-tab `rel="noopener noreferrer"` and don't embed third-party games. Existing OAuth-only auth behavior preserved.
+- Added catalog data/permission documentation, README discoverability and catalog-specific AGENTS.md baseline.
+
+### Verification evidence
+
+**Final nonmutating CI run:** https://github.com/A13Xg/Daydle/actions/runs/43782554508 — both jobs successful.
+
+| Gate | Observed result |
+|---|---|
+| Locked install | `npm ci --no-audit --no-fund`: PASS |
+| Strict TypeScript | `npm run typecheck`: PASS |
+| Static lint | `npm run lint`: PASS |
+| Formatting | `npm run format:check`: PASS (no source mutation) |
+| Unit/contract/UI tests | `npm test`: **50 passing tests, 11 suites** |
+| Production bundle | `npm run build`: PASS |
+| Preview HTTP smoke | `npm run preview -- --port 4173` + `npm run smoke`: PASS, including `/games` and `/games/wordle` SPA deep links |
+| PostgreSQL migration replay | `bash scripts/test-db.sh`: PASS on two independent fresh PostgreSQL 17 databases |
+| SQL catalog assertions | PASS — 12 seeds, safe URL, parser unsupported, admin/nonadmin authorization, canonical slug stability, ordered favorites, invalid/duplicate atomic rejection |
+| Source/security review | PR patch reviewed: no committed secrets, unsafe HTML injection, dynamic evaluation, unapproved deploy commands, non-owner contributor credit |
+
+### Defects discovered and corrected
+
+- Existing Phase 2 fixtures collided with newly seeded game/category rows: updated fixture identities and idempotent category linking without touching deployed migrations.
+- Initial PL/pgSQL selection RPC required `COALESCE` as a SQL expression and an explicitly named primary-key conflict target; fixed and reran both databases.
+- Added a pre-parse control-character block after a unit test caught WHATWG URL normalization stripping newlines.
+- Normalized all new source through Prettier; removed temporary formatting-in-CI helper so final CI validates immutable committed source.
+- Made retired or broken previously saved games visibly unavailable while preserving their selection.
+
+### Boundaries and remaining verification
+
+- Production Daydle is live on Phases 0–3, but **no Phase 4 migration was applied to hosted Supabase** and no Cloudflare deployment was performed. New schema must be reviewed and deployed *before* any corresponding app deployment, via the user's existing manual authorized release process.
+- Public catalog is verified through type checks, mocked Supabase adapter tests, SSR UI assertions, HTTP SPA route smoke and true PostgreSQL authorization/selection tests. An end-to-end authenticated **hosted** add/remove/reorder flow and real iPhone browser visit were NOT VERIFIED and must be checked at the separately authorized production or staging rollout. Do not represent local CI as proof of external publisher sites' uptime or OAuth-integrated persistence.
+- Publisher URLs are sourced from current game/publisher references, but all are deliberately labeled `unverified` until a real application launch/link check is performed. Games may require a subscription; **all 12 parsers remain unsupported** until Phase 6.
+- Admin UI is intentionally deferred to Phase 11, Today/PWA to Phase 5, result submission/parsers to Phases 6–7.
+
+### Review and rollback
+
+- Review PR #5; no auto-merge. Branch roadmap says IN REVIEW while main must remain NOT STARTED until a verified reviewed merge and status reconciliation.
+- No hosted schema or production data was changed. Revert/decline branch before merge; once a migration has been deployed, use an audited forward migration rather than rewriting applied migration history.
+
