@@ -323,7 +323,10 @@ export function TodayPage({
       <section className="panel" aria-labelledby="today-rotation">
         <div className="today-toolbar">
           <h2 id="today-rotation">My daily rotation</h2>
-          <div className="game-actions"><a href="/history">Result history</a><a href="/lineup">Edit lineup</a></div>
+          <div className="game-actions">
+            <a href="/history">Result history</a>
+            <a href="/lineup">Edit lineup</a>
+          </div>
         </div>
         {games.length === 0 ? (
           <div>

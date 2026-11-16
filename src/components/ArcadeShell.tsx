@@ -43,7 +43,12 @@ export function stackTitle(pathname: string): string {
 }
 
 export function stackBackPath(pathname: string): string {
-  if (pathname === "/lineup" || pathname === "/how-it-works" || pathname === "/history") return "/today";
+  if (
+    pathname === "/lineup" ||
+    pathname === "/how-it-works" ||
+    pathname === "/history"
+  )
+    return "/today";
   if (pathname.startsWith("/games/")) return "/games";
   return "/today";
 }

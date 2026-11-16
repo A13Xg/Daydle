@@ -1643,7 +1643,6 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   }
 }
 
-
 /* Phase 7: private result history and explicit Paste correction states. */
 .paste-save-actions {
   display: flex;
@@ -1719,9 +1718,17 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   border: 1px solid var(--hairline);
   border-radius: 1.25rem;
 }
-.history-card h3 { margin: 0 0 0.4rem; font-size: 1.1rem; }
-.history-card p { margin: 0.2rem 0; font-size: 0.88rem; }
-.history-card button { flex: none; }
+.history-card h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.1rem;
+}
+.history-card p {
+  margin: 0.2rem 0;
+  font-size: 0.88rem;
+}
+.history-card button {
+  flex: none;
+}
 .history-facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1733,13 +1740,36 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   padding: 0.85rem;
   min-width: 0;
 }
-.history-facts dt { font-size: 0.76rem; color: var(--on-surface-variant); }
-.history-facts dd { margin: 0.4rem 0 0; font-weight: 700; overflow-wrap: anywhere; }
-.history-detail, .history-empty { margin-top: 1.15rem; }
-.history-retention { font-size: 0.78rem; margin-top: 1.3rem; }
+.history-facts dt {
+  font-size: 0.76rem;
+  color: var(--on-surface-variant);
+}
+.history-facts dd {
+  margin: 0.4rem 0 0;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.history-detail,
+.history-empty {
+  margin-top: 1.15rem;
+}
+.history-retention {
+  font-size: 0.78rem;
+  margin-top: 1.3rem;
+}
 @media (max-width: 450px) {
-  .history-card { flex-direction: column; align-items: stretch; }
-  .history-card button { align-self: flex-start; }
-  .history-facts { grid-template-columns: 1fr; }
-  .paste-save-actions > * { width: 100%; justify-content: center; }
+  .history-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .history-card button {
+    align-self: flex-start;
+  }
+  .history-facts {
+    grid-template-columns: 1fr;
+  }
+  .paste-save-actions > * {
+    width: 100%;
+    justify-content: center;
+  }
 }

@@ -12,7 +12,13 @@ const env: ResultsEnvironment = {
   SUPABASE_PUBLISHABLE_KEY: "sb_publishable_testing_public",
   SUPABASE_SERVICE_ROLE_KEY: "eyJ_service_role_testing_secret_never_exposed",
 };
-const wordle = ["Wordle 1,406 4/6*", "⬛⬛⬛⬛🟩", "⬛⬛⬛🟨🟩", "⬛🟨⬛⬛🟩", "🟩🟩🟩🟩🟩"].join("\n");
+const wordle = [
+  "Wordle 1,406 4/6*",
+  "⬛⬛⬛⬛🟩",
+  "⬛⬛⬛🟨🟩",
+  "⬛🟨⬛⬛🟩",
+  "🟩🟩🟩🟩🟩",
+].join("\n");
 const path = (suffix = "") => "https://daydle.example" + RESULTS_PATH + suffix;
 
 function makeRequest(
@@ -32,18 +38,27 @@ function makeRequest(
 }
 
 function mockUpstream(result: unknown, userId = USER) {
-  const calls: { url: string; body?: Record<string, unknown>; init?: RequestInit }[] = [];
-  const fetchMock = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
-    const address = String(url);
-    calls.push({
-      url: address,
-      body: init?.body ? JSON.parse(String(init.body)) as Record<string, unknown> : undefined,
-      init,
-    });
-    if (address.endsWith("/auth/v1/user")) return Response.json({ id: userId });
-    if (address.includes("/rest/v1/rpc/")) return Response.json(result);
-    throw new Error("unexpected upstream");
-  });
+  const calls: {
+    url: string;
+    body?: Record<string, unknown>;
+    init?: RequestInit;
+  }[] = [];
+  const fetchMock = vi.fn(
+    async (url: string | URL | Request, init?: RequestInit) => {
+      const address = String(url);
+      calls.push({
+        url: address,
+        body: init?.body
+          ? (JSON.parse(String(init.body)) as Record<string, unknown>)
+          : undefined,
+        init,
+      });
+      if (address.endsWith("/auth/v1/user"))
+        return Response.json({ id: userId });
+      if (address.includes("/rest/v1/rpc/")) return Response.json(result);
+      throw new Error("unexpected upstream");
+    },
+  );
   vi.stubGlobal("fetch", fetchMock);
   return calls;
 }
@@ -55,7 +70,14 @@ afterEach(() => {
 
 describe("authenticated result Worker boundary", () => {
   it("preserves public health and rejects unauthenticated result calls", async () => {
-    expect((await worker.fetch(new Request("https://daydle.example/api/v1/health"), env)).status).toBe(200);
+    expect(
+      (
+        await worker.fetch(
+          new Request("https://daydle.example/api/v1/health"),
+          env,
+        )
+      ).status,
+    ).toBe(200);
     const upstream = vi.fn();
     vi.stubGlobal("fetch", upstream);
     const response = await worker.fetch(new Request(path()), env);
@@ -75,7 +97,8 @@ describe("authenticated result Worker boundary", () => {
   it("persists only a parsed supported one-share result using verified user identity", async () => {
     const calls = mockUpstream({ status: "saved", id: ID });
     const response = await worker.fetch(
-      makeRequest(path(), "POST", { text: wordle, userId: OTHER }), env,
+      makeRequest(path(), "POST", { text: wordle, userId: OTHER }),
+      env,
     );
     expect(response.status).toBe(201);
     expect(await response.json()).toEqual({ status: "saved", id: ID });
@@ -89,85 +112,138 @@ describe("authenticated result Worker boundary", () => {
     expect(calls[1]?.body).toMatchObject({
       p_user: USER,
       p_raw: wordle,
-      p_parsed: { gameSlug: "wordle", puzzleKey: "wordle:number:1406", attempts: 4 },
+      p_parsed: {
+        gameSlug: "wordle",
+        puzzleKey: "wordle:number:1406",
+        attempts: 4,
+      },
       p_replace_id: null,
     });
-    expect(calls[1]?.init?.headers).toMatchObject({ apikey: env.SUPABASE_SERVICE_ROLE_KEY });
+    expect(calls[1]?.init?.headers).toMatchObject({
+      apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+    });
   });
 
   it("fails closed for unknown, invalid and ambiguous strings without saving samples", async () => {
     const calls = mockUpstream({ status: "saved", id: ID });
     for (const text of ["I played Wordle yesterday", "", "x".repeat(10_001)]) {
-      const res = await worker.fetch(makeRequest(path(), "POST", { text }), env);
+      const res = await worker.fetch(
+        makeRequest(path(), "POST", { text }),
+        env,
+      );
       expect(res.status).toBe(422);
       const safeResponse = JSON.stringify(await res.json());
-      if (text.length > 0) expect(safeResponse).not.toContain(text.slice(0, 150));
+      if (text.length > 0)
+        expect(safeResponse).not.toContain(text.slice(0, 150));
     }
-    expect(calls.filter(x => x.url.includes("/rpc/"))).toHaveLength(0);
+    expect(calls.filter((x) => x.url.includes("/rpc/"))).toHaveLength(0);
   });
 
   it("retains unknown share text only following explicit opt-in, with no raw response", async () => {
     const calls = mockUpstream({ status: "retained", id: ID });
     const text = "Unknown Daily Game #17";
-    const rejected = await worker.fetch(makeRequest(path("/unknown"), "POST", { text }), env);
+    const rejected = await worker.fetch(
+      makeRequest(path("/unknown"), "POST", { text }),
+      env,
+    );
     expect(rejected.status).toBe(422);
-    expect(calls.filter(x => x.url.includes("/rpc/"))).toHaveLength(0);
+    expect(calls.filter((x) => x.url.includes("/rpc/"))).toHaveLength(0);
     const saved = await worker.fetch(
-      makeRequest(path("/unknown"), "POST", { text, retain: true }), env,
+      makeRequest(path("/unknown"), "POST", { text, retain: true }),
+      env,
     );
     expect(saved.status).toBe(201);
     const body = await saved.text();
     expect(body).not.toContain(text);
-    expect(calls.filter(x => x.url.includes("/rpc/"))[0]?.body).toEqual({
-      p_user: USER, p_raw: text, p_game_slug: null,
+    expect(calls.filter((x) => x.url.includes("/rpc/"))[0]?.body).toEqual({
+      p_user: USER,
+      p_raw: text,
+      p_game_slug: null,
     });
   });
 
   it("returns sanitized conflict and supports an explicit same-result replacement target", async () => {
     const calls = mockUpstream({ status: "conflict", id: ID });
-    const response = await worker.fetch(makeRequest(path(), "POST", { text: wordle }), env);
+    const response = await worker.fetch(
+      makeRequest(path(), "POST", { text: wordle }),
+      env,
+    );
     expect(response.status).toBe(409);
     expect(await response.json()).toEqual({ status: "conflict", id: ID });
-    await worker.fetch(makeRequest(path(), "POST", {
-      text: wordle, replaceResultId: ID,
-    }), env);
-    expect(calls.filter(x => x.url.includes("/rpc/"))[1]?.body?.p_replace_id).toBe(ID);
-    const invalid = await worker.fetch(makeRequest(path(), "POST", {
-      text: wordle, replaceResultId: OTHER.slice(0, 3),
-    }), env);
+    await worker.fetch(
+      makeRequest(path(), "POST", {
+        text: wordle,
+        replaceResultId: ID,
+      }),
+      env,
+    );
+    expect(
+      calls.filter((x) => x.url.includes("/rpc/"))[1]?.body?.p_replace_id,
+    ).toBe(ID);
+    const invalid = await worker.fetch(
+      makeRequest(path(), "POST", {
+        text: wordle,
+        replaceResultId: OTHER.slice(0, 3),
+      }),
+      env,
+    );
     expect(invalid.status).toBe(422);
   });
 
   it("scopes history, detail and deletion to verified user, never a query user ID", async () => {
     const calls = mockUpstream([]);
-    const list = await worker.fetch(makeRequest(path("?game=wordle&limit=20&userId=" + OTHER)), env);
+    const list = await worker.fetch(
+      makeRequest(path("?game=wordle&limit=20&userId=" + OTHER)),
+      env,
+    );
     expect(list.status).toBe(200);
     expect(await list.json()).toEqual({ items: [] });
-    expect(calls[1]?.body).toMatchObject({ p_user: USER, p_game: "wordle", p_limit: 20 });
+    expect(calls[1]?.body).toMatchObject({
+      p_user: USER,
+      p_game: "wordle",
+      p_limit: 20,
+    });
     const bad = await worker.fetch(makeRequest(path("?limit=500")), env);
     expect(bad.status).toBe(400);
-    expect(calls.filter(x => x.url.includes("/rpc/"))).toHaveLength(1);
+    expect(calls.filter((x) => x.url.includes("/rpc/"))).toHaveLength(1);
 
     const detail = await worker.fetch(makeRequest(path("/" + ID)), env);
     expect(calls.at(-1)?.body).toMatchObject({ p_user: USER, p_id: ID });
     expect(detail.status).toBe(503); // An array is not a valid scalar detail payload.
 
-    const deleted = await worker.fetch(makeRequest(path("/" + ID), "DELETE"), env);
+    const deleted = await worker.fetch(
+      makeRequest(path("/" + ID), "DELETE"),
+      env,
+    );
     expect(calls.at(-1)?.body).toMatchObject({ p_user: USER, p_id: ID });
     expect(deleted.status).toBe(503);
   });
 
   it("bounds body streaming, method dispatch, content types and upstream failures", async () => {
-    expect((await worker.fetch(makeRequest(path(), "PUT", { text: wordle }), env)).status).toBe(405);
+    expect(
+      (await worker.fetch(makeRequest(path(), "PUT", { text: wordle }), env))
+        .status,
+    ).toBe(405);
     const calls = mockUpstream({ status: "saved", id: ID });
-    const huge = await worker.fetch(makeRequest(path(), "POST", { text: "x".repeat(60_000) }), env);
+    const huge = await worker.fetch(
+      makeRequest(path(), "POST", { text: "x".repeat(60_000) }),
+      env,
+    );
     expect(huge.status).toBe(413);
-    const badType = await worker.fetch(new Request(path(), {
-      method: "POST", headers: { authorization: JWT }, body: "{}", 
-    }), env);
+    const badType = await worker.fetch(
+      new Request(path(), {
+        method: "POST",
+        headers: { authorization: JWT },
+        body: "{}",
+      }),
+      env,
+    );
     expect(badType.status).toBe(415);
-    expect(calls.filter(x => x.url.includes("/rpc/"))).toHaveLength(0);
-    vi.stubGlobal("fetch", vi.fn(async () => new Response(null, { status: 503 })));
+    expect(calls.filter((x) => x.url.includes("/rpc/"))).toHaveLength(0);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response(null, { status: 503 })),
+    );
     expect((await worker.fetch(makeRequest(path()), env)).status).toBe(503);
   });
 });

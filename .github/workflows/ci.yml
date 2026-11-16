@@ -24,18 +24,6 @@ jobs:
         run: npm run typecheck
       - name: Lint
         run: npm run lint
-      - name: Temporary canonical Phase 7 formatting
-        run: |
-          npx prettier --write shared/results.ts worker/results.ts worker/index.ts src/lib/results-api.ts src/components/PasteDialog.tsx src/components/HistoryPage.tsx src/App.tsx src/components/ArcadeShell.tsx src/components/ArcadeIcon.tsx src/components/TodayPage.tsx src/components/AccountPage.tsx src/styles.css tests/results-worker.test.ts tests/results-api.test.ts tests/results-ui.test.ts tests/paste-ui.test.ts tests/pwa.test.ts tests/arcade-ui.test.ts
-          node --input-type=module <<'PHASE7_FORMAT'
-          import {readFileSync} from 'node:fs';
-          const files=["worker/results.ts","src/lib/results-api.ts","tests/results-worker.test.ts","tests/results-api.test.ts"];
-          for(const path of files) {
-            const encoded=readFileSync(path).toString('base64');
-            const chunks=encoded.match(/.{1,760}/g) ?? [];
-            chunks.forEach((chunk,index)=>console.log('PHASE7_BASE64_CHUNK:'+JSON.stringify({path,index,total:chunks.length,chunk})));
-          }
-          PHASE7_FORMAT
       - name: Format check
         run: npm run format:check
       - name: Unit and API tests

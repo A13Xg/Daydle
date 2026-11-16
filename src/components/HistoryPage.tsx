@@ -23,15 +23,26 @@ const PAGE_SIZE = 20;
 
 function niceDate(date: string): string {
   const parsed = new Date(date);
-  return Number.isNaN(parsed.getTime()) ? "Date unavailable" : parsed.toLocaleDateString();
+  return Number.isNaN(parsed.getTime())
+    ? "Date unavailable"
+    : parsed.toLocaleDateString();
 }
 
 function metricSummary(item: SavedResult): string {
-  const outcome = item.outcome === "win" ? "Solved" :
-    item.outcome === "loss" ? "Not solved" :
-    item.outcome === "complete" ? "Completed" : "Incomplete";
-  if (item.attempts !== null) return outcome + " · " + item.attempts + " attempts";
-  if (item.completion_time_ms !== null) return outcome + " · " + Math.round(item.completion_time_ms / 1000) + " seconds";
+  const outcome =
+    item.outcome === "win"
+      ? "Solved"
+      : item.outcome === "loss"
+        ? "Not solved"
+        : item.outcome === "complete"
+          ? "Completed"
+          : "Incomplete";
+  if (item.attempts !== null)
+    return outcome + " · " + item.attempts + " attempts";
+  if (item.completion_time_ms !== null)
+    return (
+      outcome + " · " + Math.round(item.completion_time_ms / 1000) + " seconds"
+    );
   return outcome;
 }
 
@@ -56,7 +67,9 @@ export function HistoryPage({
   );
 
   useEffect(() => {
-    function updateOnline() { setOnline(navigator.onLine); }
+    function updateOnline() {
+      setOnline(navigator.onLine);
+    }
     window.addEventListener("online", updateOnline);
     window.addEventListener("offline", updateOnline);
     return () => {
@@ -71,18 +84,26 @@ export function HistoryPage({
     setState({ status: "loading" });
     setNotice("");
     void loadResultHistory(
-      client, userId,
+      client,
+      userId,
       { game: game.trim() || undefined, limit: PAGE_SIZE },
       controller.signal,
-    ).then((items) => {
-      if (!controller.signal.aborted) setState({
-        status: "ready", items, hasMore: items.length === PAGE_SIZE,
+    )
+      .then((items) => {
+        if (!controller.signal.aborted)
+          setState({
+            status: "ready",
+            items,
+            hasMore: items.length === PAGE_SIZE,
+          });
+      })
+      .catch((cause: unknown) => {
+        if (!controller.signal.aborted)
+          setState({
+            status: "error",
+            message: resultErrorText(cause),
+          });
       });
-    }).catch((cause: unknown) => {
-      if (!controller.signal.aborted) setState({
-        status: "error", message: resultErrorText(cause),
-      });
-    });
     return () => controller.abort();
   }, [client, userId, game, refresh]);
 
@@ -93,18 +114,29 @@ export function HistoryPage({
     }
     const controller = new AbortController();
     setDetail({ status: "loading" });
-    void getResultDetail(client, userId, selectedId, controller.signal).then((value) => {
-      if (!controller.signal.aborted) setDetail({ status: "ready", value });
-    }).catch((cause: unknown) => {
-      if (!controller.signal.aborted) setDetail({
-        status: "error", message: resultErrorText(cause),
+    void getResultDetail(client, userId, selectedId, controller.signal)
+      .then((value) => {
+        if (!controller.signal.aborted) setDetail({ status: "ready", value });
+      })
+      .catch((cause: unknown) => {
+        if (!controller.signal.aborted)
+          setDetail({
+            status: "error",
+            message: resultErrorText(cause),
+          });
       });
-    });
     return () => controller.abort();
   }, [client, userId, selectedId, refresh]);
 
   async function loadMore() {
-    if (!client || !userId || state.status !== "ready" || moreLoading || !online) return;
+    if (
+      !client ||
+      !userId ||
+      state.status !== "ready" ||
+      moreLoading ||
+      !online
+    )
+      return;
     setMoreLoading(true);
     setNotice("");
     try {
@@ -113,11 +145,15 @@ export function HistoryPage({
         limit: PAGE_SIZE,
         offset: state.items.length,
       });
-      setState((previous) => previous.status === "ready" ? {
-        status: "ready",
-        items: [...previous.items, ...batch],
-        hasMore: batch.length === PAGE_SIZE,
-      } : previous);
+      setState((previous) =>
+        previous.status === "ready"
+          ? {
+              status: "ready",
+              items: [...previous.items, ...batch],
+              hasMore: batch.length === PAGE_SIZE,
+            }
+          : previous,
+      );
     } catch (cause) {
       setNotice(resultErrorText(cause));
     } finally {
@@ -157,11 +193,15 @@ export function HistoryPage({
       <header className="history-intro">
         <p className="eyebrow">YOUR PUZZLE ARCHIVE</p>
         <h1 id="history-heading">Result history</h1>
-        <p>Review your saved results, correct an entry by pasting a new share, or permanently delete an entry.</p>
+        <p>
+          Review your saved results, correct an entry by pasting a new share, or
+          permanently delete an entry.
+        </p>
       </header>
       {!online && (
         <p className="notice" role="status">
-          You appear to be offline. History requires a connection; no private results are cached on this device.
+          You appear to be offline. History requires a connection; no private
+          results are cached on this device.
         </p>
       )}
       <div className="panel history-controls">
@@ -171,7 +211,12 @@ export function HistoryPage({
             id="history-game"
             value={game}
             onChange={(event) => {
-              setGame(event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 64));
+              setGame(
+                event.target.value
+                  .toLowerCase()
+                  .replace(/[^a-z0-9-]/g, "")
+                  .slice(0, 64),
+              );
               setSelectedId(null);
               setDeleteId(null);
             }}
@@ -179,21 +224,32 @@ export function HistoryPage({
             autoComplete="off"
           />
         </div>
-        <button type="button" onClick={() => setRefresh((n) => n + 1)} disabled={!online}>
+        <button
+          type="button"
+          onClick={() => setRefresh((n) => n + 1)}
+          disabled={!online}
+        >
           <ArcadeIcon name="refresh" size={17} /> Refresh
         </button>
       </div>
       {state.status === "loading" ? (
-        <section className="panel" role="status"><p>Loading your result history…</p></section>
+        <section className="panel" role="status">
+          <p>Loading your result history…</p>
+        </section>
       ) : state.status === "error" ? (
         <section className="panel" role="alert">
           <p>{state.message}</p>
-          <button type="button" onClick={() => setRefresh((n) => n + 1)}>Retry</button>
+          <button type="button" onClick={() => setRefresh((n) => n + 1)}>
+            Retry
+          </button>
         </section>
       ) : state.items.length === 0 ? (
         <section className="panel history-empty">
           <h2>No results here yet</h2>
-          <p>Play a supported publisher puzzle and submit one complete share message through Paste Results.</p>
+          <p>
+            Play a supported publisher puzzle and submit one complete share
+            message through Paste Results.
+          </p>
           <a href="/games">Discover supported games</a>
         </section>
       ) : (
@@ -204,7 +260,9 @@ export function HistoryPage({
               <li key={item.id} className="history-card">
                 <div>
                   <h3>{item.game_name}</h3>
-                  <p className="muted">Puzzle {item.puzzle_key} · {niceDate(item.submitted_at)}</p>
+                  <p className="muted">
+                    Puzzle {item.puzzle_key} · {niceDate(item.submitted_at)}
+                  </p>
                   <p>{metricSummary(item)}</p>
                 </div>
                 <button
@@ -212,7 +270,9 @@ export function HistoryPage({
                   aria-expanded={selectedId === item.id}
                   aria-controls="history-detail"
                   onClick={() => {
-                    setSelectedId((selected) => selected === item.id ? null : item.id);
+                    setSelectedId((selected) =>
+                      selected === item.id ? null : item.id,
+                    );
                     setDeleteId(null);
                   }}
                 >
@@ -222,47 +282,102 @@ export function HistoryPage({
             ))}
           </ol>
           {state.hasMore && (
-            <button type="button" disabled={moreLoading || !online} onClick={() => void loadMore()}>
+            <button
+              type="button"
+              disabled={moreLoading || !online}
+              onClick={() => void loadMore()}
+            >
               {moreLoading ? "Loading…" : "Load more"}
             </button>
           )}
         </section>
       )}
       {selectedId && (
-        <section id="history-detail" className="panel history-detail" aria-labelledby="detail-heading">
+        <section
+          id="history-detail"
+          className="panel history-detail"
+          aria-labelledby="detail-heading"
+        >
           <h2 id="detail-heading">Result details</h2>
-          {detail?.status === "loading" ? <p role="status">Loading details…</p> :
-            detail?.status === "error" ? <p role="alert">{detail.message}</p> :
-              detail?.status === "ready" ? (
-                <>
-                  <p><strong>{detail.value.game_name}</strong> · {detail.value.puzzle_key}</p>
-                  <p>{metricSummary(detail.value)}</p>
-                  <dl className="history-facts">
-                    <div><dt>Saved on</dt><dd>{niceDate(detail.value.submitted_at)}</dd></div>
-                    <div><dt>Puzzle date</dt><dd>{detail.value.puzzle_date ?? "Not provided by publisher"}</dd></div>
-                    <div><dt>Parser version</dt><dd>{detail.value.parser_version}</dd></div>
-                    <div><dt>Recorded corrections</dt><dd>{detail.value.correction_count ?? 0}</dd></div>
-                  </dl>
-                  <p className="muted">To correct this entry, paste a newer share for the same puzzle and explicitly choose Replace if the result differs.</p>
-                  <button type="button" onClick={() => setDeleteId(detail.value.id)}>
-                    Delete this result
-                  </button>
-                </>
-              ) : null}
+          {detail?.status === "loading" ? (
+            <p role="status">Loading details…</p>
+          ) : detail?.status === "error" ? (
+            <p role="alert">{detail.message}</p>
+          ) : detail?.status === "ready" ? (
+            <>
+              <p>
+                <strong>{detail.value.game_name}</strong> ·{" "}
+                {detail.value.puzzle_key}
+              </p>
+              <p>{metricSummary(detail.value)}</p>
+              <dl className="history-facts">
+                <div>
+                  <dt>Saved on</dt>
+                  <dd>{niceDate(detail.value.submitted_at)}</dd>
+                </div>
+                <div>
+                  <dt>Puzzle date</dt>
+                  <dd>
+                    {detail.value.puzzle_date ?? "Not provided by publisher"}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Parser version</dt>
+                  <dd>{detail.value.parser_version}</dd>
+                </div>
+                <div>
+                  <dt>Recorded corrections</dt>
+                  <dd>{detail.value.correction_count ?? 0}</dd>
+                </div>
+              </dl>
+              <p className="muted">
+                To correct this entry, paste a newer share for the same puzzle
+                and explicitly choose Replace if the result differs.
+              </p>
+              <button
+                type="button"
+                onClick={() => setDeleteId(detail.value.id)}
+              >
+                Delete this result
+              </button>
+            </>
+          ) : null}
           {deleteId === selectedId && (
-            <div className="notice" role="group" aria-label="Confirm result deletion">
-              <p>This permanently deletes the result and its retained raw submissions. This action cannot be undone.</p>
-              <button type="button" disabled={deleting || !online} onClick={() => void performDelete()}>
+            <div
+              className="notice"
+              role="group"
+              aria-label="Confirm result deletion"
+            >
+              <p>
+                This permanently deletes the result and its retained raw
+                submissions. This action cannot be undone.
+              </p>
+              <button
+                type="button"
+                disabled={deleting || !online}
+                onClick={() => void performDelete()}
+              >
                 {deleting ? "Deleting…" : "Confirm delete"}
               </button>
-              <button type="button" onClick={() => setDeleteId(null)} disabled={deleting}>Cancel</button>
+              <button
+                type="button"
+                onClick={() => setDeleteId(null)}
+                disabled={deleting}
+              >
+                Cancel
+              </button>
             </div>
           )}
         </section>
       )}
-      {notice && <p className="notice" role="status">{notice}</p>}
+      {notice && (
+        <p className="notice" role="status">
+          {notice}
+        </p>
+      )}
       <p className="muted history-retention">
-        Raw submitted text has a 90-day expiry date; automated purge is scheduled for a later phase. Structured results remain until deleted.
+        Raw submitted text has a 90-day expiry date; automated purge is
+        scheduled for a later phase. Structured results remain until deleted.
         History and detailed results require a live authenticated connection.
       </p>
     </div>

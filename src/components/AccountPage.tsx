@@ -236,7 +236,9 @@ export function AccountPage({
         </p>
       )}
       <div className="game-actions">
-        <a className="secondary-link" href="/history">My result history</a>
+        <a className="secondary-link" href="/history">
+          My result history
+        </a>
         <a className="secondary-link" href="/how-it-works">
           How Daydle works
         </a>

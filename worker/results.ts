@@ -20,10 +20,17 @@ interface ResultAuth {
 }
 
 const MAX_BODY_BYTES = 48_000;
-const errorResponse = (error: string, status: number, headers: HeadersInit = {}) =>
-  responseJson({ error }, status, headers);
+const errorResponse = (
+  error: string,
+  status: number,
+  headers: HeadersInit = {},
+) => responseJson({ error }, status, headers);
 
-function responseJson(data: unknown, status = 200, headers: HeadersInit = {}): Response {
+function responseJson(
+  data: unknown,
+  status = 200,
+  headers: HeadersInit = {},
+): Response {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
@@ -37,24 +44,47 @@ function responseJson(data: unknown, status = 200, headers: HeadersInit = {}): R
   });
 }
 
-function configuration(env: ResultsEnvironment | undefined): Omit<ResultAuth, "userId"> | null {
+function configuration(
+  env: ResultsEnvironment | undefined,
+): Omit<ResultAuth, "userId"> | null {
   try {
-    if (!env?.SUPABASE_URL || !env.SUPABASE_PUBLISHABLE_KEY || !env.SUPABASE_SERVICE_ROLE_KEY) return null;
+    if (
+      !env?.SUPABASE_URL ||
+      !env.SUPABASE_PUBLISHABLE_KEY ||
+      !env.SUPABASE_SERVICE_ROLE_KEY
+    )
+      return null;
     const url = new URL(env.SUPABASE_URL);
-    if (url.protocol !== "https:" || url.pathname !== "/" ||
-        url.search || url.hash || url.username || url.password) return null;
-    if (!env.SUPABASE_PUBLISHABLE_KEY.startsWith("sb_publishable_")) return null;
-    if (env.SUPABASE_SERVICE_ROLE_KEY.length < 30 ||
-        env.SUPABASE_SERVICE_ROLE_KEY === env.SUPABASE_PUBLISHABLE_KEY) return null;
+    if (
+      url.protocol !== "https:" ||
+      url.pathname !== "/" ||
+      url.search ||
+      url.hash ||
+      url.username ||
+      url.password
+    )
+      return null;
+    if (!env.SUPABASE_PUBLISHABLE_KEY.startsWith("sb_publishable_"))
+      return null;
+    if (
+      env.SUPABASE_SERVICE_ROLE_KEY.length < 30 ||
+      env.SUPABASE_SERVICE_ROLE_KEY === env.SUPABASE_PUBLISHABLE_KEY
+    )
+      return null;
     return {
       project: url.origin,
       publishable: env.SUPABASE_PUBLISHABLE_KEY,
       serviceKey: env.SUPABASE_SERVICE_ROLE_KEY,
     };
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
-async function authenticate(request: Request, env: ResultsEnvironment | undefined): Promise<ResultAuth | Response> {
+async function authenticate(
+  request: Request,
+  env: ResultsEnvironment | undefined,
+): Promise<ResultAuth | Response> {
   const config = configuration(env);
   if (!config) return errorResponse("service_unavailable", 503);
   const token = request.headers.get("authorization") ?? "";
@@ -68,19 +98,33 @@ async function authenticate(request: Request, env: ResultsEnvironment | undefine
       cache: "no-store",
       redirect: "error",
     });
-    if (result.status === 401 || result.status === 403) return errorResponse("authentication_required", 401);
+    if (result.status === 401 || result.status === 403)
+      return errorResponse("authentication_required", 401);
     if (!result.ok) return errorResponse("service_unavailable", 503);
     const data: unknown = await result.json();
-    if (!data || typeof data !== "object" || !("id" in data) ||
-        typeof data.id !== "string" || !RESULT_ID_PATTERN.test(data.id)) {
+    if (
+      !data ||
+      typeof data !== "object" ||
+      !("id" in data) ||
+      typeof data.id !== "string" ||
+      !RESULT_ID_PATTERN.test(data.id)
+    ) {
       return errorResponse("authentication_required", 401);
     }
     return { ...config, userId: data.id };
-  } catch { return errorResponse("service_unavailable", 503); }
+  } catch {
+    return errorResponse("service_unavailable", 503);
+  }
 }
 
-async function boundedJson(request: Request): Promise<Record<string, unknown> | Response> {
-  if (!/^application\/json(?:\s*;|$)/i.test(request.headers.get("content-type") ?? "")) {
+async function boundedJson(
+  request: Request,
+): Promise<Record<string, unknown> | Response> {
+  if (
+    !/^application\/json(?:\s*;|$)/i.test(
+      request.headers.get("content-type") ?? "",
+    )
+  ) {
     return errorResponse("content_type_required", 415);
   }
   if (Number(request.headers.get("content-length") || 0) > MAX_BODY_BYTES) {
@@ -103,8 +147,13 @@ async function boundedJson(request: Request): Promise<Record<string, unknown> | 
     }
     const bytes = new Uint8Array(count);
     let offset = 0;
-    for (const part of parts) { bytes.set(part, offset); offset += part.byteLength; }
-    const data: unknown = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
+    for (const part of parts) {
+      bytes.set(part, offset);
+      offset += part.byteLength;
+    }
+    const data: unknown = JSON.parse(
+      new TextDecoder("utf-8", { fatal: true }).decode(bytes),
+    );
     if (!data || typeof data !== "object" || Array.isArray(data)) {
       return errorResponse("invalid_json", 400);
     }
@@ -116,7 +165,11 @@ async function boundedJson(request: Request): Promise<Record<string, unknown> | 
   }
 }
 
-async function rpc(auth: ResultAuth, method: string, args: Record<string, unknown>): Promise<unknown | Response> {
+async function rpc(
+  auth: ResultAuth,
+  method: string,
+  args: Record<string, unknown>,
+): Promise<unknown | Response> {
   try {
     const result = await fetch(auth.project + "/rest/v1/rpc/" + method, {
       method: "POST",
@@ -134,8 +187,13 @@ async function rpc(auth: ResultAuth, method: string, args: Record<string, unknow
       if (result.status === 429) return errorResponse("rate_limited", 429);
       if (result.status === 400) {
         const detail: unknown = await result.json().catch(() => null);
-        if (detail && typeof detail === "object" && "message" in detail &&
-          detail.message === "result_rate_limited") return errorResponse("rate_limited", 429);
+        if (
+          detail &&
+          typeof detail === "object" &&
+          "message" in detail &&
+          detail.message === "result_rate_limited"
+        )
+          return errorResponse("rate_limited", 429);
       }
       return errorResponse("result_service_unavailable", 503);
     }
@@ -150,24 +208,39 @@ function isResponse(data: unknown): data is Response {
 }
 
 function mutation(data: unknown): Response {
-  if (!isResultMutationResponse(data)) return errorResponse("result_service_unavailable", 503);
+  if (!isResultMutationResponse(data))
+    return errorResponse("result_service_unavailable", 503);
   if (data.status === "conflict" || data.status === "replace_target_mismatch") {
     return responseJson(data, 409);
   }
   if (data.status === "not_found") return responseJson(data, 404);
-  return responseJson(data, data.status === "saved" || data.status === "retained" ? 201 : 200);
+  return responseJson(
+    data,
+    data.status === "saved" || data.status === "retained" ? 201 : 200,
+  );
 }
 
 /** Auth is server-validated; no client-provided user ID is accepted. */
-export async function handleResultsRequest(request: Request, env?: ResultsEnvironment): Promise<Response> {
+export async function handleResultsRequest(
+  request: Request,
+  env?: ResultsEnvironment,
+): Promise<Response> {
   const url = new URL(request.url);
   const pathname = url.pathname;
   const detail = pathname.match(/^\/api\/v1\/results\/([a-f0-9-]{36})$/i);
-  if (pathname !== RESULTS_PATH && pathname !== RESULTS_PATH + "/unknown" && !detail) {
+  if (
+    pathname !== RESULTS_PATH &&
+    pathname !== RESULTS_PATH + "/unknown" &&
+    !detail
+  ) {
     return errorResponse("not_found", 404);
   }
-  const allowed = pathname === RESULTS_PATH ? "GET, POST" :
-    pathname === RESULTS_PATH + "/unknown" ? "POST" : "GET, DELETE";
+  const allowed =
+    pathname === RESULTS_PATH
+      ? "GET, POST"
+      : pathname === RESULTS_PATH + "/unknown"
+        ? "POST"
+        : "GET, DELETE";
   if (!allowed.split(", ").includes(request.method)) {
     return errorResponse("method_not_allowed", 405, { allow: allowed });
   }
@@ -176,40 +249,62 @@ export async function handleResultsRequest(request: Request, env?: ResultsEnviro
   }
   if (request.method !== "GET") {
     const origin = request.headers.get("origin");
-    if (origin && origin !== url.origin) return errorResponse("origin_rejected", 403);
+    if (origin && origin !== url.origin)
+      return errorResponse("origin_rejected", 403);
   }
 
   const auth = await authenticate(request, env);
   if (isResponse(auth)) return auth;
   if (request.method === "GET") {
     if (detail) {
-      const result = await rpc(auth, "my_result_detail", { p_user: auth.userId, p_id: detail[1] });
+      const result = await rpc(auth, "my_result_detail", {
+        p_user: auth.userId,
+        p_id: detail[1],
+      });
       if (isResponse(result)) return result;
       if (result === null) return errorResponse("not_found", 404);
-      if (!result || typeof result !== "object" || Array.isArray(result) ||
-          !("id" in result) || typeof result.id !== "string") {
+      if (
+        !result ||
+        typeof result !== "object" ||
+        Array.isArray(result) ||
+        !("id" in result) ||
+        typeof result.id !== "string"
+      ) {
         return errorResponse("result_service_unavailable", 503);
       }
       return responseJson(result);
     }
     const game = url.searchParams.get("game");
-    if (game && !GAME_SLUG_PATTERN.test(game)) return errorResponse("invalid_game_filter", 400);
+    if (game && !GAME_SLUG_PATTERN.test(game))
+      return errorResponse("invalid_game_filter", 400);
     const limit = url.searchParams.get("limit") || "20";
     const offset = url.searchParams.get("offset") || "0";
-    if (!/^\d{1,4}$/.test(limit) || !/^\d{1,4}$/.test(offset) ||
-        Number(limit) < 1 || Number(limit) > 50 || Number(offset) > 5000) {
+    if (
+      !/^\d{1,4}$/.test(limit) ||
+      !/^\d{1,4}$/.test(offset) ||
+      Number(limit) < 1 ||
+      Number(limit) > 50 ||
+      Number(offset) > 5000
+    ) {
       return errorResponse("invalid_pagination", 400);
     }
     const result = await rpc(auth, "my_result_history", {
-      p_user: auth.userId, p_game: game, p_limit: Number(limit), p_offset: Number(offset),
+      p_user: auth.userId,
+      p_game: game,
+      p_limit: Number(limit),
+      p_offset: Number(offset),
     });
     if (isResponse(result)) return result;
-    return Array.isArray(result) ? responseJson({ items: result }) :
-      errorResponse("result_service_unavailable", 503);
+    return Array.isArray(result)
+      ? responseJson({ items: result })
+      : errorResponse("result_service_unavailable", 503);
   }
 
   if (detail && request.method === "DELETE") {
-    const result = await rpc(auth, "delete_my_result", { p_user: auth.userId, p_id: detail[1] });
+    const result = await rpc(auth, "delete_my_result", {
+      p_user: auth.userId,
+      p_id: detail[1],
+    });
     return isResponse(result) ? result : mutation(result);
   }
 
@@ -217,28 +312,42 @@ export async function handleResultsRequest(request: Request, env?: ResultsEnviro
   if (isResponse(body)) return body;
   if (typeof body.text !== "string") return errorResponse("invalid_share", 422);
   let parsed = parseShare(body.text);
-  if (pathname === RESULTS_PATH && parsed.status === "ambiguous" &&
-      typeof body.confirmedGameSlug === "string") {
+  if (
+    pathname === RESULTS_PATH &&
+    parsed.status === "ambiguous" &&
+    typeof body.confirmedGameSlug === "string"
+  ) {
     if (!parsed.gameSlugs.includes(body.confirmedGameSlug)) {
       return errorResponse("invalid_game_confirmation", 422);
     }
     const normalized = normalizeShare(body.text);
-    const parser = shareParsers.find((item) => item.gameSlug === body.confirmedGameSlug);
-    if (normalized.status !== "valid" || !parser || parser.detect(normalized.lines) < 0.8) {
+    const parser = shareParsers.find(
+      (item) => item.gameSlug === body.confirmedGameSlug,
+    );
+    if (
+      normalized.status !== "valid" ||
+      !parser ||
+      parser.detect(normalized.lines) < 0.8
+    ) {
       return errorResponse("invalid_game_confirmation", 422);
     }
     const chosen = parser.parse(normalized.lines);
-    if (!chosen) return responseJson({ status: "invalid", code: "invalid_format" }, 422);
+    if (!chosen)
+      return responseJson({ status: "invalid", code: "invalid_format" }, 422);
     parsed = { status: "parsed", result: chosen };
   }
-  if (pathname === RESULTS_PATH && parsed.status === "parsed" &&
-      body.confirmedGameSlug !== undefined &&
-      body.confirmedGameSlug !== parsed.result.gameSlug) {
+  if (
+    pathname === RESULTS_PATH &&
+    parsed.status === "parsed" &&
+    body.confirmedGameSlug !== undefined &&
+    body.confirmedGameSlug !== parsed.result.gameSlug
+  ) {
     return errorResponse("invalid_game_confirmation", 422);
   }
 
   if (pathname === RESULTS_PATH + "/unknown") {
-    if (body.retain !== true) return errorResponse("retention_requires_consent", 422);
+    if (body.retain !== true)
+      return errorResponse("retention_requires_consent", 422);
     if (parsed.status === "parsed" || parsed.status === "ambiguous") {
       return errorResponse("recognized_share", 409);
     }
@@ -246,25 +355,42 @@ export async function handleResultsRequest(request: Request, env?: ResultsEnviro
       return responseJson({ status: "invalid", code: parsed.code }, 422);
     }
     const game = body.gameSlug;
-    if (game !== undefined && (typeof game !== "string" || !GAME_SLUG_PATTERN.test(game))) {
+    if (
+      game !== undefined &&
+      (typeof game !== "string" || !GAME_SLUG_PATTERN.test(game))
+    ) {
       return errorResponse("invalid_game_filter", 422);
     }
     const result = await rpc(auth, "retain_unknown_share", {
-      p_user: auth.userId, p_raw: body.text, p_game_slug: game ?? null,
+      p_user: auth.userId,
+      p_raw: body.text,
+      p_game_slug: game ?? null,
     });
     return isResponse(result) ? result : mutation(result);
   }
 
-  if (parsed.status === "invalid") return responseJson({ status: "invalid", code: parsed.code }, 422);
-  if (parsed.status === "unknown") return responseJson({ status: "unknown" }, 422);
-  if (parsed.status === "ambiguous") return responseJson({ status: "ambiguous", gameSlugs: parsed.gameSlugs }, 409);
+  if (parsed.status === "invalid")
+    return responseJson({ status: "invalid", code: parsed.code }, 422);
+  if (parsed.status === "unknown")
+    return responseJson({ status: "unknown" }, 422);
+  if (parsed.status === "ambiguous")
+    return responseJson(
+      { status: "ambiguous", gameSlugs: parsed.gameSlugs },
+      409,
+    );
 
   const target = body.replaceResultId;
-  if (target !== undefined && (typeof target !== "string" || !RESULT_ID_PATTERN.test(target))) {
+  if (
+    target !== undefined &&
+    (typeof target !== "string" || !RESULT_ID_PATTERN.test(target))
+  ) {
     return errorResponse("invalid_replace_target", 422);
   }
   const result = await rpc(auth, "ingest_parsed_share", {
-    p_user: auth.userId, p_raw: body.text, p_parsed: parsed.result, p_replace_id: target ?? null,
+    p_user: auth.userId,
+    p_raw: body.text,
+    p_parsed: parsed.result,
+    p_replace_id: target ?? null,
   });
   return isResponse(result) ? result : mutation(result);
 }
