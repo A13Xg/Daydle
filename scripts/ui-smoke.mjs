@@ -91,6 +91,8 @@ function browserMetrics() {
       (el) => el.getClientRects().length,
     );
   const header = visible(".arcade-topbar");
+  const headerTargets = visible(".arcade-topbar .icon-button");
+  const brandBadges = visible(".brand-badge");
   const buttons = visible("button");
   const tabs = visible(".tabbar-link");
   return {
@@ -101,6 +103,10 @@ function browserMetrics() {
     active: tabs.filter((el) => el.getAttribute("aria-current") === "page")
       .length,
     header: header.length,
+    minHeaderTargetWidth: Math.min(1000, ...headerTargets.map((el) => Math.round(el.getBoundingClientRect().width))),
+    minHeaderTargetHeight: Math.min(1000, ...headerTargets.map((el) => Math.round(el.getBoundingClientRect().height))),
+    minTabFont: Math.min(1000, ...tabs.map((el) => Number.parseFloat(getComputedStyle(el).fontSize))),
+    minBrandBadgeFont: Math.min(1000, ...brandBadges.map((el) => Number.parseFloat(getComputedStyle(el).fontSize))),
     minButton: Math.min(
       1000,
       ...buttons.map((el) => Math.round(el.getBoundingClientRect().height)),
@@ -169,7 +175,9 @@ async function visit(client, pathname, viewport) {
     result.header !== (kind === "blank" ? 0 : 1) ||
     result.active !== (kind === "tab" ? 1 : 0) ||
     result.minButton < 44 ||
-    (result.tabCount > 0 && result.tabMinHeight < 44) ||
+    (result.header > 0 && (result.minHeaderTargetWidth < 44 || result.minHeaderTargetHeight < 44)) ||
+    (result.tabCount > 0 && (result.tabMinHeight < 44 || result.minTabFont < 11)) ||
+    (result.minBrandBadgeFont < 11) ||
     !result.font ||
     result.theme !== "#051424" ||
     result.hasCDN

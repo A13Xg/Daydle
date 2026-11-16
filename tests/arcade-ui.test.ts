@@ -133,6 +133,17 @@ describe("feature previews and static onboarding", () => {
     },
   );
 
+  it("shows four unavailable statistics metrics instead of invented performance", () => {
+    const markup = renderToStaticMarkup(createElement(FeaturePendingPage, { feature: "statistics" }));
+    for (const metric of ["Total solved", "Win rate", "Average speed", "Flawless runs"]) {
+      expect(markup).toContain(metric);
+    }
+    expect(markup.match(/aria-label="Not available"/g)).toHaveLength(4);
+    expect(markup).toContain("Guess Distribution");
+    expect(markup).not.toContain("96.4%");
+    expect(markup).not.toContain("18 Day Streak");
+  });
+
   it("teaches the actual publisher/clipboard flow, not OCR or result saving", () => {
     const markup = renderToStaticMarkup(createElement(HowItWorksPage));
     expect(markup).toContain("Build your lineup");
@@ -154,6 +165,10 @@ describe("dark-only offline design contract", () => {
     expect(css).toContain("/fonts/PlusJakartaSans.ttf");
     expect(css).toContain("env(safe-area-inset-bottom)");
     expect(css).toContain("prefers-reduced-motion");
+    expect(css).toContain("prefers-contrast: more");
+    expect(css).toContain("font-size: 0.75rem");
+    expect(css).not.toContain("font-size: 0.56rem");
+    expect(css).not.toContain("width: 40px");
     expect(css).toContain("100dvh");
     expect(html).toContain('name="color-scheme" content="dark"');
     expect(html).not.toContain("user-scalable=no");
