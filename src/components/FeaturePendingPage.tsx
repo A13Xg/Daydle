@@ -14,7 +14,8 @@ function StatisticsPreview() {
         <p className="eyebrow">ARCADE PERFORMANCE</p>
         <h1 id="feature-title">Your statistics</h1>
         <p>
-          Saved results are available in your private History. Personal statistics and achievements will be enabled in a later phase.
+          Saved results are available in your private History. Personal
+          statistics and achievements will be enabled in a later phase.
         </p>
       </header>
       <section
@@ -51,7 +52,9 @@ function StatisticsPreview() {
         <div className="stats-distribution-empty">
           <ArcadeIcon name="info" size={24} />
           <p>
-            This statistics view is not available yet. Saved results can be reviewed in History; game-specific distributions are scheduled for a later phase.
+            This statistics view is not available yet. Saved results can be
+            reviewed in History; game-specific distributions are scheduled for a
+            later phase.
           </p>
         </div>
       </section>
@@ -148,7 +151,10 @@ export function HowItWorksPage() {
           <span className="step-number">03</span>
           <h2>Bring your share text</h2>
           <p>
-            Use Paste Results after copying a share message. Supported formats are recognized when you select Submit result, then saved to private History. Unknown-format samples are only retained after separate consent.
+            Use Paste Results after copying a share message. Supported formats
+            are recognized when you select Submit result, then saved to private
+            History. Unknown-format samples are only retained after separate
+            consent.
           </p>
         </li>
       </ol>
