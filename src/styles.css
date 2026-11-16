@@ -393,8 +393,13 @@ button:disabled {
   gap: 0.6rem;
   padding-top: max(0.75rem, env(safe-area-inset-top));
 }
-.site-header nav { gap: 0.85rem; }
-.site-header nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: 0.3rem; }
+.site-header nav {
+  gap: 0.85rem;
+}
+.site-header nav a[aria-current="page"] {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
 .paste-global,
 .return-banner button,
 .today-actions button,
@@ -407,9 +412,15 @@ button:disabled {
   color: #182232;
   background: #edf2f8;
 }
-.paste-global { font-weight: 700; }
-.today-heading { margin-block: 0.5rem 1.25rem; }
-.today-heading p { margin-block: 0.3rem; }
+.paste-global {
+  font-weight: 700;
+}
+.today-heading {
+  margin-block: 0.5rem 1.25rem;
+}
+.today-heading p {
+  margin-block: 0.3rem;
+}
 .today-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -417,7 +428,10 @@ button:disabled {
   justify-content: space-between;
   gap: 1rem;
 }
-.today-list { list-style: decimal; padding-left: 1.5rem; }
+.today-list {
+  list-style: decimal;
+  padding-left: 1.5rem;
+}
 .today-game {
   padding: 1rem 0;
   border-bottom: 1px solid #dbe2ea;
@@ -427,11 +441,24 @@ button:disabled {
   justify-content: space-between;
   gap: 1rem;
 }
-.today-game:last-child { border-bottom: 0; }
-.today-game-info h3 { margin: 0; }
-.today-game-info p { margin: 0.2rem 0; }
-.today-game-info small { display: block; color: #48576c; }
-.today-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.today-game:last-child {
+  border-bottom: 0;
+}
+.today-game-info h3 {
+  margin: 0;
+}
+.today-game-info p {
+  margin: 0.2rem 0;
+}
+.today-game-info small {
+  display: block;
+  color: #48576c;
+}
+.today-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
 .return-banner {
   background: #eff6ff;
   padding: 0.75rem clamp(1rem, 4vw, 2rem);
@@ -442,13 +469,19 @@ button:disabled {
   justify-content: space-between;
   border-bottom: 1px solid #dbe2ea;
 }
-.return-banner p { margin: 0; }
-.return-banner > div { display: flex; gap: 0.5rem; }
+.return-banner p {
+  margin: 0;
+}
+.return-banner > div {
+  display: flex;
+  gap: 0.5rem;
+}
 .paste-backdrop {
   position: fixed;
   inset: 0;
   z-index: 50;
-  padding: max(1rem, env(safe-area-inset-top)) 1rem max(1rem, env(safe-area-inset-bottom));
+  padding: max(1rem, env(safe-area-inset-top)) 1rem
+    max(1rem, env(safe-area-inset-bottom));
   background: rgba(14, 27, 43, 0.6);
   overflow-y: auto;
   display: grid;
@@ -459,9 +492,10 @@ button:disabled {
   max-height: calc(100dvh - 2rem);
   overflow: auto;
   margin: 0;
-  box-shadow: 0 0.8rem 2rem rgba(0,0,0,0.16);
+  box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.16);
 }
-.paste-heading, .paste-actions {
+.paste-heading,
+.paste-actions {
   display: flex;
   justify-content: space-between;
   gap: 0.75rem;
@@ -480,10 +514,25 @@ button:disabled {
   outline-offset: 2px;
 }
 @media (max-width: 580px) {
-  .site-header nav { order: 3; width: 100%; justify-content: space-between; }
-  .paste-global { margin-left: auto; }
-  .today-game { align-items: stretch; }
-  .today-actions { width: 100%; }
-  .today-actions > * { flex: 1; text-align: center; }
-  .paste-global { position: sticky; }
+  .site-header nav {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .paste-global {
+    margin-left: auto;
+  }
+  .today-game {
+    align-items: stretch;
+  }
+  .today-actions {
+    width: 100%;
+  }
+  .today-actions > * {
+    flex: 1;
+    text-align: center;
+  }
+  .paste-global {
+    position: sticky;
+  }
 }
