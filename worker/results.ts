@@ -1,4 +1,4 @@
-import { parseShare } from "../shared/parsers";
+import { normalizeShare, parseShare, shareParsers } from "../shared/parsers";
 import {
   GAME_SLUG_PATTERN,
   RESULT_ID_PATTERN,
@@ -216,7 +216,26 @@ export async function handleResultsRequest(request: Request, env?: ResultsEnviro
   const body = await boundedJson(request);
   if (isResponse(body)) return body;
   if (typeof body.text !== "string") return errorResponse("invalid_share", 422);
-  const parsed = parseShare(body.text);
+  let parsed = parseShare(body.text);
+  if (pathname === RESULTS_PATH && parsed.status === "ambiguous" &&
+      typeof body.confirmedGameSlug === "string") {
+    if (!parsed.gameSlugs.includes(body.confirmedGameSlug)) {
+      return errorResponse("invalid_game_confirmation", 422);
+    }
+    const normalized = normalizeShare(body.text);
+    const parser = shareParsers.find((item) => item.gameSlug === body.confirmedGameSlug);
+    if (normalized.status !== "valid" || !parser || parser.detect(normalized.lines) < 0.8) {
+      return errorResponse("invalid_game_confirmation", 422);
+    }
+    const chosen = parser.parse(normalized.lines);
+    if (!chosen) return responseJson({ status: "invalid", code: "invalid_format" }, 422);
+    parsed = { status: "parsed", result: chosen };
+  }
+  if (pathname === RESULTS_PATH && parsed.status === "parsed" &&
+      body.confirmedGameSlug !== undefined &&
+      body.confirmedGameSlug !== parsed.result.gameSlug) {
+    return errorResponse("invalid_game_confirmation", 422);
+  }
 
   if (pathname === RESULTS_PATH + "/unknown") {
     if (body.retain !== true) return errorResponse("retention_requires_consent", 422);
