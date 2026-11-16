@@ -168,3 +168,23 @@ Be clear and economical; report concrete commits and links when available. Never
 - If credentials are not yet on the critical path, implement and verify the standard architecture without prompting for premature setup; call out live integration as NOT VERIFIED, and surface the exact checkpoint when reached.
 - Do not overengineer mocks, custom providers, or elaborate fallbacks merely to avoid asking for straightforward OAuth, preview hosting, or database credentials when the next gate genuinely requires them.
 - Maintain environment separation and explicit permission for remote migrations/deployments even if GitHub secrets already exist. Production permissions must never be inferred from credential availability.
+
+## Catalog rollout and selection invariants
+
+- Game IDs and slugs are stable and must not be recycled; retire games to preserve historical results. External publisher links are HTTPS-only, credential-free and opened with `noopener noreferrer`, never embedded in unsupported iframes.
+- `parser_status=supported` requires a real Phase 6 parser with validated fixtures. A launchable catalog entry does not imply that pasted results can be ingested. Link-check status is manual metadata, not a live availability guarantee.
+- Client-saved games are updated through the authenticated atomic `set_my_games(uuid[])` RPC with ordering, validation, and cross-account restrictions. Never grant browser clients unrestricted catalog mutations or service-role credentials.
+- New catalog migrations must pass fresh PostgreSQL constraint/RLS/admin-role tests. In a live environment apply approved schema migrations before deploying application code that depends on the new columns/RPCs; do not run either automatically from PR CI.
+
+## Evidence-first operational changes
+
+- Inspect literal committed workflow source before claiming credential regressions. Redacted `***` output from an unrelated probe is not evidence the actual `apikey` header is defective.
+- Scheduled maintenance jobs require tests of the outbound request, denial/non-200 behavior and secret-safe logging. Distinguish local stub checks from real hosted Actions runs.
+- Calculate cron month-boundary gaps correctly. GitHub schedules may be delayed or disabled; keep-alive is best-effort, never a backup or uptime guarantee.
+
+## Audited selection and catalog concurrency
+
+- For PostgreSQL tables protected behind an RPC, verify both table and **column-level** grants. `REVOKE UPDATE ON table` alone does not undo previously granted `UPDATE(column)`; negative tests must check `has_any_column_privilege` and actual prohibited statements.
+- Never interpret a transport/RPC failure as proof that a database write rolled back. Reconcile authoritative persisted state before issuing another full-list mutation, and block editing if the reconciliation read also fails.
+- Replace-many operations must serialize even when the previous child set is empty. Lock the stable parent row before DELETE/INSERT and test two overlapping independent transactions.
+- Errors that disable actions must be visible with retry controls on *every* route where those actions appear, including deep-linked detail pages.

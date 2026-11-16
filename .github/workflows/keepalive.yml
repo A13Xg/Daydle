@@ -1,19 +1,15 @@
 name: Supabase keep-alive
 
-# Free-tier Supabase projects are paused after about a week without activity.
-# Run on days 1, 7, 13, 19, 25 and 31 of each month (never more than 6 days apart,
-# including month boundaries) and send one cheap read through the public API.
+# One row-limited, read-only database request daily. The previous "*/6"
+# cadence was valid (maximum scheduled gap: 6 days); daily checks improve
+# resilience if GitHub delays or skips an individual scheduled run.
 #
-# Uses only the PUBLIC project URL and publishable key. These are stored as repository
-# variables (not secrets); the request is a row-limited read allowed by existing RLS.
-# No privileged key, environment secret or deployment is involved.
-#
-# Scheduled workflows run only from the default branch, and GitHub disables schedules in
-# public repositories after 60 days without repository activity (see scripts/ops/README.md).
-
+# This is a best-effort inactivity probe, NOT an uptime guarantee: GitHub may
+# delay scheduled runs and disable schedules after prolonged repository inactivity.
+# Monitor Actions notifications/last success; this is not a backup.
 on:
   schedule:
-    - cron: "17 12 */6 * *"
+    - cron: "17 12 * * *"
   workflow_dispatch:
 
 permissions: {}
@@ -30,26 +26,9 @@ jobs:
       SUPABASE_URL: ${{ vars.KEEPALIVE_SUPABASE_URL }}
       SUPABASE_PUBLISHABLE_KEY: ${{ vars.KEEPALIVE_SUPABASE_PUBLISHABLE_KEY }}
     steps:
-      - name: Validate configuration
-        run: |
-          case "$SUPABASE_URL" in
-            https://*.supabase.co) ;;
-            *) echo "KEEPALIVE_SUPABASE_URL must be an https://<ref>.supabase.co URL" >&2; exit 1 ;;
-          esac
-          case "$SUPABASE_PUBLISHABLE_KEY" in
-            sb_publishable_*) ;;
-            *) echo "KEEPALIVE_SUPABASE_PUBLISHABLE_KEY must be an sb_publishable_ key" >&2; exit 1 ;;
-          esac
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
       - name: Read one public row through the API
-        run: |
-          status=$(curl --silent --show-error --retry 3 --retry-delay 10 --retry-all-errors \
-            --max-time 30 --output response.json --write-out '%{http_code}' \
-            --header "apikey: ${SUPABASE_PUBLISHABLE_KEY}" \
-            "${SUPABASE_URL}/rest/v1/games?select=id&limit=1")
-          echo "HTTP ${status}"
-          if [ "$status" != "200" ]; then
-            echo "Unexpected status; response body follows (contains no secrets):" >&2
-            head -c 500 response.json >&2 || true
-            exit 1
-          fi
-          echo "Database responded; keep-alive recorded."
+        run: node scripts/ops/keepalive.mjs

@@ -35,15 +35,15 @@ Shared helpers live in `lib/common.ps1`.
 
 ## Free-tier keep-alive
 
-`.github/workflows/keepalive.yml` reads one public row through the Supabase API on days 1, 7, 13, 19, 25
-and 31 of each month (gaps never exceed 6 days; free projects pause after about a week idle). It uses
-only the public URL and publishable key, stored as the repository variables `KEEPALIVE_SUPABASE_URL` and
-`KEEPALIVE_SUPABASE_PUBLISHABLE_KEY`, and needs no secrets or deployment approval.
+`.github/workflows/keepalive.yml` attempts one read-only public Supabase API request **daily** at 12:17 UTC. The prior six-day schedule was valid, but daily checks provide more recovery margin if a run is delayed or missed. The workflow uses only repository variables `KEEPALIVE_SUPABASE_URL` and `KEEPALIVE_SUPABASE_PUBLISHABLE_KEY` (not privileged secrets). `scripts/ops/keepalive.mjs` validates a Supabase HTTPS project origin and public-key syntax, sends `GET /rest/v1/games?select=id&limit=1` with the configured `apikey`, and fails on non-200 without logging a key or response body.
+
+The request is tested by `tests/keepalive.test.ts` using a local HTTP stub and a synthetic key. Run `npm test` to verify request path, method/header, success/denial, validation and daily schedule. The original request **already** substituted the real key; a probe using literal `***` does not demonstrate a production regression.
 
 - Scheduled workflows run **only from the default branch**; the schedule starts after this is merged to `main`.
 - GitHub disables schedules in public repositories after 60 days with no repository activity. If runs stop,
   re-enable the workflow in the Actions tab or make any commit.
-- It prevents inactivity pausing only; it is not a backup. Export data separately.
+- This is best-effort inactivity protection, not guaranteed uptime or a backup. GitHub may delay or disable schedules; monitor Actions failure notifications and the last successful run.
+- After the owner merges the PR, manually dispatch **Supabase keep-alive** on `main` and verify a successful HTTP 200 read. Local tests do not prove the hosted key or schedule is working.
 
 ## Retesting sign-up
 

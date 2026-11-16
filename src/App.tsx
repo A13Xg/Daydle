@@ -6,6 +6,7 @@ import { useAuthSession } from "./lib/use-auth";
 import { AuthPage } from "./components/AuthPage";
 import { AuthCallback } from "./components/AuthCallback";
 import { AccountPage } from "./components/AccountPage";
+import { CatalogPage } from "./components/CatalogPage";
 
 type ServiceStatus = "loading" | "ready" | "unavailable";
 
@@ -16,6 +17,7 @@ export default function App() {
   const client = browserAuthClient();
   const authState = useAuthSession(client);
   const pathname = window.location.pathname;
+  const catalogDetail = pathname.match(/^\/games\/([a-z0-9-]+)\/?$/);
   const authenticated = authState.status === "signed-in";
 
   useEffect(() => {
@@ -40,6 +42,7 @@ export default function App() {
           Daydle
         </a>
         <nav aria-label="Primary navigation">
+          <a href="/games">Games</a>
           <a href={authenticated ? "/account" : "/auth"}>
             {authenticated ? "Account" : "Sign in"}
           </a>
@@ -51,6 +54,13 @@ export default function App() {
           <AuthCallback client={client} />
         ) : pathname === "/auth" ? (
           <AuthPage client={client} signedIn={authenticated} />
+        ) : pathname === "/games" || catalogDetail ? (
+          <CatalogPage
+            key={authenticated ? authState.session.user.id : "anonymous"}
+            client={client}
+            userId={authenticated ? authState.session.user.id : null}
+            detailSlug={catalogDetail?.[1]}
+          />
         ) : pathname === "/account" ? (
           <AccountPage
             key={authenticated ? authState.session.user.id : "signed-out"}
@@ -64,6 +74,11 @@ export default function App() {
             <p className="lead">
               Daydle's account foundation is taking shape. Game discovery, daily
               results and friends will be added in subsequent phases.
+            </p>
+            <p>
+              <a className="action-link" href="/games">
+                Explore daily games
+              </a>
             </p>
             <section aria-labelledby="foundation-heading" className="panel">
               <h2 id="foundation-heading">Environment readiness</h2>
@@ -130,7 +145,7 @@ export default function App() {
             <section aria-labelledby="next-heading" className="panel">
               <h2 id="next-heading">Coming in later phases</h2>
               <ul>
-                <li>Browse and select daily games.</li>
+                <li>Track game results and completion.</li>
                 <li>Paste and track results.</li>
                 <li>Compare scores, trends, and achievements.</li>
               </ul>

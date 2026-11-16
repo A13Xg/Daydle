@@ -67,7 +67,7 @@ BEGIN
   BEGIN
     INSERT INTO public.game_results(user_id,game_id,puzzle_id,parser_version)
       VALUES ('11111111-1111-1111-1111-111111111111',
-              'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+              '40000000-0000-4000-8000-000000000001',
               'cccccccc-cccc-cccc-cccc-cccccccccccc','2');
     RAISE EXCEPTION 'duplicate result accepted';
   EXCEPTION WHEN unique_violation THEN NULL;
@@ -102,13 +102,13 @@ BEGIN
   BEGIN
     INSERT INTO public.game_results(user_id,game_id,puzzle_id,parser_version,metrics)
       VALUES ('22222222-2222-2222-2222-222222222222',
-              'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+              '40000000-0000-4000-8000-000000000001',
               'cccccccc-cccc-cccc-cccc-cccccccccccc','1','[]'::jsonb);
     RAISE EXCEPTION 'array metrics accepted';
   EXCEPTION WHEN check_violation THEN NULL;
   END;
   BEGIN
-    DELETE FROM public.games WHERE id='aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
+    DELETE FROM public.games WHERE id='40000000-0000-4000-8000-000000000001';
     RAISE EXCEPTION 'game deletion destroyed historical puzzle records';
   EXCEPTION WHEN foreign_key_violation THEN NULL;
   END;
@@ -168,7 +168,7 @@ BEGIN
   BEGIN
     INSERT INTO public.game_results(user_id, game_id,puzzle_id,parser_version)
     VALUES ('22222222-2222-2222-2222-222222222222',
-            'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+            '40000000-0000-4000-8000-000000000001',
             'cccccccc-cccc-cccc-cccc-cccccccccccc','forged');
   EXCEPTION WHEN insufficient_privilege THEN authorized := false;
   END;
@@ -206,7 +206,7 @@ COMMIT;
 -- results without relying on friendship; unrelated third users stay masked.
 INSERT INTO public.game_results(user_id,game_id,puzzle_id,outcome,attempts,parser_version)
 VALUES ('22222222-2222-2222-2222-222222222222',
-        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        '40000000-0000-4000-8000-000000000001',
         'cccccccc-cccc-cccc-cccc-cccccccccccc','win',5,'1.0.0');
 
 BEGIN;

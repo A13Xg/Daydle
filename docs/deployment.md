@@ -37,7 +37,7 @@ Provisioning was executed on 2026-11-14 with the helpers in [scripts/ops](../scr
 3. Release: either the manual **Deploy Worker** GitHub Actions workflow (Actions tab, Run workflow on `main`; it waits for the `production` environment reviewer and uses the `CLOUDFLARE_API_TOKEN` environment secret) or, locally, `deploy-worker.ps1` from a clean working tree on the tip of `main` (it refuses anything else unless `-AllowNonMain` is passed) builds with the environment's public values, deploys the Worker, attaches the `wrangler.jsonc` custom domain and checks `/api/v1/health`. It prompts (hidden) for the Cloudflare token, which needs Workers Scripts Edit, Account Settings Read, and for the first custom-domain attach Zone DNS Edit and Workers Routes Edit on the zone.
 4. After a merge, redeploy from `main` so the live commit matches the merged one.
 5. Record the deployed commit, Worker version and rollback notes.
-6. A scheduled workflow (`keepalive.yml`) reads one public row every few days so the free-tier project is not paused for inactivity; it runs only from `main`.
+6. A scheduled workflow (`keepalive.yml`) attempts a read-only public Supabase request daily, only from `main`. It is best-effort; scheduled runs may be delayed/disabled. Following an approved merge, check a successful manual dispatch on `main`; see [scripts/ops/README.md](../scripts/ops/README.md#free-tier-keep-alive).
 
 ## Migrations and rollback policy
 

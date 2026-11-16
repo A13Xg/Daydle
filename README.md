@@ -27,6 +27,8 @@ The app shell and API health endpoint work without a Supabase project or credent
 | `npm run smoke` | HTTP smoke (requires running preview) |
 | `npm run db:test` | PostgreSQL 17 migration/constraint/RLS tests (requires disposable test server) |
 
+Public game discovery is at **[/games](/games)**, with per-game details at `/games/:slug`. Selecting favorites requires Google/Apple sign-in; the catalog is browsable anonymously. All catalog entries remain unsupported by Daydle result parsing until Phase 6. See [docs/catalog.md](docs/catalog.md) for seed data, safe URLs, owner selections, and admin RPC permissions. **The Phase 4 migration must be approved and deployed before publishing the new catalog UI to production.**
+
 Database schema, test roles and security boundaries are documented in [docs/database.md](docs/database.md). Supabase authentication flow and provider setup are in [docs/auth.md](docs/auth.md); hosting credentials and scopes in [docs/secrets.md](docs/secrets.md). CI tests the migration on two disposable PostgreSQL 17 databases without hosted Supabase credentials. Migrations are applied to the hosted project only with the owner's explicit approval.
 
 Deployment and environment isolation are documented in [docs/deployment.md](docs/deployment.md). No production deployment is authorized merely by running CI or completing a phase.

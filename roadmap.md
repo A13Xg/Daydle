@@ -28,7 +28,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 1 | Application skeleton, tooling, and deploy baselines | 0 | COMPLETE — [PR #1](https://github.com/A13Xg/Daydle/pull/1), merge `b91a6e8` |
 | 2 | Domain model, persistence, and security foundations | 1 | COMPLETE — [PR #2](https://github.com/A13Xg/Daydle/pull/2), merge `b4a1140` |
 | 3 | Authentication, onboarding, and account identity | 2 | COMPLETE with owner-approved scope changes — [PR #3](https://github.com/A13Xg/Daydle/pull/3), merge `bff7b89`, evidence in [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md) |
-| 4 | Game catalog, selection, and discovery | 3 | NOT STARTED |
+| 4 | Game catalog, selection, and discovery | 3 | IN REVIEW — [PR #5](https://github.com/A13Xg/Daydle/pull/5) |
 | 5 | Today experience, PWA, and external-game navigation | 4 | NOT STARTED |
 | 6 | Deterministic parser registry and initial game coverage | 5 | NOT STARTED |
 | 7 | Result ingestion, history, and correction lifecycle | 6 | NOT STARTED |
@@ -99,7 +99,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Signup-to-profile flow passes tests on primary target, identity rules verified, unauthorized access rejected, recovery/callback handling validated.
 
 ## Phase 4 — Game catalog, selection, and discovery
-**Status:** NOT STARTED. **Dependencies:** 3.
+**Status:** IN REVIEW on branch [PR #5](https://github.com/A13Xg/Daydle/pull/5); see [completedPhases/Phase4Exec.md](completedPhases/Phase4Exec.md) and [passing CI](https://github.com/A13Xg/Daydle/actions/runs/43782554508). Main remains NOT STARTED until PR merge reconciliation. **Dependencies:** 3.
 
 **Purpose:** Make a broad external-game catalog browseable while supporting only a smaller initial set of parsers.
 
@@ -111,6 +111,15 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 - Define disabled, stale-link, unsupported, empty, loading, and search error behavior.
 
 **Exit/verification:** Public discovery works, selections survive login, inactive games handled, permissions enforced, tests cover metadata/URL logic and selection races.
+
+**PR #5 review hardening — IMPLEMENTED / CI VERIFIED:**
+- [x] Revoke the inherited `UPDATE(sort_order)` column grant as well as table-level write grants; SQL tests check `has_any_column_privilege` and reject direct owner reordering.
+- [x] Treat failed favorite-save acknowledgements as **unconfirmed**, reread the authoritative ordered selection and block editing if reconciliation fails.
+- [x] Display saved-game loading/error states and a retry action on both catalog and direct detail routes.
+- [x] Serialize concurrent category replacements with a locked parent row; test two overlapping sessions against an initially empty category list on both clean PostgreSQL databases.
+- [x] Retain the validated operational keep-alive improvements and correct the false diagnosis from PR #6.
+- **Evidence:** [Phase 4 PR #5](https://github.com/A13Xg/Daydle/pull/5) and [CI run](https://github.com/A13Xg/Daydle/actions/runs/43785315498), 60 unit/API tests plus two clean PG17 databases. Post-merge live database workflow dispatch remains unverified.
+
 
 ## Phase 5 — Today experience, PWA, and external-game navigation
 **Status:** NOT STARTED. **Dependencies:** 4.
@@ -265,6 +274,20 @@ Future possibilities (not automatic phases or MVP blockers): additional parser c
 - **Archived after passing tests/review:** completedPhases/Phase1Exec.md, etc. The archive contains the final plan plus verified outcome summary, commit/PR reference, tests run, deviations, risks, and follow-ups.
 - **PR:** created as draft at phase start, marked ready for review only after validation; never auto-merge. Main ledger changes to COMPLETE only after merge verification.
 - **Status reconciliation:** record actual commit hashes and PR state; if a checked “COMPLETE” phase is missing evidence or expected artifacts, stop and diagnose rather than cascading unreliable assumptions.
+
+## Operational follow-up — Supabase keep-alive reliability
+
+**Status:** IMPLEMENTED / CI VERIFIED on branch in [Phase 4 PR #5](https://github.com/A13Xg/Daydle/pull/5). **Priority:** operational resilience, independent of Phase 4 catalog delivery.
+
+**Assessment of [PR #6](https://github.com/A13Xg/Daydle/pull/6):** Its claimed `apikey: ***` failure is unsupported. The actual `main` workflow already uses the configured `${SUPABASE_PUBLISHABLE_KEY}` header. A request made with a literal redaction placeholder is not a valid reproduction. Its six-day `*/6` cron also had no seven-day boundary gap. Neither is a demonstrated production defect.
+
+**Accepted and implemented improvements:**
+- Increase the cheap, row-limited read-only cron to **daily** for missed/delayed-run resilience, not to fix a nonexistent month-boundary defect.
+- Extract the HTTP check into `scripts/ops/keepalive.mjs`; validate the public Supabase origin/key, preserve the real API key header, fail on HTTP errors, and avoid logging secrets/response bodies.
+- Add isolated local-HTTP-server regression tests for request method, header, row-limited endpoint, 200 success, 401 denial and schedule.
+- Update operations runbooks, clearly separating local CI evidence from hosted success.
+
+**Pending post-merge verification:** After owner review/merge, manually dispatch `Supabase keep-alive` on `main`; verify HTTP 200 with configured repository variables and monitor workflow notifications/last success. PR CI cannot verify an actual scheduled run and performs no production dispatch, schema migration or deployment.
 
 ## Circle-Back
 
