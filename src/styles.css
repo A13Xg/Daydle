@@ -519,9 +519,6 @@ button:disabled {
     width: 100%;
     justify-content: space-between;
   }
-  .paste-global {
-    margin-left: auto;
-  }
   .today-game {
     align-items: stretch;
   }
@@ -533,6 +530,15 @@ button:disabled {
     text-align: center;
   }
   .paste-global {
-    position: sticky;
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 30;
+    background: #1c324f;
+    color: #fff;
+    box-shadow: 0 0.4rem 1.5rem rgba(0, 0, 0, 0.2);
+  }
+  .content {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
   }
 }
