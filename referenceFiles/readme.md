@@ -36,7 +36,7 @@ The tab screens link to each other, so you can click through them in a browser.
 
 The product currently ships as a web/PWA. Future iOS packaging may be explored separately, but is **not scoped or authorized now**. Preserve compatibility with a possible WKWebView wrapper when choosing web technologies. The mockups are written with that portability goal: viewport and safe-area handling, 16px inputs, 44pt hit areas, touch-safe reordering, accessible controls and no hotlinked assets. The rules, and the App Store requirements they come from, are in `DESIGN.md`.
 
-Two mockup-only shortcuts must **not** ship: the Tailwind Play CDN and the Google Fonts and Material Symbols links. The real app compiles Tailwind and bundles fonts and icons.
+Two mockup-only shortcuts must **not** ship: the Tailwind Play CDN and the Google Fonts and Material Symbols links. The React app instead uses equivalent bundled semantic CSS design tokens, local Plus Jakarta Sans and inline SVG icons; no runtime CDN is required.
 
 ## Where the mockups differ from the product baseline
 

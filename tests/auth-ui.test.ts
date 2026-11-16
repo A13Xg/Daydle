@@ -24,8 +24,12 @@ const renderAuth = (search: string, props = {}) =>
 describe("auth page", () => {
   it("offers Apple and Google only, with no email or password form", () => {
     const markup = renderAuth("");
-    expect(markup).toContain("Sign in to Daydle");
-    expect(markup).toContain("Continue with Apple");
+    expect(markup).toContain("Master Your Daily Ritual.");
+    expect(markup).toContain("Daydle");
+    expect(markup).toContain("ARCADE");
+    expect(markup).toContain("Sign in with Apple");
+    expect(markup.match(/class="provider-mark"/g)).toHaveLength(2);
+    expect(markup).toContain("Your daily puzzles");
     expect(markup).toContain("Continue with Google");
     expect(markup).not.toContain('type="email"');
     expect(markup).not.toContain('type="password"');

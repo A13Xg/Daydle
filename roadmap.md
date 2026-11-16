@@ -32,8 +32,8 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 3 | Authentication, onboarding, and account identity | 2 | COMPLETE with owner-approved scope changes — [PR #3](https://github.com/A13Xg/Daydle/pull/3), merge `bff7b89`, evidence in [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md) |
 | 4 | Game catalog, selection, and discovery | 3 | COMPLETE — [PR #5](https://github.com/A13Xg/Daydle/pull/5), merge `e0fcb2b` |
 | 5 | Today experience, PWA, and external-game navigation | 4 | COMPLETE — [PR #7](https://github.com/A13Xg/Daydle/pull/7) merged; [release](https://github.com/A13Xg/Daydle/actions/runs/43814332227) deployed; [PR #10](https://github.com/A13Xg/Daydle/pull/10) merged; owner-reported 8/8 iPhone PWA tests PASS; [archive](completedPhases/Phase5Exec.md) |
-| 6 | Deterministic parser registry and initial game coverage | 5 | IN REVIEW on PR branch — [PR #12](https://github.com/A13Xg/Daydle/pull/12), [verified CI](https://github.com/A13Xg/Daydle/actions/runs/43836926617); **not COMPLETE on main until merged** |
-| 6.5 | Obsidian Arcade UI/UX overhaul | 6 | NOT STARTED; design approved |
+| 6 | Deterministic parser registry and initial game coverage | 5 | COMPLETE — [PR #12](https://github.com/A13Xg/Daydle/pull/12), merge `99401d5`, [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43930997408) passed, [archive](completedPhases/Phase6Exec.md) |
+| 6.5 | Obsidian Arcade UI/UX overhaul | 6 | IN REVIEW — [PR #13](https://github.com/A13Xg/Daydle/pull/13), [visual-alignment CI](https://github.com/A13Xg/Daydle/actions/runs/43949077483); iPhone retest explicitly owner-deferred (NOT VERIFIED, required before release); not yet merged into main |
 | 7 | Result ingestion, history, and correction lifecycle | 6.5 | NOT STARTED |
 | 8 | Personal statistics, streaks, and achievements | 7 | NOT STARTED |
 | 9 | Public profiles and instant friendship | 8 | NOT STARTED |
@@ -160,7 +160,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Selected game -> publisher -> Daydle return -> user-triggered Paste shell is usable on iOS; offline read-only experience documented and tested.
 
 ## Phase 6 — Deterministic parser registry and initial game coverage
-**Status:** IN REVIEW on the PR branch, NOT yet merged into main — [PR #12](https://github.com/A13Xg/Daydle/pull/12), [archived plan](completedPhases/Phase6Exec.md), [CI 43836926617](https://github.com/A13Xg/Daydle/actions/runs/43836926617) (164 tests/24 suites and two database jobs passed). **Dependencies:** 5.
+**Status:** COMPLETE — [PR #12](https://github.com/A13Xg/Daydle/pull/12) merged at `99401d5`, archived [execution plan](completedPhases/Phase6Exec.md), [post-merge CI 43930997408](https://github.com/A13Xg/Daydle/actions/runs/43930997408) passed. **Dependencies:** 5.
 
 **Purpose:** Build an isolated, versioned, testable server-side parsing engine and the first 5–10 reliable game parsers.
 
@@ -175,7 +175,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Fixture suite verifies all supported games, false-positive and malformed-input handling, confidence routing, puzzle resolution, and bounded execution.
 
 ## Phase 6.5 — Obsidian Arcade UI/UX overhaul
-**Status:** NOT STARTED. **Dependencies:** 6. **Visual authority:** [Obsidian Arcade](referenceFiles/Daydle%20UI-UX%20Reference/DESIGN.md) and 13 approved example screens.
+**Status:** IN REVIEW on [PR #13](https://github.com/A13Xg/Daydle/pull/13), source validated by [CI #43949077483](https://github.com/A13Xg/Daydle/actions/runs/43949077483) (196 tests/25 suites, 16 Chromium route/viewport cases, two database security jobs). Screenshot-versus-design parity fixes and updated [screenshots](docs/screenshots/README.md) are included. The physical iPhone Safari/PWA gate was expressly deferred by the owner for PR review; it is **NOT VERIFIED** and must be revisited before any release. [Archived plan](completedPhases/Phase6.5Exec.md), with real-browser screenshot provenance [here](docs/screenshots/README.md). No UI changes on main until merge. **Dependencies:** 6. **Visual authority:** [Obsidian Arcade](referenceFiles/Daydle%20UI-UX%20Reference/DESIGN.md) and 13 approved example screens.
 
 **Purpose:** Build the permanent mobile-first visual system before adding result history, statistics and social interfaces.
 

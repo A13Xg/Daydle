@@ -8,12 +8,15 @@ const OFFLINE_HTML = "/index.html";
 
 function isAppNavigation(url) {
   if (url.pathname === "/" || url.pathname === "/today") return true;
-  return url.pathname === "/games" || /^\/games\/[a-z0-9-]+\/?$/.test(url.pathname);
+  return ["/games", "/lineup", "/statistics", "/friends", "/notifications", "/how-it-works"].includes(url.pathname) ||
+    /^\/games\/[a-z0-9-]+\/?$/.test(url.pathname);
 }
 
 function isSafeStaticAsset(url) {
   return url.pathname.startsWith("/assets/") ||
     url.pathname.startsWith("/icons/") ||
+    url.pathname.startsWith("/fonts/") ||
+    url.pathname === "/arcade-emblem.svg" ||
     url.pathname === "/app.webmanifest" ||
     url.pathname === "/favicon.svg";
 }

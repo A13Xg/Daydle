@@ -29,11 +29,15 @@ The app shell and API health endpoint work without a Supabase project or credent
 
 The daily return screen is at **[/today](/today)** (also the application home). It displays your selected games, manual played markers and publisher launch links, with a global user-initiated Paste shell. Read [docs/pwa.md](docs/pwa.md) for install, offline, privacy and manual iOS acceptance checks. **Phase 5 SQL was applied in the owner-approved November 16, 2026 release.** Later deployments/migrations still require authorization.
 
-Public game discovery is at **[/games](/games)**, with per-game details at `/games/:slug`. Selecting favorites requires Google/Apple sign-in; the catalog is browsable anonymously. The catalog remains launchable without result persistence. Five deterministic share parsers are implemented for Phase 6 (review in [PR #12](https://github.com/A13Xg/Daydle/pull/12)); see [docs/parsers.md](docs/parsers.md) for coverage and constraints. Authenticated result ingestion follows Phase 6.5 in Phase 7. See [docs/catalog.md](docs/catalog.md) for seed data, safe URLs, owner selections, and admin RPC permissions. **Phase 4 SQL was applied in the owner-approved Phase 5 release.**
+Public game discovery is at **[/games](/games)**, with per-game details at `/games/:slug`. Selecting favorites requires Google/Apple sign-in; the catalog is browsable anonymously. The catalog remains launchable without result persistence. Five deterministic share parsers from Phase 6 are merged ([PR #12](https://github.com/A13Xg/Daydle/pull/12)); see [docs/parsers.md](docs/parsers.md) for coverage and constraints. Authenticated result ingestion follows Phase 6.5 in Phase 7. See [docs/catalog.md](docs/catalog.md) for seed data, safe URLs, owner selections, and admin RPC permissions. **Phase 4 SQL was applied in the owner-approved Phase 5 release.**
 
 Database schema, test roles and security boundaries are documented in [docs/database.md](docs/database.md). Supabase authentication flow and provider setup are in [docs/auth.md](docs/auth.md); hosting credentials and scopes in [docs/secrets.md](docs/secrets.md). CI tests the migration on two disposable PostgreSQL 17 databases without hosted Supabase credentials. Migrations are applied to the hosted project only with the owner's explicit approval.
 
 Deployment and environment isolation are documented in [docs/deployment.md](docs/deployment.md). No production deployment is authorized merely by running CI or completing a phase.
+
+## Interface design
+
+Obsidian Arcade's dark palette, locally bundled Plus Jakarta Sans, three screen shells and five-tab navigation are being integrated in [Phase 6.5](https://github.com/A13Xg/Daydle/pull/13). The [UI architecture and route matrix](docs/ui-architecture.md) distinguish shipped functionality from display-only future states. The mockups are design references, **not** permission to add fabricated social statistics or notifications.
 
 ## Repository guidance
 
@@ -45,4 +49,4 @@ Deployment and environment isolation are documented in [docs/deployment.md](docs
 - [referenceFiles/](referenceFiles/readme.md) — owner-approved Obsidian Arcade visual system and 13 screen examples, scheduled for Phase 6.5. Examples do not expand the feature contract.
 - A root-level `Phase#Exec.md` exists only while its phase is actively being implemented.
 
-Obsidian Arcade is the approved design standard; its production React implementation is scheduled for Phase 6.5. Web/PWA remains the shipping platform, with future iOS packaging compatibility influencing architecture only.
+Obsidian Arcade is the approved design standard; its production React implementation is underway in [Phase 6.5 PR #13](https://github.com/A13Xg/Daydle/pull/13), not yet deployed. Web/PWA remains the shipping platform, with future iOS packaging compatibility influencing architecture only.

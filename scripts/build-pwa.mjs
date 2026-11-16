@@ -18,6 +18,8 @@ const precache = [
   "/index.html",
   "/app.webmanifest",
   "/favicon.svg",
+  "/arcade-emblem.svg",
+  "/fonts/PlusJakartaSans.ttf",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/icons/icon-maskable-512.png",

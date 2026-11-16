@@ -27,8 +27,16 @@ export function GameDetailPage({
   return (
     <article className="panel game-detail">
       <a href="/games">Back to all games</a>
-      <h1>{game.name}</h1>
-      <p>{game.description}</p>
+      <div className="game-detail-hero">
+        <span className={"game-avatar " + game.slug} aria-hidden="true">
+          {game.name.slice(0, 2).toUpperCase()}
+        </span>
+        <div>
+          <p className="eyebrow">PUBLISHER PUZZLE</p>
+          <h1>{game.name}</h1>
+        </div>
+      </div>
+      <p className="lead">{game.description}</p>
       <dl className="catalog-metadata">
         <div>
           <dt>Publisher</dt>

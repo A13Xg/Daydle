@@ -42,6 +42,7 @@ export interface CatalogPageProps {
   client: SupabaseClient | null;
   userId: string | null;
   detailSlug?: string;
+  lineupOnly?: boolean;
 }
 
 export interface SelectionNoticeProps {
@@ -74,7 +75,12 @@ export function SelectionNotice({
   return null;
 }
 
-export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
+export function CatalogPage({
+  client,
+  userId,
+  detailSlug,
+  lineupOnly = false,
+}: CatalogPageProps) {
   const [catalogState, setCatalogState] = useState<CatalogState>({
     status: "loading",
   });
@@ -320,12 +326,16 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
 
   const filtered = filterCatalog(games, filters);
   return (
-    <div className="catalog-page">
+    <div className={lineupOnly ? "lineup-page" : "catalog-page"}>
       <header className="catalog-heading">
-        <h1>Discover daily games</h1>
+        <p className="eyebrow">
+          {lineupOnly ? "MY DAILY RITUAL" : "THE PUZZLE LIBRARY"}
+        </p>
+        <h1>{lineupOnly ? "Daily lineup editor" : "Discover daily games"}</h1>
         <p>
-          Explore games on their publishers' websites, save your favorites and
-          return to track results when support is available.
+          {lineupOnly
+            ? "Adjust your saved rotation. Each move is saved to your account and verified against the server."
+            : "Discover puzzles worth coming back to. Play each game on its publisher site and build your own ritual."}
         </p>
       </header>
 
@@ -340,7 +350,12 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
       )}
       {userId && (
         <section className="panel" aria-labelledby="my-games-heading">
-          <h2 id="my-games-heading">My games</h2>
+          <div className="today-toolbar">
+            <h2 id="my-games-heading">My games</h2>
+            <a href={lineupOnly ? "/games" : "/lineup"}>
+              {lineupOnly ? "Add more games" : "Edit lineup"}
+            </a>
+          </div>
           {selectionLoading || selectionError ? (
             <SelectionNotice
               loading={selectionLoading}
@@ -348,11 +363,20 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
               onRetry={() => setRetry((n) => n + 1)}
             />
           ) : selectedGames.length === 0 ? (
-            <p>No saved games yet. Browse below and add your favorites.</p>
+            <p>
+              No saved games yet. <a href="/games">Discover games</a> to start
+              your lineup.
+            </p>
           ) : (
             <ol className="selected-games">
               {selectedGames.map((game, index) => (
                 <li key={game.id}>
+                  <span
+                    className={"game-avatar " + game.slug}
+                    aria-hidden="true"
+                  >
+                    {game.name.slice(0, 2).toUpperCase()}
+                  </span>
                   <span className="selected-game-title">{game.name}</span>
                   {!canLaunchGame(game) && (
                     <span className="muted">
@@ -410,156 +434,197 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
         </section>
       )}
 
-      <section className="panel catalog-filters" aria-label="Catalog filters">
-        <div className="field">
-          <label htmlFor="catalog-search">Search games</label>
-          <input
-            id="catalog-search"
-            type="search"
-            value={filters.query}
-            placeholder="Game title, publisher, or category"
-            onChange={(event) =>
-              setFilters((f) => ({ ...f, query: event.target.value }))
-            }
-          />
+      {lineupOnly && !userId && (
+        <div className="panel">
+          <p>Sign in to save and reorder your personal lineup.</p>
+          <a href="/auth">Sign in with Apple or Google</a>
         </div>
-        <div className="field">
-          <label htmlFor="catalog-category">Category</label>
-          <select
-            id="catalog-category"
-            value={filters.category}
-            onChange={(event) =>
-              setFilters((f) => ({ ...f, category: event.target.value }))
-            }
-          >
-            <option value="">All categories</option>
-            {(data?.categories ?? []).map((category) => (
-              <option key={category.id} value={category.slug}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="field">
-          <label htmlFor="catalog-support">Result tracking</label>
-          <select
-            id="catalog-support"
-            value={filters.support}
-            onChange={(event) =>
-              setFilters((f) => ({
-                ...f,
-                support: event.target.value as CatalogFilters["support"],
-              }))
-            }
-          >
-            <option value="all">All games</option>
-            <option value="supported">Supported games</option>
-            <option value="unsupported">Not yet supported</option>
-          </select>
-        </div>
-        <label className="filter-toggle">
-          <input
-            type="checkbox"
-            checked={filters.showArchived}
-            onChange={(event) =>
-              setFilters((f) => ({ ...f, showArchived: event.target.checked }))
-            }
-          />
-          Include archived or inactive titles
-        </label>
-      </section>
-
-      {saveError && (
-        <p role="alert" className="notice error">
+      )}
+      {lineupOnly && saveError && (
+        <p className="notice error" role="alert">
           {saveError}
         </p>
       )}
-      {!userId && (
-        <p className="notice">
-          You can browse without an account.
-          <a href="/auth"> Sign in</a> to save and reorder your favorite games.
-        </p>
+      {!lineupOnly ? (
+        <>
+          <section
+            className="panel catalog-filters"
+            aria-label="Catalog filters"
+          >
+            <div className="field">
+              <label htmlFor="catalog-search">Search games</label>
+              <input
+                id="catalog-search"
+                type="search"
+                value={filters.query}
+                placeholder="Game title, publisher, or category"
+                onChange={(event) =>
+                  setFilters((f) => ({ ...f, query: event.target.value }))
+                }
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="catalog-category">Category</label>
+              <select
+                id="catalog-category"
+                value={filters.category}
+                onChange={(event) =>
+                  setFilters((f) => ({ ...f, category: event.target.value }))
+                }
+              >
+                <option value="">All categories</option>
+                {(data?.categories ?? []).map((category) => (
+                  <option key={category.id} value={category.slug}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor="catalog-support">Result tracking</label>
+              <select
+                id="catalog-support"
+                value={filters.support}
+                onChange={(event) =>
+                  setFilters((f) => ({
+                    ...f,
+                    support: event.target.value as CatalogFilters["support"],
+                  }))
+                }
+              >
+                <option value="all">All games</option>
+                <option value="supported">Supported games</option>
+                <option value="unsupported">Not yet supported</option>
+              </select>
+            </div>
+            <label className="filter-toggle">
+              <input
+                type="checkbox"
+                checked={filters.showArchived}
+                onChange={(event) =>
+                  setFilters((f) => ({
+                    ...f,
+                    showArchived: event.target.checked,
+                  }))
+                }
+              />
+              Include archived or inactive titles
+            </label>
+          </section>
+
+          {saveError && (
+            <p role="alert" className="notice error">
+              {saveError}
+            </p>
+          )}
+          {!userId && (
+            <p className="notice">
+              You can browse without an account.
+              <a href="/auth"> Sign in</a> to save and reorder your favorite
+              games.
+            </p>
+          )}
+          <section aria-label="Catalog games">
+            <h2>
+              {filtered.length} {filtered.length === 1 ? "game" : "games"} found
+            </h2>
+            {filtered.length === 0 ? (
+              <div className="panel">
+                <p>No games match these filters.</p>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFilters({
+                      query: "",
+                      category: "",
+                      support: "all",
+                      showArchived: false,
+                    })
+                  }
+                >
+                  Clear filters
+                </button>
+              </div>
+            ) : (
+              <ul className="catalog-grid">
+                {filtered.map((game) => {
+                  const selected = selectedIds.includes(game.id);
+                  const href = safePublisherUrl(game.canonicalUrl);
+                  const launchable = canLaunchGame(game) && Boolean(href);
+                  return (
+                    <li key={game.id} className="catalog-card">
+                      <article>
+                        <div
+                          className={"game-avatar " + game.slug}
+                          aria-hidden="true"
+                        >
+                          {game.name.slice(0, 2).toUpperCase()}
+                        </div>
+                        <h3>
+                          <a href={`/games/${encodeURIComponent(game.slug)}`}>
+                            {game.name}
+                          </a>
+                        </h3>
+                        <p className="muted">
+                          {game.publisher ?? "Independent publisher"}
+                        </p>
+                        <p>{game.description}</p>
+                        <p className="game-status">
+                          <span>{parserSupportLabel(game.parserStatus)}</span>
+                          <span>{gameAvailabilityLabel(game)}</span>
+                        </p>
+                        <div className="game-actions">
+                          {launchable && href ? (
+                            <a
+                              className="action-link"
+                              href={href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Play at publisher
+                            </a>
+                          ) : (
+                            <span className="muted">
+                              Publisher link unavailable
+                            </span>
+                          )}
+                          {userId ? (
+                            <button
+                              type="button"
+                              disabled={
+                                saving ||
+                                editingDisabled ||
+                                selectionLoading ||
+                                Boolean(selectionError) ||
+                                (!selected && !canAddGame(game))
+                              }
+                              onClick={() => toggleGame(game.id)}
+                            >
+                              {selected ? "Remove" : "Add to my games"}
+                            </button>
+                          ) : null}
+                        </div>
+                      </article>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </section>
+        </>
+      ) : (
+        <section className="panel">
+          <h2>One lineup. Your pace.</h2>
+          <p>
+            Use Up and Down to reorder your games. Publisher launches remain one
+            game per tap. The list stays editable only while online and your
+            account state is verified.
+          </p>
+          <a className="secondary-link" href="/games">
+            Browse more games
+          </a>
+        </section>
       )}
-      <section aria-label="Catalog games">
-        <h2>
-          {filtered.length} {filtered.length === 1 ? "game" : "games"} found
-        </h2>
-        {filtered.length === 0 ? (
-          <div className="panel">
-            <p>No games match these filters.</p>
-            <button
-              type="button"
-              onClick={() =>
-                setFilters({
-                  query: "",
-                  category: "",
-                  support: "all",
-                  showArchived: false,
-                })
-              }
-            >
-              Clear filters
-            </button>
-          </div>
-        ) : (
-          <ul className="catalog-grid">
-            {filtered.map((game) => {
-              const selected = selectedIds.includes(game.id);
-              const href = safePublisherUrl(game.canonicalUrl);
-              const launchable = canLaunchGame(game) && Boolean(href);
-              return (
-                <li key={game.id} className="catalog-card">
-                  <article>
-                    <h3>
-                      <a href={`/games/${encodeURIComponent(game.slug)}`}>
-                        {game.name}
-                      </a>
-                    </h3>
-                    <p className="muted">
-                      {game.publisher ?? "Independent publisher"}
-                    </p>
-                    <p>{game.description}</p>
-                    <p className="game-status">
-                      <span>{parserSupportLabel(game.parserStatus)}</span>
-                      <span>{gameAvailabilityLabel(game)}</span>
-                    </p>
-                    <div className="game-actions">
-                      {launchable && href ? (
-                        <a
-                          href={href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Play at publisher
-                        </a>
-                      ) : (
-                        <span className="muted">
-                          Publisher link unavailable
-                        </span>
-                      )}
-                      {userId ? (
-                        <button
-                          type="button"
-                          disabled={
-                            saving ||
-                            editingDisabled ||
-                            selectionLoading ||
-                            Boolean(selectionError) ||
-                            (!selected && !canAddGame(game))
-                          }
-                          onClick={() => toggleGame(game.id)}
-                        >
-                          {selected ? "Remove" : "Add to my games"}
-                        </button>
-                      ) : null}
-                    </div>
-                  </article>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
     </div>
   );
 }

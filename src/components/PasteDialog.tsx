@@ -75,6 +75,7 @@ export function PasteDialog({ onClose }: { onClose: () => void }) {
         className="panel paste-dialog"
         onKeyDown={onKeyDown}
       >
+        <p className="eyebrow">ONE SHARE · ONE PUZZLE</p>
         <div className="paste-heading">
           <h2 id="paste-title">Paste Results</h2>
           <button
@@ -91,7 +92,12 @@ export function PasteDialog({ onClose }: { onClose: () => void }) {
           happens only when you tap the button below. You can always paste
           manually.
         </p>
-        <button type="button" onClick={() => void readNow()} disabled={reading}>
+        <button
+          type="button"
+          className="paste-cta"
+          onClick={() => void readNow()}
+          disabled={reading}
+        >
           {reading ? "Reading clipboard…" : "Paste from clipboard"}
         </button>
         <div className="field">

@@ -108,6 +108,43 @@ describe("offline install and security boundaries", () => {
     }
   });
 
+  it("keeps the new Arcade shell's public routes offline-safe and auth pages excluded", () => {
+    const { listeners } = worker();
+    const onFetch = listeners.get("fetch");
+    for (const pathname of [
+      "/lineup",
+      "/statistics",
+      "/friends",
+      "/notifications",
+      "/how-it-works",
+    ]) {
+      const respondWith = vi.fn();
+      onFetch?.({
+        request: {
+          method: "GET",
+          mode: "navigate",
+          url: "https://daydle.example" + pathname,
+          headers: new Headers(),
+        },
+        respondWith,
+      });
+      expect(respondWith).toHaveBeenCalledTimes(1);
+    }
+    for (const pathname of ["/account", "/auth", "/auth/callback"]) {
+      const respondWith = vi.fn();
+      onFetch?.({
+        request: {
+          method: "GET",
+          mode: "navigate",
+          url: "https://daydle.example" + pathname,
+          headers: new Headers(),
+        },
+        respondWith,
+      });
+      expect(respondWith).not.toHaveBeenCalled();
+    }
+  });
+
   it("serves only the generic cached SPA HTML after an eligible navigation fails offline", async () => {
     const { listeners, cache } = worker();
     let responsePromise: Promise<Response> | undefined;
