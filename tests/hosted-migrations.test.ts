@@ -36,13 +36,15 @@ describe("structured Supabase production migration history", () => {
   });
 
   it("accepts a partially or fully deployed reviewed migration chain", () => {
-    expect(verifyStructuredHistory([...baseline, phase4], filenames).pending)
-      .toEqual(["20261115050000"]);
-    expect(verifyStructuredHistory([...baseline, phase4, phase5], filenames, true))
-      .toEqual({
-        applied: filenames.map((name) => name.slice(0, 14)),
-        pending: [],
-      });
+    expect(
+      verifyStructuredHistory([...baseline, phase4], filenames).pending,
+    ).toEqual(["20261115050000"]);
+    expect(
+      verifyStructuredHistory([...baseline, phase4, phase5], filenames, true),
+    ).toEqual({
+      applied: filenames.map((name) => name.slice(0, 14)),
+      pending: [],
+    });
   });
 
   it("rejects missing, unknown, duplicate and out-of-order records", () => {
@@ -61,26 +63,40 @@ describe("structured Supabase production migration history", () => {
   });
 
   it("rejects structurally malformed API responses and local file changes", () => {
-    expect(() => verifyStructuredHistory({ migrations: baseline }, filenames)).toThrow();
+    expect(() =>
+      verifyStructuredHistory({ migrations: baseline }, filenames),
+    ).toThrow();
     expect(() => verifyStructuredHistory([null], filenames)).toThrow();
-    expect(() => verifyStructuredHistory(baseline, filenames.slice(0, 3))).toThrow();
-    expect(() => verifyStructuredHistory(baseline, [
-      ...filenames,
-      "20270101000000_extra.sql",
-    ])).toThrow();
+    expect(() =>
+      verifyStructuredHistory(baseline, filenames.slice(0, 3)),
+    ).toThrow();
+    expect(() =>
+      verifyStructuredHistory(baseline, [
+        ...filenames,
+        "20270101000000_extra.sql",
+      ]),
+    ).toThrow();
   });
 
   it("checks remote names when provided, tolerates the documented optional name", () => {
-    expect(verifyStructuredHistory(baseline.map(({ version }) => ({ version })), filenames).pending)
-      .toHaveLength(2);
-    expect(() => verifyStructuredHistory([
-      baseline[0],
-      { ...baseline[1], name: "wrong_migration" },
-    ], filenames)).toThrow(/name differs/);
+    expect(
+      verifyStructuredHistory(
+        baseline.map(({ version }) => ({ version })),
+        filenames,
+      ).pending,
+    ).toHaveLength(2);
+    expect(() =>
+      verifyStructuredHistory(
+        [baseline[0], { ...baseline[1], name: "wrong_migration" }],
+        filenames,
+      ),
+    ).toThrow(/name differs/);
   });
 
   it("requires all migrations applied after a successful deploy", () => {
-    expect(() => verifyStructuredHistory(baseline, filenames, true)).toThrow(/pending/);
+    expect(() => verifyStructuredHistory(baseline, filenames, true)).toThrow(
+      /pending/,
+    );
   });
 
   it("uses an official GET endpoint and never prints or sends credentials in URL", async () => {
@@ -92,7 +108,9 @@ describe("structured Supabase production migration history", () => {
     expect(result.pending).toEqual(["20261115040000", "20261115050000"]);
     const [url, options] = fetchImpl.mock.calls[0];
     expect(url).toBe(
-      "https://api.supabase.com/v1/projects/" + projectRef + "/database/migrations",
+      "https://api.supabase.com/v1/projects/" +
+        projectRef +
+        "/database/migrations",
     );
     expect(url).not.toContain(accessToken);
     expect(options.method).toBe("GET");
@@ -101,30 +119,48 @@ describe("structured Supabase production migration history", () => {
 
   it("fails closed with a scope-specific message on 401 and 403", async () => {
     for (const status of [401, 403]) {
-      await expect(getStructuredMigrationHistory(
-        projectRef, accessToken, remote(null, status),
-      )).rejects.toThrow("database_migrations_read");
+      await expect(
+        getStructuredMigrationHistory(
+          projectRef,
+          accessToken,
+          remote(null, status),
+        ),
+      ).rejects.toThrow("database_migrations_read");
     }
   });
 
   it("fails closed on network error, HTTP error or invalid JSON", async () => {
-    const fail = vi.fn().mockRejectedValue(new Error("sensitive network details"));
-    await expect(getStructuredMigrationHistory(projectRef, accessToken, fail))
-      .rejects.toThrow("request failed");
-    await expect(getStructuredMigrationHistory(projectRef, accessToken, remote(null, 502)))
-      .rejects.toThrow("HTTP 502");
-    await expect(getStructuredMigrationHistory(projectRef, accessToken, vi.fn().mockResolvedValue({
-      status: 200,
-      json: async () => { throw new Error("bad JSON"); },
-    }))).rejects.toThrow("invalid JSON");
+    const fail = vi
+      .fn()
+      .mockRejectedValue(new Error("sensitive network details"));
+    await expect(
+      getStructuredMigrationHistory(projectRef, accessToken, fail),
+    ).rejects.toThrow("request failed");
+    await expect(
+      getStructuredMigrationHistory(projectRef, accessToken, remote(null, 502)),
+    ).rejects.toThrow("HTTP 502");
+    await expect(
+      getStructuredMigrationHistory(
+        projectRef,
+        accessToken,
+        vi.fn().mockResolvedValue({
+          status: 200,
+          json: async () => {
+            throw new Error("bad JSON");
+          },
+        }),
+      ),
+    ).rejects.toThrow("invalid JSON");
   });
 
   it("does not call the API with invalid credentials or project references", async () => {
     const fetchImpl = vi.fn();
-    await expect(getStructuredMigrationHistory("wrong", accessToken, fetchImpl))
-      .rejects.toThrow("Missing protected");
-    await expect(getStructuredMigrationHistory(projectRef, "", fetchImpl))
-      .rejects.toThrow("Missing protected");
+    await expect(
+      getStructuredMigrationHistory("wrong", accessToken, fetchImpl),
+    ).rejects.toThrow("Missing protected");
+    await expect(
+      getStructuredMigrationHistory(projectRef, "", fetchImpl),
+    ).rejects.toThrow("Missing protected");
     expect(fetchImpl).not.toHaveBeenCalled();
   });
 });

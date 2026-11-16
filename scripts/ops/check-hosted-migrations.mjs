@@ -19,23 +19,37 @@ export function verifyStructuredHistory(
   const files = filenames.filter((name) => name.endsWith(".sql")).sort();
   const names = EXPECTED_MIGRATIONS.map((version, index) => {
     const name = files[index];
-    if (!name || !name.startsWith(version + "_") ||
-        !/^\d{14}_[a-z0-9_]+\.sql$/.test(name)) {
-      throw new Error("Local migration filenames do not match the reviewed four-version allowlist.");
+    if (
+      !name ||
+      !name.startsWith(version + "_") ||
+      !/^\d{14}_[a-z0-9_]+\.sql$/.test(name)
+    ) {
+      throw new Error(
+        "Local migration filenames do not match the reviewed four-version allowlist.",
+      );
     }
     return name.slice(15, -4);
   });
   if (files.length !== EXPECTED_MIGRATIONS.length) {
-    throw new Error("Unreviewed local migration files found. No release authorized.");
+    throw new Error(
+      "Unreviewed local migration files found. No release authorized.",
+    );
   }
   if (!Array.isArray(records)) {
-    throw new Error("Migration API returned a non-array response; refusing to infer history.");
+    throw new Error(
+      "Migration API returned a non-array response; refusing to infer history.",
+    );
   }
 
   const seen = new Map();
   for (const item of records) {
-    if (!item || typeof item !== "object" || Array.isArray(item) ||
-        typeof item.version !== "string" || !VERSION.test(item.version)) {
+    if (
+      !item ||
+      typeof item !== "object" ||
+      Array.isArray(item) ||
+      typeof item.version !== "string" ||
+      !VERSION.test(item.version)
+    ) {
       throw new Error("Migration API returned an invalid version record.");
     }
     const position = EXPECTED_MIGRATIONS.indexOf(item.version);
@@ -44,21 +58,32 @@ export function verifyStructuredHistory(
     }
     // The Management API includes a name, but treats it as optional in the
     // documented schema. When present, it must match the checked-in file.
-    if (item.name !== undefined &&
-        (typeof item.name !== "string" || item.name !== names[position])) {
-      throw new Error("Remote migration name differs from the checked-in migration.");
+    if (
+      item.name !== undefined &&
+      (typeof item.name !== "string" || item.name !== names[position])
+    ) {
+      throw new Error(
+        "Remote migration name differs from the checked-in migration.",
+      );
     }
     seen.set(item.version, true);
   }
 
   const applied = EXPECTED_MIGRATIONS.filter((v) => seen.has(v));
   const pending = EXPECTED_MIGRATIONS.filter((v) => !seen.has(v));
-  if (applied.length < 2 ||
-      applied.some((v, i) => v !== EXPECTED_MIGRATIONS[i])) {
-    throw new Error("Production migration history has a missing Phase 2/3 baseline or an out-of-order version.");
+  if (
+    applied.length < 2 ||
+    applied.some((v, i) => v !== EXPECTED_MIGRATIONS[i])
+  ) {
+    throw new Error(
+      "Production migration history has a missing Phase 2/3 baseline or an out-of-order version.",
+    );
   }
   if (requireAllApplied && pending.length) {
-    throw new Error("Reviewed migrations still pending after deployment: " + pending.join(", "));
+    throw new Error(
+      "Reviewed migrations still pending after deployment: " +
+        pending.join(", "),
+    );
   }
   return { applied, pending };
 }
@@ -86,19 +111,23 @@ export async function getStructuredMigrationHistory(
       },
     );
   } catch {
-    throw new Error("Supabase migration-history request failed; no database changes attempted.");
+    throw new Error(
+      "Supabase migration-history request failed; no database changes attempted.",
+    );
   }
 
   if (response.status !== 200) {
     if (response.status === 401 || response.status === 403) {
       throw new Error(
-        "Supabase migration-history API access denied (HTTP " + response.status +
-        "); production access token requires database_migrations_read permission.",
+        "Supabase migration-history API access denied (HTTP " +
+          response.status +
+          "); production access token requires database_migrations_read permission.",
       );
     }
     throw new Error(
       "Supabase structured migration-history API unavailable (HTTP " +
-      response.status + "); no database changes attempted.",
+        response.status +
+        "); no database changes attempted.",
     );
   }
   try {
@@ -112,11 +141,17 @@ export async function verifyHostedMigrations(
   { projectRef, accessToken, filenames, requireAllApplied = false },
   fetchImpl = fetch,
 ) {
-  const history = await getStructuredMigrationHistory(projectRef, accessToken, fetchImpl);
+  const history = await getStructuredMigrationHistory(
+    projectRef,
+    accessToken,
+    fetchImpl,
+  );
   return verifyStructuredHistory(history, filenames, requireAllApplied);
 }
 
-const invoked = process.argv[1] ? pathToFileURL(resolve(process.argv[1])).href : "";
+const invoked = process.argv[1]
+  ? pathToFileURL(resolve(process.argv[1])).href
+  : "";
 if (invoked === import.meta.url) {
   try {
     const state = await verifyHostedMigrations({
@@ -126,11 +161,16 @@ if (invoked === import.meta.url) {
       requireAllApplied: process.argv.includes("--require-all-applied"),
     });
     console.log("Production migration versions:", state.applied.join(", "));
-    console.log("Approved pending migrations:", state.pending.join(", ") || "(none)");
+    console.log(
+      "Approved pending migrations:",
+      state.pending.join(", ") || "(none)",
+    );
   } catch (error) {
     // Never log the server response, token, request headers, database
     // connection or user data. Only our own constant error messages.
-    console.error(error instanceof Error ? error.message : "Migration verification failed.");
+    console.error(
+      error instanceof Error ? error.message : "Migration verification failed.",
+    );
     process.exitCode = 1;
   }
 }
