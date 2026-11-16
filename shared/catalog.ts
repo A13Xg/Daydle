@@ -36,6 +36,7 @@ export function safePublisherUrl(
   input: string | null | undefined,
 ): string | null {
   if (typeof input !== "string" || input.length > 2048) return null;
+  if (/[\u0000-\u001f\u007f]/.test(input)) return null;
   try {
     const url = new URL(input);
     if (url.protocol !== "https:" || url.username || url.password) return null;
