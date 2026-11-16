@@ -1287,7 +1287,9 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
 
 /* Signed-out ritual hub and fixed-tab footer clearance. */
 .shell-tab .site-footer {
-  padding-bottom: calc(var(--tabbar-height) + env(safe-area-inset-bottom) + 2.25rem);
+  padding-bottom: calc(
+    var(--tabbar-height) + env(safe-area-inset-bottom) + 2.25rem
+  );
 }
 .today-welcome {
   max-width: 780px;
@@ -1299,12 +1301,44 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   padding: clamp(1.5rem, 5vw, 3.5rem);
   border-color: rgba(77, 142, 255, 0.23);
   background:
-    radial-gradient(circle at 50% 0%, rgba(77, 142, 255, 0.24), transparent 59%),
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(77, 142, 255, 0.24),
+      transparent 59%
+    ),
     linear-gradient(150deg, #132741, #0d1c2d 70%);
 }
-.today-welcome h1 { font-size: clamp(2rem, 6vw, 3rem); max-width: 17ch; margin: 0 auto 0.9rem; }
-.today-welcome .lead { max-width: 42ch; margin-inline: auto; }
-.welcome-mark { width: 100px; height: 100px; display: grid; place-items: center; margin: 0 auto 1.35rem; border-radius: 28px; background: rgba(173, 198, 255, 0.06); border: 1px solid rgba(173, 198, 255, 0.14); }
-.welcome-mark img { width: 72px; height: 72px; }
-.welcome-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.75rem; margin: 1.65rem 0 1rem; }
-.welcome-note { font-size: 0.75rem; margin-top: 1.65rem; }
+.today-welcome h1 {
+  font-size: clamp(2rem, 6vw, 3rem);
+  max-width: 17ch;
+  margin: 0 auto 0.9rem;
+}
+.today-welcome .lead {
+  max-width: 42ch;
+  margin-inline: auto;
+}
+.welcome-mark {
+  width: 100px;
+  height: 100px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 1.35rem;
+  border-radius: 28px;
+  background: rgba(173, 198, 255, 0.06);
+  border: 1px solid rgba(173, 198, 255, 0.14);
+}
+.welcome-mark img {
+  width: 72px;
+  height: 72px;
+}
+.welcome-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.65rem 0 1rem;
+}
+.welcome-note {
+  font-size: 0.75rem;
+  margin-top: 1.65rem;
+}

@@ -205,7 +205,14 @@ try {
     { stdio: "ignore" },
   );
   let port;
-  for (let i = 0; i < 100; i++) {
+  // Some shared CI hosts take longer to initialize headless Chrome.
+  // Report early process exit instead of misclassifying a startup crash as timeout.
+  let exitReason = null;
+  chrome.once("exit", (code, signal) => {
+    exitReason = { code, signal };
+  });
+  for (let i = 0; i < 250; i++) {
+    if (exitReason) throw new Error("Chromium exited during startup: " + JSON.stringify(exitReason));
     try {
       port = Number(
         readFileSync(join(directory, "DevToolsActivePort"), "utf8").split(
@@ -218,7 +225,7 @@ try {
     }
     await sleep(100);
   }
-  if (!port) throw new Error("Chromium DevTools did not become ready.");
+  if (!port) throw new Error("Chromium DevTools did not become ready within 25 seconds.");
   const pages = await (
     await fetch("http://127.0.0.1:" + port + "/json/list")
   ).json();

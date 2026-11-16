@@ -199,12 +199,22 @@ export function TodayPage({
         </div>
         <p className="eyebrow">WELCOME TO THE ARCADE</p>
         <h1 id="today-title">Your daily games. One place.</h1>
-        <p className="lead">Find your favorite puzzles, build a daily lineup, and come back whenever you want to play.</p>
+        <p className="lead">
+          Find your favorite puzzles, build a daily lineup, and come back
+          whenever you want to play.
+        </p>
         <div className="welcome-actions">
-          <a className="action-link" href="/auth">Sign in with Apple or Google</a>
-          <a className="secondary-link" href="/games">Browse games without signing in</a>
+          <a className="action-link" href="/auth">
+            Sign in with Apple or Google
+          </a>
+          <a className="secondary-link" href="/games">
+            Browse games without signing in
+          </a>
         </div>
-        <p className="muted welcome-note">Play at each publisher. Participation is optional. Results are not saved yet.</p>
+        <p className="muted welcome-note">
+          Play at each publisher. Participation is optional. Results are not
+          saved yet.
+        </p>
       </section>
     );
 
