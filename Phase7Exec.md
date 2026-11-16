@@ -1,6 +1,6 @@
 # Phase 7 Execution Plan — Result ingestion, history, and correction lifecycle
 
-**Status:** PLAN REVIEWED — implementation pending. No production changes.
+**Status:** IN PROGRESS / HOSTED ACCEPTANCE BLOCKED — implementation and isolated tests are committed; no hosted migration, secrets or deployment.
 **Base:** `main` at `520ca5be730bc9ea45a7ffd00fbe85e6525625f3`. [PR #13](https://github.com/A13Xg/Daydle/pull/13) merged on 2026-11-16; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43970518949) PASS.
 **Branch/PR:** `phase/07-results-history-corrections` / [#14](https://github.com/A13Xg/Daydle/pull/14) (draft).
 **Authority:** [IDEA.md](IDEA.md) §§5,7,8,11; [roadmap.md](roadmap.md) Phase 7; [AGENTS.md](AGENTS.md); [Phase 6](completedPhases/Phase6Exec.md) and [6.5](completedPhases/Phase6.5Exec.md) archives.
@@ -59,3 +59,26 @@
 ## Review verdict
 
 The architecture preserves existing pure parsers and protects transaction ownership inside server-only SQL RPCs. Limiting this phase to owner result APIs avoids premature Phase 8+ public stats/spoiler paths. Implement as above; new risk discoveries must be documented before expanding scope.
+
+## Phase 7 implementation and verification record — November 16, 2026
+
+### Implemented in draft PR #14
+
+- Forward-only Phase 7 migration: five supported parser-backed catalog slugs, service-only RPCs for canonical save, replay/replace, owner history/detail/delete, explicit unknown-sample retention, quota and private audit events. No browser mutation grants.
+- Worker verifies Supabase Bearer sessions using the public project key, runs Phase 6 parser server-side, enforces request limits, sanitizes response errors, and calls server-only RPCs with the verified owner ID. No service-role key is checked into Git.
+- Owner-only result browser client, Paste form with explicit submit/duplicate/conflict/replace/unknown-sample consent, History page with filter/pagination/detail/delete, navigation and PWA offline-safe exclusions. Today/help copy updated to distinguish manual marks and verified saves.
+- Security tests exercise RPC grant denials, cross-account isolation, publisher puzzle identity, duplicate idempotency, corrections, private audit, raw expiry metadata and deletes. The independent real two-process PG17 concurrency script verifies two parallel writes converge to one saved row, raw record and audit event.
+- HTTP and UI tests verify authentication, body bounds, parser decisions, unknown opt-in, response minimization and private route navigation; browser smoke now includes the History stack at 320, 393 and 1024 widths.
+
+### Automated evidence
+
+- [CI #43977903592](https://github.com/A13Xg/Daydle/actions/runs/43977903592): 215 tests / 28 suites, TypeScript, lint, formatted source, build, PWA/API smoke, 17 Chromium route/viewport checks and two isolated PostgreSQL security databases PASS. This run used temporary canonical formatting; source was then committed and the diagnostic removed.
+- [Final clean-source CI #43978176350](https://github.com/A13Xg/Daydle/actions/runs/43978176350): verify actual conclusion at the link; do not treat a pending run as passed.
+- No production migration, Worker/PWA deployment, or account-secret changes were performed.
+
+### Acceptance limitations — NOT VERIFIED
+
+- Hosted Supabase/Cloudflare end-to-end tests require separately approved Phase 7 migration, protected Worker bindings SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY and SUPABASE_SERVICE_ROLE_KEY, and real OAuth/test-user submissions. These are NOT VERIFIED; do not infer permission from earlier phase approvals.
+- Real iPhone Safari/PWA behavior after Phase 7 is NOT VERIFIED; the older owner-deferred UI acceptance is not automatically a pass for this new flow.
+- 90-day raw retention is enforced by expiry metadata and a private purge function exists; running scheduled physical deletion is NOT VERIFIED and remains a later operations obligation.
+- PR #14 remains draft and Phase7Exec.md remains active. Do not merge, deploy, archive as COMPLETE or start Phase 8 before essential hosted acceptance is resolved under the repository process.
