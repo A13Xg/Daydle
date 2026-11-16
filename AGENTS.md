@@ -181,3 +181,10 @@ Be clear and economical; report concrete commits and links when available. Never
 - Inspect literal committed workflow source before claiming credential regressions. Redacted `***` output from an unrelated probe is not evidence the actual `apikey` header is defective.
 - Scheduled maintenance jobs require tests of the outbound request, denial/non-200 behavior and secret-safe logging. Distinguish local stub checks from real hosted Actions runs.
 - Calculate cron month-boundary gaps correctly. GitHub schedules may be delayed or disabled; keep-alive is best-effort, never a backup or uptime guarantee.
+
+## Audited selection and catalog concurrency
+
+- For PostgreSQL tables protected behind an RPC, verify both table and **column-level** grants. `REVOKE UPDATE ON table` alone does not undo previously granted `UPDATE(column)`; negative tests must check `has_any_column_privilege` and actual prohibited statements.
+- Never interpret a transport/RPC failure as proof that a database write rolled back. Reconcile authoritative persisted state before issuing another full-list mutation, and block editing if the reconciliation read also fails.
+- Replace-many operations must serialize even when the previous child set is empty. Lock the stable parent row before DELETE/INSERT and test two overlapping independent transactions.
+- Errors that disable actions must be visible with retry controls on *every* route where those actions appear, including deep-linked detail pages.

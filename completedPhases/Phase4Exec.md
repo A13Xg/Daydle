@@ -121,3 +121,16 @@ Verified latest main at `d4644ce`, Phases 0–3 COMPLETE, prior PR #3 merged, pa
 - Audited [PR #6](https://github.com/A13Xg/Daydle/pull/6) and its feedback. The original `apikey: ***` regression claim was rejected: `main` already sends the configured public key; testing a literal redaction placeholder does not prove failure.
 - Rechecked `*/6` scheduling across months: maximum gap was six days, so no calendar bug. A daily cadence gives additional resilience to delayed or missed GitHub runs.
 - Added and tested the isolated read-only keep-alive request, synthetic local HTTP-stub contract checks, and runbook updates on PR #5. Live default-branch dispatch remains a separately documented post-merge validation, not an implied completed run.
+
+### Supplemental review hardening — PR #5 feedback
+
+Four substantive review findings were accepted and corrected:
+
+1. `UPDATE(sort_order)` column-level permission from Phase 2 survived table-level REVOKE. The Phase 4 migration now explicitly revokes the column grant; SQL tests reject any direct authenticated favorites UPDATE.
+2. A rejected RPC response did not establish rollback. The client now reloads the server's canonical favorite list after an unconfirmed save; on a second read failure, selection editing is disabled until a successful retry. UI messaging no longer falsely claims previous state was preserved.
+3. The direct `/games/:slug` page now exposes selected-game loading/errors and an accessible retry action when favorites cannot be loaded.
+4. Administrator category replacement locks the parent game row. A real two-session concurrency test starts with no links, overlaps two admin replacements, and verifies that only the final ordered replacement survives.
+
+**Regression evidence:** [GitHub Actions run 43785315498](https://github.com/A13Xg/Daydle/actions/runs/43785315498) — 60 Vitest tests (12 suites), typecheck/lint/format/build/smoke successful; PostgreSQL 17 schema/RLS and two-session category race passed against **both** disposable databases. No hosted migration or Worker deployment occurred.
+
+PR #6's unsupported API-key defect claim remains rejected. Corrected operational improvements were implemented directly on PR #5; PR #6 may be closed without merging. The next manual keep-alive dispatch on `main` remains unverified pending reviewed merge.

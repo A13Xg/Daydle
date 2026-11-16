@@ -112,6 +112,15 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 
 **Exit/verification:** Public discovery works, selections survive login, inactive games handled, permissions enforced, tests cover metadata/URL logic and selection races.
 
+**PR #5 review hardening — IMPLEMENTED / CI VERIFIED:**
+- [x] Revoke the inherited `UPDATE(sort_order)` column grant as well as table-level write grants; SQL tests check `has_any_column_privilege` and reject direct owner reordering.
+- [x] Treat failed favorite-save acknowledgements as **unconfirmed**, reread the authoritative ordered selection and block editing if reconciliation fails.
+- [x] Display saved-game loading/error states and a retry action on both catalog and direct detail routes.
+- [x] Serialize concurrent category replacements with a locked parent row; test two overlapping sessions against an initially empty category list on both clean PostgreSQL databases.
+- [x] Retain the validated operational keep-alive improvements and correct the false diagnosis from PR #6.
+- **Evidence:** [Phase 4 PR #5](https://github.com/A13Xg/Daydle/pull/5) and [CI run](https://github.com/A13Xg/Daydle/actions/runs/43785315498), 60 unit/API tests plus two clean PG17 databases. Post-merge live database workflow dispatch remains unverified.
+
+
 ## Phase 5 — Today experience, PWA, and external-game navigation
 **Status:** NOT STARTED. **Dependencies:** 4.
 
@@ -268,7 +277,7 @@ Future possibilities (not automatic phases or MVP blockers): additional parser c
 
 ## Operational follow-up — Supabase keep-alive reliability
 
-**Status:** IMPLEMENTED ON BRANCH / VERIFICATION PENDING in [Phase 4 PR #5](https://github.com/A13Xg/Daydle/pull/5). **Priority:** operational resilience, independent of Phase 4 catalog delivery.
+**Status:** IMPLEMENTED / CI VERIFIED on branch in [Phase 4 PR #5](https://github.com/A13Xg/Daydle/pull/5). **Priority:** operational resilience, independent of Phase 4 catalog delivery.
 
 **Assessment of [PR #6](https://github.com/A13Xg/Daydle/pull/6):** Its claimed `apikey: ***` failure is unsupported. The actual `main` workflow already uses the configured `${SUPABASE_PUBLISHABLE_KEY}` header. A request made with a literal redaction placeholder is not a valid reproduction. Its six-day `*/6` cron also had no seven-day boundary gap. Neither is a demonstrated production defect.
 
