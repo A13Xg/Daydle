@@ -11,8 +11,8 @@ This file governs development and review in this repository. Read it alongside [
 - Phase 0 is the authorized initial bootstrap committed to main and is exempt from the PR requirement.
 - Use conventional, informative, non-promotional commit messages. Never claim tests passed unless they were actually executed. Never change roadmap status based only on intent.
 - Preserve secrets, credentials, and private data. No raw clipboard contents in general logs or commits. Use realistic test fixtures that are permitted to be stored.
-- Product UX must be behaviorally polished; visual design details are intentionally deferred. Do not invent a final color palette or visual system without a separate instruction.
-- `referenceFiles/` holds optional UI/UX mockups and the single reference design system (see `referenceFiles/readme.md`). They are reference only: do not implement, match, or adopt them unless the user explicitly asks for a specific screen or style. They never override IDEA.md, roadmap.md or this file.
+- Product UX must be behaviorally polished. The owner has approved Obsidian Arcade (`referenceFiles/Daydle UI-UX Reference/DESIGN.md`) and its 13 screen examples as the UI/UX visual standard for Phase 6.5. Do not introduce a competing design system or implement later feature behavior prematurely.
+- `referenceFiles/` contains the **owner-approved** Obsidian Arcade design standard and 13 visual references. Implement visual patterns in the scheduled Phase 6.5 overhaul, not earlier phases. Standalone HTML is not production code; mockup-only product features are illustrative, not approved. `IDEA.md` and `roadmap.md` still govern functional scope and security.
 
 ## Sources of truth (read in this order)
 
@@ -20,8 +20,9 @@ This file governs development and review in this repository. Read it alongside [
 2. IDEA.md — approved product contract and constraints.
 3. roadmap.md — dependency graph, numbered phases, deliverables, acceptance gates, status.
 4. This AGENTS.md — process and quality controls.
-5. completedPhases/Phase#Exec.md — historical evidence and known deviations, **not** a substitute for inspecting live code.
-6. Actual files, migrations, commit history, branches, PR state, CI/build/test results, production configuration.
+5. `referenceFiles/Daydle UI-UX Reference/DESIGN.md` and visual examples — owner-approved visual guidance for UI work, subordinate to product/security requirements.
+6. completedPhases/Phase#Exec.md — historical evidence and known deviations, **not** a substitute for inspecting live code.
+7. Actual files, migrations, commit history, branches, PR state, CI/build/test results, production configuration.
 
 If sources conflict, identify the difference, cite repository evidence, and apply the higher-priority requirement. Do not rewrite history silently.
 
@@ -136,9 +137,15 @@ If review finds issues, keep or reopen the branch/PR, fix them, rerun gates, and
 7. Viewer-specific spoiler masking until valid same-puzzle submission or verified next publisher reset, across every API/query/cache.
 8. Raw share text retained only 90 days; parsed history persists until deletion; use encrypted independent scheduled backups on free-tier Supabase.
 9. Primary iOS Safari/PWA experience: user-gesture clipboard, best-effort external tab launch, focus/return action, read-only offline caches.
-10. Polished behavior, accessibility, errors/retries/empty states required; precise aesthetics remain deferred.
+10. Polished behavior, accessibility, errors/retries/empty states required; implement approved Obsidian Arcade aesthetics in Phase 6.5.
 11. Public beta can be deployed only after explicit user authorization. No production changes merely because a phase plan mentions them.
 12. Every GitHub Actions `uses:` reference is pinned to a full 40-character commit SHA (see *GitHub Actions supply-chain pinning*).
+
+## Future iOS packaging compatibility
+
+- Web/PWA remains the only approved current delivery target. Xcode, Capacitor, native plugins, signing, entitlements, and App Store submission are **not** in scope until explicitly authorized.
+- Preserve practical compatibility with a future WKWebView wrapper: bundle assets locally, avoid runtime CDN dependencies and browser-only OAuth assumptions, use a small platform adapter seam when needed, and do not depend on opening many external sites from one tap.
+- Compatibility is a design constraint, not a claim that any native build, simulator test or App Store readiness has been verified. The Phase 5 owner-accepted device tests are for Safari/home-screen PWA only.
 
 ## Result reporting format
 

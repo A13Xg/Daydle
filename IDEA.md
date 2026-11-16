@@ -2,7 +2,7 @@
 
 > All your daily games. One place.
 
-**Status:** Approved product baseline. **Release target:** public beta. **Primary platform:** iOS Safari and installable PWA. **Implementation sequence:** [roadmap.md](roadmap.md). **Execution rules:** [AGENTS.md](AGENTS.md).
+**Status:** Approved product baseline. **Release target:** public beta. **Primary platform:** iOS Safari and installable PWA. **Visual standard:** [Obsidian Arcade](referenceFiles/Daydle%20UI-UX%20Reference/DESIGN.md), owner-approved, scheduled for Phase 6.5 implementation. **Implementation sequence:** [roadmap.md](roadmap.md). **Execution rules:** [AGENTS.md](AGENTS.md).
 
 ## 1. Vision and purpose
 
@@ -17,7 +17,7 @@ The brand is not limited to games ending in “-dle.” Examples of categories i
 - Primary UX: iPhone Safari and home-screen installed PWA. Desktop and Android should degrade gracefully where possible; iOS quality is the launch priority.
 - MVP includes account creation, game catalog and personal selection, minimal Today view, publisher launch, single-result universal ingestion, game/date resolution, persisted result history, personal stats and activity streaks, public profiles, instant friends, spoiler-aware game-specific friend comparisons, installability, admin workflows, and operational reliability.
 - Initial parser target: **5–10 working, fixture-tested games** with diverse output formats. Catalog may contain many more launchable but unsupported games.
-- The application must be functionally polished and accessible at beta launch. Detailed visual layout, colors, typography, and branding system are explicitly deferred and must not block logic or interaction specification.
+- The application must be functionally polished and accessible at beta launch. Obsidian Arcade's tokens, mobile navigation shells, components and 13 screen examples have been approved as the visual standard. Implement them in Phase 6.5; sample UI features do not override the functional baseline.
 
 ## 3. Identity, registration, and profile data
 
@@ -103,9 +103,12 @@ The brand is not limited to games ending in “-dle.” Examples of categories i
 - Set a practical WCAG 2.2 AA accessibility target: semantic controls, meaningful names, keyboard navigation, screen reader labels, focus management, motion preferences, and visible feedback.
 - Thoroughly test iOS Safari and installed PWA navigation and clipboard flows; verify Android/desktop baseline without broadening primary scope.
 - No known critical defects at public beta; automated unit/integration/API/parser/E2E coverage; security and data-access checks; observability and backups functioning.
-- **Defer visual specification** (precise layouts, palettes, type scale, iconography, illustration, animation language) to a separate design exercise. This does not defer interaction completeness or polished end-to-end UX.
-- Explicit non-goals for initial release: native apps, hosted copies of third-party games, forced daily schedules, batch/multi-result submission, LLM-driven production parsing, hard anti-cheat guarantees, a global cross-game leaderboard, subscriptions/ads, and broad public social feeds.
+- **Approved visual specification:** Obsidian Arcade in `referenceFiles/Daydle UI-UX Reference/DESIGN.md` and its 13 examples, to be implemented in Phase 6.5 after deterministic parsing. Screenshot-only social actions, artificial global rankings/counters, notifications and multi-launch behavior are not product requirements. Preserve WCAG 2.2 AA and full interaction states.
+- Explicit non-goals for initial release: native app packaging/App Store submission, hosted copies of third-party games, forced daily schedules, batch/multi-result submission, LLM-driven production parsing, hard anti-cheat guarantees, a global cross-game leaderboard, subscriptions/ads, and broad public social feeds.
+- **Portability constraint:** choose libraries, navigation, locally bundled assets and auth/external-launch adapter seams compatible with a potential future iOS WKWebView wrapper. Do not implement Xcode/Capacitor packaging or native integrations without later explicit approval.
 
 ## 13. Delivery governance
+
+The [Obsidian Arcade design standard](referenceFiles/Daydle%20UI-UX%20Reference/DESIGN.md) and 13 examples are owner-approved for UI design, not as a new functional feature list. Phase 6.5 introduces the system into the React app after Phase 6; native iOS packaging remains out of scope.
 
 The roadmap in [roadmap.md](roadmap.md) is the authoritative sequence and status ledger. [AGENTS.md](AGENTS.md) defines the required cycle for each requested phase, including baseline verification, branch and draft PR, execution-plan creation, implementation, testing, audit, and final review-ready PR. Work is requested and reported directly in the current chat. Do not begin subsequent phases without a direct instruction. No generated-content attribution, co-author lines, or separate non-owner contributors are to be introduced.

@@ -159,12 +159,16 @@ spacing:
 
 This is the **only** design system in the reference set. The tokens above are the single source of truth: every mockup in this folder uses these tokens ($1). A few deliberate exceptions remain: game-brand tints (for example the Wordle green and Connections orange badges), a handful of translucent status tints, and some inline `style` colors on `account`. Prefer tokens for anything new. Do not introduce a second palette or typeface.
 
-## Platform targets: one codebase, web and iOS
+## Owner-approved design authority and platform scope
 
-Daydle ships as a **web app first** (React, TypeScript, Vite, Cloudflare) and is planned to also **build into an iOS app with Xcode** for eventual App Store release (`IDEA.md` currently lists native apps as an initial-release non-goal, so this needs a roadmap decision before work starts). The design is written so both come from the same code:
+Obsidian Arcade and the 13 associated examples are approved as the UI/UX standard. The React application has **not** yet implemented this design; Phase 6.5 is the planned overhaul. This visual authority does not add screenshot-only product behavior. Web/PWA is the current target, with future iOS wrapper **compatibility** as a design constraint, not as an approved development deliverable.
+
+## Platform targets: web now, preserve future iOS compatibility
+
+Daydle ships as a **web/PWA** (React, TypeScript, Vite, Cloudflare). For architectural flexibility, choose patterns that can plausibly be packaged later in an iOS WKWebView wrapper. No native release, Xcode target or Capacitor setup is approved for current phases:
 
 - **Web:** installable PWA, iOS Safari and desktop and Android browsers degrade gracefully.
-- **iOS:** the same built web bundle runs inside a `WKWebView` shell (for example Capacitor) that is opened and archived in Xcode. Native capabilities (Sign in with Apple, push notifications, haptics, share sheet, opening publisher sites) are reached through thin plugins behind a small platform adapter, never by forking screens.
+- **Potential iOS package (later, if authorized):** a WKWebView shell such as Capacitor could reuse the web bundle, with native capability adapters rather than UI forks. No such shell currently exists.
 
 Rules that follow from supporting both:
 
@@ -277,7 +281,7 @@ One family, **Plus Jakarta Sans** (400 to 800), bundled with the app. Icons use 
 - Respect Reduce Motion (CSS `prefers-reduced-motion`, implemented in the shared base CSS) and Increased Contrast (`prefers-contrast`). WebKit does not expose **Reduce Transparency** or **Bold Text** to CSS; in the iOS shell, read them through a small native bridge and switch blur surfaces to opaque tokens. Dynamic Type is covered under Typography.
 - State is never conveyed by color alone.
 
-## App Store readiness (iOS build)
+## Potential future App Store considerations (out of scope for current build)
 
 Design constraints that follow from Apple's App Review Guidelines (verify the current text before each submission):
 
