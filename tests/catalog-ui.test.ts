@@ -3,7 +3,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import type { CatalogGame } from "../shared/catalog";
 import { GameDetailPage } from "../src/components/GameDetailPage";
-import { CatalogPage } from "../src/components/CatalogPage";
+import { CatalogPage, SelectionNotice } from "../src/components/CatalogPage";
 
 const game: CatalogGame = {
   id: "g1",
@@ -78,4 +78,29 @@ describe("catalog accessibility / outbound-link states", () => {
     );
     expect(markup).toContain("catalog is not configured");
   });
+  it("renders an actionable retry when saved games fail to load on detail routes", () => {
+    const html = renderToStaticMarkup(
+      createElement(SelectionNotice, {
+        loading: false,
+        error: "Your saved games could not be loaded.",
+        onRetry: vi.fn(),
+      }),
+    );
+    expect(html).toContain('role="alert"');
+    expect(html).toContain("Your saved games could not be loaded.");
+    expect(html).toContain("Retry saved games");
+  });
+
+  it("shows a loading status rather than a disabled unexplained action", () => {
+    const html = renderToStaticMarkup(
+      createElement(SelectionNotice, {
+        loading: true,
+        error: "",
+        onRetry: vi.fn(),
+      }),
+    );
+    expect(html).toContain('role="status"');
+    expect(html).toContain("Loading your games");
+  });
+
 });

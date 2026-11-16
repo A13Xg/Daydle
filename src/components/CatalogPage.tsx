@@ -14,7 +14,7 @@ import {
 import {
   loadCatalog,
   loadSelectedGames,
-  saveSelectedGames,
+  saveAndReconcileSelectedGames,
   type CatalogData,
 } from "../lib/catalog-api";
 import { GameDetailPage } from "./GameDetailPage";
@@ -28,6 +28,36 @@ export interface CatalogPageProps {
   client: SupabaseClient | null;
   userId: string | null;
   detailSlug?: string;
+}
+
+export interface SelectionNoticeProps {
+  loading: boolean;
+  error: string;
+  onRetry: () => void;
+}
+
+/** Visible on both the catalog and direct game-detail routes. */
+export function SelectionNotice({
+  loading,
+  error,
+  onRetry,
+}: SelectionNoticeProps) {
+  if (loading) {
+    return <p role="status">Loading your games…</p>;
+  }
+
+  if (error) {
+    return (
+      <div className="notice error" role="alert">
+        <p>{error}</p>
+        <button type="button" onClick={onRetry}>
+          Retry saved games
+        </button>
+      </div>
+    );
+  }
+
+  return null;
 }
 
 export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
@@ -100,12 +130,20 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
     setSaving(true);
     setSaveError("");
     try {
-      const saved = await saveSelectedGames(client, next);
-      setSelectedIds(saved);
+      const outcome = await saveAndReconcileSelectedGames(client, userId, next);
+      setSelectedIds(outcome.gameIds);
+      if (!outcome.confirmed) {
+        setSaveError(
+          "The save response was uncertain. We reloaded your games from the server; review the current selection before editing again.",
+        );
+      }
     } catch {
-      setSaveError(
-        "Could not save your changes. Your previous selection was kept. Try again.",
+      // Never trust a stale local list after a possibly committed write.
+      // Keep editing disabled until a new authoritative read succeeds.
+      setSelectionError(
+        "Your last save could not be verified. Reload your saved games before making further changes.",
       );
+      setSaveError("");
     } finally {
       saveLock.current = false;
       setSaving(false);
@@ -113,7 +151,7 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
   }
 
   function toggleGame(id: string) {
-    if (!userId || saveLock.current) return;
+    if (!userId || saveLock.current || selectionLoading || selectionError) return;
     const next = selectedIds.includes(id)
       ? selectedIds.filter((selected) => selected !== id)
       : [...selectedIds, id];
@@ -176,6 +214,13 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
       );
     return (
       <>
+        {userId && (
+          <SelectionNotice
+            loading={selectionLoading}
+            error={selectionError}
+            onRetry={() => setRetry((n) => n + 1)}
+          />
+        )}
         {saveError && (
           <p role="alert" className="notice error">
             {saveError}
@@ -206,15 +251,12 @@ export function CatalogPage({ client, userId, detailSlug }: CatalogPageProps) {
       {userId && (
         <section className="panel" aria-labelledby="my-games-heading">
           <h2 id="my-games-heading">My games</h2>
-          {selectionLoading ? (
-            <p role="status">Loading your games…</p>
-          ) : selectionError ? (
-            <div role="alert">
-              <p>{selectionError}</p>
-              <button type="button" onClick={() => setRetry((n) => n + 1)}>
-                Retry saved games
-              </button>
-            </div>
+          {selectionLoading || selectionError ? (
+            <SelectionNotice
+              loading={selectionLoading}
+              error={selectionError}
+              onRetry={() => setRetry((n) => n + 1)}
+            />
           ) : selectedGames.length === 0 ? (
             <p>No saved games yet. Browse below and add your favorites.</p>
           ) : (

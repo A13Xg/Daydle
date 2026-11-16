@@ -146,3 +146,28 @@ export async function saveSelectedGames(
   }
   return rows.map((row) => row.game_id);
 }
+
+/**
+ * A rejected RPC response is not proof of a rolled-back transaction: the write
+ * may have committed before the acknowledgement was lost. Reload authoritative
+ * server state before enabling another full-list replacement.
+ *
+ * If reconciliation also fails, reject so the caller blocks further edits.
+ */
+export async function saveAndReconcileSelectedGames(
+  client: SupabaseClient,
+  userId: string,
+  requestedIds: string[],
+): Promise<{ gameIds: string[]; confirmed: boolean }> {
+  try {
+    return {
+      gameIds: await saveSelectedGames(client, requestedIds),
+      confirmed: true,
+    };
+  } catch {
+    return {
+      gameIds: await loadSelectedGames(client, userId),
+      confirmed: false,
+    };
+  }
+}

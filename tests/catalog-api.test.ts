@@ -4,6 +4,7 @@ import {
   loadCatalog,
   loadSelectedGames,
   saveSelectedGames,
+  saveAndReconcileSelectedGames,
 } from "../src/lib/catalog-api";
 
 const ok = (data: unknown) => Promise.resolve({ data, error: null });
@@ -102,4 +103,46 @@ describe("catalog Supabase adapter", () => {
       "did not match",
     );
   });
+  it("reconciles a lost save acknowledgement using authoritative selections", async () => {
+    const rpc = vi.fn().mockRejectedValueOnce(new Error("Network response lost"));
+    const eq = vi.fn().mockReturnValue({
+      order: () => ok([
+        { game_id: "a", sort_order: 0 },
+        { game_id: "b", sort_order: 1 },
+      ]),
+    });
+    const from = vi.fn().mockReturnValue({ select: () => ({ eq }) });
+    const client = { rpc, from } as unknown as SupabaseClient;
+
+    const outcome = await saveAndReconcileSelectedGames(client, "owner-id", ["a", "b"]);
+    expect(outcome).toEqual({ gameIds: ["a", "b"], confirmed: false });
+    expect(rpc).toHaveBeenCalledOnce();
+    expect(eq).toHaveBeenCalledWith("user_id", "owner-id");
+  });
+
+  it("blocks stale follow-up edits when the post-error reload also fails", async () => {
+    const rpc = vi.fn().mockRejectedValueOnce(new Error("Response lost"));
+    const eq = vi.fn().mockReturnValue({
+      order: () => Promise.resolve({ data: null, error: { message: "Read unavailable" } }),
+    });
+    const from = vi.fn().mockReturnValue({ select: () => ({ eq }) });
+    const client = { rpc, from } as unknown as SupabaseClient;
+
+    await expect(
+      saveAndReconcileSelectedGames(client, "owner-id", ["a", "b"]),
+    ).rejects.toThrow("Read unavailable");
+  });
+
+  it("does not re-read selections after a confirmed save", async () => {
+    const rpc = vi.fn().mockResolvedValue({
+      data: [{ game_id: "a", sort_order: 0 }],
+      error: null,
+    });
+    const from = vi.fn();
+    const client = { rpc, from } as unknown as SupabaseClient;
+    await expect(saveAndReconcileSelectedGames(client, "owner-id", ["a"]))
+      .resolves.toEqual({ gameIds: ["a"], confirmed: true });
+    expect(from).not.toHaveBeenCalled();
+  });
+
 });
