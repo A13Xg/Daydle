@@ -155,7 +155,7 @@ spacing:
 
 # Daydle Design System: Obsidian Arcade
 
-> **Status: reference only.** Nothing here is a requirement until the owner explicitly asks for a screen or style to be built. See `../readme.md`. When this file and `IDEA.md`, `roadmap.md` or `AGENTS.md` disagree, those documents win.
+> **Status: owner-approved visual standard.** Phase 6.5 implements these Obsidian Arcade tokens and layouts in React. The 13 standalone mockups remain reference implementations, not permission to add unapproved mechanics. `IDEA.md`, `roadmap.md` and `AGENTS.md` govern functionality, security and release scope.
 
 This is the **only** design system in the reference set. The tokens above are the single source of truth: every mockup in this folder uses these tokens ($1). A few deliberate exceptions remain: game-brand tints (for example the Wordle green and Connections orange badges), a handful of translucent status tints, and some inline `style` colors on `account`. Prefer tokens for anything new. Do not introduce a second palette or typeface.
 
