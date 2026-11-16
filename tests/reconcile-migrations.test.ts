@@ -155,11 +155,12 @@ describe("read-only production baseline reconciliation", () => {
     const fetchImpl = vi.fn();
 
     await expect(
-      reconcileBaseline(
-        report(EXPECTED_MIGRATIONS.slice(0, 2)),
-        filenames,
-        { projectRef, accessToken, fetchImpl, repair },
-      ),
+      reconcileBaseline(report(EXPECTED_MIGRATIONS.slice(0, 2)), filenames, {
+        projectRef,
+        accessToken,
+        fetchImpl,
+        repair,
+      }),
     ).resolves.toEqual([]);
     expect(repair).not.toHaveBeenCalled();
     expect(fetchImpl).not.toHaveBeenCalled();
