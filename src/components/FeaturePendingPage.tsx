@@ -1,10 +1,63 @@
 import { ArcadeIcon } from "./ArcadeIcon";
 
+function StatisticsPreview() {
+  const metrics = [
+    { label: "Total solved", detail: "Available after result saving" },
+    { label: "Win rate", detail: "Game-specific results only" },
+    { label: "Average speed", detail: "For puzzles that report time" },
+    { label: "Flawless runs", detail: "Based on supported game formats" },
+  ] as const;
+
+  return (
+    <section className="statistics-preview" aria-labelledby="feature-title">
+      <header className="stats-introduction">
+        <p className="eyebrow">ARCADE PERFORMANCE</p>
+        <h1 id="feature-title">Your statistics</h1>
+        <p>Track each puzzle on its own terms once Daydle can save results. No historical scores are available yet.</p>
+      </header>
+      <section className="panel stats-overview" aria-labelledby="stats-metrics-heading">
+        <div className="stats-section-title">
+          <div className="stats-section-label">
+            <ArcadeIcon name="spark" size={22} />
+            <h2 id="stats-metrics-heading">Master Metrics</h2>
+          </div>
+          <span className="status-pill">Coming later</span>
+        </div>
+        <div className="stats-metric-grid">
+          {metrics.map(({ label, detail }) => (
+            <article className="stats-metric" key={label}>
+              <h3>{label}</h3>
+              <p className="stats-unavailable" aria-label="Not available">—</p>
+              <small>{detail}</small>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="panel stats-distribution" aria-labelledby="distribution-heading">
+        <div className="stats-section-label">
+          <ArcadeIcon name="statistics" size={22} />
+          <h2 id="distribution-heading">Guess Distribution</h2>
+        </div>
+        <div className="stats-distribution-empty">
+          <ArcadeIcon name="info" size={24} />
+          <p>There is no saved guess data to chart yet. Game-specific distributions will appear after result ingestion is enabled.</p>
+        </div>
+      </section>
+      <div className="feature-links">
+        <a className="action-link" href="/today">Go to Today <ArcadeIcon name="arrow" size={17} /></a>
+        <a className="secondary-link" href="/games">Discover games</a>
+      </div>
+    </section>
+  );
+}
+
 export function FeaturePendingPage({
   feature,
 }: {
   feature: "statistics" | "friends" | "notifications";
 }) {
+  if (feature === "statistics") return <StatisticsPreview />;
+
   const options = {
     statistics: {
       title: "Your statistics",

@@ -17,6 +17,7 @@ import {
   saveSelectedSnapshot,
 } from "../lib/offline-snapshot";
 import { recordPublisherLaunch } from "../lib/launch-return";
+import { ArcadeIcon } from "./ArcadeIcon";
 
 interface TodaySnapshot {
   data: CatalogData;
@@ -193,29 +194,37 @@ export function TodayPage({
 
   if (!userId)
     return (
-      <section className="panel today-welcome" aria-labelledby="today-title">
-        <div className="welcome-mark" aria-hidden="true">
-          <img src="/arcade-emblem.svg" width="72" height="72" alt="" />
+      <div className="today-page today-guest">
+        <div className="today-guest-status">
+          <span className="status-pill"><ArcadeIcon name="today" size={17} /> YOUR DAILY HUB</span>
+          <span className="muted">Always your choice to play</span>
         </div>
-        <p className="eyebrow">WELCOME TO THE ARCADE</p>
-        <h1 id="today-title">Your daily games. One place.</h1>
-        <p className="lead">
-          Find your favorite puzzles, build a daily lineup, and come back
-          whenever you want to play.
-        </p>
-        <div className="welcome-actions">
-          <a className="action-link" href="/auth">
-            Sign in with Apple or Google
-          </a>
-          <a className="secondary-link" href="/games">
-            Browse games without signing in
-          </a>
-        </div>
-        <p className="muted welcome-note">
-          Play at each publisher. Participation is optional. Results are not
-          saved yet.
-        </p>
-      </section>
+        <header className="today-heading today-guest-heading">
+          <p className="eyebrow">YOUR PERSONAL PUZZLE ROTATION</p>
+          <h1 id="today-title">Build your daily puzzle lineup.</h1>
+          <p className="lead">
+            Collect the games you love, open them at their publisher, and return whenever you're ready for another round.
+          </p>
+          <div className="welcome-actions">
+            <a className="action-link" href="/games">Discover daily games <ArcadeIcon name="arrow" size={18} /></a>
+            <a className="secondary-link" href="/auth">Sign in to save a lineup</a>
+          </div>
+          <p className="muted welcome-note">Your lineup and manual played marks stay private. Result saving is coming in a later phase.</p>
+        </header>
+        <section className="today-guest-grid" aria-label="How Daydle works">
+          <article className="panel today-guest-card">
+            <span className="guest-card-number">01</span>
+            <h2>Choose your puzzles</h2>
+            <p>Browse the catalog and set your preferred order.</p>
+          </article>
+          <article className="panel today-guest-card">
+            <span className="guest-card-number">02</span>
+            <h2>Play your way</h2>
+            <p>Follow each publisher link. No forced schedule.</p>
+          </article>
+        </section>
+        <a className="today-guide-link" href="/how-it-works">How the daily ritual works <ArcadeIcon name="arrow" size={18} /></a>
+      </div>
     );
 
   const reload = () => setRetry((value) => value + 1);
