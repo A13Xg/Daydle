@@ -12,7 +12,7 @@ BEGIN
  IF has_table_privilege('authenticated','public.games','UPDATE')
    OR has_table_privilege('authenticated','public.user_games','INSERT')
    OR has_table_privilege('authenticated','public.user_games','DELETE')
-   OR has_table_privilege('authenticated','public.user_games','UPDATE')
+   OR has_any_column_privilege('authenticated','public.user_games','UPDATE')
    OR has_function_privilege('anon','public.set_my_games(uuid[])','EXECUTE')
    OR has_function_privilege('anon','public.admin_retire_game(uuid)','EXECUTE')
    OR has_function_privilege('anon','public.admin_save_game(uuid,text,text,text,text,text,text,text,text)','EXECUTE')
@@ -138,6 +138,14 @@ BEGIN
  EXCEPTION WHEN insufficient_privilege THEN rejected:=true;
  END;
  IF NOT rejected THEN RAISE EXCEPTION 'Direct cross-account INSERT allowed'; END IF;
+
+ rejected:=false;
+ BEGIN
+   UPDATE public.user_games SET sort_order=987
+   WHERE user_id='22222222-2222-2222-2222-222222222222';
+ EXCEPTION WHEN insufficient_privilege THEN rejected:=true;
+ END;
+ IF NOT rejected THEN RAISE EXCEPTION 'Direct column-level favorites UPDATE allowed'; END IF;
 
  SELECT count(*) INTO n FROM public.set_my_games(ARRAY[]::uuid[]);
  IF n<>0 OR EXISTS(SELECT 1 FROM public.user_games WHERE

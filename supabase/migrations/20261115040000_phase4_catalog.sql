@@ -126,6 +126,12 @@ BEGIN
  IF NOT app_private.catalog_admin_allowed() THEN
    RAISE EXCEPTION 'Not authorized for catalog administration' USING ERRCODE='42501';
  END IF;
+ -- Lock the parent even when there are no current category rows: concurrent
+ -- replacement RPCs then serialize and cannot leave the union of two lists.
+ PERFORM 1 FROM public.games WHERE id=p_game_id FOR UPDATE;
+ IF NOT FOUND THEN
+   RAISE EXCEPTION 'Unknown game' USING ERRCODE='22023';
+ END IF;
  names:=COALESCE(p_category_slugs,ARRAY[]::text[]);
  IF pg_catalog.cardinality(names)>20
     OR (SELECT count(*) FROM pg_catalog.unnest(names) s) <> (SELECT count(DISTINCT s) FROM pg_catalog.unnest(names) s)
@@ -195,8 +201,10 @@ BEGIN
 END;
 $$;
 
--- Revoke direct mutations to enforce the transactional selection contract.
+-- Revoke both table-level grants and the column-specific sort_order grant
+-- inherited from Phase 2. Table-only REVOKE does NOT remove column grants.
 REVOKE INSERT,DELETE,UPDATE ON public.user_games FROM authenticated;
+REVOKE UPDATE(sort_order) ON public.user_games FROM authenticated;
 REVOKE ALL ON FUNCTION app_private.safe_publisher_url(text) FROM PUBLIC,anon,authenticated;
 REVOKE ALL ON FUNCTION app_private.catalog_admin_allowed() FROM PUBLIC,anon,authenticated;
 REVOKE ALL ON FUNCTION public.admin_save_game(uuid,text,text,text,text,text,text,text,text) FROM PUBLIC,anon,authenticated;
