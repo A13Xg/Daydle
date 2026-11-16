@@ -82,27 +82,22 @@ jobs:
         run: |
           set -euo pipefail
           supabase link --project-ref "$SUPABASE_PROJECT_ID"
-          supabase migration list --linked > "$RUNNER_TEMP/daydle-before.txt"
-          # The first Phase 2/3 migrations may have been applied directly to
-          # the hosted database without being recorded in Supabase's history.
-          # Never assume this is true: verify all required tables, RLS policies,
-          # functions and auth trigger using a read-only Management API query
-          # before repairing *only* the verified baseline history entries.
-          # Any mismatch or missing read permission stops before SQL/deploy.
-          node scripts/ops/reconcile-migration-history.mjs "$RUNNER_TEMP/daydle-before.txt"
-          supabase migration list --linked > "$RUNNER_TEMP/daydle-after-baseline.txt"
-          node scripts/ops/verify-migration-plan.mjs "$RUNNER_TEMP/daydle-after-baseline.txt"
+          # Read applied migrations through the official structured Management
+          # API. CLI migration list produces human-formatted tables whose layout
+          # and output stream are not a stable production authorization format.
+          # The project already records both Phase 2 and Phase 3 versions.
+          node scripts/ops/check-hosted-migrations.mjs
           supabase db push --linked --dry-run
 
       - name: Apply reviewed migrations only
         env:
+          SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: |
           set -euo pipefail
           supabase db push --linked --yes
-          supabase migration list --linked > "$RUNNER_TEMP/daydle-after.txt"
-          node scripts/ops/verify-migration-plan.mjs "$RUNNER_TEMP/daydle-after.txt" --require-all-applied
+          node scripts/ops/check-hosted-migrations.mjs --require-all-applied
 
       - name: Build production PWA using public project configuration
         env:
