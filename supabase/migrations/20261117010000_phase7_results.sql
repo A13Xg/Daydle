@@ -102,7 +102,7 @@ BEGIN
   v_parser_version := p_parsed->>'parserVersion';
   v_format_version := p_parsed->>'formatVersion';
   v_outcome := p_parsed->>'outcome';
-  IF v_key IS NULL OR v_key !~ '^[a-z0-9:-]{1,160}
+  IF v_key IS NULL OR v_key !~ '^[a-z0-9:-]{1,160}$'
     OR v_parser_version IS NULL OR char_length(v_parser_version) NOT BETWEEN 1 AND 40
     OR v_format_version IS NULL OR char_length(v_format_version) NOT BETWEEN 1 AND 40
     OR v_outcome NOT IN ('win','loss','complete','incomplete')
