@@ -1,6 +1,6 @@
 # Phase 5 production release — structured migration-history correction
 
-**Status:** PLANNING · **Branch:** `fix/phase5-structured-migration-history` · **Base:** `bd78ea03cc67ad43734bc72212667429f1605530` · **Latest failed run:** [43812374685](https://github.com/A13Xg/Daydle/actions/runs/43812374685).
+**Status:** IMPLEMENTED / CI VERIFIED — REVIEW PENDING · **Branch:** `fix/phase5-structured-migration-history` · **Base:** `bd78ea03cc67ad43734bc72212667429f1605530` · **Latest failed run:** [43812374685](https://github.com/A13Xg/Daydle/actions/runs/43812374685).
 
 ## Verified root cause
 
@@ -35,4 +35,4 @@ The project exposes 18 Phase 2 RLS-enabled tables; the Phase 4 `public.set_my_ga
 
 ## Verification and disposition
 
-Await final CI for this PR. The live release requires owner-reviewed merge and another protected GitHub Actions dispatch on `main`; real iPhone testing remains open until that run successfully migrates and deploys.
+[Final immutable CI run 43813640712](https://github.com/A13Xg/Daydle/actions/runs/43813640712) passed **both jobs**: 108 tests / 22 suites, strict TypeScript, ESLint, Prettier, Worker/Vite build, PWA HTTP smoke and two clean PostgreSQL 17 security databases (including Phase 2/3 schema probes). The connected production Supabase baseline was read directly and contains exactly Phase 2 and Phase 3 migration records; this production read was **not** part of PR CI. No release dispatch or hosted SQL/Worker changes occurred. The live release still requires owner-reviewed merge and a fresh protected GitHub Actions dispatch from `main`; real iPhone testing remains open until that run succeeds.
