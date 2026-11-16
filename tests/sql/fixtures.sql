@@ -13,7 +13,7 @@ INSERT INTO public.games(id, slug, name, canonical_url) VALUES
  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'demo', 'Demo', 'https://example.org/daily');
 
 INSERT INTO public.game_category_links(game_id, category_id) VALUES
- ('40000000-0000-4000-8000-000000000001', '50000000-0000-4000-8000-000000000001');
+ ('40000000-0000-4000-8000-000000000001', '50000000-0000-4000-8000-000000000001') ON CONFLICT DO NOTHING;
 
 INSERT INTO public.user_games(user_id, game_id, sort_order) VALUES
  ('11111111-1111-1111-1111-111111111111', '40000000-0000-4000-8000-000000000001', 1);
