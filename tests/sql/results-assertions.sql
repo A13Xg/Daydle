@@ -41,7 +41,7 @@ BEGIN
   BEGIN
     PERFORM public.ingest_parsed_share(
       '11111111-1111-1111-1111-111111111111',
-      'Wordle example','{"gameSlug":"wordle","puzzleKey":"wordle-1406",
+      'Wordle example','{"gameSlug":"wordle","puzzleKey":"wordle:number:1406",
       "outcome":"win","parserVersion":"1.0.0","formatVersion":"wordle-v1"}'::jsonb);
   EXCEPTION WHEN insufficient_privilege THEN blocked:=true;
   END;
@@ -56,7 +56,7 @@ DECLARE
   user_one constant uuid := '11111111-1111-1111-1111-111111111111';
   user_two constant uuid := '22222222-2222-2222-2222-222222222222';
   payload jsonb :=
-    '{"gameSlug":"wordle","puzzleKey":"wordle-1406","puzzleDate":null,
+    '{"gameSlug":"wordle","puzzleKey":"wordle:number:1406","puzzleDate":null,
     "outcome":"win","attempts":4,"score":null,"completionTimeMs":null,
     "metrics":{"hardMode":true},"parserVersion":"1.0.0","formatVersion":"wordle-v1"}';
   next_payload jsonb;
@@ -70,7 +70,7 @@ BEGIN
   saved := (r->>'id')::uuid;
   IF saved IS NULL THEN RAISE EXCEPTION 'No ID after save'; END IF;
   IF (SELECT count(*) FROM public.puzzles WHERE game_id='40000000-0000-4000-8000-000000000001'
-       AND puzzle_key='wordle-1406' AND puzzle_date IS NULL)<>1
+       AND puzzle_key='wordle:number:1406' AND puzzle_date IS NULL)<>1
   THEN RAISE EXCEPTION 'Canonical publisher number incorrectly inferred date'; END IF;
 
   r:=public.ingest_parsed_share(user_one,'same result with changed whitespace',payload);
@@ -100,7 +100,7 @@ BEGIN
     OR public.my_result_detail(user_two,'f1111111-1111-1111-1111-111111111111') IS NOT NULL
   THEN RAISE EXCEPTION 'Cross-account result detail leak'; END IF;
   IF jsonb_array_length(public.my_result_history(user_one,'wordle',20,0))<1
-    OR public.my_result_history(user_two,'wordle',20,0)::text LIKE '%wordle-1406%'
+    OR public.my_result_history(user_two,'wordle',20,0)::text LIKE '%wordle:number:1406%'
   THEN RAISE EXCEPTION 'User history ownership/filter broken'; END IF;
   IF public.my_result_history(user_one,NULL,20,0)::text LIKE '%raw_share_text%'
   THEN RAISE EXCEPTION 'Raw text exposed through history'; END IF;
