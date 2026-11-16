@@ -20,3 +20,16 @@
 7. Do not merge this patch automatically. User merges and re-dispatches the protected workflow.
 
 **Actual remote migration history:** NOT YET OBSERVED (the first run captured it in a temporary file but did not print sanitized version data).
+
+## Implemented on PR #8
+
+- Reworked the migration preflight to inspect exactly the four expected version rows, report **version identifiers only** (not database rows, provider responses, credentials, or private data), and reject unknown/out-of-order versions.
+- Added a fixed read-only Supabase Management API schema probe checking 18 RLS-protected Phase 2 tables, 18 named policies, private functions, the Phase 3 onboarding column, all Phase 3 identity functions and the enabled `auth.users` trigger.
+- If and only if those checks pass **and neither Phase 4 nor Phase 5 schema signatures exist**, use Supabase CLI `migration repair --status applied --linked` to record only missing Phase 2/3 versions. It repairs tracking metadata, **not the SQL schema**.
+- Re-list migration versions and pass the strict allowlist again before the dry-run, approved Phase 4/5 SQL, and Worker deployment.
+- Read-only verification endpoint: `POST /v1/projects/{ref}/database/query/read-only` requires the existing protected Supabase access token to have `database_read` scope. If denied, the release fails closed before history repair. CLI v2.117.0 remains pinned.
+- Nine isolated new tests cover parsing, exact read-only API request, successful/partial repair, idempotence, out-of-sequence/unknown history, schema mismatch, token-scope denial and repair errors. Test fixtures contain no real project reference or credentials.
+
+**Remote history reality:** The initial failed job did not retain or print the remote version list. Until the next protected run, missing historical entries are **one supported explanation, not a confirmed fact**. The repaired workflow will show sanitized version-only evidence and refuse unexpected conditions.
+
+**Release limitations:** No authenticated hosted SQL probe, history repair, migration push or Cloudflare deploy can run in PR CI. The user must review/merge this patch and re-dispatch the protected production workflow. Preserve the live iPhone test gate after a successful deployment.

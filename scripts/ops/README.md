@@ -53,3 +53,7 @@ undo and no free-tier backup), so use it only while the project holds test accou
 iPhone Settings > Apple ID > Sign-In & Security > Sign in with Apple > Daydle > Stop Using Apple ID,
 which also makes Apple send the name again; Google: myaccount.google.com/permissions) and sign out on the
 test device. A single user can also be deleted in the Supabase dashboard under Authentication > Users.
+
+## Phase 5 migration-history incident
+
+The first main-branch Phase 5 release failed at the strict migration-history check, not at authentication. See [ReleaseFixPlan.md](../../ReleaseFixPlan.md), [fix PR #8](https://github.com/A13Xg/Daydle/pull/8) and [deployment guidance](../../docs/deployment.md#phase-5-migration-history-recovery-after-initial-release-failure). The recovery workflow prints only expected version identifiers, verifies pre-existing Phase 2/3 schema through a read-only Supabase Management API call, and repairs only missing tracking entries if all safeguards pass. No direct SQL replay of Phase 2/3 is allowed. A schema difference or missing `database_read` scope is a hard stop requiring investigation.
