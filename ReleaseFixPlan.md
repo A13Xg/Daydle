@@ -43,3 +43,7 @@
 - PR review checked for committed credentials, dynamic code execution, unauthorized release on PR and misleading production success claims; none were found.
 - **Live outcome remains NOT VERIFIED:** The protected workflow cannot be dispatched through this GitHub integration and fix PR #8 is unmerged. The operator must merge the reviewed PR, re-dispatch the main-only production release and approve the protected environment. Depending on actual remote version records it may verify the existing baseline immediately or repair metadata only if the strong read-only schema preconditions pass; any discrepancy stops.
 - Keep this incident plan available until the production job succeeds. Do not mark Phase 5 deployed or ready for real iPhone testing based on CI alone.
+
+## November 16 clarification — superseded by PR #9
+
+The missing Phase 2/3 history assumption was **falsified** by direct connected Supabase evidence. Both versions are correctly recorded as applied in the production project's `supabase_migrations.schema_migrations`; the actual Phase 4/5 objects do not yet exist. The new [PR #9](https://github.com/A13Xg/Daydle/pull/9) replaces the CLI text parser with the structured Management API and does **not** perform metadata repair. Keep this document as incident history, not as current release instructions.
