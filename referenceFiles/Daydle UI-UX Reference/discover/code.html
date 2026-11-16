@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="#051424" name="theme-color"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "primary-fixed": "#d8e2ff", "error": "#ffb4ab", "surface-container-highest": "#273647", "on-error-container": "#ffdad6", "secondary": "#c0c1ff", "primary-fixed-dim": "#adc6ff", "error-container": "#93000a", "on-secondary-fixed": "#07006c", "secondary-fixed": "#e1e0ff", "on-background": "#d4e4fa", "on-tertiary-container": "#00311f", "surface-dim": "#051424", "on-primary-container": "#00285d", "surface-container-low": "#0d1c2d", "on-primary-fixed-variant": "#004395", "background": "#051424", "surface-tint": "#adc6ff", "on-primary-fixed": "#001a42", "surface-container-high": "#1c2b3c", "on-tertiary-fixed": "#002113", "primary": "#adc6ff", "primary-container": "#4d8eff", "on-secondary-fixed-variant": "#2f2ebe", "on-tertiary": "#003824", "inverse-primary": "#005ac2", "surface-variant": "#273647", "surface-container": "#122131", "tertiary-fixed-dim": "#4edea3", "on-tertiary-fixed-variant": "#005236", "on-surface-variant": "#c2c6d6", "inverse-surface": "#d4e4fa", "inverse-on-surface": "#233143", "secondary-container": "#3131c0", "on-secondary-container": "#b0b2ff", "on-error": "#690005", "outline": "#8c909f", "on-primary": "#002e6a", "surface": "#051424", "tertiary-fixed": "#6ffbbe", "on-secondary": "#1000a9", "on-surface": "#d4e4fa", "tertiary-container": "#00a572", "tertiary": "#4edea3", "secondary-fixed-dim": "#c0c1ff", "surface-bright": "#2c3a4c", "outline-variant": "#424754", "surface-container-lowest": "#010f1f" }, borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, spacing: { "space-md": "1rem", "space-xl": "2.5rem", "space-xs": "0.25rem", "gutter": "1rem", "margin-mobile": "1rem", "space-sm": "0.5rem", "margin": "2rem", "space-lg": "1.5rem", "gutter-mobile": "0.5rem" }, fontFamily: { "headline-lg": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "title-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"] }, fontSize: { "headline-lg": ["36px", { lineHeight: "44px", letterSpacing: "-0.02em", fontWeight: "700" }], "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }], "label-sm": ["11px", { lineHeight: "14px", letterSpacing: "0.05em", fontWeight: "700" }], "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "700" }], "title-md": ["18px", { lineHeight: "24px", fontWeight: "600" }], "headline-lg-mobile": ["28px", { lineHeight: "36px", letterSpacing: "-0.02em", fontWeight: "700" }], "headline-sm": ["20px", { lineHeight: "28px", fontWeight: "600" }], "display-lg": ["48px", { lineHeight: "56px", letterSpacing: "-0.03em", fontWeight: "800" }], "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "600" }], "label-lg": ["14px", { lineHeight: "20px", letterSpacing: "0.01em", fontWeight: "600" }], "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }] } } } };</script><style>@layer base { html, body { width: 100vw; margin: 0; padding: 0; min-height: 100%; } .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); } .pt-safe { padding-top: env(safe-area-inset-top, 0px); } } ::-webkit-scrollbar { display: none; } body { min-height: max(884px, 100dvh); }</style><meta content="mobile_tab" name="shell-type"/><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-white"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.45)]"><div class="h-16 px-margin-mobile flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm"><div class="relative flex items-center justify-center"><img alt="Daydle Puzzle Logo" class="h-8 w-auto object-contain drop-shadow-[0_0_8px_rgba(77,142,255,0.4)]" src="https://lh3.googleusercontent.com/aida/ALJJyrAOZlYz-Avgx9d9KMHSP5Al6qJ7_lMvHgQkwM4wdtOuTgT62n51V9oDY4C45XsOvJunwQtVR1rCNMxYF0Wp8Kq7h3oeZKN3srfUXUABUbewhbXglupOq3hl4qoLh-l33HRkxhm4sNyDHMUJ7j2uMilmNmq6QQGcp__ViKAdOAiNMLGFt9ZfU0JiFBg7wChjBfX8IptuEA6gCSrAOlRodgp0LBMsWblLS6QX-RuzvtFzHg"/></div><div class="flex flex-col"><span class="font-headline-md text-title-md text-primary tracking-tight font-bold">Daydle</span><span class="font-label-sm text-label-sm text-tertiary tracking-wider font-semibold uppercase -mt-0.5">Arcade</span></div></div><div class="flex items-center gap-space-xs"><a aria-label="Paste Game Results" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container active:scale-95 transition-all" data-path="paste-results" href="#"><span class="material-symbols-outlined text-[22px]">content_paste</span></a><a class="w-11 h-11 flex items-center justify-center rounded-full p-0.5 hover:ring-2 hover:ring-primary/40 active:scale-95 transition-all" data-path="account" href="#"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-1 ring-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAinkPCcZO0B65NKKnV-sQsV0NgsyPJZyBAYXz8r4YHWbok_vT7T7dh4yZ4wgqj-H_EKCerqhuiuRR0aZJeeL3H1Cf0h5YCRi4KVX_SI5Q4ucOkL773Hw739F6AymfK2KGSRWDKoUwaiFOQ_bmcCaJKN6bwWXFuZlsGyeSSKSiL7K6dfyOLSVodgFSWZle_mm8dcwh-tF4Q8W4GRjQy3Y369mXdLApPze8IediTVnws"/></a></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-background"><div class="flex flex-col w-full px-margin-mobile pb-space-xl">
+<!-- Search & Tactical Filters -->
+<section class="flex flex-col gap-space-sm pt-space-sm">
+<div class="relative w-full">
+<div class="absolute inset-y-0 left-0 pl-space-md flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="w-full h-12 pl-11 pr-11 bg-surface-container-low text-on-surface placeholder:text-outline text-body-md font-body-md rounded-full shadow-inner focus:outline-none focus:bg-surface-container transition-all" id="puzzle-search-input" placeholder="Search 40+ daily puzzles, creators, tags..." type="search"/>
+<div class="absolute inset-y-0 right-0 pr-space-md flex items-center">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm tracking-widest uppercase">⌘K</span>
+</div>
+</div>
+<!-- Category Filter Chips -->
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-1">
+<button class="filter-chip active flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary-container text-on-primary font-label-md text-label-md shadow-sm transition-all whitespace-nowrap" data-filter="all">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span>All</span>
+<span class="ml-0.5 px-1.5 py-0.2 rounded-full bg-on-primary/20 text-on-primary text-label-sm font-label-sm">42</span>
+</button>
+<button class="filter-chip flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all whitespace-nowrap" data-filter="word">
+<span class="material-symbols-outlined text-[16px]">spellcheck</span>
+<span>Word</span>
+</button>
+<button class="filter-chip flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all whitespace-nowrap" data-filter="logic">
+<span class="material-symbols-outlined text-[16px]">psychology</span>
+<span>Logic</span>
+</button>
+<button class="filter-chip flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all whitespace-nowrap" data-filter="geography">
+<span class="material-symbols-outlined text-[16px]">public</span>
+<span>Geography</span>
+</button>
+<button class="filter-chip flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all whitespace-nowrap" data-filter="trivia">
+<span class="material-symbols-outlined text-[16px]">quiz</span>
+<span>Trivia</span>
+</button>
+<button class="filter-chip flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all whitespace-nowrap" data-filter="numbers">
+<span class="material-symbols-outlined text-[16px]">calculate</span>
+<span>Numbers</span>
+</button>
+</div>
+</section>
+<!-- Custom Lineup Manager Banner (Tactical Arcade Deck) -->
+<section class="mt-space-md relative overflow-hidden rounded-lg bg-surface-container-low shadow-lg">
+<div class="absolute -top-12 -right-12 w-40 h-40 bg-secondary-container/30 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute -bottom-8 -left-8 w-32 h-32 bg-primary-container/20 rounded-full blur-2xl pointer-events-none"></div>
+<div class="relative p-space-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-secondary-fixed">
+<span class="material-symbols-outlined text-[18px]">queue_music</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase font-bold">Daily Ritual Stack</span>
+</div>
+<span class="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-tertiary-container/30 text-tertiary text-label-sm font-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+          Ready (4/6 Solved)
+        </span>
+</div>
+<div class="flex flex-col">
+<h2 class="font-title-md text-title-md text-on-surface font-bold tracking-tight">Custom Lineup Manager</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">Customize your daily playlist — auto-launch your favorites in one streamlined tap.</p>
+</div>
+<div class="flex items-center justify-between pt-space-xs">
+<!-- Visual Pill Stack -->
+<div class="flex -space-x-1.5 overflow-hidden items-center py-1">
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center text-primary font-label-sm text-label-sm font-bold shadow-sm">W</div>
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center text-secondary font-label-sm text-label-sm font-bold shadow-sm">C</div>
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center text-tertiary font-label-sm text-label-sm font-bold shadow-sm">S</div>
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center text-primary-fixed-dim font-label-sm text-label-sm font-bold shadow-sm">M</div>
+<span class="ml-2 font-label-sm text-label-sm text-on-surface-variant font-medium">+2 more</span>
+</div>
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary text-on-primary font-label-md text-label-md font-bold shadow-md hover:brightness-110 active:scale-95 transition-all">
+<span>Edit My Lineup</span>
+<span class="material-symbols-outlined text-[16px]">tune</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Trending Daily Puzzles Header -->
+<section class="mt-space-lg flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-primary shadow-[0_0_8px_rgba(77,142,255,0.8)]"></div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">Trending Daily Puzzles</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Synced Live</span>
+</div>
+<!-- Featured Grid Layout -->
+<div class="grid grid-cols-1 gap-space-sm" id="puzzles-container">
+<!-- Wordle (Completed) -->
+<article class="p-space-md rounded-lg bg-surface-container-low shadow-sm flex flex-col gap-space-sm transition-all hover:bg-surface-container" data-category="word">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-12 h-12 rounded-DEFAULT bg-surface-container flex items-center justify-center text-tertiary shadow-inner flex-shrink-0">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">grid_on</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="font-title-md text-title-md text-on-surface font-bold truncate">Wordle</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">NYT</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">Word Guessing · 6 Guesses</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-tertiary-container/30 text-tertiary font-label-sm text-label-sm font-bold shadow-[0_0_12px_rgba(0,165,114,0.25)] flex-shrink-0">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Completed</span>
+</span>
+</div>
+<div class="flex items-center justify-between pt-1 border-t-0">
+<div class="flex items-center gap-2">
+<div class="flex -space-x-2 overflow-hidden">
+<img class="w-6 h-6 rounded-full object-cover shadow-sm" data-alt="Close-up avatar of a woman with neon cyberpunk lighting looking confident and focused" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBx1cfrbsB1Beeg2p4oxu-whkW8dQjUbFWo2G0etzBP49dyJ8lsMgQDWQ6u-bhCRHfCCvQtAP8lYzCW8yYpR986QO_vu0lVzUPIBTN9-gi6ctLYsH41d4ePKKU3nLlF4S0PJ2AuzYaEJnH8SOc3ikG-4GgsLieTPIyNejky_b5pVm_IpR2S9_XHBu3DlakauHb8DM24oY4WJfCt25dNI-W1Fx_EGU9FX9YQlY7TcyUS"/>
+<img class="w-6 h-6 rounded-full object-cover shadow-sm" data-alt="Portrait avatar of a smiling young man in a minimalist hoodie with soft cyan mood lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBe1bJaK2tuzJpXL4PBc1JvT7pGWu_IsM6taHynMhcSr8DjUxYGkVPhkCaH4_Dv2K56LR4DWwAAmSLUxnAMBUyW2PiE2RxyJNvd58s6ComC70P4iACNk1FpTtd7E3VTSR8n0w2p_QZUeQV8af7XVivx0shQ7ci1T2TytZRRRikc0lLpi19TxJfDjCyspeseOZJg0VRwBykeD9xwryee3TsXWiPXw7qFpS_-K_V3D-Pl"/>
+<div class="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center text-[10px] font-bold text-on-surface-variant shadow-sm">+6</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">8 friends played</span>
+</div>
+<div class="flex items-center gap-1 text-tertiary font-label-md text-label-md font-bold">
+<span class="material-symbols-outlined text-[16px]">emoji_events</span>
+<span>4/6 Tries</span>
+</div>
+</div>
+</article>
+<!-- Connections (Completed) -->
+<article class="p-space-md rounded-lg bg-surface-container-low shadow-sm flex flex-col gap-space-sm transition-all hover:bg-surface-container" data-category="word logic">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-12 h-12 rounded-DEFAULT bg-surface-container flex items-center justify-center text-secondary shadow-inner flex-shrink-0">
+<span class="material-symbols-outlined text-[28px]">bubble_chart</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="font-title-md text-title-md text-on-surface font-bold truncate">Connections</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">NYT</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">Categorization · Group into 4s</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-tertiary-container/30 text-tertiary font-label-sm text-label-sm font-bold shadow-[0_0_12px_rgba(0,165,114,0.25)] flex-shrink-0">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Completed</span>
+</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-secondary">local_fire_department</span>
+<span class="font-label-sm text-label-sm font-medium">14 Day Streak Kept</span>
+</div>
+<div class="flex items-center gap-1 text-secondary font-label-md text-label-md font-bold">
+<span class="material-symbols-outlined text-[16px]">done_all</span>
+<span>Perfect Solved</span>
+</div>
+</div>
+</article>
+<!-- Strands (Pending - Play Now) -->
+<article class="p-space-md rounded-lg bg-surface-container shadow-md flex flex-col gap-space-sm relative overflow-hidden" data-category="word">
+<div class="absolute top-0 right-0 w-24 h-24 bg-primary-container/10 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-start justify-between gap-space-sm relative">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-12 h-12 rounded-DEFAULT bg-primary-container/20 flex items-center justify-center text-primary shadow-inner flex-shrink-0">
+<span class="material-symbols-outlined text-[28px]">gesture</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="font-title-md text-title-md text-on-surface font-bold truncate">Strands</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-semibold">NYT</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">Word Search · Find Spangram</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container-highest text-primary-fixed-dim font-label-sm text-label-sm font-bold flex-shrink-0">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>Pending</span>
+</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary">groups</span>
+<span class="font-label-sm text-label-sm font-medium">5 friends currently playing</span>
+</div>
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary-container text-on-primary font-label-md text-label-md font-bold shadow-md hover:brightness-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+<span>Play Now</span>
+</button>
+</div>
+</article>
+<!-- Worldle (Country Silhouette) -->
+<article class="p-space-md rounded-lg bg-surface-container-low shadow-sm flex flex-col gap-space-sm transition-all hover:bg-surface-container" data-category="geography">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-12 h-12 rounded-DEFAULT bg-surface-container flex items-center justify-center text-tertiary-fixed-dim shadow-inner flex-shrink-0">
+<span class="material-symbols-outlined text-[28px]">travel_explore</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="font-title-md text-title-md text-on-surface font-bold truncate">Worldle</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">Geo</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">Country Silhouette · Distance Hints</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-bold flex-shrink-0">
+<span class="material-symbols-outlined text-[16px]">hourglass_empty</span>
+<span>Pending</span>
+</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-tertiary">navigation</span>
+<span class="font-label-sm text-label-sm font-medium">Global Avg: 3.2 guesses</span>
+</div>
+<button class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-surface-container-high text-primary font-label-md text-label-md font-semibold hover:bg-surface-bright active:scale-95 transition-all">
+<span>Solve</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</article>
+<!-- Murdle (Mystery Logic Puzzle - Status: New) -->
+<article class="p-space-md rounded-lg bg-surface-container-low shadow-sm flex flex-col gap-space-sm transition-all hover:bg-surface-container relative" data-category="logic">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-12 h-12 rounded-DEFAULT bg-secondary-container/20 flex items-center justify-center text-secondary shadow-inner flex-shrink-0">
+<span class="material-symbols-outlined text-[28px]">fingerprint</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="font-title-md text-title-md text-on-surface font-bold truncate">Murdle</h3>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold uppercase tracking-wider">New</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">Mystery Logic · Detective Deduction</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-secondary-container/40 text-secondary font-label-sm text-label-sm font-bold flex-shrink-0">
+<span class="material-symbols-outlined text-[16px]">stars</span>
+<span>Featured</span>
+</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-secondary">menu_book</span>
+<span class="font-label-sm text-label-sm font-medium">Case #248 Available</span>
+</div>
+<button class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-surface-container-high text-secondary font-label-md text-label-md font-semibold hover:bg-surface-bright active:scale-95 transition-all">
+<span>Investigate</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</article>
+<!-- Bandle (Music Identification - Status: Trending) -->
+<article class="p-space-md rounded-lg bg-surface-container-low shadow-sm flex flex-col gap-space-sm transition-all hover:bg-surface-container" data-category="trivia">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-12 h-12 rounded-DEFAULT bg-surface-container flex items-center justify-center text-primary-container shadow-inner flex-shrink-0">
+<span class="material-symbols-outlined text-[28px]">graphic_eq</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="font-title-md text-title-md text-on-surface font-bold truncate">Bandle</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">Audio</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">Song ID · Instrument by Instrument</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary-container/20 text-primary font-label-sm text-label-sm font-bold shadow-[0_0_10px_rgba(77,142,255,0.2)] flex-shrink-0">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span>Trending</span>
+</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary">headphones</span>
+<span class="font-label-sm text-label-sm font-medium">9.4k listeners today</span>
+</div>
+<button class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-surface-container-high text-primary font-label-md text-label-md font-semibold hover:bg-surface-bright active:scale-95 transition-all">
+<span>Listen</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</article>
+<!-- Contexto (AI Semantics - Status: Popular) -->
+<article class="p-space-md rounded-lg bg-surface-container-low shadow-sm flex flex-col gap-space-sm transition-all hover:bg-surface-container" data-category="word logic">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-12 h-12 rounded-DEFAULT bg-surface-container flex items-center justify-center text-tertiary shadow-inner flex-shrink-0">
+<span class="material-symbols-outlined text-[28px]">hub</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="font-title-md text-title-md text-on-surface font-bold truncate">Contexto</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">AI</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">AI Semantics · Proximity Ranker</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container-high text-tertiary-fixed-dim font-label-sm text-label-sm font-bold flex-shrink-0">
+<span class="material-symbols-outlined text-[16px]">whatshot</span>
+<span>Popular</span>
+</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-tertiary">psychology_alt</span>
+<span class="font-label-sm text-label-sm font-medium">Secret word #412 active</span>
+</div>
+<button class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-surface-container-high text-primary font-label-md text-label-md font-semibold hover:bg-surface-bright active:scale-95 transition-all">
+<span>Play</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</article>
+</div>
+</section>
+<!-- Community Favorites Section -->
+<section class="mt-space-lg flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">Community Favorites</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Based on friend activity &amp; completion rates</p>
+</div>
+<button class="font-label-md text-label-md text-primary font-semibold hover:underline">View All</button>
+</div>
+<!-- Community Grid Cards -->
+<div class="grid grid-cols-2 gap-space-sm">
+<!-- Card 1: Tradle -->
+<div class="p-space-md rounded-lg bg-surface-container-low shadow-sm flex flex-col justify-between gap-space-sm relative overflow-hidden group">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">query_stats</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">96%</span>
+</div>
+<h4 class="font-title-md text-title-md text-on-surface font-bold mt-1">Tradle</h4>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Export data puzzle by OEC world trade.</p>
+</div>
+<div class="flex flex-col gap-1 pt-1">
+<div class="flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px] text-tertiary">bolt</span>
+<span>12.4k plays</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="font-label-sm text-label-sm text-primary font-medium">3 friends solved</span>
+</div>
+</div>
+</div>
+<!-- Card 2: Globle -->
+<div class="p-space-md rounded-lg bg-surface-container-low shadow-sm flex flex-col justify-between gap-space-sm relative overflow-hidden group">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">globe</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">89%</span>
+</div>
+<h4 class="font-title-md text-title-md text-on-surface font-bold mt-1">Globle</h4>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Hot &amp; cold thermal globe geography.</p>
+</div>
+<div class="flex flex-col gap-1 pt-1">
+<div class="flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px] text-tertiary">bolt</span>
+<span>18.1k plays</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="font-label-sm text-label-sm text-secondary font-medium">6 friends solved</span>
+</div>
+</div>
+</div>
+<!-- Card 3: Squaredle -->
+<div class="p-space-md rounded-lg bg-surface-container-low shadow-sm flex flex-col justify-between gap-space-sm relative overflow-hidden group">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[18px]">apps</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">91%</span>
+</div>
+<h4 class="font-title-md text-title-md text-on-surface font-bold mt-1">Squaredle</h4>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Daily word board path connector matrix.</p>
+</div>
+<div class="flex flex-col gap-1 pt-1">
+<div class="flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px] text-tertiary">bolt</span>
+<span>22.8k plays</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="font-label-sm text-label-sm text-tertiary font-medium">11 friends solved</span>
+</div>
+</div>
+</div>
+<!-- Card 4: Chronophoto -->
+<div class="p-space-md rounded-lg bg-surface-container-low shadow-sm flex flex-col justify-between gap-space-sm relative overflow-hidden group">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary-fixed">
+<span class="material-symbols-outlined text-[18px]">history</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">94%</span>
+</div>
+<h4 class="font-title-md text-title-md text-on-surface font-bold mt-1">Chronophoto</h4>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Guess historical snapshot year accurately.</p>
+</div>
+<div class="flex flex-col gap-1 pt-1">
+<div class="flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px] text-tertiary">bolt</span>
+<span>15.3k plays</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="font-label-sm text-label-sm text-primary font-medium">4 friends solved</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Arcade Request / Suggest Footer -->
+<section class="mt-space-lg p-space-md rounded-lg bg-surface-container-lowest text-center flex flex-col items-center gap-space-xs shadow-inner">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary mb-1">
+<span class="material-symbols-outlined text-[20px]">extension</span>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface font-bold">Missing your favorite puzzle?</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xs">We add community submissions every Tuesday. Submit custom RSS or share links.</p>
+<button class="mt-2 px-5 py-2 rounded-full bg-surface-container-high text-primary hover:bg-surface-bright font-label-md text-label-md font-bold transition-all active:scale-95 shadow-sm">
+      Suggest Puzzle
+    </button>
+</section>
+</div>
+<script>
+  (function() {
+    const searchInput = document.getElementById('puzzle-search-input');
+    const filterChips = document.querySelectorAll('.filter-chip');
+    const puzzleCards = document.querySelectorAll('#puzzles-container > article');
+
+    // Category Filter Handler
+    filterChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        filterChips.forEach(c => {
+          c.classList.remove('active', 'bg-primary-container', 'text-on-primary', 'shadow-sm');
+          c.classList.add('bg-surface-container', 'text-on-surface-variant');
+        });
+
+        chip.classList.add('active', 'bg-primary-container', 'text-on-primary', 'shadow-sm');
+        chip.classList.remove('bg-surface-container', 'text-on-surface-variant');
+
+        const filterValue = chip.getAttribute('data-filter');
+        applyFilters(searchInput.value.toLowerCase(), filterValue);
+      });
+    });
+
+    // Real-time Search Handler
+    searchInput.addEventListener('input', (e) => {
+      const activeChip = document.querySelector('.filter-chip.active');
+      const filterValue = activeChip ? activeChip.getAttribute('data-filter') : 'all';
+      applyFilters(e.target.value.toLowerCase(), filterValue);
+    });
+
+    function applyFilters(query, category) {
+      puzzleCards.forEach(card => {
+        const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+        const desc = card.querySelector('p')?.textContent.toLowerCase() || '';
+        const cardCats = (card.getAttribute('data-category') || '').toLowerCase();
+
+        const matchesQuery = title.includes(query) || desc.includes(query);
+        const matchesCategory = (category === 'all') || cardCats.includes(category);
+
+        if (matchesQuery && matchesCategory) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-low/95 backdrop-blur-xl shadow-[0_-4px_24px_rgba(0,0,0,0.6)]" data-active-classes="text-primary font-bold"><div class="flex justify-around items-center h-16 px-space-xs max-w-lg mx-auto"><a class="flex flex-col items-center justify-center gap-0.5 w-14 h-12 rounded-full text-on-surface-variant hover:text-on-surface transition-all active:scale-90" data-path="today" href="#"><span class="material-symbols-outlined text-[22px]">calendar_today</span><span class="font-label-sm text-label-sm">Today</span></a><a aria-current="page" class="flex flex-col items-center justify-center gap-0.5 w-14 h-12 rounded-full transition-all active:scale-90 text-primary font-bold" data-path="discover" href="#"><span class="material-symbols-outlined text-[22px]">explore</span><span class="font-label-sm text-label-sm">Discover</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-14 h-12 rounded-full text-on-surface-variant hover:text-on-surface transition-all active:scale-90" data-path="statistics" href="#"><span class="material-symbols-outlined text-[22px]">bar_chart</span><span class="font-label-sm text-label-sm">Stats</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-14 h-12 rounded-full text-on-surface-variant hover:text-on-surface transition-all active:scale-90" data-path="friends" href="#"><span class="material-symbols-outlined text-[22px]">group</span><span class="font-label-sm text-label-sm">Friends</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-14 h-12 rounded-full text-on-surface-variant hover:text-on-surface transition-all active:scale-90" data-path="account" href="#"><span class="material-symbols-outlined text-[22px]">person</span><span class="font-label-sm text-label-sm">Account</span></a></div></nav></body></html>

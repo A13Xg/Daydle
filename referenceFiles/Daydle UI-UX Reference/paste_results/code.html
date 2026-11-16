@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="#051424" name="theme-color"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "primary-fixed": "#d8e2ff", "error": "#ffb4ab", "surface-container-highest": "#273647", "on-error-container": "#ffdad6", "secondary": "#c0c1ff", "primary-fixed-dim": "#adc6ff", "error-container": "#93000a", "on-secondary-fixed": "#07006c", "secondary-fixed": "#e1e0ff", "on-background": "#d4e4fa", "on-tertiary-container": "#00311f", "surface-dim": "#051424", "on-primary-container": "#00285d", "surface-container-low": "#0d1c2d", "on-primary-fixed-variant": "#004395", "background": "#051424", "surface-tint": "#adc6ff", "on-primary-fixed": "#001a42", "surface-container-high": "#1c2b3c", "on-tertiary-fixed": "#002113", "primary": "#adc6ff", "primary-container": "#4d8eff", "on-secondary-fixed-variant": "#2f2ebe", "on-tertiary": "#003824", "inverse-primary": "#005ac2", "surface-variant": "#273647", "surface-container": "#122131", "tertiary-fixed-dim": "#4edea3", "on-tertiary-fixed-variant": "#005236", "on-surface-variant": "#c2c6d6", "inverse-surface": "#d4e4fa", "inverse-on-surface": "#233143", "secondary-container": "#3131c0", "on-secondary-container": "#b0b2ff", "on-error": "#690005", "outline": "#8c909f", "on-primary": "#002e6a", "surface": "#051424", "tertiary-fixed": "#6ffbbe", "on-secondary": "#1000a9", "on-surface": "#d4e4fa", "tertiary-container": "#00a572", "tertiary": "#4edea3", "secondary-fixed-dim": "#c0c1ff", "surface-bright": "#2c3a4c", "outline-variant": "#424754", "surface-container-lowest": "#010f1f" }, borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, spacing: { "space-md": "1rem", "space-xl": "2.5rem", "space-xs": "0.25rem", "gutter": "1rem", "margin-mobile": "1rem", "space-sm": "0.5rem", "margin": "2rem", "space-lg": "1.5rem", "gutter-mobile": "0.5rem" }, fontFamily: { "headline-lg": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "title-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"] }, fontSize: { "headline-lg": ["36px", { lineHeight: "44px", letterSpacing: "-0.02em", fontWeight: "700" }], "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }], "label-sm": ["11px", { lineHeight: "14px", letterSpacing: "0.05em", fontWeight: "700" }], "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "700" }], "title-md": ["18px", { lineHeight: "24px", fontWeight: "600" }], "headline-lg-mobile": ["28px", { lineHeight: "36px", letterSpacing: "-0.02em", fontWeight: "700" }], "headline-sm": ["20px", { lineHeight: "28px", fontWeight: "600" }], "display-lg": ["48px", { lineHeight: "56px", letterSpacing: "-0.03em", fontWeight: "800" }], "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "600" }], "label-lg": ["14px", { lineHeight: "20px", letterSpacing: "0.01em", fontWeight: "600" }], "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }] } } } };</script><style>@layer base { html, body { width: 100vw; margin: 0; padding: 0; min-height: 100%; } .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); } .pt-safe { padding-top: env(safe-area-inset-top, 0px); } } ::-webkit-scrollbar { display: none; } body { min-height: max(884px, 100dvh); }</style><meta content="mobile_stack" name="shell-type"/><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-white"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.45)]"><div class="h-16 px-margin-mobile flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-xs"><button aria-label="Go back" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container active:scale-90 transition-all" onclick="history.back()" type="button"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><div class="flex items-center gap-space-xs"><img alt="Daydle Puzzle Logo" class="h-7 w-auto object-contain drop-shadow-[0_0_6px_rgba(77,142,255,0.35)]" src="https://lh3.googleusercontent.com/aida/ALJJyrAOZlYz-Avgx9d9KMHSP5Al6qJ7_lMvHgQkwM4wdtOuTgT62n51V9oDY4C45XsOvJunwQtVR1rCNMxYF0Wp8Kq7h3oeZKN3srfUXUABUbewhbXglupOq3hl4qoLh-l33HRkxhm4sNyDHMUJ7j2uMilmNmq6QQGcp__ViKAdOAiNMLGFt9ZfU0JiFBg7wChjBfX8IptuEA6gCSrAOlRodgp0LBMsWblLS6QX-RuzvtFzHg"/><h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate max-w-[190px]">Paste Results</h1></div></div><div class="flex items-center gap-space-xs"><a class="w-11 h-11 flex items-center justify-center rounded-full p-0.5 hover:ring-2 hover:ring-primary/40 active:scale-95 transition-all" data-path="account" href="#"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-1 ring-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAinkPCcZO0B65NKKnV-sQsV0NgsyPJZyBAYXz8r4YHWbok_vT7T7dh4yZ4wgqj-H_EKCerqhuiuRR0aZJeeL3H1Cf0h5YCRi4KVX_SI5Q4ucOkL773Hw739F6AymfK2KGSRWDKoUwaiFOQ_bmcCaJKN6bwWXFuZlsGyeSSKSiL7K6dfyOLSVodgFSWZle_mm8dcwh-tF4Q8W4GRjQy3Y369mXdLApPze8IediTVnws"/></a></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-safe bg-background"><div class="flex flex-col w-full px-margin-mobile pb-space-xl">
+<!-- Top Utility Context Bar -->
+<div class="flex items-center justify-between py-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="flex h-2 w-2 rounded-full bg-tertiary animate-pulse shadow-[0_0_8px_rgba(78,222,163,0.8)]"></span>
+<span class="font-label-sm text-label-sm text-tertiary tracking-wider uppercase font-semibold">Smart Parser Active</span>
+</div>
+<div class="flex items-center gap-space-xs bg-surface-container-high/60 px-2.5 py-1 rounded-full">
+<span class="material-symbols-outlined text-[15px] text-primary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold tracking-wide">Instant Detection</span>
+</div>
+</div>
+<!-- Main Parsing Card Module -->
+<section class="mt-space-xs flex flex-col bg-surface-container-low rounded-xl p-space-md shadow-xl relative overflow-hidden">
+<div class="flex items-center justify-between mb-space-sm">
+<label class="flex items-center gap-space-xs font-title-md text-title-md text-on-surface" for="paste-input">
+<span class="material-symbols-outlined text-primary text-[20px]">content_paste</span>
+        Input Score Grid
+      </label>
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors py-1 px-2 rounded-full hover:bg-surface-container" id="clear-btn" type="button">
+        Clear
+      </button>
+</div>
+<!-- Textarea with Glow & Obsidian feel -->
+<div class="relative w-full rounded-lg bg-surface-container-lowest p-space-sm shadow-inner group transition-all">
+<textarea class="w-full bg-transparent font-body-md text-body-md text-on-surface focus:outline-none resize-none font-mono tracking-tight leading-relaxed placeholder:text-outline-variant placeholder:font-body-md" id="paste-input" placeholder="Paste your puzzle score share text here (e.g. Wordle 1,624 3/6*, Connections Puzzle #884, Strands #254)..." rows="6">Wordle 1,624 3/6*
+
+⬛🟨⬛⬛⬛
+🟩🟩⬛🟨⬛
+🟩🟩🟩🟩🟩</textarea>
+<button class="absolute bottom-3 right-3 flex items-center gap-1.5 bg-surface-container-high/90 hover:bg-surface-bright text-primary px-3 py-1.5 rounded-full shadow-md transition-all active:scale-95" id="paste-clipboard-btn" type="button">
+<span class="material-symbols-outlined text-[16px]">content_paste_go</span>
+<span class="font-label-sm text-label-sm">Paste Clipboard</span>
+</button>
+</div>
+<!-- Live Auto-Detection Badge / Result Card -->
+<div class="mt-space-md bg-surface-container flex flex-col gap-space-xs p-space-md rounded-lg shadow-sm transition-all duration-300" id="detection-badge">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="w-7 h-7 rounded-full bg-tertiary/15 flex items-center justify-center text-tertiary shadow-[0_0_12px_rgba(78,222,163,0.3)]">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-tertiary font-bold">Auto-Detected</span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">99.8% Match</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface tracking-tight">Wordle #1,624</h2>
+</div>
+</div>
+<span class="bg-tertiary-container/30 text-tertiary px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-bold uppercase tracking-wider">
+          Solved
+        </span>
+</div>
+<!-- Quick Metrics Row -->
+<div class="grid grid-cols-3 gap-2 mt-space-xs pt-space-xs">
+<div class="bg-surface-container-high/50 rounded p-2 flex flex-col items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Attempts</span>
+<span class="font-title-md text-title-md text-primary font-bold">3 / 6</span>
+</div>
+<div class="bg-surface-container-high/50 rounded p-2 flex flex-col items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Mode</span>
+<span class="font-title-md text-title-md text-secondary font-bold flex items-center gap-0.5">
+            Hard <span class="material-symbols-outlined text-[14px] text-tertiary">star</span>
+</span>
+</div>
+<div class="bg-surface-container-high/50 rounded p-2 flex flex-col items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Speed Rank</span>
+<span class="font-title-md text-title-md text-on-surface font-bold">Top 8%</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Options & Privacy Shield Toggles -->
+<section class="mt-space-md flex flex-col bg-surface-container-low rounded-xl p-space-md shadow-md gap-space-md">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm tracking-wider uppercase text-on-surface-variant font-bold">Sharing &amp; Synchronization</span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">tune</span>
+</div>
+<!-- Toggle 1: Friends Feed -->
+<div class="flex items-center justify-between gap-space-sm cursor-pointer select-none" onclick="toggleSwitch('toggle-friends')">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center text-primary mt-0.5">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">group</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-semibold">Share with Friends Feed</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Post result immediately to your squad leaderboard</span>
+</div>
+</div>
+<button aria-checked="true" class="w-12 h-6 rounded-full bg-primary-container p-0.5 transition-colors duration-200 ease-in-out relative flex items-center" id="toggle-friends" role="switch" type="button">
+<div class="dot w-5 h-5 rounded-full bg-on-primary shadow-sm transform translate-x-6 transition-transform duration-200"></div>
+</button>
+</div>
+<!-- Toggle 2: Spoiler Shield -->
+<div class="flex items-center justify-between gap-space-sm cursor-pointer select-none" onclick="toggleSwitch('toggle-spoiler')">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center text-tertiary mt-0.5">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">visibility_off</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-body-md text-body-md text-on-surface font-semibold">Spoiler Shield</span>
+<span class="bg-secondary-container text-on-secondary-container px-1.5 py-0.2 rounded-full font-label-sm text-label-sm font-bold text-[10px]">PRO</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Hide guess breakdown until friend has completed puzzle</span>
+</div>
+</div>
+<button aria-checked="true" class="w-12 h-6 rounded-full bg-primary-container p-0.5 transition-colors duration-200 ease-in-out relative flex items-center" id="toggle-spoiler" role="switch" type="button">
+<div class="dot w-5 h-5 rounded-full bg-on-primary shadow-sm transform translate-x-6 transition-transform duration-200"></div>
+</button>
+</div>
+<!-- Toggle 3: Global Streak Sync -->
+<div class="flex items-center justify-between gap-space-sm cursor-pointer select-none" onclick="toggleSwitch('toggle-streak')">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center text-secondary mt-0.5">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-semibold">Sync to Global Streak</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Preserves your 42-day uninterrupted puzzle sequence</span>
+</div>
+</div>
+<button aria-checked="true" class="w-12 h-6 rounded-full bg-primary-container p-0.5 transition-colors duration-200 ease-in-out relative flex items-center" id="toggle-streak" role="switch" type="button">
+<div class="dot w-5 h-5 rounded-full bg-on-primary shadow-sm transform translate-x-6 transition-transform duration-200"></div>
+</button>
+</div>
+</section>
+<!-- Confirm Primary Action CTA -->
+<div class="mt-space-lg flex flex-col gap-space-sm">
+<button class="w-full h-14 rounded-full bg-primary-container text-on-primary font-title-md text-title-md font-bold flex items-center justify-center gap-space-xs shadow-[0_4px_24px_rgba(77,142,255,0.45)] hover:brightness-110 active:scale-[0.98] transition-all" id="confirm-btn" type="button">
+<span class="material-symbols-outlined text-[22px]">check</span>
+      Confirm &amp; Log Score
+    </button>
+<!-- Secondary Helper: Screenshot Scanner -->
+<button class="w-full py-space-sm rounded-full bg-surface-container-high/60 hover:bg-surface-container-high text-on-surface font-label-lg text-label-lg flex items-center justify-center gap-space-xs active:scale-[0.99] transition-all" type="button">
+<span class="material-symbols-outlined text-primary text-[20px]">photo_camera</span>
+      Or scan screenshot from camera / photo library
+    </button>
+</div>
+<!-- Interactive Feedback Drawer Script -->
+<script>
+    function toggleSwitch(id) {
+      const button = document.getElementById(id);
+      if (!button) return;
+      const isChecked = button.getAttribute('aria-checked') === 'true';
+      const newChecked = !isChecked;
+      button.setAttribute('aria-checked', newChecked.toString());
+      const dot = button.querySelector('.dot');
+      if (newChecked) {
+        button.classList.remove('bg-surface-container-highest');
+        button.classList.add('bg-primary-container');
+        dot.classList.remove('translate-x-0');
+        dot.classList.add('translate-x-6');
+      } else {
+        button.classList.remove('bg-primary-container');
+        button.classList.add('bg-surface-container-highest');
+        dot.classList.remove('translate-x-6');
+        dot.classList.add('translate-x-0');
+      }
+    }
+
+    const textarea = document.getElementById('paste-input');
+    const clearBtn = document.getElementById('clear-btn');
+    const pasteClipboardBtn = document.getElementById('paste-clipboard-btn');
+    const detectionBadge = document.getElementById('detection-badge');
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        textarea.value = '';
+        textarea.focus();
+        detectionBadge.style.opacity = '0.35';
+      });
+    }
+
+    if (pasteClipboardBtn) {
+      pasteClipboardBtn.addEventListener('click', async () => {
+        try {
+          if (navigator.clipboard && navigator.clipboard.readText) {
+            const text = await navigator.clipboard.readText();
+            if (text) {
+              textarea.value = text;
+              detectionBadge.style.opacity = '1';
+            }
+          }
+        } catch (e) {
+          textarea.value = 'Connections\nPuzzle #884\n🟨🟨🟨🟨\n🟩🟩🟩🟩\n🟦🟦🟦🟦\n🟪🟪🟪🟪';
+          detectionBadge.style.opacity = '1';
+        }
+      });
+    }
+
+    const confirmBtn = document.getElementById('confirm-btn');
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', () => {
+        confirmBtn.innerHTML = '<span class="material-symbols-outlined text-[22px] animate-spin">refresh</span> Logging Result...';
+        confirmBtn.classList.add('opacity-90');
+        setTimeout(() => {
+          confirmBtn.innerHTML = '<span class="material-symbols-outlined text-[22px]">done_all</span> Logged to Daily Feed!';
+          confirmBtn.classList.remove('bg-primary-container');
+          confirmBtn.classList.add('bg-tertiary-container', 'text-on-tertiary-container');
+        }, 650);
+      });
+    }
+  </script>
+</div></main></body></html>

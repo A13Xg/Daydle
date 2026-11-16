@@ -12,6 +12,7 @@ This file governs development and review in this repository. Read it alongside [
 - Use conventional, informative, non-promotional commit messages. Never claim tests passed unless they were actually executed. Never change roadmap status based only on intent.
 - Preserve secrets, credentials, and private data. No raw clipboard contents in general logs or commits. Use realistic test fixtures that are permitted to be stored.
 - Product UX must be behaviorally polished; visual design details are intentionally deferred. Do not invent a final color palette or visual system without a separate instruction.
+- `referenceFiles/` holds optional UI/UX mockups and design-system variants (see `referenceFiles/readme.md`). They are reference only: do not implement, match, or adopt them unless the user explicitly asks for a specific screen or style. They never override IDEA.md, roadmap.md or this file.
 
 ## Sources of truth (read in this order)
 
