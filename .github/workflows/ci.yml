@@ -30,6 +30,53 @@ jobs:
         run: npm test
       - name: Production build
         run: npm run build
+      - name: Diagnose effective Worker routing and live public responses (read-only)
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync } from "node:fs";
+          const config = JSON.parse(readFileSync("dist/worker/wrangler.json", "utf8"));
+          console.log("Generated worker config:", JSON.stringify({
+            name: config.name,
+            main: config.main,
+            routes: config.routes,
+            assets: {
+              directory: config.assets?.directory,
+              binding: config.assets?.binding,
+              run_worker_first: config.assets?.run_worker_first,
+              not_found_handling: config.assets?.not_found_handling,
+            },
+          }));
+          for (const path of [
+            "/api/v1/health", "/api/v1/not-found",
+            "/app.webmanifest", "/sw.js", "/today",
+          ]) {
+            for (const navigation of path === "/api/v1/health" ? [false, true] : [false]) {
+              const url = "https://daydle.agoodman.io" + path;
+              try {
+                const response = await fetch(url, {
+                  signal: AbortSignal.timeout(12000),
+                  redirect: "manual",
+                  cache: "no-store",
+                  headers: navigation ? { "sec-fetch-mode": "navigate" } : {},
+                });
+                const body = await response.text();
+                const type = body.trimStart().startsWith("<") ? "html" :
+                  body.trimStart().startsWith("{") ? "jsonish" : "other";
+                console.log("Live probe", JSON.stringify({
+                  path, navigation, status: response.status,
+                  contentType: response.headers.get("content-type"),
+                  kind: type, length: body.length,
+                  redirectHost: response.headers.get("location")
+                    ? new URL(response.headers.get("location"), url).host : null,
+                }));
+              } catch (error) {
+                console.log("Live probe error", JSON.stringify({
+                  path, navigation, name: error?.name ?? "unknown",
+                }));
+              }
+            }
+          }
+          NODE
       - name: Preview smoke
         run: |
           npm run preview -- --port 4173 > /tmp/daydle-preview.log 2>&1 &
