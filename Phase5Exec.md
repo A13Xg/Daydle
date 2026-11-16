@@ -1,6 +1,6 @@
 # Phase 5 Execution Plan — Today experience, PWA, and external-game navigation
 
-**Status:** RELEASE CANDIDATE / READY FOR HUMAN REVIEW — automated checks passed; production and physical iPhone acceptance pending  
+**Status:** DEPLOYED / LIVE PUBLIC ENDPOINTS VERIFIED — physical iPhone installed-PWA acceptance still pending  
 **Base:** reconciled `main` at `e076ccb3cfba8c3173442eb8ad77780727d8e309`; [Phase 4 PR #5](https://github.com/A13Xg/Daydle/pull/5) merged at `e0fcb2b`; main CI successful.  
 **Branch:** `phase/05-today-pwa` · **Release-candidate PR:** [#7](https://github.com/A13Xg/Daydle/pull/7).  
 **Sources:** [IDEA.md](IDEA.md) sections 5–8, [roadmap.md](roadmap.md#phase-5--today-experience-pwa-and-external-game-navigation), [AGENTS.md](AGENTS.md), [Phase 4 archive](completedPhases/Phase4Exec.md).
@@ -142,3 +142,12 @@ To unblock the **approved release**, first complete review and merge of PR #7 (r
 - Direct Supabase `list_migrations` and `execute_sql` verification confirmed that Phase 2 (`20261114050000`) and Phase 3 (`20261114060000`) already have valid migration-history records. All 18 Phase 2 public/private tables have RLS; Phase 4 catalog additions and Phase 5 day marks are absent.
 - [PR #9](https://github.com/A13Xg/Daydle/pull/9) switches to the documented Management API `GET /database/migrations` structured records and **does not** attempt metadata repair. It uses the same protected production credentials and requires `database_migrations_read` scope.
 - Phase 5 remains BLOCKED until a real successful hosted deployment followed by the physical iPhone tests.
+
+### Successful hosted rollout and post-deploy smoke incident (November 16, 2026)
+
+- Owner merged [PR #9](https://github.com/A13Xg/Daydle/pull/9), and the protected [release run 43814332227](https://github.com/A13Xg/Daydle/actions/runs/43814332227) successfully dry-ran, applied and verified migrations `20261115040000` (Phase 4) and `20261115050000` (Phase 5). A subsequent connected `list_migrations` read independently confirmed all four versions recorded.
+- The same run built the PWA and successfully deployed `daydle-app` to `daydle.agoodman.io`, Worker version `126e8806-3cb5-4765-a164-225466531727`. No database redo or rollback is required.
+- Its final smoke step failed because the first HTTP 200 response at `/api/v1/health` was **HTML**, not JSON. The script checked the status before parsing JSON and had no content-aware retry. The logs establish the mismatch, but do not definitively identify which Cloudflare edge/routing/cache condition produced the transient HTML.
+- [Fix PR #10](https://github.com/A13Xg/Daydle/pull/10) adds retries for the actual JSON/API/PWA contracts, checks `run_worker_first` in the generated build and verifies the deployed SW matches the production build. Logs omit response bodies and credentials.
+- A separate public-only GitHub CI run successfully fetched JSON health, JSON 404, manifest, service worker, Today/Games HTML and three PNG icons from the **live** domain; that check intentionally skips comparison to the locally built SW because unconfigured PR CI embeds different `VITE_*` values than the protected production build.
+- **Phase exit remains open** until the owner supplies real iPhone Safari/installed PWA evidence from [docs/pwa.md](docs/pwa.md). Keep this plan active; do not mark Phase 5 COMPLETE or begin Phase 6 merely because the server deploy succeeded.

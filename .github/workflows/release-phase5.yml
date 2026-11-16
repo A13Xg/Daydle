@@ -105,37 +105,17 @@ jobs:
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
         run: npm run build
 
+      - name: Verify generated Worker-first API routing
+        run: node scripts/ops/verify-live-release.mjs --routing-only
+
       - name: Deploy Daydle Worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
         run: npx --no-install wrangler deploy
 
-      - name: Verify live health, Today and PWA assets
-        run: |
-          set -euo pipefail
-          base="https://daydle.agoodman.io"
-          for attempt in $(seq 1 12); do
-            if curl --fail --silent --show-error --max-time 15 "$base/api/v1/health" -o "$RUNNER_TEMP/daydle-health.json"; then
-              break
-            fi
-            if [[ "$attempt" -eq 12 ]]; then echo "Health check failed" >&2; exit 1; fi
-            sleep 10
-          done
-          node -e '
-            const health = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"));
-            if(health.status!=="ok" || health.service!=="daydle-api") process.exit(1);
-          ' "$RUNNER_TEMP/daydle-health.json"
-
-          curl --fail --silent --show-error --max-time 15 "$base/app.webmanifest" -o "$RUNNER_TEMP/daydle-manifest.json"
-          node -e '
-            const manifest = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"));
-            if(manifest.start_url!=="/today" || manifest.display!=="standalone") process.exit(1);
-          ' "$RUNNER_TEMP/daydle-manifest.json"
-
-          curl --fail --silent --show-error --max-time 15 "$base/sw.js" -o "$RUNNER_TEMP/daydle-sw.js"
-          grep -q "daydle-shell-" "$RUNNER_TEMP/daydle-sw.js"
-          for path in /today /games /icons/icon-192.png /icons/icon-512.png /icons/apple-touch-icon.png; do
-            curl --fail --silent --show-error --max-time 15 "$base$path" -o /dev/null
-          done
-          echo "Hosted Phase 5 release: migration history and app/PWA endpoints verified."
+      - name: Verify live API, Today and deployed PWA asset version
+        # A Cloudflare deploy can succeed before every edge/asset route serves
+        # the latest version. HTTP 200 with SPA HTML is NOT an API success.
+        # Wait for expected JSON contracts and the built service worker version.
+        run: node scripts/ops/verify-live-release.mjs
