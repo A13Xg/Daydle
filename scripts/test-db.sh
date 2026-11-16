@@ -36,6 +36,7 @@ for db in "${databases[@]}"; do
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/assertions.sql
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/auth-assertions.sql
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/catalog-assertions.sql
+  bash scripts/test-category-concurrency.sh
 done
 
 echo "PASS: All Daydle schema, RLS, auth identity and catalog tests passed on two clean databases."
