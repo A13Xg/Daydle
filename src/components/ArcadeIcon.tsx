@@ -13,7 +13,8 @@ export type ArcadeIconName =
   | "spark"
   | "info"
   | "edit"
-  | "clock";
+  | "clock"
+  | "refresh";
 
 export function ArcadeIcon({
   name,
@@ -127,6 +128,12 @@ export function ArcadeIcon({
       return (
         <svg {...common}>
           <path d="m3 17 11-11 4 4-11 11H3v-4ZM12 8l4 4" />
+        </svg>
+      );
+    case "refresh":
+      return (
+        <svg {...common}>
+          <path d="M20 11a8 8 0 0 0-14-5L3 9M3 3v6h6M4 13a8 8 0 0 0 14 5l3-3M21 21v-6h-6" />
         </svg>
       );
     case "clock":

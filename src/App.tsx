@@ -9,6 +9,7 @@ import { AccountPage } from "./components/AccountPage";
 import { CatalogPage } from "./components/CatalogPage";
 import { TodayPage } from "./components/TodayPage";
 import { PasteDialog } from "./components/PasteDialog";
+import { HistoryPage } from "./components/HistoryPage";
 import {
   ArcadeHeader,
   ArcadePasteAction,
@@ -104,6 +105,8 @@ export default function App() {
           lineupOnly={pathname === "/lineup"}
         />
       );
+    if (pathname === "/history")
+      return <HistoryPage key={userId ?? "anonymous"} client={client} userId={userId} />;
     if (pathname === "/account")
       return (
         <AccountPage
@@ -202,7 +205,7 @@ export default function App() {
         </>
       )}
       {pasteOpen && (
-        <PasteDialog key={userId ?? "anonymous"} onClose={closePaste} />
+        <PasteDialog key={userId ?? "anonymous"} onClose={closePaste} client={client} userId={userId} />
       )}
     </div>
   );
