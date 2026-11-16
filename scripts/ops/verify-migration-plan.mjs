@@ -18,7 +18,7 @@ export function verifyMigrationPlan(report, filenames, requireAllApplied = false
   }
 
   const seen = new Map();
-  for (const line of report.replace(/\x1b\[[0-9;]*m/g, "").split(/\r?\n/)) {
+  for (const line of report.split(/\r?\n/)) {
     const fields = line.split(/[│|]/).map((field) => field.trim());
     if (fields.length < 3) continue;
     const [localVersion, remoteVersion] = fields;
