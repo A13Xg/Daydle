@@ -2,7 +2,7 @@
 
 **Status:** RELEASE CANDIDATE / READY FOR HUMAN REVIEW — automated checks passed; production and physical iPhone acceptance pending  
 **Base:** reconciled `main` at `e076ccb3cfba8c3173442eb8ad77780727d8e309`; [Phase 4 PR #5](https://github.com/A13Xg/Daydle/pull/5) merged at `e0fcb2b`; main CI successful.  
-**Branch:** `phase/05-today-pwa` · **Draft PR:** [#7](https://github.com/A13Xg/Daydle/pull/7).  
+**Branch:** `phase/05-today-pwa` · **Release-candidate PR:** [#7](https://github.com/A13Xg/Daydle/pull/7).  
 **Sources:** [IDEA.md](IDEA.md) sections 5–8, [roadmap.md](roadmap.md#phase-5--today-experience-pwa-and-external-game-navigation), [AGENTS.md](AGENTS.md), [Phase 4 archive](completedPhases/Phase4Exec.md).
 
 ## Preflight and constraints
@@ -42,7 +42,7 @@ iOS home-screen apps do **not** guarantee external-tab return handling and use a
 5. PWA build assets, generated versioned SW/precache, manifest/Apple icons; test static HTTP and offline cache bypass policies in simulated worker.
 6. Write regression/unit/rendered UI tests and docs; run `npm ci`, typecheck/lint/format, Vitest, production build, preview HTTP smoke, and both clean PostgreSQL instances.
 7. Audit changed diff for leaks, service worker cache scope, XSS, session switching, stale data, browser API permissions, input retention, PWA update strategy, static/deep link failures, and deployment incompatibility; repair and rerun.
-8. Explicitly label real iPhone installed-PWA OAuth/return test **NOT VERIFIED** unless real device evidence exists. If that is a *material* acceptance gate (roadmap says yes), **keep draft and root-level plan**; otherwise archive after documented scope decision. No silent claim of iOS compatibility.
+8. Explicitly label real iPhone installed-PWA OAuth/return test **NOT VERIFIED** unless real device evidence exists. If that is a *material* acceptance gate (roadmap says yes), **keep the root-level plan active and Phase 5 unverified**; the owner's subsequent release-first authorization permits human PR review/merge before the physical-iPhone gate. No silent claim of iOS compatibility.
 9. No auto-merge, remote migration, deploy, token access or Phase 6.
 
 ## Acceptance criteria
@@ -55,7 +55,7 @@ iOS home-screen apps do **not** guarantee external-tab return handling and use a
 - [x] Offline: previously cached **safe** catalog and selected IDs only; no authenticated Supabase/API/puzzle results or raw content intercepted/cached; user-scoped snapshot does not show when signed out/other account.
 - [x] All frontend/Worker/unit/build/smoke/db CI pass; regression for service worker controls tested.
 - [x] Source/diff/security and docs review, no attribution or unapproved production mutation.
-- [ ] Real iPhone Safari and installed PWA: install, external link, return, clipboard permission and offline/online restoration, Google/Apple installed-PWA authentication documented as **VERIFIED** only with actual device evidence; otherwise keep draft, flag blocked only at exit.
+- [ ] Real iPhone Safari and installed PWA: install, external link, return, clipboard permission and offline/online restoration, Google/Apple installed-PWA authentication documented as **VERIFIED** only with actual device evidence; otherwise leave phase acceptance open and record the unverified device gate; the owner-authorized release-first PR review exception applies.
 
 ## Risks and explicit caveats
 
@@ -68,7 +68,7 @@ iOS home-screen apps do **not** guarantee external-tab return handling and use a
 
 ## Actual results, evidence and review disposition
 
-**Phase branch:** `phase/05-today-pwa`; [draft PR #7](https://github.com/A13Xg/Daydle/pull/7). **Source implementation is complete and automated gates pass.** Full Phase 5 acceptance remains **BLOCKED** on authorized hosted deployment and real iPhone Safari/installed-PWA observation.
+**Phase branch:** `phase/05-today-pwa`; [release-candidate PR #7](https://github.com/A13Xg/Daydle/pull/7). **Source implementation is complete and automated gates pass.** Full Phase 5 acceptance remains **BLOCKED** on execution of the owner-authorized hosted release and real iPhone Safari/installed-PWA observation.
 
 ### Delivered source
 
