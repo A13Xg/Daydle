@@ -14,9 +14,15 @@ export function normalizeShare(input: unknown): NormalizationResult {
   if (input.length > MAX_SHARE_LENGTH) {
     return { status: "invalid", code: "too_long" };
   }
-  // Permit tab/newline/CR only; reject invisible controls that can disguise headers.
-  if (/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\u009f]/u.test(input)) {
-    return { status: "invalid", code: "control_character" };
+  // Permit tab/newline/CR only; reject controls before any regex work.
+  for (const character of input) {
+    const point = character.codePointAt(0)!;
+    if (
+      (point < 32 && point !== 9 && point !== 10 && point !== 13) ||
+      (point >= 127 && point <= 159)
+    ) {
+      return { status: "invalid", code: "control_character" };
+    }
   }
   const text = input
     .replace(/^\uFEFF/u, "")
