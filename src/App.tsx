@@ -9,6 +9,13 @@ import { AccountPage } from "./components/AccountPage";
 import { CatalogPage } from "./components/CatalogPage";
 import { TodayPage } from "./components/TodayPage";
 import { PasteDialog } from "./components/PasteDialog";
+import {
+  ArcadeHeader,
+  ArcadePasteAction,
+  ArcadeTabBar,
+  shellForPath,
+} from "./components/ArcadeShell";
+import { FeaturePendingPage, HowItWorksPage } from "./components/FeaturePendingPage";
 
 type HealthStatus = "checking" | "ready" | "unavailable";
 
@@ -26,6 +33,7 @@ export default function App() {
   const authenticated = authState.status === "signed-in";
   const userId = authenticated ? authState.session.user.id : null;
   const pathname = window.location.pathname;
+  const shell = shellForPath(pathname);
   const catalogDetail = pathname.match(/^\/games\/([a-z0-9-]+)\/?$/);
   const [pasteOpen, setPasteOpen] = useState(false);
   const [returnPrompt, setReturnPrompt] = useState(false);
@@ -59,6 +67,15 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!pasteOpen) return;
+    const prior = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prior;
+    };
+  }, [pasteOpen]);
+
   function openPaste() {
     clearPublisherLaunch(sessionStorageAvailable());
     setReturnPrompt(false);
@@ -70,49 +87,69 @@ export default function App() {
     requestAnimationFrame(() => pasteTrigger.current?.focus());
   }
 
+  function page() {
+    if (pathname === "/auth/callback") return <AuthCallback client={client} />;
+    if (pathname === "/auth")
+      return <AuthPage client={client} signedIn={authenticated} />;
+    if (pathname === "/games" || catalogDetail || pathname === "/lineup")
+      return (
+        <CatalogPage
+          key={userId ?? "anonymous"}
+          client={client}
+          userId={userId}
+          detailSlug={catalogDetail?.[1]}
+          lineupOnly={pathname === "/lineup"}
+        />
+      );
+    if (pathname === "/account")
+      return (
+        <AccountPage
+          key={userId ?? "signed-out"}
+          client={client}
+          user={authenticated ? authState.session.user : null}
+          loadingSession={authState.status === "loading"}
+        />
+      );
+    if (pathname === "/statistics")
+      return <FeaturePendingPage feature="statistics" />;
+    if (pathname === "/friends")
+      return <FeaturePendingPage feature="friends" />;
+    if (pathname === "/notifications")
+      return <FeaturePendingPage feature="notifications" />;
+    if (pathname === "/how-it-works") return <HowItWorksPage />;
+    if (pathname === "/" || pathname === "/today" || pathname === "/today/")
+      return (
+        <TodayPage
+          key={userId ?? "anonymous"}
+          client={client}
+          userId={userId}
+        />
+      );
+    return (
+      <section className="panel" role="status">
+        <h1>Page not found</h1>
+        <p>That route isn't part of the Daydle arcade.</p>
+        <a href="/today">Return to Today</a>
+      </section>
+    );
+  }
+
   return (
-    <div className="app">
+    <div className={`app shell-${shell}`}>
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <header className="site-header">
-        <a href="/today" className="brand">
-          Daydle
-        </a>
-        <nav aria-label="Primary navigation">
-          <a
-            href="/today"
-            aria-current={
-              pathname === "/" || pathname === "/today" ? "page" : undefined
-            }
-          >
-            Today
-          </a>
-          <a
-            href="/games"
-            aria-current={pathname.startsWith("/games") ? "page" : undefined}
-          >
-            Games
-          </a>
-          <a href={authenticated ? "/account" : "/auth"}>
-            {authenticated ? "Account" : "Sign in"}
-          </a>
-        </nav>
-        <button
-          type="button"
-          className="paste-global"
-          onClick={openPaste}
-          ref={pasteTrigger}
-        >
-          Paste Results
-        </button>
-      </header>
-
-      {returnPrompt && !pasteOpen && (
+      <ArcadeHeader
+        pathname={pathname}
+        signedIn={authenticated}
+        onPaste={openPaste}
+        pasteTrigger={pasteTrigger}
+      />
+      {returnPrompt && !pasteOpen && shell !== "blank" && (
         <aside className="return-banner" role="status">
           <p>
-            Back from a game? Open Paste Results when you're ready. Clipboard
-            access requires a separate tap.
+            Back from a game? Paste a copied share result when you're ready.
+            Clipboard access always requires another tap.
           </p>
           <div>
             <button type="button" onClick={openPaste}>
@@ -130,55 +167,36 @@ export default function App() {
           </div>
         </aside>
       )}
-
-      <main id="main" className="content">
-        {pathname === "/auth/callback" ? (
-          <AuthCallback client={client} />
-        ) : pathname === "/auth" ? (
-          <AuthPage client={client} signedIn={authenticated} />
-        ) : pathname === "/games" || catalogDetail ? (
-          <CatalogPage
-            key={userId ?? "anonymous"}
-            client={client}
-            userId={userId}
-            detailSlug={catalogDetail?.[1]}
-          />
-        ) : pathname === "/account" ? (
-          <AccountPage
-            key={userId ?? "signed-out"}
-            client={client}
-            user={authenticated ? authState.session.user : null}
-            loadingSession={authState.status === "loading"}
-          />
-        ) : (
-          <TodayPage
-            key={userId ?? "anonymous"}
-            client={client}
-            userId={userId}
-          />
-        )}
+      <main id="main" className={`content content-${shell}`}>
+        {page()}
       </main>
-      <footer className="site-footer">
-        <small>
-          Daydle opens games on their publisher sites. Played markers are
-          manual, not verified results.
-        </small>
-        {health === "unavailable" && (
-          <span role="alert">
-            {" "}
-            Daydle API unavailable.
-            <button
-              type="button"
-              onClick={() => {
-                setHealth("checking");
-                setHealthRetry((n) => n + 1);
-              }}
-            >
-              Retry
-            </button>
-          </span>
-        )}
-      </footer>
+      {shell !== "blank" && (
+        <footer className="site-footer">
+          <small>
+            Publisher games open externally. Manual play markers are not verified results.
+          </small>
+          {health === "unavailable" && (
+            <span role="alert" className="health-warning">
+              Daydle API unavailable.
+              <button
+                type="button"
+                onClick={() => {
+                  setHealth("checking");
+                  setHealthRetry((n) => n + 1);
+                }}
+              >
+                Retry
+              </button>
+            </span>
+          )}
+        </footer>
+      )}
+      {shell === "tab" && !pasteOpen && (
+        <>
+          <ArcadePasteAction onPaste={openPaste} pasteTrigger={pasteTrigger} />
+          <ArcadeTabBar pathname={pathname} />
+        </>
+      )}
       {pasteOpen && (
         <PasteDialog key={userId ?? "anonymous"} onClose={closePaste} />
       )}

@@ -45,8 +45,8 @@ function png(size) {
       const glyph = (outer && !inner && u >= 0.36) || leftStem;
       const accent = ((u - 0.775) / 0.041) ** 2 +
         ((v - 0.25) / 0.041) ** 2 <= 1;
-      const rgb = accent ? [82, 216, 201] :
-        glyph ? [255, 255, 255] : [24, 34, 50];
+      const rgb = accent ? [78, 222, 163] :
+        glyph ? [173, 198, 255] : [5, 20, 36];
       const i = row + 1 + x * 4;
       pixels[i] = rgb[0];
       pixels[i + 1] = rgb[1];

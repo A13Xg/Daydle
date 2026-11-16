@@ -14,6 +14,8 @@ function isAppNavigation(url) {
 function isSafeStaticAsset(url) {
   return url.pathname.startsWith("/assets/") ||
     url.pathname.startsWith("/icons/") ||
+    url.pathname.startsWith("/fonts/") ||
+    url.pathname === "/arcade-emblem.svg" ||
     url.pathname === "/app.webmanifest" ||
     url.pathname === "/favicon.svg";
 }
