@@ -36,7 +36,7 @@ for db in "${databases[@]}"; do
     actual="$(
       node --input-type=module -e '
         import { BASELINE_PROBE_SQL } from "./scripts/ops/reconcile-migration-history.mjs";
-        process.stdout.write(BASELINE_PROBE_SQL + ";\\n");
+        process.stdout.write(BASELINE_PROBE_SQL + ";\n");
       ' | psql -X -v ON_ERROR_STOP=1 -t -A
     )"
     if [[ "$actual" != "$expected" ]]; then
