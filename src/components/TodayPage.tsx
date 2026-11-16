@@ -245,9 +245,16 @@ export function TodayPage({
   return (
     <div className="today-page">
       <header className="today-heading">
-        <h1>Today</h1>
-        <p>{day} · Your selected games, in your preferred order</p>
-        <p>Participation is optional. Missing a day is not a failure.</p>
+        <p className="eyebrow">YOUR DAILY RITUAL</p>
+        <h1>Today in your arcade.</h1>
+        <p className="today-date">{day}</p>
+        <p>Your selected puzzles, in your own order. Play as many or as few as you like.</p>
+        {playedIds !== null && !offline && games.length > 0 && (
+          <div className="today-summary" role="group" aria-label="Manually marked played today">
+            <span>{numberPlayed} / {games.length} marked played</span>
+            <progress value={numberPlayed} max={games.length} aria-label="Manual played marks, not verified results" />
+          </div>
+        )}
       </header>
 
       {(!online || offline) && (
@@ -268,7 +275,7 @@ export function TodayPage({
       <section className="panel" aria-labelledby="today-rotation">
         <div className="today-toolbar">
           <h2 id="today-rotation">My daily rotation</h2>
-          <a href="/games">Manage games</a>
+          <a href="/lineup">Edit lineup</a>
         </div>
         {games.length === 0 ? (
           <div>
@@ -281,10 +288,7 @@ export function TodayPage({
         ) : (
           <>
             {playedIds !== null && !offline && (
-              <p className="muted" role="status">
-                {numberPlayed} of {games.length} manually marked played. This is
-                not a count of verified results.
-              </p>
+              <p className="muted" role="status">Progress is based only on manual played marks, not verified puzzle results.</p>
             )}
             <ol className="today-list">
               {games.map((game) => {
@@ -294,16 +298,17 @@ export function TodayPage({
                 return (
                   <li key={game.id} className="today-game">
                     <div className="today-game-info">
-                      <h3>{game.name}</h3>
-                      <p>{game.publisher ?? "External game publisher"}</p>
-                      <small>{gameAvailabilityLabel(game)}</small>
-                      <small>
-                        {manualPlayedLabel(
-                          marked,
-                          playedIds !== null && !offline,
-                        )}
-                      </small>
-                      <small>Result saving is not available yet.</small>
+                      <span className={"game-avatar " + game.slug} aria-hidden="true">
+                        {game.name.slice(0, 2).toUpperCase()}
+                      </span>
+                      <div className="today-game-copy">
+                        <h3>{game.name}</h3>
+                        <p>{game.publisher ?? "External game publisher"}</p>
+                        <span className={"status-pill" + (marked && playedIds !== null && !offline ? " marked" : "")}>
+                          {manualPlayedLabel(marked, playedIds !== null && !offline)}
+                        </span>
+                        <small>{gameAvailabilityLabel(game)} · Scores not saved yet</small>
+                      </div>
                     </div>
                     <div className="today-actions">
                       {launchable && link ? (
@@ -325,6 +330,7 @@ export function TodayPage({
                       )}
                       <button
                         type="button"
+                        className={marked ? "marked" : ""}
                         disabled={!canEdit || savingId !== null}
                         aria-label={`${marked ? "Unmark" : "Mark"} ${game.name} played today`}
                         onClick={() => void togglePlayed(game.id, !marked)}
@@ -344,7 +350,7 @@ export function TodayPage({
         )}
       </section>
       <section className="panel" aria-labelledby="today-help">
-        <h2 id="today-help">Returning from a publisher</h2>
+        <div className="today-toolbar"><h2 id="today-help">Returning from a publisher</h2><a href="/how-it-works">How it works</a></div>
         <p>
           Publisher games may open in a Safari tab or another browser context.
           Return to Daydle from the tab switcher or home screen, then choose
