@@ -27,11 +27,34 @@ for db in "${databases[@]}"; do
   echo "Testing isolated database: $db"
   createdb "$db"
   export PGDATABASE="$db"
+  # Validate the EXACT read-only Management API baseline probe in PG17,
+  # first after the Phase 3 schema exists and later with Phase 4/5 present.
+  # The aggregate-only probe exposes no test account rows or secrets.
+  baseline_probe() {
+    local expected="$1"
+    local actual
+    actual="$(
+      node --input-type=module -e '
+        import { BASELINE_PROBE_SQL } from "./scripts/ops/reconcile-migration-history.mjs";
+        process.stdout.write(BASELINE_PROBE_SQL + ";\\n");
+      ' | psql -X -v ON_ERROR_STOP=1 -t -A
+    )"
+    if [[ "$actual" != "$expected" ]]; then
+      echo "Read-only baseline catalog probe failed against isolated PG17" >&2
+      exit 1
+    fi
+  }
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/bootstrap.sql
   for migration in supabase/migrations/*.sql; do
     echo "Applying migration: $migration"
     psql -X -v ON_ERROR_STOP=1 -f "$migration"
+    if [[ "$migration" == *phase3_auth_identity.sql ]]; then
+      baseline_probe "t|t|t|t|t|t|f|f"
+      echo "PASS: Phase 2/3 read-only recovery signatures"
+    fi
   done
+  baseline_probe "t|t|t|t|t|t|t|t"
+  echo "PASS: Phase 4/5 schema presence detection"
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/fixtures.sql
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/assertions.sql
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/auth-assertions.sql
