@@ -184,7 +184,13 @@ export async function handleResultsRequest(request: Request, env?: ResultsEnviro
   if (request.method === "GET") {
     if (detail) {
       const result = await rpc(auth, "my_result_detail", { p_user: auth.userId, p_id: detail[1] });
-      return isResponse(result) ? result : result === null ? errorResponse("not_found", 404) : responseJson(result);
+      if (isResponse(result)) return result;
+      if (result === null) return errorResponse("not_found", 404);
+      if (!result || typeof result !== "object" || Array.isArray(result) ||
+          !("id" in result) || typeof result.id !== "string") {
+        return errorResponse("result_service_unavailable", 503);
+      }
+      return responseJson(result);
     }
     const game = url.searchParams.get("game");
     if (game && !GAME_SLUG_PATTERN.test(game)) return errorResponse("invalid_game_filter", 400);
