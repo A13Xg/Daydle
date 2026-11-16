@@ -14,6 +14,8 @@
 
 ## Status legend and dependencies
 
+Obsidian Arcade from [PR #11](https://github.com/A13Xg/Daydle/pull/11) is now the owner-approved visual design standard. Implement it in Phase 6.5, not automatically in parser work. Screenshot-only features do not override IDEA.md.
+
 - **NOT STARTED** — no approved phase execution.
 - **IN PROGRESS** — phase branch/draft PR exists, planning or development underway.
 - **BLOCKED** — documented unsatisfied dependency or failure.
@@ -29,9 +31,10 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 2 | Domain model, persistence, and security foundations | 1 | COMPLETE — [PR #2](https://github.com/A13Xg/Daydle/pull/2), merge `b4a1140` |
 | 3 | Authentication, onboarding, and account identity | 2 | COMPLETE with owner-approved scope changes — [PR #3](https://github.com/A13Xg/Daydle/pull/3), merge `bff7b89`, evidence in [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md) |
 | 4 | Game catalog, selection, and discovery | 3 | COMPLETE — [PR #5](https://github.com/A13Xg/Daydle/pull/5), merge `e0fcb2b` |
-| 5 | Today experience, PWA, and external-game navigation | 4 | BLOCKED ON DEVICE ACCEPTANCE — source [PR #7](https://github.com/A13Xg/Daydle/pull/7), [Phase 4/5 migrations + Worker deployed](https://github.com/A13Xg/Daydle/actions/runs/43814332227); public endpoints subsequently verified; [PR #10](https://github.com/A13Xg/Daydle/pull/10) hardens post-deploy smoke; real iPhone tests pending |
-| 6 | Deterministic parser registry and initial game coverage | 5 | NOT STARTED |
-| 7 | Result ingestion, history, and correction lifecycle | 6 | NOT STARTED |
+| 5 | Today experience, PWA, and external-game navigation | 4 | COMPLETE — [PR #7](https://github.com/A13Xg/Daydle/pull/7) merged; [release](https://github.com/A13Xg/Daydle/actions/runs/43814332227) deployed; [PR #10](https://github.com/A13Xg/Daydle/pull/10) merged; owner-reported 8/8 iPhone PWA tests PASS; [archive](completedPhases/Phase5Exec.md) |
+| 6 | Deterministic parser registry and initial game coverage | 5 | NOT STARTED on main; work in [PR #12](https://github.com/A13Xg/Daydle/pull/12) |
+| 6.5 | Obsidian Arcade UI/UX overhaul | 6 | NOT STARTED; design approved |
+| 7 | Result ingestion, history, and correction lifecycle | 6.5 | NOT STARTED |
 | 8 | Personal statistics, streaks, and achievements | 7 | NOT STARTED |
 | 9 | Public profiles and instant friendship | 8 | NOT STARTED |
 | 10 | Spoiler-safe comparisons, scoreboards, and rankings | 9 | NOT STARTED |
@@ -122,7 +125,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 
 
 ## Phase 5 — Today experience, PWA, and external-game navigation
-**Main status:** BLOCKED ON PHYSICAL iPHONE ACCEPTANCE. Phase 5 application source was merged via [PR #7](https://github.com/A13Xg/Daydle/pull/7). Owner-approved [release run 43814332227](https://github.com/A13Xg/Daydle/actions/runs/43814332227) **actually applied and verified** Phase 4/5 Supabase SQL and **deployed** Cloudflare Worker `daydle-app` (version `126e8806-3cb5-4765-a164-225466531727`). The action's final smoke step misclassified a transient HTTP 200 HTML response as valid health JSON and failed **after** successful deployment. Subsequent independent read-only GitHub CI probes confirmed the hosted health JSON, JSON API 404, manifest, service worker, Today/Games pages and icons. [PR #10](https://github.com/A13Xg/Daydle/pull/10) adds content-aware propagation retries and a build-version PWA check. The physical Safari/installed-PWA scenarios remain **NOT VERIFIED**, and the active plan remains [Phase5Exec.md](Phase5Exec.md). **Dependencies:** 4.
+**Main status:** COMPLETE — the owner reported all eight physical iPhone Safari/installed-PWA scenarios PASS on November 16, 2026. This is manual owner attestation, not independently reproduced hardware CI. Archived evidence: [completedPhases/Phase5Exec.md](completedPhases/Phase5Exec.md). Phase 5 application source was merged via [PR #7](https://github.com/A13Xg/Daydle/pull/7). Owner-approved [release run 43814332227](https://github.com/A13Xg/Daydle/actions/runs/43814332227) **actually applied and verified** Phase 4/5 Supabase SQL and **deployed** Cloudflare Worker `daydle-app` (version `126e8806-3cb5-4765-a164-225466531727`). The action's final smoke step misclassified a transient HTTP 200 HTML response as valid health JSON and failed **after** successful deployment. Subsequent independent read-only GitHub CI probes confirmed the hosted health JSON, JSON API 404, manifest, service worker, Today/Games pages and icons. [PR #10](https://github.com/A13Xg/Daydle/pull/10) adds content-aware propagation retries and a build-version PWA check. The eight physical Safari/installed-PWA scenarios were subsequently **reported PASS by the owner**; the plan has been archived. **Dependencies:** 4.
 
 **Automated gates completed on PR #7:**
 - [x] Today from selected games in order with private manual played markers distinct from verified results.
@@ -141,8 +144,8 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 - [x] PR #9 merged. Protected [release 43814332227](https://github.com/A13Xg/Daydle/actions/runs/43814332227) applied Phase 4/5 migrations and verified all four version records, then deployed the Cloudflare Worker to `daydle.agoodman.io`. **The red conclusion applies only to the immediate post-deploy smoke.**
 - [x] Independent read-only CI verified live JSON health, JSON 404, manifest, service worker, Today/Games navigation and 180/192/512px icons after deployment.
 - [x] [PR #10](https://github.com/A13Xg/Daydle/pull/10) implements bounded semantic HTTP retries, generated Worker routing assertion, source-versioned SW checking in the protected build and regression coverage for HTTP 200 HTML fallback. [CI 43816919772](https://github.com/A13Xg/Daydle/actions/runs/43816919772) passed **118 tests/23 suites and both PostgreSQL 17 security databases**; [live public verification 43816547897](https://github.com/A13Xg/Daydle/actions/runs/43816547897) confirmed all nine endpoints.
-- [ ] Merge PR #10 to harden subsequent release runs, retaining production approval; no additional schema migration is required for the already deployed Phase 5.
-- [ ] Physical iPhone Safari/home-screen install, Google/Apple sign-in, publisher return, clipboard permissions, offline restoration, and account switching. All remain NOT VERIFIED. Keep Phase 5's final acceptance open. The owner-directed release-first sequence permits reviewed merge before iPhone verification without declaring the phase complete.
+- [x] [PR #10](https://github.com/A13Xg/Daydle/pull/10) merged at [1ed806c](https://github.com/A13Xg/Daydle/commit/1ed806c249fbaa4f6e4a1b549ea99384e2590c69). No additional migration needed.
+- [x] Owner reported all eight on-device Safari/home-screen PWA checks PASS: installation, Google/Apple login, publisher return, clipboard gesture/fallback, offline, account isolation and reconnection. No new automated device proof was generated.
 
 
 **Purpose:** Close the mobile game-launch-return loop without inventing iOS clipboard/browser capabilities.
@@ -171,8 +174,21 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 
 **Exit/verification:** Fixture suite verifies all supported games, false-positive and malformed-input handling, confidence routing, puzzle resolution, and bounded execution.
 
+## Phase 6.5 — Obsidian Arcade UI/UX overhaul
+**Status:** NOT STARTED. **Dependencies:** 6. **Visual authority:** [Obsidian Arcade](referenceFiles/Daydle%20UI-UX%20Reference/DESIGN.md) and 13 approved example screens.
+
+**Purpose:** Build the permanent mobile-first visual system before adding result history, statistics and social interfaces.
+
+**Implementation guidance:**
+- Implement dark-only Plus Jakarta Sans tokens, accessible shared components, mobile five-tab navigation, stack and blank/auth shells. Bundle production assets; never ship Tailwind Play CDN or remote demo fonts.
+- Rebuild existing auth, Today, catalog, account and Paste views without changing security, clipboard gestures, PWA/offline, external navigation or backend contracts. Unimplemented Stats/Friends routes must have genuine empty/unavailable states, never fabricated metrics.
+- Use mockup screens for visual composition; friend requests, global cross-game rankings, unverified counters, push alerts, reactions and multi-site auto-launch remain outside the approved product baseline.
+- Choose web libraries and platform-adapter seams suitable for a possible future WKWebView shell; no Capacitor setup, Xcode build or App Store publication is authorized in this phase.
+
+**Exit/verification:** Consistent responsive UI and interaction coverage across existing routes; automated accessibility and full regression suite; manual Safari/PWA checks for affected flows.
+
 ## Phase 7 — Result ingestion, history, and correction lifecycle
-**Status:** NOT STARTED. **Dependencies:** 6.
+**Status:** NOT STARTED. **Dependencies:** 6.5.
 
 **Purpose:** Make pasted results reliably owned, deduplicated, persisted, corrected, and retrievable.
 
