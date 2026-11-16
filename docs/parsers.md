@@ -33,6 +33,6 @@ Normalization accepts at most **10,000 UTF-16 code units** and **64 raw lines**,
 - Ingestion and catalog `parser_status=supported` remain disabled until Phase 7 wires an authorized API. Strands markers demonstrate claimed completion, not a validated puzzle solution. No global score conversions exist.
 - No actual iOS native wrapper is included. This library is platform-independent and uses no DOM or Node-specific APIs, preserving future packaging options.
 
-### Verification
+### Verified source checks
 
-`npm run typecheck`, `npm run lint`, `npm run format:check`, `npm test`, `npm run build` and CI PostgreSQL security suites are required before Phase 6 can move to review. Report actual run status in `completedPhases/Phase6Exec.md` only when available.
+[Committed-source PR CI #43836926617](https://github.com/A13Xg/Daydle/actions/runs/43836926617) passed TypeScript, ESLint, Prettier, 164 tests/24 suites (46 parser-specific cases), production build, PWA HTTP smoke and the two isolated PostgreSQL 17 database-security jobs. This validates the source library but **does not** prove live publisher formats or hosted result ingestion. Details are in [the Phase 6 execution archive](../completedPhases/Phase6Exec.md).

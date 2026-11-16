@@ -32,7 +32,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 3 | Authentication, onboarding, and account identity | 2 | COMPLETE with owner-approved scope changes — [PR #3](https://github.com/A13Xg/Daydle/pull/3), merge `bff7b89`, evidence in [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md) |
 | 4 | Game catalog, selection, and discovery | 3 | COMPLETE — [PR #5](https://github.com/A13Xg/Daydle/pull/5), merge `e0fcb2b` |
 | 5 | Today experience, PWA, and external-game navigation | 4 | COMPLETE — [PR #7](https://github.com/A13Xg/Daydle/pull/7) merged; [release](https://github.com/A13Xg/Daydle/actions/runs/43814332227) deployed; [PR #10](https://github.com/A13Xg/Daydle/pull/10) merged; owner-reported 8/8 iPhone PWA tests PASS; [archive](completedPhases/Phase5Exec.md) |
-| 6 | Deterministic parser registry and initial game coverage | 5 | NOT STARTED on main; work in [PR #12](https://github.com/A13Xg/Daydle/pull/12) |
+| 6 | Deterministic parser registry and initial game coverage | 5 | IN REVIEW on PR branch — [PR #12](https://github.com/A13Xg/Daydle/pull/12), [verified CI](https://github.com/A13Xg/Daydle/actions/runs/43836926617); **not COMPLETE on main until merged** |
 | 6.5 | Obsidian Arcade UI/UX overhaul | 6 | NOT STARTED; design approved |
 | 7 | Result ingestion, history, and correction lifecycle | 6.5 | NOT STARTED |
 | 8 | Personal statistics, streaks, and achievements | 7 | NOT STARTED |
@@ -160,7 +160,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Selected game -> publisher -> Daydle return -> user-triggered Paste shell is usable on iOS; offline read-only experience documented and tested.
 
 ## Phase 6 — Deterministic parser registry and initial game coverage
-**Status:** NOT STARTED. **Dependencies:** 5.
+**Status:** IN REVIEW on the PR branch, NOT yet merged into main — [PR #12](https://github.com/A13Xg/Daydle/pull/12), [archived plan](completedPhases/Phase6Exec.md), [CI 43836926617](https://github.com/A13Xg/Daydle/actions/runs/43836926617) (164 tests/24 suites and two database jobs passed). **Dependencies:** 5.
 
 **Purpose:** Build an isolated, versioned, testable server-side parsing engine and the first 5–10 reliable game parsers.
 

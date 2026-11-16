@@ -1,9 +1,9 @@
 # Phase 6 Execution Plan — Deterministic parser registry and initial game coverage
 
-**Status:** PLAN REVIEWED — ready to implement; automated gates not yet executed.
+**Status:** IN REVIEW — deterministic parser implementation complete and CI/security gates passed; human review/merge pending.
 **Base:** `main` at `374b97f028137a51d19c47591b7aa146cf1e70f6` (PR #11 merged, main CI 43833255126 passed).
 **Branch:** `phase/06-deterministic-parsers`; **PR:** [#12](https://github.com/A13Xg/Daydle/pull/12) (draft until gates pass).
-**Authority:** [IDEA.md](IDEA.md) parsing, puzzle identity and data privacy; [roadmap.md](roadmap.md) Phase 6 and approved Phase 6.5; [AGENTS.md](AGENTS.md); owner-reported Phase 5 device acceptance and [archive](completedPhases/Phase5Exec.md).
+**Authority:** [IDEA.md](../IDEA.md) parsing, puzzle identity and data privacy; [roadmap.md](../roadmap.md) Phase 6 and approved Phase 6.5; [AGENTS.md](../AGENTS.md); owner-reported Phase 5 device acceptance and [archive](../completedPhases/Phase5Exec.md).
 
 ## Preflight and Phase 5 acceptance
 
@@ -30,7 +30,7 @@
 - `shared/parsers/registry.ts` and `shared/parsers/index.ts`: single-result routing, ambiguity/unknown/error taxonomy and exports without Worker or browser runtime dependencies.
 - `tests/parsers.test.ts`: fixture-driven valid, loss/hard-mode/date/emoji/hint, malformed, false-positive and ambiguous/multi-result cases.
 - `docs/parsers.md`: format coverage/limitations, exact fixtures provenance, versioning and acceptance rules.
-- `Phase6Exec.md`: retain plan and outcomes while draft; archive only after all gates pass.
+- `completedPhases/Phase6Exec.md`: reviewed plan and measured outcomes archived after CI and audit.
 
 ## Input, identity and validity rules
 
@@ -59,6 +59,24 @@
 4. Run **real** GitHub PR CI: `npm ci`, `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm test`, `npm run build`, `npm run smoke` and both disposable PostgreSQL 17 security suites. Do not treat static review as an executed test.
 5. Audit false positives, Unicode, max input, malformed data, multi-result handling, puzzle identity and metadata boundaries, generated JS portability, secrets, attribution, changed files and phase scope. Fix and rerun.
 6. Once checks pass and documentation is honest, append measured completion evidence; move this plan to `completedPhases/Phase6Exec.md`, set Phase 6 to IN REVIEW on the PR branch, update PR body and change draft to ready. Do not merge/deploy.
+
+## Verified implementation and closure evidence — November 16, 2026
+
+**Implemented:** Five pure, versioned, deterministic parser modules for seeded catalog slugs `wordle`, `connections`, `strands`, `mini-crossword`, `quordle`. Typed normalized input, bounded control/size/line protection, safe diagnostics, ambiguous/mixed share detection, strict format/puzzle identity rules and no persistence side effects. [Parser documentation](../docs/parsers.md) records supported variants and limitations. No game-catalog parser support flag was changed pending Phase 7 ingestion.
+
+**Executed checks:** [PR CI run 43836926617](https://github.com/A13Xg/Daydle/actions/runs/43836926617) passed both `validate` and `database-security` jobs for committed source `21f1281048e8235eb7d5e51a8745b56442f9f501`:
+
+- `npm ci --no-audit --no-fund`, strict `npm run typecheck`, `npm run lint`, immutable `npm run format:check` — PASS.
+- `npm test` — PASS: **164/164 tests across 24 suites**, including **46 parser cases** across valid/invalid/unicode/false-positive/multi-result boundaries.
+- `npm run build` and HTTP `npm run smoke` — PASS: Worker/client build plus API, Today, manifest, icons and service worker smoke.
+- `bash scripts/test-db.sh` — PASS on two isolated PostgreSQL 17 security databases.
+- A temporary CI formatter diagnostic was used to obtain canonical source formatting, then removed. The **final** immutable CI workflow was restored identically to `main` and rerun successfully on committed source; no pre-merge mutation step remains.
+
+**Audit:** PR #12 diff inspected after CI: 22 changed paths (before final archiving), zero production workflow diffs, zero migrations, zero application/Worker route changes, no credentials, no new native package or tool-attribution trailers. Relative links in current design, roadmap, PWA and parser documentation checked against the branch tree with zero missing files. Source remains completely offline and not publicly exposed; no raw share text logged.
+
+**Limitations:** Publisher formats may evolve. Strands sample derives from documented marker semantics rather than exhaustive publisher share fixture history. Wordle hard mode is only a share claim. Puzzle-number shares do not imply a date; Mini has the explicit share date. Real signed-in ingestion/persistence, provider verification and revised UI are **not part of Phase 6**. No new physical-device check is needed for pure parser code; the separate Phase 5 PWA gate was previously accepted by the owner.
+
+**Disposition:** All Phase 6 source gates pass; archive this plan and mark phase **IN REVIEW** on the PR branch only. `main` remains unchanged until PR #12 is explicitly merged. Phase 6.5 (Obsidian Arcade integration) is the next phase after the merge. No hosted write or deployment was performed.
 
 ## Risks and rollback
 
