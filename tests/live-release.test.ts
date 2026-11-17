@@ -228,6 +228,23 @@ describe("live release verification after Cloudflare deployment", () => {
     ).toMatch(/HTTP 503/);
   });
 
+  it("identifies missing Worker bindings versus rejected Supabase RPCs without response-body disclosure", async () => {
+    const errors = [
+      ["service_unavailable", /Worker runtime configuration/],
+      ["result_service_unavailable", /Supabase privileged RPC/],
+      ["social_service_unavailable", /unexpected safe public-profile/],
+    ] as const;
+    for (const [code, expected] of errors) {
+      const response = new Response(
+        JSON.stringify({ error: code, private: "DO_NOT_LOG_THIS" }),
+        { status: 503, headers: TYPE_JSON },
+      );
+      const message = await inspectPublicPlayerAbsent(response);
+      expect(message).toMatch(expected);
+      expect(message).not.toContain("DO_NOT_LOG_THIS");
+    }
+  });
+
   it("verifies the entire live PWA/API contract using non-secret requests", async () => {
     const fetchImpl = vi.fn(async (url: string) => liveResponse(url));
     const log = vi.fn();
