@@ -3,6 +3,7 @@ import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { validateDisplayName } from "../lib/auth-actions";
 import { ArcadeIcon } from "./ArcadeIcon";
 import { loadAdminView } from "../lib/administration-api";
+import { exportMyData, savePrivacyArchive, privacyErrorText } from "../lib/privacy-api";
 
 interface Profile {
   display_name: string;
@@ -34,6 +35,8 @@ export function AccountPage({
   const [error, setError] = useState("");
   const [reload, setReload] = useState(0);
   const [adminAccess, setAdminAccess] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [exportProgress, setExportProgress] = useState("");
 
   useEffect(() => {
     setAdminAccess(false);
@@ -126,6 +129,26 @@ export function AccountPage({
       );
     } finally {
       setSavingProfile(false);
+    }
+  }
+
+  async function downloadAccountExport() {
+    if (!client || !user || exporting) return;
+    setExporting(true);
+    setExportProgress("Preparing private account export…");
+    setError("");
+    setMessage("");
+    try {
+      const data = await exportMyData(client, user.id, (dataset, count) => {
+        setExportProgress("Collecting " + dataset.replaceAll("_", " ") + ": " + count + " records");
+      });
+      savePrivacyArchive(data);
+      setMessage("Your private export file was prepared. Check your browser's downloads.");
+    } catch (cause) {
+      setError(privacyErrorText(cause));
+    } finally {
+      setExporting(false);
+      setExportProgress("");
     }
   }
 
@@ -261,6 +284,19 @@ export function AccountPage({
         <a className="secondary-link" href="/history">
           My result history
         </a>
+        <button
+          type="button"
+          disabled={exporting}
+          onClick={() => void downloadAccountExport()}
+          aria-describedby="account-export-privacy"
+        >
+          {exporting ? "Preparing export…" : "Export my account data"}
+        </button>
+        <small id="account-export-privacy" className="fine-print">
+          The JSON file may include private past share text and result history.
+          Keep the downloaded file private. An interrupted export never saves a partial file.
+        </small>
+        {exportProgress && <p role="status">{exportProgress}</p>}
         <a className="secondary-link" href="/how-it-works">
           How Daydle works
         </a>
