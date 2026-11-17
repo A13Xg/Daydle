@@ -102,7 +102,9 @@ export async function handleAdministrationRequest(
       if (isResponse(value)) return value;
       if (!validRequests(value))
         return errorResponse("request_service_unavailable", 503);
-      return responseJson(value);
+      return responseJson(value.map(({ id, name, url: publisherUrl, notes, status, created_at, vote_count, voted_by_me, suggested_by_me }) => ({
+        id, name, url: publisherUrl, notes, status, created_at, vote_count, voted_by_me, suggested_by_me,
+      })));
     }
     if (!auth) return errorResponse("authentication_required", 401);
     const body = await boundedJson(request);
