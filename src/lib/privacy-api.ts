@@ -111,6 +111,12 @@ export function privacyErrorText(error: unknown): string {
       return "This account contains too many records for an in-browser export. Contact support for a managed export.";
     case "cancelled":
       return "Export cancelled.";
+    case "recent_sign_in_required":
+      return "Sign in again with Apple or Google, then retry account deletion within 15 minutes.";
+    case "delete_confirmation_required":
+      return "Type the exact confirmation phrase before deleting the account.";
+    case "account_deletion_unavailable":
+      return "Daydle could not confirm account deletion. Your account may still be active; contact support before retrying.";
     case "connection_failed":
       return "Connection interrupted. No incomplete export was saved; retry.";
     default:
@@ -135,4 +141,46 @@ export function savePrivacyArchive(archive: PrivacyArchive): void {
     // Give Safari time to resolve the blob URL before revoking it.
     setTimeout(() => URL.revokeObjectURL(url), 60_000);
   }
+}
+
+export const DELETE_ACCOUNT_PHRASE = "DELETE MY DAYDLE ACCOUNT";
+
+/** Irreversible; the server independently verifies a recent OAuth sign-in. */
+export async function permanentlyDeleteMyAccount(
+  client: SupabaseClient,
+  userId: string,
+  confirmation: string,
+): Promise<void> {
+  if (confirmation !== DELETE_ACCOUNT_PHRASE)
+    throw new PrivacyError("delete_confirmation_required");
+  const { token } = await accessToken(client, userId);
+  let response: Response;
+  try {
+    response = await fetch("/api/v1/privacy/delete", {
+      method: "POST",
+      headers: {
+        authorization: "Bearer " + token,
+        "content-type": "application/json",
+      },
+      cache: "no-store",
+      credentials: "omit",
+      body: JSON.stringify({ confirmation }),
+    });
+  } catch {
+    throw new PrivacyError("connection_failed");
+  }
+  let result: unknown;
+  try {
+    result = await response.json();
+  } catch {
+    throw new PrivacyError("invalid_response");
+  }
+  if (!response.ok) {
+    const code = result && typeof result === "object" && "error" in result &&
+      typeof result.error === "string" ? result.error : "account_deletion_unavailable";
+    throw new PrivacyError(code);
+  }
+  if (!result || typeof result !== "object" ||
+      !("status" in result) || result.status !== "deleted")
+    throw new PrivacyError("invalid_response");
 }
