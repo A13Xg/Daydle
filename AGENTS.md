@@ -129,7 +129,7 @@ If review finds issues, keep or reopen the branch/PR, fix them, rerun gates, and
 ## Baseline design constraints to check every phase
 
 1. React/TypeScript/Vite, Cloudflare Workers, Supabase Auth/Postgres; don't introduce unnecessary services or a second backend.
-2. Open public signup; email/password and Apple/Google OAuth; no required password for OAuth-only account.
+2. Open signup with Apple/Google OAuth as the active owner-approved Phase 3 release scope; email/password is deliberately disabled pending a safe confirmed-email design and separate authorization. No local password for OAuth-only accounts; see [Phase 3 scope record](completedPhases/Phase3Exec.md#owner-scope-changes-and-deviations-from-the-plan).
 3. All user profiles publicly expose permitted game performance, not email/raw inputs or sensitive account details. Friendship only filters the Compare with Friends view.
 4. Five-character secure random friend codes with DB collision retry; instant symmetric friendship by code/link/QR; no acceptance gate.
 5. Server-authoritative deterministic versioned parsers, initially 5–10 supported games and broad launchable catalog.

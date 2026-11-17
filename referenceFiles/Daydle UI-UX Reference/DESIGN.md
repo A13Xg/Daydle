@@ -155,13 +155,13 @@ spacing:
 
 # Daydle Design System: Obsidian Arcade
 
-> **Status: owner-approved visual standard.** Phase 6.5 implements these Obsidian Arcade tokens and layouts in React. The 13 standalone mockups remain reference implementations, not permission to add unapproved mechanics. `IDEA.md`, `roadmap.md` and `AGENTS.md` govern functionality, security and release scope.
+> **Status: owner-approved visual standard, implemented in merged Phase 6.5 [PR #13](https://github.com/A13Xg/Daydle/pull/13).** The Obsidian Arcade tokens and layouts are used in the React app. The 13 standalone mockups remain reference implementations, not permission to add unapproved mechanics. `IDEA.md`, `roadmap.md` and `AGENTS.md` govern functionality, security and release scope.
 
 This is the **only** design system in the reference set. The tokens above are the single source of truth: every mockup in this folder uses these tokens ($1). A few deliberate exceptions remain: game-brand tints (for example the Wordle green and Connections orange badges), a handful of translucent status tints, and some inline `style` colors on `account`. Prefer tokens for anything new. Do not introduce a second palette or typeface.
 
 ## Owner-approved design authority and platform scope
 
-Obsidian Arcade and the 13 associated examples are approved as the UI/UX standard. The React application has **not** yet implemented this design; Phase 6.5 is the planned overhaul. This visual authority does not add screenshot-only product behavior. Web/PWA is the current target, with future iOS wrapper **compatibility** as a design constraint, not as an approved development deliverable.
+Obsidian Arcade and the 13 associated examples are approved as the UI/UX standard. The React application implements the visual standard from merged Phase 6.5; the mockups remain references for subsequent screens. Phase 7's History and Paste source is merged, but its hosted rollout is blocked on separate authorization and integration acceptance. This visual authority does not add screenshot-only product behavior. Web/PWA is the current target, with future iOS wrapper **compatibility** as a design constraint, not as an approved development deliverable.
 
 ## Platform targets: web now, preserve future iOS compatibility
 
@@ -228,7 +228,7 @@ Rules: put text on `primary-container` only in `on-primary-container`. Never pla
 
 ## Typography
 
-One family, **Plus Jakarta Sans** (400 to 800), bundled with the app. Icons use **Material Symbols Outlined**, bundled as a subset. Use the named scale (`text-headline-md`, `font-headline-md`); do not invent sizes.
+One family, **Plus Jakarta Sans** (400 to 800), bundled with the app. The standalone mockups use **Material Symbols Outlined**; the production React UI uses locally bundled inline SVG icons rather than a network-loaded font. Use the named scale (`text-headline-md`, `font-headline-md`); do not invent sizes.
 
 - Scores, streaks, headers: `display-*` and `headline-*`, weight 700 to 800, tight tracking.
 - Micro-labels and badges: uppercase `label-sm`, 0.05em tracking.

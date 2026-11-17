@@ -21,7 +21,7 @@ The brand is not limited to games ending in “-dle.” Examples of categories i
 
 ## 3. Identity, registration, and profile data
 
-- Support email/password registration and Apple/Google OAuth using Supabase Auth. OAuth-only users do not need a local password; never store or invent one. Account identity has a verified/auth-provider email; Apple private relay is valid.
+- **Current approved rollout:** open registration via Apple/Google OAuth using Supabase Auth. The owner disabled email/password on the hosted project during Phase 3 because enabling unconfirmed email signup created an account pre-hijacking risk through automatic identity linking. Email/password remains a deferred product option, not an enabled beta flow; reintroduction requires secure email confirmation, provider/SMTP verification and explicit approval. OAuth-only users do not need a local password; never store or invent one. Account identity has a verified/auth-provider email; Apple private relay is valid. See [Phase 3 owner scope changes](completedPhases/Phase3Exec.md#owner-scope-changes-and-deviations-from-the-plan).
 - Each profile has a display name (not necessarily unique) and a unique generated friend code. Accept a provider-supplied display name when available; otherwise collect it in onboarding. Do not expose a public email lookup.
 - Public user profiles show selected/played games, scores, results, game-specific statistics, rankings, historical trends, streaks, and achievements, subject to spoiler restrictions.
 - Emails, authentication factors, private settings, raw pasted submissions, backend diagnostic data, moderation data, and other sensitive fields are never public.
