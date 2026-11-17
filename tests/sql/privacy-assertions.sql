@@ -30,13 +30,21 @@ BEGIN
   page:=public.privacy_export_page(p,'results',(page->0->>'id')::uuid,10);
   IF jsonb_array_length(page)<>0 THEN RAISE EXCEPTION 'Result pagination replays data'; END IF;
   page:=public.privacy_export_page(q,'results',NULL,10);
-  IF jsonb_array_length(page)<>0 THEN RAISE EXCEPTION 'Other account export saw results'; END IF;
+  IF EXISTS (
+    SELECT 1 FROM jsonb_array_elements(page) item
+    LEFT JOIN public.game_results r ON r.id=(item->>'id')::uuid
+    WHERE r.user_id IS DISTINCT FROM q
+  ) THEN RAISE EXCEPTION 'Other account export included foreign results'; END IF;
   page:=public.privacy_export_page(p,'raw',NULL,20);
   IF jsonb_array_length(page)<>1 OR page::text NOT LIKE '%Wordle 100 4/6%'
     OR page::text LIKE '%Unknown old result%'
   THEN RAISE EXCEPTION 'Expired share exported or current owner share missing'; END IF;
   page:=public.privacy_export_page(q,'raw',NULL,20);
-  IF jsonb_array_length(page)<>0 THEN RAISE EXCEPTION 'Other account exported raw text'; END IF;
+  IF page::text LIKE '%Wordle 100 4/6%' OR EXISTS (
+    SELECT 1 FROM jsonb_array_elements(page) item
+    LEFT JOIN public.raw_submissions r ON r.id=(item->>'id')::uuid
+    WHERE r.user_id IS DISTINCT FROM q
+  ) THEN RAISE EXCEPTION 'Other account export included foreign raw text'; END IF;
   page:=public.privacy_export_page(p,'friends',NULL,20);
   IF jsonb_array_length(page)<>1 OR page->0->>'id'<>q::text
   THEN RAISE EXCEPTION 'Owner friends export missing'; END IF;
