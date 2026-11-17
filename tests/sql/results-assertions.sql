@@ -198,6 +198,12 @@ BEGIN
                                  '{gameSlug}','"globle"'::jsonb));
   EXCEPTION WHEN invalid_parameter_value THEN denied:=true;
   END;
+  r:=public.capture_unparsed_share(user_two,'Unknown Daily Game #17',
+    'unsupported','unknown_header');
+  IF r->>'status'<>'captured'
+    OR (SELECT count(*) FROM public.raw_submissions
+        WHERE raw_share_text='Unknown Daily Game #17' AND result_id IS NULL)<>2
+  THEN RAISE EXCEPTION 'Same raw share was deduplicated across distinct owners'; END IF;
   IF NOT denied THEN RAISE EXCEPTION 'Unsupported parser game saved'; END IF;
   denied:=false;
   BEGIN
