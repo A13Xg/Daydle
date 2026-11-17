@@ -103,6 +103,14 @@ BEGIN
   new_id:=(v->>'id')::uuid;
   IF (SELECT count(*) FROM public.game_category_links WHERE game_id=new_id)<>2
   THEN RAISE EXCEPTION 'Catalog categories not saved atomically'; END IF;
+  UPDATE public.games SET link_status='verified',link_checked_at=now() WHERE id=new_id;
+  v:=public.daydle_admin_action(alice,'save_game',
+    jsonb_build_object('id',new_id,'slug','phase11-demo','name','Phase 11 Demo',
+      'url','https://games.example/changed','status','active','categories','word, numbers'));
+  IF v->>'status'<>'saved' OR
+      (SELECT link_status FROM public.games WHERE id=new_id)<>'unverified' OR
+      (SELECT link_checked_at FROM public.games WHERE id=new_id) IS NOT NULL
+  THEN RAISE EXCEPTION 'Catalog URL change inherited stale verified link'; END IF;
   v:=public.daydle_admin_action(alice,'retire_game',jsonb_build_object('id',new_id));
   IF v->>'status'<>'saved'
     OR (SELECT status FROM public.games WHERE id=new_id)<>'retired'
@@ -132,7 +140,7 @@ BEGIN
     RAISE EXCEPTION 'Raw text leaked into diagnostics'; END IF;
   IF (SELECT count(*) FROM app_private.admin_events
       WHERE actor_id=alice AND action IN ('suggestion_moderated','requests_restrict',
-        'requests_unrestrict','catalog_saved','catalog_retired','sample_reviewed'))<>6
+        'requests_unrestrict','catalog_saved','catalog_retired','sample_reviewed'))<>7
   THEN RAISE EXCEPTION 'Admin mutation audit trail incomplete'; END IF;
 END $$;
 ROLLBACK;
