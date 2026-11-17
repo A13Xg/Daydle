@@ -166,7 +166,7 @@ export async function boundedJson(
   }
 }
 
-export export async function rpc(
+export async function rpc(
   auth: Omit<ResultAuth, "userId">,
   method: string,
   args: Record<string, unknown>,
