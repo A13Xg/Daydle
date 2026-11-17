@@ -81,6 +81,8 @@ function projectAdminView(
       typeof row.raw_text !== "string" ||
       row.raw_text.length > 10000 ||
       typeof row.expires_at !== "string" ||
+      !Number.isFinite(Date.parse(row.expires_at)) ||
+      Date.parse(row.expires_at) <= Date.now() ||
       !["invalid", "unsupported"].includes(String(row.disposition)) ||
       !row.diagnostics ||
       typeof row.diagnostics !== "object" ||
