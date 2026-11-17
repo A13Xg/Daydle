@@ -2,7 +2,7 @@
 
 **Status:** SOURCE CI VERIFIED / HOSTED ACCEPTANCE BLOCKED — source implemented and validated; Phase 8 SQL applied and verified in Daydle Preview. Draft PR remains open; Cloudflare Worker/frontend has NOT been deployed. Do not archive or mark COMPLETE until all acceptance gates are satisfied.
 **Branch/PR:** `phase/08-personal-statistics-achievements` / [PR #15](https://github.com/A13Xg/Daydle/pull/15).
-**Base:** `main` at `d0c693035f297d044a0663e6baf9d3e182b5d2e2`.
+**Base:** `main`, updated from the current merged release evidence before readiness verification.
 **Source authorities:** IDEA.md §§7–9, roadmap.md Phase 8, AGENTS.md, Obsidian Arcade DESIGN.md, completed Phase 7 source PR #14.
 
 ## Preflight, dependency and release decision
@@ -61,3 +61,9 @@
 - The repository's `wrangler.jsonc` targets only **`daydle-app` at `daydle.agoodman.io`**, and `.github/workflows/deploy.yml` is a **main-only, reviewer-protected production** workflow. There is **no separate hosted preview Worker** in the repo. The user authorized *preview* Worker/frontend, not an unreviewed replacement of the live domain.
 - This connection cannot write protected GitHub environment secrets or Cloudflare Worker runtime secrets, and cannot dispatch GitHub Actions workflows or invoke Wrangler. Secrets (notably the runtime **`SUPABASE_SERVICE_ROLE_KEY`**, plus public URL/publishable key) therefore remain unconfigured/unverified. No Cloudflare Worker/frontend deploy, secret write, protected workflow dispatch or live OAuth/result/statistics test was performed.
 - Release guidance: see [`docs/phase78-release.md`](docs/phase78-release.md). Distinguish database readiness from application availability. PR #15 remains draft and unmerged.
+
+## Pre-merge release preparation
+
+- Phase 7 SQL and Phase 8 SQL source files were renamed to match the actual, already-applied migration version/name pairs. The structured hosted migration validator now checks all six records rather than only the original Phase 2–5 allowlist. No SQL was re-applied.
+- The main-only, reviewer-protected `deploy.yml` will check hosted migration records (read-only), confirm the `SUPABASE_SERVICE_ROLE_KEY` Cloudflare secret name without exposing its value, populate public Worker runtime bindings from protected GitHub configuration, and verify the exact deployed PWA asset version. Owner authorized the existing `daydle.agoodman.io` Worker; no application deploy occurred in this change.
+- Remaining steps: current-head validation, user merge, protected deployment review/dispatch, authenticated E2E. Deferred iPhone testing is not claimed as passed.
