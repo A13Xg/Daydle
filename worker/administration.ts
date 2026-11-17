@@ -120,6 +120,7 @@ function projectAdminView(
       "cadence",
       "parser_status",
       "link_status",
+      "category_slugs",
     ],
     samples: [
       "id",
