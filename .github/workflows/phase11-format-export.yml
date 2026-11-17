@@ -1,4 +1,4 @@
-# Temporary, read-only formatting export (revision 3). Remove after synchronizing PR files.
+# Temporary, read-only formatting export (revision 4). Remove after synchronizing PR files.
 name: Phase 11 Format Export
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
           npx prettier --write src/App.tsx src/components/AdminPage.tsx src/components/GameRequestsPage.tsx src/components/AccountPage.tsx src/lib/administration-api.ts worker/administration.ts shared/administration.ts tests/administration-worker.test.ts tests/hosted-migrations.test.ts
           node --input-type=module -e '
             import { readFileSync } from "node:fs";
-            const paths = ["src/App.tsx", "src/components/AdminPage.tsx", "src/components/GameRequestsPage.tsx", "src/components/AccountPage.tsx", "src/lib/administration-api.ts", "worker/administration.ts", "shared/administration.ts", "tests/administration-worker.test.ts tests/hosted-migrations.test.ts"];
+            const paths = ["src/App.tsx", "src/components/AdminPage.tsx", "src/components/GameRequestsPage.tsx", "src/components/AccountPage.tsx", "src/lib/administration-api.ts", "worker/administration.ts", "shared/administration.ts", "tests/administration-worker.test.ts", "tests/hosted-migrations.test.ts"];
             for (const path of paths) {
               console.log("DAYDLE_FMT::" + path + "::" + JSON.stringify(readFileSync(path, "utf8")));
             }
