@@ -65,7 +65,10 @@ export function socialErrorText(error: unknown): string {
     case "authentication_required":
       return "Sign in to manage your friends.";
     case "invalid_friend_code":
+    case "invalid_code":
       return "Enter a valid five-character friend code.";
+    case "self":
+      return "You cannot add your own friend code.";
     case "invalid_target":
       return "That player link is invalid.";
     case "rate_limited":

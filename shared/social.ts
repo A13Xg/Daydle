@@ -81,6 +81,7 @@ export function validPublicPlayer(value: unknown): value is PublicPlayer {
     typeof v.display_name === "string" &&
     v.display_name.length <= 80 &&
     typeof v.created_at === "string" &&
+    Number.isFinite(Date.parse(v.created_at)) &&
     Array.isArray(v.games) &&
     v.games.length <= 100 &&
     v.games.every(

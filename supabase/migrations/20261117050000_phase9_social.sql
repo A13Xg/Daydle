@@ -137,7 +137,7 @@ BEGIN
   IF NOT app_private.consume_social_quota(p_user) THEN
     RETURN '{"status":"rate_limited"}'::jsonb;
   END IF;
-  SELECT user_id INTO v_target FROM public.friend_codes WHERE code=p_code;
+  SELECT user_id INTO v_target FROM public.friend_codes WHERE code=p_code FOR SHARE;
   IF v_target IS NULL THEN
     RETURN '{"status":"not_found"}'::jsonb;
   END IF;

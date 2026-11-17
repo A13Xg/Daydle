@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   connectionLink,
@@ -64,6 +64,8 @@ export function FriendsPage({
   const [refresh, setRefresh] = useState(0);
   const [pending, setPending] = useState(false);
   const [confirm, setConfirm] = useState<Confirmation | null>(null);
+  const confirmRef = useRef<HTMLDivElement>(null);
+  const lastTrigger = useRef<HTMLElement | null>(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [qrOpen, setQrOpen] = useState(false);
@@ -95,6 +97,24 @@ export function FriendsPage({
     );
     return () => controller.abort();
   }, [client, userId, refresh]);
+
+  useEffect(() => {
+    if (!confirm) return;
+    const target = confirmRef.current;
+    target?.scrollIntoView({ block: "center", behavior: "instant" });
+    target?.focus();
+  }, [confirm]);
+
+  function showConfirmation(next: Confirmation) {
+    lastTrigger.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setConfirm(next);
+  }
+
+  function cancelConfirmation() {
+    setConfirm(null);
+    requestAnimationFrame(() => lastTrigger.current?.focus());
+  }
 
   const detected = useCallback((found: string) => {
     setCode(found);
@@ -295,7 +315,7 @@ export function FriendsPage({
                   <button
                     type="button"
                     className="social-subtle"
-                    onClick={() => setConfirm({ action: "regenerate" })}
+                    onClick={() => showConfirmation({ action: "regenerate" })}
                     disabled={pending}
                   >
                     Regenerate code
@@ -377,6 +397,8 @@ export function FriendsPage({
               {confirm && (
                 <div
                   className="panel social-confirm"
+                  ref={confirmRef}
+                  tabIndex={-1}
                   role="group"
                   aria-label="Confirm relationship change"
                 >
@@ -416,7 +438,7 @@ export function FriendsPage({
                     </button>
                     <button
                       type="button"
-                      onClick={() => setConfirm(null)}
+                      onClick={cancelConfirmation}
                       disabled={pending}
                     >
                       Cancel
@@ -464,7 +486,7 @@ export function FriendsPage({
                             type="button"
                             disabled={pending}
                             onClick={() =>
-                              setConfirm({ action: "unfriend", person })
+                              showConfirmation({ action: "unfriend", person })
                             }
                           >
                             Remove
@@ -473,7 +495,7 @@ export function FriendsPage({
                             type="button"
                             disabled={pending}
                             onClick={() =>
-                              setConfirm({ action: "block", person })
+                              showConfirmation({ action: "block", person })
                             }
                           >
                             Block
@@ -515,7 +537,7 @@ export function FriendsPage({
                           type="button"
                           disabled={pending}
                           onClick={() =>
-                            setConfirm({ action: "unblock", person })
+                            showConfirmation({ action: "unblock", person })
                           }
                         >
                           Unblock
