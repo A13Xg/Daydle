@@ -35,35 +35,52 @@ export function puzzleDisplayName(key: string): string {
 
 export function resultOutcomeLabel(outcome: string): string {
   switch (outcome) {
-    case "win": return "Solved";
-    case "loss": return "Not solved";
-    case "complete": return "Completed";
-    default: return "Incomplete";
+    case "win":
+      return "Solved";
+    case "loss":
+      return "Not solved";
+    case "complete":
+      return "Completed";
+    default:
+      return "Incomplete";
   }
 }
 
 export function resultSummary(value: ResultDisplay): string {
   const state = resultOutcomeLabel(value.outcome);
-  if (value.attempts !== null) return state + " · " + value.attempts + " attempts";
+  if (value.attempts !== null)
+    return state + " · " + value.attempts + " attempts";
   if (value.completion_time_ms !== null) {
     const seconds = Math.round(value.completion_time_ms / 1000);
-    return state + " · " + Math.floor(seconds / 60) + ":" + String(seconds % 60).padStart(2, "0");
+    return (
+      state +
+      " · " +
+      Math.floor(seconds / 60) +
+      ":" +
+      String(seconds % 60).padStart(2, "0")
+    );
   }
   if (value.score !== null) return state + " · score " + value.score;
   return state;
 }
 
-export function resultDetails(value: Pick<SavedResult, "game_slug" | "metrics">): { label: string; value: string }[] {
+export function resultDetails(
+  value: Pick<SavedResult, "game_slug" | "metrics">,
+): { label: string; value: string }[] {
   const m = value.metrics ?? {};
   const details: { label: string; value: string }[] = [];
   const number = (key: string, label: string) => {
     const n = m[key];
-    if (typeof n === "number" && Number.isFinite(n)) details.push({ label, value: n.toLocaleString("en-US") });
+    if (typeof n === "number" && Number.isFinite(n))
+      details.push({ label, value: n.toLocaleString("en-US") });
   };
   switch (value.game_slug) {
     case "wordle":
       if (typeof m.hardModeClaimed === "boolean")
-        details.push({ label: "Hard mode (share claim)", value: m.hardModeClaimed ? "Yes" : "No" });
+        details.push({
+          label: "Hard mode (share claim)",
+          value: m.hardModeClaimed ? "Yes" : "No",
+        });
       break;
     case "connections":
       number("solvedGroups", "Groups solved");
@@ -76,9 +93,22 @@ export function resultDetails(value: Pick<SavedResult, "game_slug" | "metrics">)
       break;
     case "quordle": {
       const boards = m.boardAttempts;
-      if (Array.isArray(boards) && boards.length === 4 && boards.every((item) =>
-        item === null || (typeof item === "number" && Number.isInteger(item) && item >= 1 && item <= 9)
-      )) details.push({ label: "Board attempts", value: boards.map((item) => item ?? "X").join(" · ") });
+      if (
+        Array.isArray(boards) &&
+        boards.length === 4 &&
+        boards.every(
+          (item) =>
+            item === null ||
+            (typeof item === "number" &&
+              Number.isInteger(item) &&
+              item >= 1 &&
+              item <= 9),
+        )
+      )
+        details.push({
+          label: "Board attempts",
+          value: boards.map((item) => item ?? "X").join(" · "),
+        });
       number("failedBoards", "Unsolved boards");
       break;
     }

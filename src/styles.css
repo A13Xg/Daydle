@@ -1774,7 +1774,6 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   }
 }
 
-
 /* Phase 7: compact, game-aware result cards and explicit review states. */
 .history-list-heading {
   display: flex;
@@ -1784,7 +1783,9 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   flex-wrap: wrap;
 }
 .history-list-heading h2,
-.history-list-heading p { margin: 0 0 0.9rem; }
+.history-list-heading p {
+  margin: 0 0 0.9rem;
+}
 .history-entry {
   overflow: hidden;
   background: var(--surface-container-low);
@@ -1800,7 +1801,9 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   min-width: 0;
   flex: 1 1 12rem;
 }
-.history-card-copy p { overflow-wrap: anywhere; }
+.history-card-copy p {
+  overflow-wrap: anywhere;
+}
 .history-outcome {
   display: inline-flex;
   align-items: center;
@@ -1831,7 +1834,9 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   border-top: 1px solid var(--outline-variant);
   background: var(--surface-container);
 }
-.history-entry .history-detail > p:first-child { margin-top: 0; }
+.history-entry .history-detail > p:first-child {
+  margin-top: 0;
+}
 .history-metrics h4 {
   font-size: 0.9rem;
   margin: 1.15rem 0 0.7rem;
@@ -1847,12 +1852,19 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   border: 1px solid var(--error-container);
   border-radius: 1rem;
 }
-.history-confirm-actions { display: flex; gap: 0.65rem; flex-wrap: wrap; }
+.history-confirm-actions {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
 .history-confirm-actions button:first-child {
   color: var(--on-error-container);
   background: var(--error-container);
 }
-.paste-count { text-align: right; font-variant-numeric: tabular-nums; }
+.paste-count {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
 .paste-preview {
   margin-block: 0.85rem;
   padding: 1rem;
@@ -1868,10 +1880,17 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   gap: 0.5rem;
   margin-bottom: 0.7rem;
 }
-.paste-preview > strong { display: block; font-size: 1.12rem; }
-.paste-preview > p { margin: 0.4rem 0; }
+.paste-preview > strong {
+  display: block;
+  font-size: 1.12rem;
+}
+.paste-preview > p {
+  margin: 0.4rem 0;
+}
 .paste-preview small,
-.paste-hint { color: var(--on-surface-variant); }
+.paste-hint {
+  color: var(--on-surface-variant);
+}
 .paste-conflict {
   padding: 1rem;
   margin: 0.9rem 0;
@@ -1879,7 +1898,10 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   border-radius: 1.2rem;
   background: var(--surface-container);
 }
-.paste-conflict h3 { font-size: 1.12rem; margin-top: 0; }
+.paste-conflict h3 {
+  font-size: 1.12rem;
+  margin-top: 0;
+}
 .paste-conflict-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1896,7 +1918,10 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   margin-top: 0.45rem;
   overflow-wrap: anywhere;
 }
-.paste-conflict-item p { margin-block: 0.3rem; font-size: 0.85rem; }
+.paste-conflict-item p {
+  margin-block: 0.3rem;
+  font-size: 0.85rem;
+}
 .paste-replace-action {
   color: var(--on-primary-container) !important;
   background: var(--primary-container) !important;
@@ -1907,8 +1932,18 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
   }
-  .history-entry .history-outcome { grid-column: 1 / -1; justify-self: start; }
-  .history-entry .history-card-copy { grid-column: 1 / -1; }
-  .history-entry .history-card button { grid-column: 1 / -1; justify-self: stretch; }
-  .paste-conflict-grid { grid-template-columns: minmax(0, 1fr); }
+  .history-entry .history-outcome {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+  .history-entry .history-card-copy {
+    grid-column: 1 / -1;
+  }
+  .history-entry .history-card button {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+  .paste-conflict-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

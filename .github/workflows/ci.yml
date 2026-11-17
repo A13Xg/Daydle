@@ -24,18 +24,6 @@ jobs:
         run: npm run typecheck
       - name: Lint
         run: npm run lint
-      - name: Temporary Phase 7 UI canonical format
-        run: |
-          npx prettier --write src/lib/result-view.ts src/components/HistoryPage.tsx src/components/PasteDialog.tsx src/styles.css tests/result-view.test.ts
-          node --input-type=module <<'PHASE7_UI_FORMAT'
-          import { readFileSync } from 'node:fs';
-          const paths = ["src/lib/result-view.ts","src/components/HistoryPage.tsx","src/components/PasteDialog.tsx","src/styles.css","tests/result-view.test.ts"];
-          for(const path of paths){
-            const encoded = readFileSync(path).toString('base64');
-            const chunks = encoded.match(/.{1,760}/g) ?? [];
-            chunks.forEach((chunk,index)=>console.log('PHASE7_UI_BASE64:'+JSON.stringify({path,index,total:chunks.length,chunk})));
-          }
-          PHASE7_UI_FORMAT
       - name: Format check
         run: npm run format:check
       - name: Unit and API tests

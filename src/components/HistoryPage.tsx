@@ -30,8 +30,13 @@ const PAGE_SIZE = 20;
 
 function niceDate(date: string): string {
   const parsed = new Date(date);
-  return Number.isNaN(parsed.getTime()) ? "Date unavailable" :
-    parsed.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+  return Number.isNaN(parsed.getTime())
+    ? "Date unavailable"
+    : parsed.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
 }
 
 export function HistoryPage({
@@ -58,7 +63,9 @@ export function HistoryPage({
   const nextPageRequest = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    function updateOnline() { setOnline(navigator.onLine); }
+    function updateOnline() {
+      setOnline(navigator.onLine);
+    }
     window.addEventListener("online", updateOnline);
     window.addEventListener("offline", updateOnline);
     return () => {
@@ -75,17 +82,25 @@ export function HistoryPage({
     setMoreLoading(false);
     setState({ status: "loading" });
     void loadResultHistory(
-      client, userId, { game: game || undefined, limit: PAGE_SIZE },
+      client,
+      userId,
+      { game: game || undefined, limit: PAGE_SIZE },
       controller.signal,
-    ).then((items) => {
-      if (!controller.signal.aborted && generation.current === current) {
-        setState({ status: "ready", items, hasMore: items.length === PAGE_SIZE });
-      }
-    }).catch((cause: unknown) => {
-      if (!controller.signal.aborted && generation.current === current) {
-        setState({ status: "error", message: resultErrorText(cause) });
-      }
-    });
+    )
+      .then((items) => {
+        if (!controller.signal.aborted && generation.current === current) {
+          setState({
+            status: "ready",
+            items,
+            hasMore: items.length === PAGE_SIZE,
+          });
+        }
+      })
+      .catch((cause: unknown) => {
+        if (!controller.signal.aborted && generation.current === current) {
+          setState({ status: "error", message: resultErrorText(cause) });
+        }
+      });
     return () => controller.abort();
   }, [client, userId, game, refresh]);
 
@@ -96,13 +111,15 @@ export function HistoryPage({
     }
     const controller = new AbortController();
     setDetail({ status: "loading" });
-    void getResultDetail(client, userId, selectedId, controller.signal).then((value) => {
-      if (!controller.signal.aborted) setDetail({ status: "ready", value });
-    }).catch((cause: unknown) => {
-      if (!controller.signal.aborted) {
-        setDetail({ status: "error", message: resultErrorText(cause) });
-      }
-    });
+    void getResultDetail(client, userId, selectedId, controller.signal)
+      .then((value) => {
+        if (!controller.signal.aborted) setDetail({ status: "ready", value });
+      })
+      .catch((cause: unknown) => {
+        if (!controller.signal.aborted) {
+          setDetail({ status: "error", message: resultErrorText(cause) });
+        }
+      });
     return () => controller.abort();
   }, [client, userId, selectedId, refresh, detailRetry]);
 
@@ -123,24 +140,40 @@ export function HistoryPage({
   }
 
   async function loadMore() {
-    if (!client || !userId || state.status !== "ready" || moreLoading || !online) return;
+    if (
+      !client ||
+      !userId ||
+      state.status !== "ready" ||
+      moreLoading ||
+      !online
+    )
+      return;
     const request = new AbortController();
     nextPageRequest.current = request;
     const current = generation.current;
     setMoreLoading(true);
     setNotice("");
     try {
-      const batch = await loadResultHistory(client, userId, {
-        game: game || undefined,
-        limit: PAGE_SIZE,
-        offset: state.items.length,
-      }, request.signal);
+      const batch = await loadResultHistory(
+        client,
+        userId,
+        {
+          game: game || undefined,
+          limit: PAGE_SIZE,
+          offset: state.items.length,
+        },
+        request.signal,
+      );
       if (request.signal.aborted || current !== generation.current) return;
-      setState((previous) => previous.status === "ready" ? {
-        status: "ready",
-        items: [...previous.items, ...batch],
-        hasMore: batch.length === PAGE_SIZE,
-      } : previous);
+      setState((previous) =>
+        previous.status === "ready"
+          ? {
+              status: "ready",
+              items: [...previous.items, ...batch],
+              hasMore: batch.length === PAGE_SIZE,
+            }
+          : previous,
+      );
     } catch (cause) {
       if (!request.signal.aborted && current === generation.current) {
         setNotice(resultErrorText(cause));
@@ -186,11 +219,15 @@ export function HistoryPage({
       <header className="history-intro">
         <p className="eyebrow">YOUR PUZZLE ARCHIVE</p>
         <h1 id="history-heading">Result history</h1>
-        <p>Review each publisher result, see the recorded metrics and corrections, or permanently delete an entry.</p>
+        <p>
+          Review each publisher result, see the recorded metrics and
+          corrections, or permanently delete an entry.
+        </p>
       </header>
       {!online && (
         <p className="notice" role="status">
-          You appear to be offline. History requires a connection; no private results are cached on this device.
+          You appear to be offline. History requires a connection; no private
+          results are cached on this device.
         </p>
       )}
       <div className="panel history-controls">
@@ -203,7 +240,9 @@ export function HistoryPage({
           >
             <option value="">All supported games</option>
             {supportedResultGames.map(({ slug, name }) => (
-              <option key={slug} value={slug}>{name}</option>
+              <option key={slug} value={slug}>
+                {name}
+              </option>
             ))}
           </select>
         </div>
@@ -212,18 +251,27 @@ export function HistoryPage({
         </button>
       </div>
       {state.status === "loading" ? (
-        <section className="panel" role="status"><p>Loading your result history…</p></section>
+        <section className="panel" role="status">
+          <p>Loading your result history…</p>
+        </section>
       ) : state.status === "error" ? (
         <section className="panel" role="alert">
           <p>{state.message}</p>
-          <button type="button" onClick={reload} disabled={!online}>Retry</button>
+          <button type="button" onClick={reload} disabled={!online}>
+            Retry
+          </button>
         </section>
       ) : state.items.length === 0 ? (
         <section className="panel history-empty">
           <h2>No results {game ? "for this game" : "here yet"}</h2>
-          <p>Play a supported publisher puzzle and submit one complete share message through Paste Results.</p>
+          <p>
+            Play a supported publisher puzzle and submit one complete share
+            message through Paste Results.
+          </p>
           {game ? (
-            <button type="button" onClick={() => changeFilter("")}>Show all games</button>
+            <button type="button" onClick={() => changeFilter("")}>
+              Show all games
+            </button>
           ) : (
             <a href="/games">Discover supported games</a>
           )}
@@ -232,7 +280,10 @@ export function HistoryPage({
         <section className="panel" aria-labelledby="saved-results-heading">
           <div className="history-list-heading">
             <h2 id="saved-results-heading">Saved results</h2>
-            <p className="muted">{state.items.length} shown{state.hasMore ? " · More available" : ""}</p>
+            <p className="muted">
+              {state.items.length} shown
+              {state.hasMore ? " · More available" : ""}
+            </p>
           </div>
           <ol className="history-list">
             {state.items.map((item) => {
@@ -247,7 +298,10 @@ export function HistoryPage({
                     <div className="history-card-copy">
                       <h3>{item.game_name}</h3>
                       <p>{puzzleDisplayName(item.puzzle_key)}</p>
-                      <p className="muted">{resultSummary(item)} · Saved {niceDate(item.submitted_at)}</p>
+                      <p className="muted">
+                        {resultSummary(item)} · Saved{" "}
+                        {niceDate(item.submitted_at)}
+                      </p>
                     </div>
                     <button
                       type="button"
@@ -262,47 +316,106 @@ export function HistoryPage({
                     </button>
                   </div>
                   {expanded && (
-                    <section id={detailId} className="history-detail" aria-label={"Details for " + item.game_name}>
+                    <section
+                      id={detailId}
+                      className="history-detail"
+                      aria-label={"Details for " + item.game_name}
+                    >
                       {detail?.status === "loading" ? (
                         <p role="status">Loading details…</p>
                       ) : detail?.status === "error" ? (
                         <div role="alert">
                           <p>{detail.message}</p>
-                          <button type="button" onClick={() => setDetailRetry((n) => n + 1)}>Retry details</button>
+                          <button
+                            type="button"
+                            onClick={() => setDetailRetry((n) => n + 1)}
+                          >
+                            Retry details
+                          </button>
                         </div>
-                      ) : detail?.status === "ready" && detail.value.id === item.id ? (
+                      ) : detail?.status === "ready" &&
+                        detail.value.id === item.id ? (
                         <>
                           <dl className="history-facts">
-                            <div><dt>Puzzle</dt><dd>{puzzleDisplayName(detail.value.puzzle_key)}</dd></div>
-                            <div><dt>Puzzle date</dt><dd>{detail.value.puzzle_date ?? "Not provided"}</dd></div>
-                            <div><dt>Recorded on</dt><dd>{niceDate(detail.value.submitted_at)}</dd></div>
-                            <div><dt>Corrections</dt><dd>{detail.value.correction_count ?? 0}</dd></div>
-                            <div><dt>Parser version</dt><dd>{detail.value.parser_version}</dd></div>
+                            <div>
+                              <dt>Puzzle</dt>
+                              <dd>
+                                {puzzleDisplayName(detail.value.puzzle_key)}
+                              </dd>
+                            </div>
+                            <div>
+                              <dt>Puzzle date</dt>
+                              <dd>
+                                {detail.value.puzzle_date ?? "Not provided"}
+                              </dd>
+                            </div>
+                            <div>
+                              <dt>Recorded on</dt>
+                              <dd>{niceDate(detail.value.submitted_at)}</dd>
+                            </div>
+                            <div>
+                              <dt>Corrections</dt>
+                              <dd>{detail.value.correction_count ?? 0}</dd>
+                            </div>
+                            <div>
+                              <dt>Parser version</dt>
+                              <dd>{detail.value.parser_version}</dd>
+                            </div>
                           </dl>
                           {resultDetails(detail.value).length > 0 && (
                             <div className="history-metrics">
                               <h4>Game metrics</h4>
                               <dl className="history-facts">
-                                {resultDetails(detail.value).map(({ label, value }) => (
-                                  <div key={label}><dt>{label}</dt><dd>{value}</dd></div>
-                                ))}
+                                {resultDetails(detail.value).map(
+                                  ({ label, value }) => (
+                                    <div key={label}>
+                                      <dt>{label}</dt>
+                                      <dd>{value}</dd>
+                                    </div>
+                                  ),
+                                )}
                               </dl>
                             </div>
                           )}
-                          <p className="muted">Correct an entry by submitting a new share for the same puzzle and explicitly confirming replacement.</p>
-                          <button className="history-delete-trigger" type="button" onClick={() => setDeleteId(item.id)} disabled={deleting}>
+                          <p className="muted">
+                            Correct an entry by submitting a new share for the
+                            same puzzle and explicitly confirming replacement.
+                          </p>
+                          <button
+                            className="history-delete-trigger"
+                            type="button"
+                            onClick={() => setDeleteId(item.id)}
+                            disabled={deleting}
+                          >
                             Delete this result
                           </button>
                         </>
                       ) : null}
                       {deleteId === item.id && (
-                        <div className="history-delete-confirm" role="group" aria-label="Confirm result deletion">
-                          <p>Delete this result and its retained share text? This cannot be undone.</p>
+                        <div
+                          className="history-delete-confirm"
+                          role="group"
+                          aria-label="Confirm result deletion"
+                        >
+                          <p>
+                            Delete this result and its retained share text? This
+                            cannot be undone.
+                          </p>
                           <div className="history-confirm-actions">
-                            <button type="button" disabled={deleting || !online} onClick={() => void performDelete()}>
+                            <button
+                              type="button"
+                              disabled={deleting || !online}
+                              onClick={() => void performDelete()}
+                            >
                               {deleting ? "Deleting…" : "Confirm delete"}
                             </button>
-                            <button type="button" disabled={deleting} onClick={() => setDeleteId(null)}>Cancel</button>
+                            <button
+                              type="button"
+                              disabled={deleting}
+                              onClick={() => setDeleteId(null)}
+                            >
+                              Cancel
+                            </button>
                           </div>
                         </div>
                       )}
@@ -313,16 +426,25 @@ export function HistoryPage({
             })}
           </ol>
           {state.hasMore && (
-            <button type="button" disabled={moreLoading || !online} onClick={() => void loadMore()}>
+            <button
+              type="button"
+              disabled={moreLoading || !online}
+              onClick={() => void loadMore()}
+            >
               {moreLoading ? "Loading…" : "Load more results"}
             </button>
           )}
         </section>
       )}
-      {notice && <p role="status" className="notice">{notice}</p>}
+      {notice && (
+        <p role="status" className="notice">
+          {notice}
+        </p>
+      )}
       <p className="muted history-retention">
-        Raw submitted text has a 90-day expiry date; automated purge is scheduled for a later phase.
-        Structured results remain until deleted. History requires an authenticated connection.
+        Raw submitted text has a 90-day expiry date; automated purge is
+        scheduled for a later phase. Structured results remain until deleted.
+        History requires an authenticated connection.
       </p>
     </div>
   );
