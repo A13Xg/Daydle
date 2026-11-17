@@ -11,8 +11,8 @@ BEGIN
 
   IF has_function_privilege('anon','public.ingest_parsed_share(uuid,text,jsonb,uuid)','EXECUTE')
     OR has_function_privilege('authenticated','public.ingest_parsed_share(uuid,text,jsonb,uuid)','EXECUTE')
-    OR has_function_privilege('anon','public.retain_unknown_share(uuid,text,text)','EXECUTE')
-    OR has_function_privilege('authenticated','public.retain_unknown_share(uuid,text,text)','EXECUTE')
+    OR has_function_privilege('anon','public.capture_unparsed_share(uuid,text,text,text,text[],text)','EXECUTE')
+    OR has_function_privilege('authenticated','public.capture_unparsed_share(uuid,text,text,text,text[],text)','EXECUTE')
     OR has_function_privilege('anon','public.my_result_history(uuid,text,integer,integer)','EXECUTE')
     OR has_function_privilege('authenticated','public.my_result_history(uuid,text,integer,integer)','EXECUTE')
     OR has_function_privilege('anon','public.my_result_detail(uuid,uuid)','EXECUTE')
@@ -46,6 +46,13 @@ BEGIN
   EXCEPTION WHEN insufficient_privilege THEN blocked:=true;
   END;
   IF NOT blocked THEN RAISE EXCEPTION 'Browser could ingest a fabricated result'; END IF;
+  blocked:=false;
+  BEGIN
+    PERFORM public.capture_unparsed_share(
+      '11111111-1111-1111-1111-111111111111','hidden','unsupported','unknown_header');
+  EXCEPTION WHEN insufficient_privilege THEN blocked:=true;
+  END;
+  IF NOT blocked THEN RAISE EXCEPTION 'Browser could store raw submissions directly'; END IF;
 END $$;
 ROLLBACK;
 
@@ -116,20 +123,75 @@ BEGIN
     WHERE user_id=user_one AND result_id=saved AND action='deleted')
   THEN RAISE EXCEPTION 'Delete event did not survive cascade'; END IF;
 
-  r:=public.retain_unknown_share(user_one,'Unknown game share',NULL);
-  IF r->>'status'<>'retained'
-  THEN RAISE EXCEPTION 'Explicit unsupported retention failed'; END IF;
+  r:=public.capture_unparsed_share(user_one,'Unknown Daily Game #17',
+    'unsupported','unknown_header');
+  IF r->>'status'<>'captured' OR r->>'classification'<>'unknown_header'
+  THEN RAISE EXCEPTION 'Unknown submit was not categorized: %',r; END IF;
   IF NOT EXISTS (SELECT 1 FROM public.raw_submissions
-    WHERE id=(r->>'id')::uuid AND disposition='unsupported'
+    WHERE disposition='unsupported' AND result_id IS NULL
+      AND raw_share_text='Unknown Daily Game #17'
+      AND parser_diagnostics->>'review_status'='pending'
+      AND parser_diagnostics->>'reason_code'='unknown_header'
+      AND parser_diagnostics->>'source'='explicit_submit'
       AND expires_at>received_at AND expires_at<=received_at+interval '90 days')
-  THEN RAISE EXCEPTION 'Unknown sample TTL not bounded to 90 days'; END IF;
+  THEN RAISE EXCEPTION 'Unknown capture diagnostics/TTL incorrect'; END IF;
+  r:=public.capture_unparsed_share(user_one,'Unknown Daily Game #17',
+    'unsupported','unknown_header');
+  IF r->>'status'<>'already_captured'
+    OR (SELECT count(*) FROM public.raw_submissions
+        WHERE user_id=user_one AND raw_share_text='Unknown Daily Game #17')<>1
+  THEN RAISE EXCEPTION 'Repeated unknown text was not idempotent: %',r; END IF;
+
+  r:=public.capture_unparsed_share(user_one,'Wordle #987 missing score lines',
+    'invalid','invalid_format',ARRAY[]::text[],'wordle');
+  IF r->>'status'<>'captured'
+  THEN RAISE EXCEPTION 'Recognized malformed share not retained: %',r; END IF;
+  IF NOT EXISTS(SELECT 1 FROM public.raw_submissions
+    WHERE user_id=user_one AND disposition='invalid'
+      AND parser_diagnostics->>'reason_code'='invalid_format'
+      AND game_id=(SELECT id FROM public.games WHERE slug='wordle')
+      AND raw_share_text='Wordle #987 missing score lines')
+  THEN RAISE EXCEPTION 'Malformed share category/game hint missing'; END IF;
+
+  r:=public.capture_unparsed_share(user_one,'Overlapping share header',
+    'unsupported','ambiguous_match',ARRAY['wordle','quordle']);
+  IF r->>'status'<>'captured'
+  THEN RAISE EXCEPTION 'Ambiguous input not retained: %',r; END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.raw_submissions
+    WHERE raw_share_text='Overlapping share header'
+      AND parser_diagnostics->'candidate_game_slugs'='["wordle","quordle"]'::jsonb)
+  THEN RAISE EXCEPTION 'Ambiguous parser candidates missing'; END IF;
   denied:=false;
   BEGIN
-    PERFORM public.retain_unknown_share(user_one,'Unrecognized',
-                                        'non-existent-catalog-game');
+    PERFORM public.capture_unparsed_share(user_one,'Malformed',
+      'unsupported','bad_client_supplied_reason');
   EXCEPTION WHEN invalid_parameter_value THEN denied:=true;
   END;
-  IF NOT denied THEN RAISE EXCEPTION 'Unknown catalog slug accepted'; END IF;
+  IF NOT denied THEN RAISE EXCEPTION 'Unrecognized diagnostic reason accepted'; END IF;
+  denied:=false;
+  BEGIN
+    PERFORM public.capture_unparsed_share(user_one,'Malformed',
+      'unsupported','ambiguous_match',ARRAY['invalid/../../slug']);
+  EXCEPTION WHEN invalid_parameter_value THEN denied:=true;
+  END;
+  IF NOT denied THEN RAISE EXCEPTION 'Unsafe parser candidate accepted'; END IF;
+  denied:=false;
+  BEGIN
+    PERFORM public.capture_unparsed_share(user_one,'Malformed',
+      'unsupported','unknown_header',ARRAY[]::text[],'unknown-game');
+  EXCEPTION WHEN invalid_parameter_value THEN denied:=true;
+  END;
+  IF NOT denied THEN RAISE EXCEPTION 'Unknown catalog hint accepted'; END IF;
+  denied:=false;
+  BEGIN
+    PERFORM public.capture_unparsed_share(user_one,'',
+      'invalid','invalid_format');
+  EXCEPTION WHEN invalid_parameter_value THEN denied:=true;
+  END;
+  IF NOT denied THEN RAISE EXCEPTION 'Empty raw capture accepted'; END IF;
+  IF (SELECT count(*) FROM public.raw_submissions
+      WHERE user_id=user_two AND result_id IS NULL)<>0
+  THEN RAISE EXCEPTION 'Captured sample assigned to wrong owner'; END IF;
   denied:=false;
   BEGIN
     PERFORM public.ingest_parsed_share(user_one,'Wordle 0',jsonb_set(payload,
@@ -151,4 +213,4 @@ BEGIN
 END $$;
 ROLLBACK;
 
-SELECT 'PASS: Phase 7 service RPCs, private grant boundaries, owner history, idempotent corrections, deletion and TTL' AS test_summary;
+SELECT 'PASS: Phase 7 service RPCs, private grant boundaries, owner history, idempotent corrections, categorized raw failure captures, deletion and TTL' AS test_summary;
