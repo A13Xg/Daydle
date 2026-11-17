@@ -35,7 +35,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 6 | Deterministic parser registry and initial game coverage | 5 | COMPLETE — [PR #12](https://github.com/A13Xg/Daydle/pull/12), merge `99401d5`, [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43930997408) passed, [archive](completedPhases/Phase6Exec.md) |
 | 6.5 | Obsidian Arcade UI/UX overhaul | 6 | COMPLETE — [PR #13](https://github.com/A13Xg/Daydle/pull/13) merged into main at `520ca5b`; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43970518949) passed; redesigned iPhone acceptance remains owner-deferred before release |
 | 7 | Result ingestion, history, and correction lifecycle | 6.5 | BLOCKED (hosted acceptance) — [PR #14](https://github.com/A13Xg/Daydle/pull/14) merged at `1ff1b04`; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/44004416809) passed. Phase 7 SQL applied and verified on Daydle Preview; Worker configuration, deployment and authenticated E2E acceptance remain unverified. [Active release plan](Phase7Exec.md) |
-| 8 | Personal statistics, streaks, and achievements | 7 | NOT STARTED |
+| 8 | Personal statistics, streaks, and achievements | 7 | SOURCE CI VERIFIED / RELEASE PENDING — [PR #15](https://github.com/A13Xg/Daydle/pull/15) contains the feature. Phase 8 SQL applied/verified on Daydle Preview; Worker release and real authenticated E2E still pending. [Active plan](Phase8Exec.md) |
 | 9 | Public profiles and instant friendship | 8 | NOT STARTED |
 | 10 | Spoiler-safe comparisons, scoreboards, and rankings | 9 | NOT STARTED |
 | 11 | Administration, game requests/voting, and diagnostics | 10 | NOT STARTED |
@@ -188,7 +188,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Consistent responsive UI and interaction coverage across existing routes; automated accessibility and full regression suite; manual Safari/PWA checks for affected flows.
 
 ## Phase 7 — Result ingestion, history, and correction lifecycle
-**Status:** BLOCKED on hosted acceptance after [PR #14](https://github.com/A13Xg/Daydle/pull/14) merged at `1ff1b044` and [main CI #44004416809](https://github.com/A13Xg/Daydle/actions/runs/44004416809) passed. [Active plan](Phase7Exec.md) remains at repository root until Worker configuration, authenticated E2E and release gates are authorized and verified. The owner explicitly approved and completed the Phase 7 preview SQL migration on November 16, 2026. **Dependencies:** 6.5 (merged). The hosted Phase 7 migration was verified; no Phase 7 app deployment has been authorized.
+**Status:** BLOCKED on hosted acceptance after [PR #14](https://github.com/A13Xg/Daydle/pull/14) merged at `1ff1b044` and [main CI #44004416809](https://github.com/A13Xg/Daydle/actions/runs/44004416809) passed. [Active plan](Phase7Exec.md) remains at repository root until Worker configuration, authenticated E2E and release gates are authorized and verified. The owner explicitly approved and completed the Phase 7 preview SQL migration on November 16, 2026. **Dependencies:** 6.5 (merged). The hosted Phase 7 migration was verified; the owner authorized release to `daydle.agoodman.io`, which has not yet been executed.
 
 **Purpose:** Make pasted results reliably owned, deduplicated, persisted, corrected, and retrievable.
 
@@ -202,7 +202,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Paste-to-history and correction E2E pass; duplicate replay is idempotent; malformed/unknown handling safe; raw expiry metadata present and tested.
 
 ## Phase 8 — Personal statistics, streaks, and achievements
-**Status:** NOT STARTED. **Dependencies:** 7.
+**Status:** SOURCE CI VERIFIED / RELEASE PENDING — [draft PR #15](https://github.com/A13Xg/Daydle/pull/15), [active plan](Phase8Exec.md). The Phase 8 SQL has been applied and verified; the Worker/frontend is not deployed. **Dependencies:** Phase 7 source/SQL present; staged release acceptance is independent.
 
 **Purpose:** Turn canonical results into trustworthy, game-aware historical insights.
 

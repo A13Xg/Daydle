@@ -29,7 +29,7 @@ Notes:
 
 ## Cloudflare runtime secrets
 
-When authorized server routes need privileged Supabase access in later phases, store `SUPABASE_SECRET_KEY` (value `sb_secret_...`) as a **Cloudflare Worker secret**. This key bypasses RLS and must never be prefixed `VITE_`, committed, logged, included in an untrusted PR job, or sent to browsers. Nonsecret runtime `SUPABASE_URL` can be a Worker environment variable.
+Phase 7/8's current Worker code requires `SUPABASE_SERVICE_ROLE_KEY` (the **legacy service-role JWT**, not a `sb_secret_` API key) as an encrypted **Cloudflare Worker runtime secret**, not a GitHub Actions build variable or `VITE_*` setting. That key bypasses RLS and must never be committed, logged, included in untrusted PR CI, or sent to browsers. The protected deploy workflow checks the binding name without reading its value and fails if it is missing. `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` are public runtime bindings injected from the existing protected GitHub environment variables into the generated Worker configuration during deployment (not checked into Git).
 
 Cloudflare `wrangler secret put` normally produces and deploys a new Worker version; **do not run it as a setup step without deployment authorization**. Use the dashboard's Variables and Secrets controls or authorized versioned setup during the deployment phase.
 

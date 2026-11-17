@@ -1,4 +1,5 @@
 import { normalizeShare, parseShare, shareParsers } from "../shared/parsers";
+import { earnedAchievements } from "../shared/statistics";
 import {
   GAME_SLUG_PATTERN,
   RESULT_ID_PATTERN,
@@ -413,4 +414,60 @@ export async function handleResultsRequest(
     p_replace_id: target ?? null,
   });
   return isResponse(result) ? result : mutation(result);
+}
+
+/** Owner-only complete-history personal aggregates; never public ranking data. */
+export async function handleStatisticsRequest(
+  request: Request,
+  env?: ResultsEnvironment,
+): Promise<Response> {
+  const url = new URL(request.url);
+  if (url.pathname !== "/api/v1/statistics") {
+    return errorResponse("not_found", 404);
+  }
+  if (request.method !== "GET") {
+    return errorResponse("method_not_allowed", 405, { allow: "GET" });
+  }
+  const timezone = url.searchParams.get("timezone");
+  if (
+    !timezone ||
+    timezone.length > 64 ||
+    !/^[A-Za-z0-9_+./-]+$/.test(timezone)
+  ) {
+    return errorResponse("invalid_timezone", 400);
+  }
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: timezone });
+  } catch {
+    return errorResponse("invalid_timezone", 400);
+  }
+  const auth = await authenticate(request, env);
+  if (isResponse(auth)) return auth;
+  const summary = await rpc(auth, "my_personal_statistics", {
+    p_user: auth.userId,
+    p_timezone: timezone,
+  });
+  if (isResponse(summary)) return summary;
+  if (
+    !summary ||
+    typeof summary !== "object" ||
+    Array.isArray(summary) ||
+    !("totalResults" in summary) ||
+    !("longestStreak" in summary) ||
+    !("games" in summary) ||
+    typeof summary.totalResults !== "number" ||
+    typeof summary.longestStreak !== "number" ||
+    !Array.isArray(summary.games) ||
+    !Number.isSafeInteger(summary.totalResults) ||
+    !Number.isSafeInteger(summary.longestStreak)
+  ) {
+    return errorResponse("result_service_unavailable", 503);
+  }
+  return responseJson({
+    ...summary,
+    achievements: earnedAchievements(
+      summary.totalResults,
+      summary.longestStreak,
+    ),
+  });
 }

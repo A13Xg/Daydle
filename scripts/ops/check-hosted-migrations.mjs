@@ -1,7 +1,17 @@
 import { readdirSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { resolve } from "node:path";
-import { EXPECTED_MIGRATIONS } from "./verify-migration-plan.mjs";
+/** Exact hosted migration versions and names, including generated Phase 7/8 IDs. */
+export const HOSTED_MIGRATIONS = Object.freeze([
+  { version: "20261114050000", name: "phase2_domain_security" },
+  { version: "20261114060000", name: "phase3_auth_identity" },
+  { version: "20261115040000", name: "phase4_catalog" },
+  { version: "20261115050000", name: "phase5_today_marks" },
+  { version: "20261117030322", name: "20261117010000_phase7_results" },
+  { version: "20261117034143", name: "20261117040000_phase8_statistics" },
+]);
+
+const EXPECTED_MIGRATIONS = HOSTED_MIGRATIONS.map(({ version }) => version);
 
 const VERSION = /^\d{14}$/;
 const PROJECT_REF = /^[a-z0-9]{20}$/;
@@ -17,23 +27,18 @@ export function verifyStructuredHistory(
   requireAllApplied = false,
 ) {
   const files = filenames.filter((name) => name.endsWith(".sql")).sort();
-  const names = EXPECTED_MIGRATIONS.map((version, index) => {
-    const name = files[index];
+  const names = HOSTED_MIGRATIONS.map(({ version, name }, index) => {
+    const filename = files[index];
     if (
-      !name ||
-      !name.startsWith(version + "_") ||
-      !/^\d{14}_[a-z0-9_]+\.sql$/.test(name)
+      filename !== version + "_" + name + ".sql" ||
+      !/^\d{14}_[a-z0-9_]+\.sql$/.test(filename)
     ) {
-      throw new Error(
-        "Local migration filenames do not match the reviewed four-version allowlist.",
-      );
+      throw new Error("Local migration filenames differ from the reviewed hosted version/name allowlist.");
     }
-    return name.slice(15, -4);
+    return name;
   });
-  if (files.length !== EXPECTED_MIGRATIONS.length) {
-    throw new Error(
-      "Unreviewed local migration files found. No release authorized.",
-    );
+  if (files.length !== HOSTED_MIGRATIONS.length) {
+    throw new Error("Unreviewed local migration files found. No release authorized.");
   }
   if (!Array.isArray(records)) {
     throw new Error(

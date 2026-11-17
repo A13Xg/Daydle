@@ -10,6 +10,7 @@ import { CatalogPage } from "./components/CatalogPage";
 import { TodayPage } from "./components/TodayPage";
 import { PasteDialog } from "./components/PasteDialog";
 import { HistoryPage } from "./components/HistoryPage";
+import { StatisticsPage } from "./components/StatisticsPage";
 import {
   ArcadeHeader,
   ArcadePasteAction,
@@ -123,7 +124,13 @@ export default function App() {
         />
       );
     if (pathname === "/statistics")
-      return <FeaturePendingPage feature="statistics" />;
+      return (
+        <StatisticsPage
+          key={userId ?? "anonymous"}
+          client={client}
+          userId={userId}
+        />
+      );
     if (pathname === "/friends")
       return <FeaturePendingPage feature="friends" />;
     if (pathname === "/notifications")

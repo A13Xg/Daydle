@@ -1,6 +1,6 @@
 # Phase 7 — Result ingestion, history and correction lifecycle
 
-**Status:** Source merged in [PR #14](https://github.com/A13Xg/Daydle/pull/14) at `1ff1b044` with [passing main CI](https://github.com/A13Xg/Daydle/actions/runs/44004416809). Phase 7 is **BLOCKED on hosted acceptance**: the Phase 7 migration is now applied and verified on Daydle Preview, but no Worker/frontend deployment or authenticated E2E has been authorized or verified. See the [active plan](../Phase7Exec.md).
+**Status:** Source merged in [PR #14](https://github.com/A13Xg/Daydle/pull/14) at `1ff1b044` with [passing main CI](https://github.com/A13Xg/Daydle/actions/runs/44004416809). Phase 7 is **BLOCKED on hosted acceptance**: the Phase 7 migration is now applied and verified on Daydle Preview, but the owner has authorized a protected Worker/frontend deployment to `daydle.agoodman.io`, but no release or authenticated E2E has been performed. See the [active plan](../Phase7Exec.md).
 
 ## User workflow
 

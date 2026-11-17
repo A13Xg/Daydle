@@ -2,7 +2,7 @@
 
 **All your daily games. One place.**
 
-Daydle is an iOS-first web application for discovering daily games, launching games on publisher websites, tracking shared results, viewing public statistics and comparing performance with friends. Phases 1–5 provide authentication, secure game discovery, user-selected Today, and an owner-accepted iPhone PWA. Phase 6 adds deterministic parsing; Phase 6.5's Obsidian Arcade UI is merged. [Phase 7 PR #14](https://github.com/A13Xg/Daydle/pull/14) merged result ingestion and private History source, and its hosted SQL migration was owner-authorized and applied to Daydle Preview. Worker deployment and authenticated acceptance remain separately gated. Public statistics and comparisons remain future phases.
+Daydle is an iOS-first web application for discovering daily games, launching games on publisher websites, tracking shared results, viewing public statistics and comparing performance with friends. Phases 1–5 provide authentication, secure game discovery, user-selected Today, and an owner-accepted iPhone PWA. Phase 6 adds deterministic parsing; Phase 6.5's Obsidian Arcade UI is merged. [Phase 7 PR #14](https://github.com/A13Xg/Daydle/pull/14) merged result ingestion and private History source, and its hosted SQL migration was owner-authorized and applied to Daydle Preview. The owner authorized Worker deployment to `daydle.agoodman.io`; actual release and authenticated acceptance are still pending. Public statistics and comparisons remain future phases.
 
 ## Local development
 
