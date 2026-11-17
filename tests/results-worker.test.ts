@@ -156,6 +156,25 @@ describe("authenticated result Worker boundary", () => {
     });
   });
 
+  it("retains ambiguous mixed-game shares with a bounded candidate set", async () => {
+    const calls = mockUpstream({ status: "captured", classification: "ambiguous_match" });
+    const mixed = wordle + "\nStrands #987";
+    const response = await worker.fetch(makeRequest(path(), "POST", { text: mixed }), env);
+    expect(response.status).toBe(409);
+    expect(await response.json()).toEqual({
+      status: "ambiguous",
+      gameSlugs: ["wordle", "strands"],
+      captured: true,
+    });
+    const captured = calls.find((call) => call.url.endsWith("/rpc/capture_unparsed_share"));
+    expect(captured?.body).toMatchObject({
+      p_user: USER,
+      p_disposition: "unsupported",
+      p_reason: "ambiguous_match",
+      p_candidates: ["wordle", "strands"],
+    });
+  });
+
   it("bounds invalid sample capture and never retains empty, oversized or NUL shares", async () => {
     const calls = mockUpstream({ status: "captured" });
     for (const raw of ["", "x".repeat(10_001), "Wordle 1/6\u0000bad"]) {
