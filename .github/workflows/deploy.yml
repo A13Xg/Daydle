@@ -66,7 +66,9 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          node scripts/ops/check-worker-secrets.mjs
+          set -euo pipefail
+          npx --no-install wrangler secret list --name daydle-app --format json |
+            node scripts/ops/check-worker-secrets.mjs
 
       - name: Build
         env:
@@ -88,6 +90,15 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
         run: npx --no-install wrangler deploy
+
+      - name: Verify deployed Worker retains encrypted secret metadata
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          npx --no-install wrangler secret list --name daydle-app --format json |
+            node scripts/ops/check-worker-secrets.mjs
 
       - name: Verify deployed APIs, routes and exact PWA version
         run: node scripts/ops/verify-live-release.mjs
