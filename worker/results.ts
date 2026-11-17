@@ -186,20 +186,41 @@ export async function rpc(
     });
     if (!result.ok) {
       if (result.status === 429) return errorResponse("rate_limited", 429);
-      if (result.status === 400) {
-        const detail: unknown = await result.json().catch(() => null);
-        if (
-          detail &&
-          typeof detail === "object" &&
-          "message" in detail &&
-          detail.message === "result_rate_limited"
-        )
-          return errorResponse("rate_limited", 429);
+
+      // Only a bounded SQLSTATE/PGRST code is safe to log. Never log
+      // the upstream body, message, request arguments, auth headers or keys.
+      const detail: unknown = await result.json().catch(() => null);
+      if (
+        result.status === 400 &&
+        detail &&
+        typeof detail === "object" &&
+        "message" in detail &&
+        detail.message === "result_rate_limited"
+      ) {
+        return errorResponse("rate_limited", 429);
       }
+      const code =
+        detail &&
+        typeof detail === "object" &&
+        "code" in detail &&
+        typeof detail.code === "string" &&
+        /^(?:PGRST[0-9]{3}|[A-Z0-9]{5})$/.test(detail.code)
+          ? detail.code
+          : null;
+      console.error("supabase_rpc_failure", {
+        rpc: /^[a-z][a-z_]{0,63}$/.test(method) ? method : "unknown",
+        httpStatus: result.status,
+        postgrestCode: code,
+      });
       return errorResponse("result_service_unavailable", 503);
     }
     return await result.json();
   } catch {
+    // Do not log exception messages: upstream/network exceptions may contain
+    // arbitrary credential-bearing text.
+    console.error("supabase_rpc_transport_failure", {
+      rpc: /^[a-z][a-z_]{0,63}$/.test(method) ? method : "unknown",
+    });
     return errorResponse("result_service_unavailable", 503);
   }
 }
