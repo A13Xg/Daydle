@@ -184,9 +184,10 @@ async function visit(client, pathname, viewport) {
   const kind = pathname.startsWith("/auth")
     ? "blank"
     : (
-        ["/lineup", "/history", "/how-it-works", "/notifications", "/games/wordle"].includes(
+        ["/lineup", "/history", "/how-it-works", "/notifications", "/games/wordle", "/compare"].includes(
           pathname,
-        ) || /^\/players\/[0-9a-f-]{36}\/?$/i.test(pathname)
+        ) || /^\/players\/[0-9a-f-]{36}\/?$/i.test(pathname) ||
+        /^\/comparison-results\/[0-9a-f-]{36}\/?$/i.test(pathname)
       )
       ? "stack"
       : "tab";
@@ -223,6 +224,24 @@ async function visit(client, pathname, viewport) {
     );
     if (!card.heading || card.spoilers || card.ownerCode) {
       throw new Error("Public player route leaked private result data: " + JSON.stringify(card));
+    }
+  }
+  if (pathname === "/compare" && viewport.width === 393) {
+    const safe = await evaluate(
+      client,
+      '({heading:!!document.querySelector("#comparison-heading"),picker:!!document.querySelector("#compare-game"),fake:document.querySelectorAll(".comparison-entry").length,friendScope:[...document.querySelectorAll(".comparison-scope button")].find(x=>x.textContent.includes("My friends"))?.disabled})',
+    );
+    if (!safe.heading || !safe.picker || safe.fake !== 0 || !safe.friendScope) {
+      throw new Error("Guest comparison UI leaked results or broke accessible selectors: " + JSON.stringify(safe));
+    }
+  }
+  if (pathname.startsWith("/comparison-results/") && viewport.width === 393) {
+    const safe = await evaluate(
+      client,
+      '({heading:!!document.querySelector("#public-result-heading"),scores:document.querySelectorAll(".comparison-result-card").length})',
+    );
+    if (!safe.heading || safe.scores !== 0) {
+      throw new Error("Guest result detail leaked unavailable data: " + JSON.stringify(safe));
     }
   }
   if (pathname === "/history" && viewport.width === 393) {
@@ -342,6 +361,8 @@ try {
             "/lineup",
             "/history",
             "/statistics",
+            "/compare",
+            "/comparison-results/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
             "/friends",
             "/players/11111111-1111-4111-8111-111111111111",
             "/account",
@@ -350,14 +371,14 @@ try {
             "/notifications",
             "/games/wordle",
           ]
-        : ["/today", "/games", "/friends", "/auth"];
+        : ["/today", "/games", "/friends", "/compare", "/auth"];
     for (const pathname of paths) await visit(client, pathname, viewport);
   }
   console.log(
-    "UI-SMOKE: 20 route/viewport checks passed (Chromium, not Safari).",
+    "UI-SMOKE: 24 route/viewport checks passed (Chromium, not Safari).",
   );
 } finally {
   client?.close();
   chrome?.kill("SIGKILL");
-  rmSync(directory, { recursive: true, force: true });
+  rmSync(directory, { recursive: true, force: true, maxRetries: 5, retryDelay: 150 });
 }
