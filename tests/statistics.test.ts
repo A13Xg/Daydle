@@ -32,10 +32,7 @@ describe("canonical personal statistics", () => {
       "America/Los_Angeles",
       new Date("2026-03-09T17:00:00Z"),
     );
-    expect(stats.activityDays).toEqual([
-      "2026-03-07",
-      "2026-03-08",
-    ]);
+    expect(stats.activityDays).toEqual(["2026-03-07", "2026-03-08"]);
     expect(stats.daysActive).toBe(2);
     expect(stats.longestStreak).toBe(2);
     expect(stats.currentStreak).toBe(2);
@@ -78,7 +75,11 @@ describe("canonical personal statistics", () => {
         score: null,
       }),
     ];
-    const stats = calculatePersonalStatistics(rows, "UTC", new Date("2026-11-14T00:00:00Z"));
+    const stats = calculatePersonalStatistics(
+      rows,
+      "UTC",
+      new Date("2026-11-14T00:00:00Z"),
+    );
     const wordle = stats.games.find((game) => game.slug === "wordle")!;
     expect(wordle.completed).toBe(2);
     expect(wordle.lost).toBe(1);
@@ -88,7 +89,9 @@ describe("canonical personal statistics", () => {
       { attempts: 3, count: 1 },
       { attempts: 5, count: 1 },
     ]);
-    expect(stats.games.find((game) => game.slug === "mini-crossword")?.bestTimeMs).toBe(42000);
+    expect(
+      stats.games.find((game) => game.slug === "mini-crossword")?.bestTimeMs,
+    ).toBe(42000);
     expect(stats).not.toHaveProperty("universalScore");
   });
 
@@ -96,7 +99,11 @@ describe("canonical personal statistics", () => {
     const rows = Array.from({ length: 10 }, (_, index) =>
       result("2026-11-" + String(index + 1).padStart(2, "0") + "T12:00:00Z"),
     );
-    const old = calculatePersonalStatistics(rows, "UTC", new Date("2026-11-10T13:00:00Z"));
+    const old = calculatePersonalStatistics(
+      rows,
+      "UTC",
+      new Date("2026-11-10T13:00:00Z"),
+    );
     expect(old.achievements.map((item) => item.code)).toContain("ten_results");
     expect(old.achievements.map((item) => item.code)).toContain("seven_day_streak");
     const changed = calculatePersonalStatistics(
@@ -105,13 +112,21 @@ describe("canonical personal statistics", () => {
       new Date("2026-11-10T13:00:00Z"),
     );
     expect(changed.longestStreak).toBe(6);
-    expect(changed.achievements.map((item) => item.code)).not.toContain("ten_results");
-    expect(changed.achievements.map((item) => item.code)).not.toContain("seven_day_streak");
+    expect(changed.achievements.map((item) => item.code)).not.toContain(
+      "ten_results",
+    );
+    expect(changed.achievements.map((item) => item.code)).not.toContain(
+      "seven_day_streak",
+    );
     expect(changed.totalResults).toBe(9);
   });
 
   it("handles empty and incomplete-only results without fabricated rates", () => {
-    const empty = calculatePersonalStatistics([], "UTC", new Date("2026-11-16T12:00:00Z"));
+    const empty = calculatePersonalStatistics(
+      [],
+      "UTC",
+      new Date("2026-11-16T12:00:00Z"),
+    );
     expect(empty).toMatchObject({
       totalResults: 0,
       currentStreak: 0,
@@ -131,10 +146,7 @@ describe("canonical personal statistics", () => {
   it("rejects invalid timezones and malformed timestamps", () => {
     expect(() => calculatePersonalStatistics([], "Not/A_Zone")).toThrow();
     expect(() =>
-      calculatePersonalStatistics(
-        [result("not-a-date")],
-        "UTC",
-      ),
+      calculatePersonalStatistics([result("not-a-date")], "UTC"),
     ).toThrow(RangeError);
   });
 });

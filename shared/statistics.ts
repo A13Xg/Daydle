@@ -201,7 +201,9 @@ export function calculatePersonalStatistics(
         .map(([attempts, count]) => ({ attempts, count }));
       return game;
     })
-    .sort((a, b) => a.name.localeCompare(b.name) || a.slug.localeCompare(b.slug));
+    .sort(
+      (a, b) => a.name.localeCompare(b.name) || a.slug.localeCompare(b.slug),
+    );
 
   const achievements = ACHIEVEMENT_RULES.filter(
     (rule) =>
