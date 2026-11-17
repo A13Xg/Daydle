@@ -67,14 +67,17 @@ BEGIN
   v:=public.daydle_request_action(bob,'create',NULL,'Another','https://puzzle.example/new','');
   IF v->>'status'<>'duplicate' OR (v->>'id')::uuid<>new_id
   THEN RAISE EXCEPTION 'Duplicate URL was stored twice'; END IF;
-  IF public.daydle_request_action(carol,'vote',new_id)->>'status'<>'voted'
-    OR public.daydle_request_action(carol,'vote',new_id)->>'status'<>'voted'
-    OR (SELECT count(*) FROM public.suggestion_votes
+  v:=public.daydle_request_action(carol,'vote',new_id);
+  IF v->>'status'<>'voted' THEN RAISE EXCEPTION 'First vote failed: %',v; END IF;
+  v:=public.daydle_request_action(carol,'vote',new_id);
+  IF v->>'status'<>'voted' OR
+     (SELECT count(*) FROM public.suggestion_votes
       WHERE suggestion_id=new_id AND user_id=carol)<>1
-  THEN RAISE EXCEPTION 'Vote was not idempotent'; END IF;
-  IF public.daydle_request_action(carol,'unvote',new_id)->>'status'<>'unvoted'
+  THEN RAISE EXCEPTION 'Vote was not idempotent: %',v; END IF;
+  v:=public.daydle_request_action(carol,'unvote',new_id);
+  IF v->>'status'<>'unvoted'
     OR EXISTS(SELECT 1 FROM public.suggestion_votes WHERE suggestion_id=new_id AND user_id=carol)
-  THEN RAISE EXCEPTION 'Unvote failed'; END IF;
+  THEN RAISE EXCEPTION 'Unvote failed: %',v; END IF;
 
   v:=public.daydle_admin_action(alice,'moderate',
     jsonb_build_object('id',new_id,'status','rejected'));
