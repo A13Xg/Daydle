@@ -9,3 +9,7 @@ A bounded 366-day activity series is provided for rendering; lifetime totals and
 Achievements are derived from server-returned canonical counts and longest streak using the same deterministic shared rules as the pure fixture-tested calculator. They are not persisted as irreversible award rows; deletion and correction change eligibility on the next read.
 
 **Deploy gate:** This source migration is not approved for live Supabase. Apply and verify it only with separate authorization after CI/PR review. Do not infer permission from the owner's prior explicit Phase 7 migration authorization.
+
+## Authorized Daydle Preview migration record (November 16, 2026)
+
+The Phase 8 SQL was applied and verified. Supabase assigned migration version `20261117034143` and name `20261117040000_phase8_statistics`; the source filename's version prefix is **not** the stored version. Existing Phase 7 SQL was recorded as version `20261117030322` and name `20261117010000_phase7_results`. Avoid automatic replay until version mapping has been reconciled. The service-role-only permissions were confirmed by read-only SQL; no Worker frontend release occurred.
