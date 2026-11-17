@@ -1,8 +1,8 @@
 # Phase 7 Execution Plan — Result ingestion, history, and correction lifecycle
 
-**Status:** IN PROGRESS / HOSTED ACCEPTANCE BLOCKED — implementation and isolated tests are committed; no hosted migration, secrets or deployment.
+**Status:** BLOCKED — PR #14 merged to main at `1ff1b044`; [post-merge CI #44004416809](https://github.com/A13Xg/Daydle/actions/runs/44004416809) passed. Hosted Phase 7 migration, runtime secret availability, Worker/frontend deployment and authenticated end-to-end acceptance are NOT VERIFIED. The plan stays active until acceptance is complete.
 **Base:** `main` at `520ca5be730bc9ea45a7ffd00fbe85e6525625f3`. [PR #13](https://github.com/A13Xg/Daydle/pull/13) merged on 2026-11-16; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43970518949) PASS.
-**Branch/PR:** `phase/07-results-history-corrections` / [#14](https://github.com/A13Xg/Daydle/pull/14) (draft).
+**Branch/PR:** `phase/07-results-history-corrections` / [#14](https://github.com/A13Xg/Daydle/pull/14) (MERGED, 2026-11-16 18:37 PST). Historical draft-era notes below remain as recorded evidence; the current disposition is this header and the post-merge reconciliation below.
 **Authority:** [IDEA.md](IDEA.md) §§5,7,8,11; [roadmap.md](roadmap.md) Phase 7; [AGENTS.md](AGENTS.md); [Phase 6](completedPhases/Phase6Exec.md) and [6.5](completedPhases/Phase6.5Exec.md) archives.
 
 ## Preflight and reconciliation
@@ -94,3 +94,11 @@ The owner approved retaining all **bounded, eligible parser failures after an ex
 - [Chromium CI #44001940876](https://github.com/A13Xg/Daydle/actions/runs/44001940876) ran **224/224 tests across 29 suites**, 17 mobile/desktop route checks, and both PostgreSQL security jobs successfully, while temporarily capturing compiled-app guest History/Paste images. The capture-only hooks were then removed from normal CI in the next commit.
 - The two [Phase 7 guest screenshots](docs/screenshots/README.md#phase-7--real-guest-ui-captures-pr-14) verify the Obsidian Arcade dark stack/modal styles without fabricating signed-in data. Authenticated result cards/conflict view remain hosted E2E NOT VERIFIED.
 - The approved automatic parser-failure capture is validated by service-only RPC grant tests, bounded input validation, per-user duplicate/idempotency tests, unknown/ambiguous/invalid parser reason metadata and 90-day expiry constraints. The preview database had zero raw samples at read-only inspection; no past raw shares could be recovered.
+
+
+## Post-merge reconciliation — November 16, 2026
+
+- [PR #14](https://github.com/A13Xg/Daydle/pull/14) merged into `main` at `1ff1b04471838dbcc79ea18ede0ee47c22a4a9fa`. [Main CI run #44004416809](https://github.com/A13Xg/Daydle/actions/runs/44004416809) completed successfully. Prior branch evidence is 224 passing tests, 17 Chromium browser checks, and 2 isolated PostgreSQL 17 security databases; the merge CI success does not establish hosted acceptance.
+- A fresh read-only check of connected Supabase `Daydle Preview` (`xyjuriehmrkdqdmcxdso`) shows migrations only through Phase 5 (`20261114050000`, `20261114060000`, `20261115040000`, `20261115050000`). Phase 7 migration `20261117010000_phase7_results` is **not applied**. Pending, unparsed raw samples in the hosted database: **0** at time checked.
+- This merge happened before the separately required hosted release acceptance. Treat the source integration as merged, but **do not** claim the phase complete, archive this plan, deploy, or advance dependent Phase 8 until the required hosted integration is authorized and verified (unless the owner explicitly approves out-of-order development).
+- Remaining release gate: explicit approval to apply the reviewed Phase 7 migration; protected Worker secrets configured without exposure; separate approval for Worker/PWA deployment; real OAuth, result save/duplicate/replace/delete, privacy isolation and raw failure capture verified. Physical iPhone acceptance remains deferred; do not reclassify it as passing. Scheduled raw-data purge remains Phase 12.

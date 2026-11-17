@@ -1,6 +1,6 @@
 # Phase 7 — Result ingestion, history and correction lifecycle
 
-**Status:** Draft implementation in [PR #14](https://github.com/A13Xg/Daydle/pull/14). No live migration or deployment has been performed.
+**Status:** Source merged in [PR #14](https://github.com/A13Xg/Daydle/pull/14) at `1ff1b044` with [passing main CI](https://github.com/A13Xg/Daydle/actions/runs/44004416809). Phase 7 is **BLOCKED on hosted acceptance**: the connected live Supabase project still has Phase 2–5 migrations only; no Phase 7 live migration or deployment has been verified. See the [active plan](../Phase7Exec.md).
 
 ## User workflow
 

@@ -34,7 +34,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 5 | Today experience, PWA, and external-game navigation | 4 | COMPLETE — [PR #7](https://github.com/A13Xg/Daydle/pull/7) merged; [release](https://github.com/A13Xg/Daydle/actions/runs/43814332227) deployed; [PR #10](https://github.com/A13Xg/Daydle/pull/10) merged; owner-reported 8/8 iPhone PWA tests PASS; [archive](completedPhases/Phase5Exec.md) |
 | 6 | Deterministic parser registry and initial game coverage | 5 | COMPLETE — [PR #12](https://github.com/A13Xg/Daydle/pull/12), merge `99401d5`, [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43930997408) passed, [archive](completedPhases/Phase6Exec.md) |
 | 6.5 | Obsidian Arcade UI/UX overhaul | 6 | COMPLETE — [PR #13](https://github.com/A13Xg/Daydle/pull/13) merged into main at `520ca5b`; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43970518949) passed; redesigned iPhone acceptance remains owner-deferred before release |
-| 7 | Result ingestion, history, and correction lifecycle | 6.5 | IN PROGRESS — [draft PR #14](https://github.com/A13Xg/Daydle/pull/14), migration and API/UI tests under review; no hosted deploy |
+| 7 | Result ingestion, history, and correction lifecycle | 6.5 | BLOCKED (hosted acceptance) — [PR #14](https://github.com/A13Xg/Daydle/pull/14) merged at `1ff1b04`; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/44004416809) passed. Phase 7 SQL is not applied to the hosted project, and authenticated deployment/E2E acceptance remains unverified. [Active release plan](Phase7Exec.md) |
 | 8 | Personal statistics, streaks, and achievements | 7 | NOT STARTED |
 | 9 | Public profiles and instant friendship | 8 | NOT STARTED |
 | 10 | Spoiler-safe comparisons, scoreboards, and rankings | 9 | NOT STARTED |
@@ -188,7 +188,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Consistent responsive UI and interaction coverage across existing routes; automated accessibility and full regression suite; manual Safari/PWA checks for affected flows.
 
 ## Phase 7 — Result ingestion, history, and correction lifecycle
-**Status:** IN PROGRESS on [draft PR #14](https://github.com/A13Xg/Daydle/pull/14), [active plan](Phase7Exec.md); source and isolated DB verification ongoing. **Dependencies:** 6.5 (merged). No hosted migration or app deployment.
+**Status:** BLOCKED on hosted acceptance after [PR #14](https://github.com/A13Xg/Daydle/pull/14) merged at `1ff1b044` and [main CI #44004416809](https://github.com/A13Xg/Daydle/actions/runs/44004416809) passed. [Active plan](Phase7Exec.md) remains at repository root until the environment-specific migration, Worker configuration, authenticated E2E and release gates are authorized and verified. **Dependencies:** 6.5 (merged). No hosted Phase 7 migration or app deployment has been verified.
 
 **Purpose:** Make pasted results reliably owned, deduplicated, persisted, corrected, and retrievable.
 
