@@ -92,7 +92,16 @@ describe("structured Supabase production migration history", () => {
   });
 
   it("requires the exact recorded hosted Phase 10 version and name", () => {
-    const full = [...baseline, phase4, phase5, phase7, phase8, phase9, phase10, phase11];
+    const full = [
+      ...baseline,
+      phase4,
+      phase5,
+      phase7,
+      phase8,
+      phase9,
+      phase10,
+      phase11,
+    ];
     expect(verifyStructuredHistory(full, filenames, true)).toEqual({
       applied: filenames.map((name) => name.slice(0, 14)),
       pending: [],
