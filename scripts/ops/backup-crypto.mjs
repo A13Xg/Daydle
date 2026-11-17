@@ -3,7 +3,7 @@ import {
 } from "node:crypto";
 import { createReadStream } from "node:fs";
 import {
-  open, rename, unlink, stat,
+  open, link, unlink, stat,
 } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import { resolve } from "node:path";
@@ -111,15 +111,10 @@ export async function decryptBackup(input, output, base64Key) {
     await target.sync();
     await target.close();
     target = undefined;
-    // Never overwrite a preexisting restore path. Reserved outputs must be
-    // prepared by the protected backup runner before invoking this tool.
-    try {
-      const existing = await stat(output);
-      if (existing) throw new Error("backup_output_exists");
-    } catch (error) {
-      if (error.code !== "ENOENT") throw error;
-    }
-    await rename(tmp, output);
+    // Hard-link with exclusive destination creation; a concurrent restore
+    // cannot be overwritten between a stat check and rename.
+    await link(tmp, output);
+    await unlink(tmp);
     return true;
   } catch {
     await unlink(tmp).catch(() => undefined);
