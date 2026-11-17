@@ -34,7 +34,7 @@ ROLLBACK;
 
 BEGIN;
 SET LOCAL ROLE authenticated;
-SELECT set_config('request.jwt.claim.sub','22222222-2222-2222-2222-222222222222',true);
+SELECT set_config('request.jwt.claim.sub','33333333-3333-3333-3333-333333333333',true);
 DO $$
 DECLARE denied boolean:=false;
 BEGIN
@@ -43,7 +43,7 @@ BEGIN
  THEN RAISE EXCEPTION 'Stranger can read locked result via RLS'; END IF;
  BEGIN
   PERFORM public.comparison_board(
-    '22222222-2222-2222-2222-222222222222',
+    '33333333-3333-3333-3333-333333333333',
     'wordle','wordle-100','global',20,0);
  EXCEPTION WHEN insufficient_privilege THEN denied:=true;
  END;
@@ -67,7 +67,7 @@ DECLARE
  history jsonb;
 BEGIN
  IF app_private.comparison_can_view(NULL,current_puzzle)
- OR app_private.comparison_can_view(bob,current_puzzle)
+ OR app_private.comparison_can_view(carol,current_puzzle)
  THEN RAISE EXCEPTION 'Unreleased puzzle unlocked with no matching viewer result'; END IF;
 
  sample:=public.comparison_board(NULL,'wordle','wordle-100','global',20,0);
@@ -93,8 +93,7 @@ BEGIN
  VALUES (other_puzzle,'40000000-0000-4000-8000-000000000001','wordle:another',current_date);
  INSERT INTO public.game_results(user_id,game_id,puzzle_id,outcome,attempts,parser_version)
  VALUES
-   (bob,'40000000-0000-4000-8000-000000000001',current_puzzle,'win',4,'test'),
-   (carol,'40000000-0000-4000-8000-000000000001',current_puzzle,'win',5,'test'),
+   (carol,'40000000-0000-4000-8000-000000000001',current_puzzle,'win',4,'test'),
    (carol,'40000000-0000-4000-8000-000000000001',other_puzzle,'win',2,'test');
 
  IF NOT app_private.comparison_can_view(bob,current_puzzle)
@@ -171,15 +170,12 @@ BEGIN
 END $$;
 ROLLBACK;
 
--- Direct browser RLS uses the unified same-puzzle filter after a saved result.
+-- The baseline fixture assertions already persist Bob's own current result.
+-- Direct browser RLS uses the unified same-puzzle filter for that result.
 BEGIN;
-INSERT INTO public.game_results(user_id,game_id,puzzle_id,outcome,attempts,parser_version)
-VALUES ('22222222-2222-2222-2222-222222222222',
- '40000000-0000-4000-8000-000000000001',
- 'cccccccc-cccc-cccc-cccc-cccccccccccc','win',4,'test');
 SET LOCAL ROLE authenticated;
 SELECT set_config('request.jwt.claim.sub','22222222-2222-2222-2222-222222222222',true);
-DO $$
+DO $
 BEGIN
  IF (SELECT count(*) FROM public.game_results WHERE puzzle_id='cccccccc-cccc-cccc-cccc-cccccccccccc')<>2
  THEN RAISE EXCEPTION 'Direct RLS did not unlock own matching puzzle'; END IF;
