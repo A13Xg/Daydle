@@ -42,7 +42,9 @@ describe("Phase 11 Obsidian Arcade routes", () => {
     expect(html).toContain('id="suggestion-url"');
     expect(html).toContain('id="suggestion-notes"');
     expect(html).toContain("Submit request");
-    expect(html).toContain("Approval does not guarantee result parsing support");
+    expect(html).toContain(
+      "Approval does not guarantee result parsing support",
+    );
   });
 
   it("rejects guest operator controls without leaking sample metadata", () => {
