@@ -1,0 +1,29 @@
+name: Phase 9 local QR dependency lock verification
+on:
+  push:
+    branches:
+      - phase/09-public-profiles-instant-friends
+permissions:
+  contents: read
+jobs:
+  verify-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: "22"
+      - run: npm install --package-lock-only --save-exact --ignore-scripts --no-audit --no-fund qrcode-generator@2.0.4
+      - name: Print public npm lock metadata
+        run: |
+          node --input-type=module -e '
+            import { readFileSync } from "node:fs";
+            const pkg = JSON.parse(readFileSync("package.json", "utf8"));
+            const lock = JSON.parse(readFileSync("package-lock.json", "utf8"));
+            const data = {
+              dependency: pkg.dependencies["qrcode-generator"],
+              entry: lock.packages["node_modules/qrcode-generator"],
+            };
+            if (data.dependency !== "2.0.4" || !data.entry?.integrity?.startsWith("sha512-")) process.exit(2);
+            console.log("__DAYDLE_QR_PACKAGE__" + Buffer.from(JSON.stringify(data)).toString("base64"));
+          '
