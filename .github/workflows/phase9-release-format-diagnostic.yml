@@ -1,0 +1,22 @@
+name: Release formatting verification
+on:
+  push:
+    branches: [release/phase09-hosted-gate]
+permissions:
+  contents: read
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: actions/setup-node@249970729cb0ef3589644e2896644e5dc5ba9c38
+        with:
+          node-version: "22"
+      - run: npm ci --no-audit --no-fund
+      - run: npx prettier --write tests/hosted-migrations.test.ts tests/live-release.test.ts
+      - run: |
+          for path in tests/hosted-migrations.test.ts tests/live-release.test.ts; do
+            printf '__DAYDLE_FORMAT_BEGIN__%s\n' "$path"
+            base64 -w0 "$path"
+            printf '\n__DAYDLE_FORMAT_END__%s\n' "$path"
+          done
