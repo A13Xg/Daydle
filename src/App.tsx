@@ -118,13 +118,8 @@ export default function App() {
           lineupOnly={pathname === "/lineup"}
         />
       );
-    if (pathname === "/requests") {
-      return client ? (
-        <GameRequestsPage client={client} userId={userId} />
-      ) : (
-        <section className="panel" role="status">Service unavailable.</section>
-      );
-    }
+    if (pathname === "/requests")
+      return <GameRequestsPage client={client} userId={userId} />;
     if (pathname === "/admin") {
       return client ? (
         <AdminPage client={client} userId={userId} />
