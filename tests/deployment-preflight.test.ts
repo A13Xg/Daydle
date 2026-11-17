@@ -24,22 +24,43 @@ describe("protected Daydle Worker release preflight", () => {
   });
   it("rejects incorrect project, secret-like public values or broken routing", () => {
     expect(() =>
-      prepareWorkerRuntime(sample, { ...options, url: "https://another.supabase.co" }),
+      prepareWorkerRuntime(sample, {
+        ...options,
+        url: "https://another.supabase.co",
+      }),
     ).toThrow();
     expect(() =>
-      prepareWorkerRuntime(sample, { ...options, publishableKey: "sb_secret_invalid" }),
+      prepareWorkerRuntime(sample, {
+        ...options,
+        publishableKey: "sb_secret_invalid",
+      }),
     ).toThrow();
     expect(() =>
       prepareWorkerRuntime({ ...sample, assets: {} }, options),
     ).toThrow();
     expect(() =>
-      prepareWorkerRuntime({ ...sample, vars: { SUPABASE_URL: "https://other.supabase.co" } }, options),
+      prepareWorkerRuntime(
+        { ...sample, vars: { SUPABASE_URL: "https://other.supabase.co" } },
+        options,
+      ),
     ).toThrow();
   });
   it("checks only required secret binding names; no secret values needed", () => {
-    expect(hasRequiredWorkerSecrets('[{"name":"SUPABASE_SERVICE_ROLE_KEY","type":"secret_text"}]')).toBe(true);
-    expect(hasRequiredWorkerSecrets('[{"name":"SUPABASE_SECRET_KEY","type":"secret_text"}]')).toBe(false);
-    expect(hasRequiredWorkerSecrets('[{"name":"SUPABASE_SERVICE_ROLE_KEY","type":"plain_text"}]')).toBe(false);
+    expect(
+      hasRequiredWorkerSecrets(
+        '[{"name":"SUPABASE_SERVICE_ROLE_KEY","type":"secret_text"}]',
+      ),
+    ).toBe(true);
+    expect(
+      hasRequiredWorkerSecrets(
+        '[{"name":"SUPABASE_SECRET_KEY","type":"secret_text"}]',
+      ),
+    ).toBe(false);
+    expect(
+      hasRequiredWorkerSecrets(
+        '[{"name":"SUPABASE_SERVICE_ROLE_KEY","type":"plain_text"}]',
+      ),
+    ).toBe(false);
     expect(hasRequiredWorkerSecrets("<html>not JSON</html>")).toBe(false);
   });
 });
