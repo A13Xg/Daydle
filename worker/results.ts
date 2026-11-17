@@ -429,7 +429,11 @@ export async function handleStatisticsRequest(
     return errorResponse("method_not_allowed", 405, { allow: "GET" });
   }
   const timezone = url.searchParams.get("timezone");
-  if (!timezone || timezone.length > 64 || !/^[A-Za-z0-9_+./-]+$/.test(timezone)) {
+  if (
+    !timezone ||
+    timezone.length > 64 ||
+    !/^[A-Za-z0-9_+./-]+$/.test(timezone)
+  ) {
     return errorResponse("invalid_timezone", 400);
   }
   try {

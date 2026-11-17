@@ -77,8 +77,8 @@ export function StatisticsPage({
   }
 
   const stats = state.status === "ready" ? state.data : null;
-  const game = stats?.games.find((item) => item.slug === selectedGame) ??
-    stats?.games[0];
+  const game =
+    stats?.games.find((item) => item.slug === selectedGame) ?? stats?.games[0];
   const metrics = stats
     ? [
         { label: "Results recorded", value: stats.totalResults },
@@ -94,14 +94,14 @@ export function StatisticsPage({
         <p className="eyebrow">ARCADE PERFORMANCE</p>
         <h1 id="feature-title">Your statistics</h1>
         <p>
-          Personal progress from saved publisher results. Activity is grouped
-          by submission day in {timezone}.
+          Personal progress from saved publisher results. Activity is grouped by
+          submission day in {timezone}.
         </p>
       </header>
       {!online && (
         <p className="notice" role="status">
-          You are offline. Private statistics require a connection and are
-          not cached on this device.
+          You are offline. Private statistics require a connection and are not
+          cached on this device.
         </p>
       )}
       {state.status === "loading" && (
@@ -123,7 +123,10 @@ export function StatisticsPage({
       )}
       {stats && (
         <>
-          <section className="panel stats-overview" aria-labelledby="stats-metrics-heading">
+          <section
+            className="panel stats-overview"
+            aria-labelledby="stats-metrics-heading"
+          >
             <div className="stats-section-title">
               <div className="stats-section-label">
                 <ArcadeIcon name="spark" size={22} />
@@ -148,8 +151,10 @@ export function StatisticsPage({
           </section>
           {stats.totalResults === 0 ? (
             <div className="panel stats-distribution-empty">
-              <p>No recorded results yet. Submit a supported publisher share
-                through Paste Results to start tracking progress.</p>
+              <p>
+                No recorded results yet. Submit a supported publisher share
+                through Paste Results to start tracking progress.
+              </p>
               <a href="/games">Discover supported games</a>
             </div>
           ) : (
@@ -177,8 +182,8 @@ export function StatisticsPage({
                 {game && (
                   <div>
                     <p>
-                      {game.recorded} results · {game.completed} completed ·
-                      {" "}{game.lost} not solved
+                      {game.recorded} results · {game.completed} completed ·{" "}
+                      {game.lost} not solved
                     </p>
                     <p>
                       Completion rate:{" "}
@@ -226,8 +231,8 @@ export function StatisticsPage({
           )}
           <p className="muted">
             Your statistics are recalculated from current saved results.
-            Corrections and deletions change your totals. Changing timezones
-            may change historical activity-day grouping.
+            Corrections and deletions change your totals. Changing timezones may
+            change historical activity-day grouping.
           </p>
           <a className="secondary-link" href="/history">
             View result history

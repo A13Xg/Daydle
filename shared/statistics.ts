@@ -148,8 +148,7 @@ export function calculatePersonalStatistics(
     }
     const game = state.game;
     game.recorded++;
-    const completed =
-      result.outcome === "win" || result.outcome === "complete";
+    const completed = result.outcome === "win" || result.outcome === "complete";
     if (completed) {
       game.completed++;
       if (

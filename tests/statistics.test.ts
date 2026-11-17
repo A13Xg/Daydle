@@ -42,18 +42,12 @@ describe("canonical personal statistics", () => {
   it("accepts yesterday as a live streak but expires after missed days", () => {
     const rows = [result("2026-11-12T20:00:00Z")];
     expect(
-      calculatePersonalStatistics(
-        rows,
-        "UTC",
-        new Date("2026-11-13T20:00:00Z"),
-      ).currentStreak,
+      calculatePersonalStatistics(rows, "UTC", new Date("2026-11-13T20:00:00Z"))
+        .currentStreak,
     ).toBe(1);
     expect(
-      calculatePersonalStatistics(
-        rows,
-        "UTC",
-        new Date("2026-11-14T20:00:00Z"),
-      ).currentStreak,
+      calculatePersonalStatistics(rows, "UTC", new Date("2026-11-14T20:00:00Z"))
+        .currentStreak,
     ).toBe(0);
   });
 
@@ -105,7 +99,9 @@ describe("canonical personal statistics", () => {
       new Date("2026-11-10T13:00:00Z"),
     );
     expect(old.achievements.map((item) => item.code)).toContain("ten_results");
-    expect(old.achievements.map((item) => item.code)).toContain("seven_day_streak");
+    expect(old.achievements.map((item) => item.code)).toContain(
+      "seven_day_streak",
+    );
     const changed = calculatePersonalStatistics(
       rows.filter((_, index) => index !== 3),
       "UTC",
