@@ -42,40 +42,106 @@ function projectedMutation(value: { status: string; id?: string }): {
   status: string;
   id?: string;
 } {
-  return value.id ? { status: value.status, id: value.id } : { status: value.status };
+  return value.id
+    ? { status: value.status, id: value.id }
+    : { status: value.status };
 }
 
-function projectAdminView(view: AdminView, value: unknown, id: string | null): unknown | null {
+function projectAdminView(
+  view: AdminView,
+  value: unknown,
+  id: string | null,
+): unknown | null {
   if (view === "overview") {
-    if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+    if (!value || typeof value !== "object" || Array.isArray(value))
+      return null;
     const row = value as Record<string, unknown>;
-    const keys = ["pending_requests", "unparsed_samples", "restricted_users"] as const;
-    if (keys.some((key) => typeof row[key] !== "number" || !Number.isSafeInteger(row[key]) || (row[key] as number) < 0))
+    const keys = [
+      "pending_requests",
+      "unparsed_samples",
+      "restricted_users",
+    ] as const;
+    if (
+      keys.some(
+        (key) =>
+          typeof row[key] !== "number" ||
+          !Number.isSafeInteger(row[key]) ||
+          (row[key] as number) < 0,
+      )
+    )
       return null;
     return Object.fromEntries(keys.map((key) => [key, row[key]]));
   }
   if (view === "sample") {
-    if (!value || typeof value !== "object" || Array.isArray(value)) return null;
-    const row = value as Record<string, unknown>;
-    if (row.id !== id || typeof row.raw_text !== "string" ||
-      row.raw_text.length > 10000 || typeof row.expires_at !== "string" ||
-      !["invalid", "unsupported"].includes(String(row.disposition)) ||
-      !row.diagnostics || typeof row.diagnostics !== "object" || Array.isArray(row.diagnostics))
+    if (!value || typeof value !== "object" || Array.isArray(value))
       return null;
-    return { id: row.id, raw_text: row.raw_text, disposition: row.disposition,
-      diagnostics: row.diagnostics, expires_at: row.expires_at };
+    const row = value as Record<string, unknown>;
+    if (
+      row.id !== id ||
+      typeof row.raw_text !== "string" ||
+      row.raw_text.length > 10000 ||
+      typeof row.expires_at !== "string" ||
+      !["invalid", "unsupported"].includes(String(row.disposition)) ||
+      !row.diagnostics ||
+      typeof row.diagnostics !== "object" ||
+      Array.isArray(row.diagnostics)
+    )
+      return null;
+    return {
+      id: row.id,
+      raw_text: row.raw_text,
+      disposition: row.disposition,
+      diagnostics: row.diagnostics,
+      expires_at: row.expires_at,
+    };
   }
-  const allowed: Record<Exclude<AdminView,"overview"|"sample">, readonly string[]> = {
-    requests: ["id","name","url","notes","status","created_at","suggested_by","vote_count"],
-    games: ["id","slug","name","description","publisher","url","status","cadence","parser_status","link_status"],
-    samples: ["id","disposition","received_at","expires_at","reason","review_status","game_slug"],
-    diagnostics: ["reason","disposition","samples"],
-    restrictions: ["user_id","reason","created_at"],
+  const allowed: Record<
+    Exclude<AdminView, "overview" | "sample">,
+    readonly string[]
+  > = {
+    requests: [
+      "id",
+      "name",
+      "url",
+      "notes",
+      "status",
+      "created_at",
+      "suggested_by",
+      "vote_count",
+    ],
+    games: [
+      "id",
+      "slug",
+      "name",
+      "description",
+      "publisher",
+      "url",
+      "status",
+      "cadence",
+      "parser_status",
+      "link_status",
+    ],
+    samples: [
+      "id",
+      "disposition",
+      "received_at",
+      "expires_at",
+      "reason",
+      "review_status",
+      "game_slug",
+    ],
+    diagnostics: ["reason", "disposition", "samples"],
+    restrictions: ["user_id", "reason", "created_at"],
   };
-  if (!Array.isArray(value) || value.length > 100 ||
-    value.some((row) => !row || typeof row !== "object" || Array.isArray(row))) return null;
+  if (
+    !Array.isArray(value) ||
+    value.length > 100 ||
+    value.some((row) => !row || typeof row !== "object" || Array.isArray(row))
+  )
+    return null;
   return value.map((row: Record<string, unknown>) =>
-    Object.fromEntries(allowed[view].map((key) => [key, row[key] ?? null])));
+    Object.fromEntries(allowed[view].map((key) => [key, row[key] ?? null])),
+  );
 }
 
 function statusFor(value: { status: string }): number {
@@ -125,9 +191,10 @@ export async function handleAdministrationRequest(
   // Public request listing intentionally allows visitors. An offered bearer
   // must still be verified; never silently downgrade a bad token to guest.
   const hasBearer = request.headers.has("authorization");
-  const auth = admin || request.method === "POST" || hasBearer
-    ? await authenticate(request, env)
-    : null;
+  const auth =
+    admin || request.method === "POST" || hasBearer
+      ? await authenticate(request, env)
+      : null;
   if (isResponse(auth)) return auth;
   const config = auth ?? configuration(env);
   if (!config) return errorResponse("service_unavailable", 503);
@@ -142,9 +209,31 @@ export async function handleAdministrationRequest(
       if (isResponse(value)) return value;
       if (!validRequests(value))
         return errorResponse("request_service_unavailable", 503);
-      return responseJson(value.map(({ id, name, url: publisherUrl, notes, status, created_at, vote_count, voted_by_me, suggested_by_me }) => ({
-        id, name, url: publisherUrl, notes, status, created_at, vote_count, voted_by_me, suggested_by_me,
-      })));
+      return responseJson(
+        value.map(
+          ({
+            id,
+            name,
+            url: publisherUrl,
+            notes,
+            status,
+            created_at,
+            vote_count,
+            voted_by_me,
+            suggested_by_me,
+          }) => ({
+            id,
+            name,
+            url: publisherUrl,
+            notes,
+            status,
+            created_at,
+            vote_count,
+            voted_by_me,
+            suggested_by_me,
+          }),
+        ),
+      );
     }
     if (!auth) return errorResponse("authentication_required", 401);
     const body = await boundedJson(request);
@@ -159,10 +248,13 @@ export async function handleAdministrationRequest(
     if (action === "create") {
       const name = typeof body.name === "string" ? body.name.trim() : "";
       const notes = typeof body.notes === "string" ? body.notes : "";
-      const urlValue = typeof body.url === "string" ? safePublisherUrl(body.url) : null;
+      const urlValue =
+        typeof body.url === "string" ? safePublisherUrl(body.url) : null;
       if (
-        name.length < 2 || name.length > 120 ||
-        notes.length > 500 || !urlValue
+        name.length < 2 ||
+        name.length > 120 ||
+        notes.length > 500 ||
+        !urlValue
       )
         return errorResponse("invalid_request", 422);
       payload.p_name = name;
@@ -227,7 +319,16 @@ export async function handleAdministrationRequest(
   // Only documented data keys are sent to SQL; actor is always server-derived.
   const fields: Record<AdminAction, readonly string[]> = {
     moderate: ["id", "status"],
-    save_game: ["id", "slug", "name", "url", "description", "publisher", "cadence", "status"],
+    save_game: [
+      "id",
+      "slug",
+      "name",
+      "url",
+      "description",
+      "publisher",
+      "cadence",
+      "status",
+    ],
     retire_game: ["id"],
     review_sample: ["id", "status", "gameSlug", "notes"],
     restrict: ["userId", "reason"],
@@ -241,8 +342,11 @@ export async function handleAdministrationRequest(
       return errorResponse("invalid_payload", 422);
   }
   for (const key of ["id", "userId"]) {
-    if (key in safeData && (typeof safeData[key] !== "string" ||
-        !RESULT_ID_PATTERN.test(safeData[key])))
+    if (
+      key in safeData &&
+      (typeof safeData[key] !== "string" ||
+        !RESULT_ID_PATTERN.test(safeData[key]))
+    )
       return errorResponse("invalid_target", 422);
   }
   const value = await rpc(config, "daydle_admin_action", {
