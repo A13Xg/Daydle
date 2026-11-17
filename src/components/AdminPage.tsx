@@ -103,6 +103,9 @@ export function AdminPage({
     setLoading(true);
     setError("");
     setSample(null);
+    setRows([]);
+    setOverview({});
+    setDenied(false);
     loadAdminView(client, userId, section, offset, undefined, abort.signal).then(
       (data) => {
         if (abort.signal.aborted) return;
