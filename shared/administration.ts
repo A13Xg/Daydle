@@ -58,9 +58,7 @@ export function validRequest(value: unknown): value is GameRequest {
 
 export function validRequests(value: unknown): value is GameRequest[] {
   return (
-    Array.isArray(value) &&
-    value.length <= 50 &&
-    value.every(validRequest)
+    Array.isArray(value) && value.length <= 50 && value.every(validRequest)
   );
 }
 
@@ -87,7 +85,11 @@ export function validMutation(
   );
 }
 
-export function pageNumber(value: string | null, fallback: number, max: number): number | null {
+export function pageNumber(
+  value: string | null,
+  fallback: number,
+  max: number,
+): number | null {
   if (value === null) return fallback;
   if (!/^(0|[1-9][0-9]*)$/.test(value)) return null;
   const number = Number(value);
