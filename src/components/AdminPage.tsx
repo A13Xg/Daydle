@@ -530,7 +530,10 @@ export function AdminPage({
               <ul>
                 {rows.map((row, index) => (
                   <li key={index}>
-                    {row.day ?? "unknown day"} · {row.game_slug ?? "unknown game"} · {row.parser_version ?? "unknown version"} · {row.reason ?? "parsed"} / {row.disposition}:{" "}
+                    {row.day ?? "unknown day"} ·{" "}
+                    {row.game_slug ?? "unknown game"} ·{" "}
+                    {row.parser_version ?? "unknown version"} ·{" "}
+                    {row.reason ?? "parsed"} / {row.disposition}:{" "}
                     {row.samples ?? 0}
                   </li>
                 ))}
