@@ -59,7 +59,12 @@ describe("structured Supabase production migration history", () => {
   it("accepts a partially or fully deployed reviewed migration chain", () => {
     expect(
       verifyStructuredHistory([...baseline, phase4], filenames).pending,
-    ).toEqual(["20261115050000", "20261117030322", "20261117034143", "20261117051824"]);
+    ).toEqual([
+      "20261115050000",
+      "20261117030322",
+      "20261117034143",
+      "20261117051824",
+    ]);
     expect(
       verifyStructuredHistory(
         [...baseline, phase4, phase5, phase7, phase8, phase9],

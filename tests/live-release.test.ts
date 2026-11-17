@@ -41,11 +41,13 @@ function liveResponse(url: string): Response {
     });
   if (path === "/api/v1/social")
     return new Response(JSON.stringify({ error: "authentication_required" }), {
-      status: 401, headers: TYPE_JSON,
+      status: 401,
+      headers: TYPE_JSON,
     });
   if (path === "/api/v1/players/eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee")
     return new Response(JSON.stringify({ error: "not_found" }), {
-      status: 404, headers: TYPE_JSON,
+      status: 404,
+      headers: TYPE_JSON,
     });
   if (path === "/app.webmanifest")
     return new Response(
@@ -201,13 +203,28 @@ describe("live release verification after Cloudflare deployment", () => {
 
   it("fails closed on missing social route, missing Worker secrets or incorrect authorization denial", async () => {
     expect(
-      await inspectSocialAuthBoundary(new Response("<html>fallback</html>", { status: 200, headers: TYPE_HTML })),
+      await inspectSocialAuthBoundary(
+        new Response("<html>fallback</html>", {
+          status: 200,
+          headers: TYPE_HTML,
+        }),
+      ),
     ).toMatch(/social auth/);
     expect(
-      await inspectSocialAuthBoundary(new Response('{"error":"authentication_required"}', { status: 503, headers: TYPE_JSON })),
+      await inspectSocialAuthBoundary(
+        new Response('{"error":"authentication_required"}', {
+          status: 503,
+          headers: TYPE_JSON,
+        }),
+      ),
     ).toMatch(/HTTP 503/);
     expect(
-      await inspectPublicPlayerAbsent(new Response('{"error":"not_found"}', { status: 503, headers: TYPE_JSON })),
+      await inspectPublicPlayerAbsent(
+        new Response('{"error":"not_found"}', {
+          status: 503,
+          headers: TYPE_JSON,
+        }),
+      ),
     ).toMatch(/HTTP 503/);
   });
 
