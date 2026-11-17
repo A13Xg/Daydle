@@ -1,6 +1,6 @@
 # Phase 8 statistics RPC
 
-The migration `20261117040000_phase8_statistics.sql` defines `my_personal_statistics(p_user uuid,p_timezone text)`, a **service_role-only** on-demand aggregate over the complete authoritative `game_results` set. It does not read or return raw share text. There are no materialized counters that can go stale following a result replacement/deletion.
+The migration `20261117034143_20261117040000_phase8_statistics.sql` defines `my_personal_statistics(p_user uuid,p_timezone text)`, a **service_role-only** on-demand aggregate over the complete authoritative `game_results` set. It does not read or return raw share text. There are no materialized counters that can go stale following a result replacement/deletion.
 
 The Worker must verify the real Supabase bearer session, derive the owner UUID server-side, pass the user-selected IANA timezone, and expose only the returned owner data with `Cache-Control: private, no-store`. This RPC is **not** a public stats endpoint for future social pages.
 
