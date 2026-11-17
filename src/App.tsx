@@ -125,7 +125,8 @@ export default function App() {
         <AdminPage client={client} userId={userId} />
       ) : (
         <section className="panel" role="status">
-          Service unavailable.
+          <h1>Administration unavailable</h1>
+          <p>Administrator services are not configured. Try again later.</p>
         </section>
       );
     }
