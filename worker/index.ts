@@ -10,7 +10,7 @@ import { handleComparisonRequest } from "./comparisons";
 import { COMPARISON_PATH } from "../shared/comparisons";
 import { handleAdministrationRequest } from "./administration";
 import { healthResponse } from "./health";
-import { handlePrivacyRequest, purgeExpiredRawSamples } from "./privacy";
+import { handlePrivacyRequest, handleAccountDeletion, PRIVACY_DELETE_PATH, purgeExpiredRawSamples } from "./privacy";
 import { PRIVACY_EXPORT_PATH } from "../shared/privacy";
 
 function apiError(
@@ -53,6 +53,9 @@ export default {
     env: ResultsEnvironment,
   ): Response | Promise<Response> {
     const path = new URL(request.url).pathname;
+    if (path === PRIVACY_DELETE_PATH) {
+      return handleAccountDeletion(request, env);
+    }
     if (path === PRIVACY_EXPORT_PATH) {
       return handlePrivacyRequest(request, env);
     }
