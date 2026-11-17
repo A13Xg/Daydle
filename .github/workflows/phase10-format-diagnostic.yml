@@ -1,0 +1,38 @@
+name: Phase 10 temporary formatting output
+on:
+  push:
+    branches:
+      - phase/10-spoiler-safe-comparisons
+permissions:
+  contents: read
+jobs:
+  ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: "22"
+      - run: npm ci --no-audit --no-fund
+      - run: npx prettier --write src/App.tsx src/components/ComparisonsPage.tsx src/components/FriendsPage.tsx src/components/HeadToHead.tsx src/components/PlayerPerformance.tsx src/components/PublicPlayerPage.tsx src/lib/comparisons-api.ts src/styles.css
+      - run: |
+          for path in src/App.tsx src/components/ComparisonsPage.tsx src/components/FriendsPage.tsx src/components/HeadToHead.tsx src/components/PlayerPerformance.tsx src/components/PublicPlayerPage.tsx src/lib/comparisons-api.ts src/styles.css; do
+            printf '__DAYDLE_FORMAT_BEGIN__%s\n' "$path"
+            base64 -w0 "$path"
+            printf '\n__DAYDLE_FORMAT_END__%s\n' "$path"
+          done
+  service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: "22"
+      - run: npm ci --no-audit --no-fund
+      - run: npx prettier --write worker/comparisons.ts shared/comparisons.ts tests/comparisons-worker.test.ts
+      - run: |
+          for path in worker/comparisons.ts shared/comparisons.ts tests/comparisons-worker.test.ts; do
+            printf '__DAYDLE_FORMAT_BEGIN__%s\n' "$path"
+            base64 -w0 "$path"
+            printf '\n__DAYDLE_FORMAT_END__%s\n' "$path"
+          done
