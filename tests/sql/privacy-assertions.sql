@@ -59,8 +59,17 @@ BEGIN
     RAISE EXCEPTION 'Arbitrary dataset export accepted';
   EXCEPTION WHEN invalid_parameter_value THEN NULL;
   END;
+  INSERT INTO public.raw_submissions(
+    id,user_id,raw_share_text,disposition,received_at,expires_at
+  ) VALUES (
+    '94444444-4444-4444-8444-444444444444',
+    p, 'Expire test data', 'unsupported',
+    now()-interval '100 days', now()-interval '10 days'
+  );
   purge:=public.privacy_purge_expired_raw();
-  IF (purge->>'deleted')::integer<>1 OR EXISTS(
+  IF (purge->>'deleted')::integer<1 OR EXISTS(
+     SELECT 1 FROM public.raw_submissions WHERE id='94444444-4444-4444-8444-444444444444')
+    OR EXISTS(
      SELECT 1 FROM public.raw_submissions WHERE id='92222222-2222-2222-2222-222222222222')
     OR NOT EXISTS(
       SELECT 1 FROM public.raw_submissions WHERE id='91111111-1111-1111-1111-111111111111')
