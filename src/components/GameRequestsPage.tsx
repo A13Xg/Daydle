@@ -133,13 +133,19 @@ export function GameRequestsPage({
         </form>
       ) : (
         <section className="panel">
-          <p>Sign in to submit a game or vote. You can browse requests below.</p>
+          <p>
+            Sign in to submit a game or vote. You can browse requests below.
+          </p>
           <a className="action-link" href="/auth">
             Sign in
           </a>
         </section>
       )}
-      {success && <p className="notice" role="status">{success}</p>}
+      {success && (
+        <p className="notice" role="status">
+          {success}
+        </p>
+      )}
       {error && (
         <div className="notice error" role="alert">
           {error}
