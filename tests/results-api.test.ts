@@ -6,7 +6,6 @@ import {
   getResultDetail,
   loadResultHistory,
   resultErrorText,
-  retainUnknownShare,
   submitShare,
 } from "../src/lib/results-api";
 
@@ -109,21 +108,22 @@ describe("browser-to-Worker owner results API", () => {
     });
   });
 
-  it("only retains raw samples on an explicit user action", async () => {
-    const fake = vi
-      .fn()
-      .mockResolvedValue(
-        Response.json({ status: "retained", id: ID }, { status: 201 }),
-      );
+  it("recognizes categorized failure acknowledgments without echoing raw text", async () => {
+    const fake = vi.fn()
+      .mockResolvedValueOnce(Response.json({ status: "unknown", captured: true }, { status: 202 }))
+      .mockResolvedValueOnce(Response.json({
+        status: "invalid", code: "invalid_format", captured: true,
+      }, { status: 202 }));
     vi.stubGlobal("fetch", fake);
-    expect(
-      (await retainUnknownShare(authenticatedClient(), USER, "unknown share"))
-        .status,
-    ).toBe("retained");
-    const body = JSON.parse(
-      String((fake.mock.calls[0] as [string, RequestInit])[1].body),
-    );
-    expect(body).toEqual({ text: "unknown share", retain: true });
+    const raw = "Private unknown result text";
+    const unknown = await submitShare(authenticatedClient(), USER, raw);
+    expect(unknown).toEqual({ status: "unknown", captured: true });
+    const invalid = await submitShare(authenticatedClient(), USER, "Wordle incomplete");
+    expect(invalid).toEqual({ status: "invalid", code: "invalid_format", captured: true });
+    expect(JSON.stringify(unknown)).not.toContain(raw);
+    const first = fake.mock.calls[0] as [string, RequestInit];
+    expect(first[0]).toBe("/api/v1/results");
+    expect(JSON.parse(String(first[1].body))).toEqual({ text: raw });
   });
 
   it("validates detail and pagination, and sends owner-scoped delete", async () => {
