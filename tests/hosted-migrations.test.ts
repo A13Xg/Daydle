@@ -66,7 +66,7 @@ describe("structured Supabase production migration history", () => {
         "20261117051824",
         "20261117075359",
         "20261117090000",
-      "20261117100000",
+        "20261117100000",
       ],
     });
   });
@@ -85,7 +85,17 @@ describe("structured Supabase production migration history", () => {
     ]);
     expect(
       verifyStructuredHistory(
-        [...baseline, phase4, phase5, phase7, phase8, phase9, phase10, phase11, phase12],
+        [
+          ...baseline,
+          phase4,
+          phase5,
+          phase7,
+          phase8,
+          phase9,
+          phase10,
+          phase11,
+          phase12,
+        ],
         filenames,
         true,
       ),

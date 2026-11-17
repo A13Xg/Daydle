@@ -10,7 +10,12 @@ import { handleComparisonRequest } from "./comparisons";
 import { COMPARISON_PATH } from "../shared/comparisons";
 import { handleAdministrationRequest } from "./administration";
 import { healthResponse } from "./health";
-import { handlePrivacyRequest, handleAccountDeletion, PRIVACY_DELETE_PATH, purgeExpiredRawSamples } from "./privacy";
+import {
+  handlePrivacyRequest,
+  handleAccountDeletion,
+  PRIVACY_DELETE_PATH,
+  purgeExpiredRawSamples,
+} from "./privacy";
 import { PRIVACY_EXPORT_PATH } from "../shared/privacy";
 
 function apiError(

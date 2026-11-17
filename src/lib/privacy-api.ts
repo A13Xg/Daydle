@@ -1,6 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
-  PRIVACY_DATASETS, PRIVACY_EXPORT_PATH, projectPrivacyRows,
+  PRIVACY_DATASETS,
+  PRIVACY_EXPORT_PATH,
+  projectPrivacyRows,
   type PrivacyDataset,
 } from "../../shared/privacy";
 
@@ -23,10 +25,17 @@ async function accessToken(
   userId: string,
 ): Promise<{ token: string; email: string | null }> {
   const { data, error } = await client.auth.getSession();
-  if (error || !data.session ||
-      data.session.user.id.toLowerCase() !== userId.toLowerCase() ||
-      !data.session.access_token) throw new PrivacyError("authentication_required");
-  return { token: data.session.access_token, email: data.session.user.email ?? null };
+  if (
+    error ||
+    !data.session ||
+    data.session.user.id.toLowerCase() !== userId.toLowerCase() ||
+    !data.session.access_token
+  )
+    throw new PrivacyError("authentication_required");
+  return {
+    token: data.session.access_token,
+    email: data.session.user.email ?? null,
+  };
 }
 
 /** Fetches every dataset to completion; never silently returns a truncated export. */
@@ -62,7 +71,8 @@ export async function exportMyData(
         throw new PrivacyError("connection_failed");
       }
       if (!response.ok) {
-        if (response.status === 401) throw new PrivacyError("authentication_required");
+        if (response.status === 401)
+          throw new PrivacyError("authentication_required");
         throw new PrivacyError("export_failed");
       }
       let body: unknown;
@@ -71,9 +81,14 @@ export async function exportMyData(
       } catch {
         throw new PrivacyError("invalid_response");
       }
-      if (!body || typeof body !== "object" || Array.isArray(body) ||
-          !("dataset" in body) || body.dataset !== dataset ||
-          !("items" in body))
+      if (
+        !body ||
+        typeof body !== "object" ||
+        Array.isArray(body) ||
+        !("dataset" in body) ||
+        body.dataset !== dataset ||
+        !("items" in body)
+      )
         throw new PrivacyError("invalid_response");
       const batch = projectPrivacyRows(dataset, body.items, cursor);
       if (!batch) throw new PrivacyError("invalid_response");
@@ -132,8 +147,10 @@ export function savePrivacyArchive(archive: PrivacyArchive): void {
   try {
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = "daydle-account-export-" +
-      new Date().toISOString().slice(0, 10) + ".json";
+    anchor.download =
+      "daydle-account-export-" +
+      new Date().toISOString().slice(0, 10) +
+      ".json";
     document.body.append(anchor);
     anchor.click();
     anchor.remove();
@@ -176,11 +193,20 @@ export async function permanentlyDeleteMyAccount(
     throw new PrivacyError("invalid_response");
   }
   if (!response.ok) {
-    const code = result && typeof result === "object" && "error" in result &&
-      typeof result.error === "string" ? result.error : "account_deletion_unavailable";
+    const code =
+      result &&
+      typeof result === "object" &&
+      "error" in result &&
+      typeof result.error === "string"
+        ? result.error
+        : "account_deletion_unavailable";
     throw new PrivacyError(code);
   }
-  if (!result || typeof result !== "object" ||
-      !("status" in result) || result.status !== "deleted")
+  if (
+    !result ||
+    typeof result !== "object" ||
+    !("status" in result) ||
+    result.status !== "deleted"
+  )
     throw new PrivacyError("invalid_response");
 }

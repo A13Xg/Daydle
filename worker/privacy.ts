@@ -1,10 +1,20 @@
 import {
-  PRIVACY_EXPORT_PATH, PRIVACY_PURGE_CRON, isDataset,
-  projectPrivacyRows, validCursor, validPurgeResult,
+  PRIVACY_EXPORT_PATH,
+  PRIVACY_PURGE_CRON,
+  isDataset,
+  projectPrivacyRows,
+  validCursor,
+  validPurgeResult,
 } from "../shared/privacy";
 import {
-  authenticate, boundedJson, configuration, errorResponse, isResponse,
-  responseJson, rpc, type ResultsEnvironment,
+  authenticate,
+  boundedJson,
+  configuration,
+  errorResponse,
+  isResponse,
+  responseJson,
+  rpc,
+  type ResultsEnvironment,
 } from "./results";
 
 export async function handlePrivacyRequest(
@@ -18,17 +28,21 @@ export async function handlePrivacyRequest(
     return errorResponse("method_not_allowed", 405, { allow: "GET" });
 
   const keys = [...url.searchParams.keys()];
-  if (keys.some((key) => !["dataset", "cursor", "limit"].includes(key)) ||
-    new Set(keys).size !== keys.length)
+  if (
+    keys.some((key) => !["dataset", "cursor", "limit"].includes(key)) ||
+    new Set(keys).size !== keys.length
+  )
     return errorResponse("invalid_export_query", 422);
   const dataset = url.searchParams.get("dataset");
   if (!isDataset(dataset)) return errorResponse("invalid_export_dataset", 422);
   const cursor = url.searchParams.get("cursor");
   if (!validCursor(cursor)) return errorResponse("invalid_export_cursor", 422);
   const limit = url.searchParams.get("limit");
-  if (limit !== null &&
+  if (
+    limit !== null &&
     (!/^[1-9][0-9]?$/.test(limit) ||
-      Number(limit) > (dataset === "raw" ? 20 : 50)))
+      Number(limit) > (dataset === "raw" ? 20 : 50))
+  )
     return errorResponse("invalid_export_limit", 422);
   const auth = await authenticate(request, env);
   if (isResponse(auth)) return auth;
@@ -85,8 +99,10 @@ export async function handleAccountDeletion(
 
   const body = await boundedJson(request);
   if (isResponse(body)) return body;
-  if (Object.keys(body).length !== 1 ||
-      body.confirmation !== ACCOUNT_DELETE_CONFIRMATION)
+  if (
+    Object.keys(body).length !== 1 ||
+    body.confirmation !== ACCOUNT_DELETE_CONFIRMATION
+  )
     return errorResponse("delete_confirmation_required", 422);
 
   // Only this auth-derived UUID is addressable; never a client-supplied ID.
