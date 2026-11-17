@@ -14,6 +14,10 @@ import { StatisticsPage } from "./components/StatisticsPage";
 import { FriendsPage } from "./components/FriendsPage";
 import { PublicPlayerPage } from "./components/PublicPlayerPage";
 import {
+  ComparisonsPage,
+  PublicResultDetail,
+} from "./components/ComparisonsPage";
+import {
   ArcadeHeader,
   ArcadePasteAction,
   ArcadeTabBar,
@@ -43,6 +47,9 @@ export default function App() {
   const shell = shellForPath(pathname);
   const catalogDetail = pathname.match(/^\/games\/([a-z0-9-]+)\/?$/);
   const playerId = pathname.match(/^\/players\/([0-9a-f-]{36})\/?$/i)?.[1];
+  const comparisonResultId = pathname.match(
+    /^\/comparison-results\/([0-9a-f-]{36})\/?$/i,
+  )?.[1];
   const [pasteOpen, setPasteOpen] = useState(false);
   const [returnPrompt, setReturnPrompt] = useState(false);
   const [health, setHealth] = useState<HealthStatus>("checking");
@@ -138,7 +145,25 @@ export default function App() {
       return (
         <FriendsPage key={userId ?? "guest"} client={client} userId={userId} />
       );
-    if (playerId) return <PublicPlayerPage key={playerId} id={playerId} />;
+    if (playerId)
+      return (
+        <PublicPlayerPage
+          key={playerId}
+          id={playerId}
+          client={client}
+          viewerId={userId}
+        />
+      );
+    if (pathname === "/compare")
+      return <ComparisonsPage client={client} userId={userId} />;
+    if (comparisonResultId)
+      return (
+        <PublicResultDetail
+          id={comparisonResultId}
+          client={client}
+          userId={userId}
+        />
+      );
     if (pathname === "/notifications")
       return <FeaturePendingPage feature="notifications" />;
     if (pathname === "/how-it-works") return <HowItWorksPage />;

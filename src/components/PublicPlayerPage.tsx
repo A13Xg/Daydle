@@ -2,13 +2,24 @@ import { useEffect, useState } from "react";
 import type { PublicPlayer } from "../../shared/social";
 import { loadPublicPlayer, socialErrorText } from "../lib/social-api";
 import { ArcadeIcon } from "./ArcadeIcon";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { PlayerPerformance } from "./PlayerPerformance";
+import { HeadToHead } from "./HeadToHead";
 
 type LoadState =
   | { status: "loading" }
   | { status: "error"; message: string }
   | { status: "ready"; value: PublicPlayer };
 
-export function PublicPlayerPage({ id }: { id: string }) {
+export function PublicPlayerPage({
+  id,
+  client,
+  viewerId,
+}: {
+  id: string;
+  client: SupabaseClient | null;
+  viewerId: string | null;
+}) {
   const [state, setState] = useState<LoadState>({ status: "loading" });
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
@@ -84,11 +95,25 @@ export function PublicPlayerPage({ id }: { id: string }) {
               </p>
             )}
           </section>
+          <PlayerPerformance
+            profileId={id}
+            client={client}
+            viewerId={viewerId}
+          />
+          {viewerId && viewerId !== id && (
+            <HeadToHead
+              leftId={viewerId}
+              rightId={id}
+              client={client}
+              viewerId={viewerId}
+            />
+          )}
           <aside className="social-privacy-note">
             <ArcadeIcon name="info" size={20} />
             <p>
-              Scores, puzzle results and achievement rankings stay hidden until
-              spoiler-safe public comparisons are available.
+              Only unlocked puzzle results contribute to public statistics.
+              Personal all-time totals and unverified current-puzzle performance
+              remain private.
             </p>
           </aside>
           <a className="secondary-link" href="/friends">

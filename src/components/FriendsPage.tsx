@@ -23,6 +23,7 @@ import {
 import { ArcadeIcon } from "./ArcadeIcon";
 import { FriendQr } from "./FriendQr";
 import { FriendScanner } from "./FriendScanner";
+import { HeadToHead } from "./HeadToHead";
 
 type NetworkState =
   | { status: "loading" }
@@ -76,6 +77,7 @@ export function FriendsPage({
   const [error, setError] = useState("");
   const [qrOpen, setQrOpen] = useState(false);
   const [scannerOpen, setScannerOpen] = useState(false);
+  const [selectedFriend, setSelectedFriend] = useState<string | null>(null);
   const [online, setOnline] = useState(() => navigator.onLine);
 
   useEffect(() => {
@@ -492,6 +494,12 @@ export function FriendsPage({
                           <a href={`/players/${person.id}`}>Profile</a>
                           <button
                             type="button"
+                            onClick={() => setSelectedFriend(person.id)}
+                          >
+                            Compare
+                          </button>
+                          <button
+                            type="button"
                             disabled={pending}
                             onClick={() =>
                               showConfirmation({ action: "unfriend", person })
@@ -555,6 +563,16 @@ export function FriendsPage({
                   </ul>
                 </section>
               )}
+              {userId &&
+                selectedFriend &&
+                network.friends.some((p) => p.id === selectedFriend) && (
+                  <HeadToHead
+                    leftId={userId}
+                    rightId={selectedFriend}
+                    client={client}
+                    viewerId={userId}
+                  />
+                )}
               <section
                 className="panel social-comparison"
                 aria-labelledby="social-compare-heading"
@@ -564,12 +582,12 @@ export function FriendsPage({
                   <h2 id="social-compare-heading">Compare with friends</h2>
                 </div>
                 <p>
-                  Your connections are ready. Head-to-head scores and
-                  shared-game comparisons become available after spoiler-aware
-                  ranking rules are verified.
+                  See real same-puzzle rankings for selected games. Scores for
+                  locked puzzles stay hidden until your own matching result is
+                  recorded or the publisher reset has been verified.
                 </p>
-                <a className="secondary-link" href="/statistics">
-                  View your own statistics
+                <a className="action-link" href="/compare?scope=friends">
+                  Open friend scoreboards <ArcadeIcon name="arrow" size={17} />
                 </a>
               </section>
             </>

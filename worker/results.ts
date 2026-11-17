@@ -45,7 +45,7 @@ export function responseJson(
   });
 }
 
-function configuration(
+export function configuration(
   env: ResultsEnvironment | undefined,
 ): Omit<ResultAuth, "userId"> | null {
   try {
@@ -167,7 +167,7 @@ export async function boundedJson(
 }
 
 export async function rpc(
-  auth: ResultAuth,
+  auth: Omit<ResultAuth, "userId">,
   method: string,
   args: Record<string, unknown>,
 ): Promise<unknown | Response> {
@@ -500,7 +500,7 @@ export async function publicProfileLookup(
 ): Promise<unknown | Response> {
   const settings = configuration(env);
   if (!settings) return errorResponse("service_unavailable", 503);
-  return rpc({ ...settings, userId: profileId }, "social_public_profile", {
+  return rpc(settings, "social_public_profile", {
     p_profile: profileId,
   });
 }
