@@ -11,7 +11,10 @@ import {
 } from "../../shared/administration";
 
 export class AdministrationError extends Error {
-  constructor(readonly code: string, readonly status: number) {
+  constructor(
+    readonly code: string,
+    readonly status: number,
+  ) {
     super(code);
   }
 }
@@ -114,10 +117,11 @@ export async function loadGameRequests(
   offset = 0,
   signal?: AbortSignal,
 ): Promise<GameRequest[]> {
-  const data = await request(
-    REQUESTS_PATH + "?limit=20&offset=" + offset,
-    { client, userId, signal },
-  );
+  const data = await request(REQUESTS_PATH + "?limit=20&offset=" + offset, {
+    client,
+    userId,
+    signal,
+  });
   if (!validRequests(data))
     throw new AdministrationError("invalid_response", 503);
   return data;
@@ -147,7 +151,11 @@ export async function loadAdminView(
   id?: string,
   signal?: AbortSignal,
 ): Promise<unknown> {
-  const query = new URLSearchParams({ view, limit: "20", offset: String(offset) });
+  const query = new URLSearchParams({
+    view,
+    limit: "20",
+    offset: String(offset),
+  });
   if (id) query.set("id", id);
   return request(ADMIN_PATH + "?" + query.toString(), {
     client,
