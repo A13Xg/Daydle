@@ -74,6 +74,30 @@ export async function inspectMissingApi(response) {
   }
 }
 
+export async function inspectSocialAuthBoundary(response) {
+  if (response.status !== 401 || !/\bapplication\/json\b/i.test(responseType(response))) {
+    return `social auth: HTTP ${response.status}, expected JSON 401`;
+  }
+  try {
+    const payload = await response.json();
+    return payload?.error === "authentication_required" ? null : "social auth: unexpected response";
+  } catch {
+    return "social auth: invalid JSON";
+  }
+}
+
+export async function inspectPublicPlayerAbsent(response) {
+  if (response.status !== 404 || !/\bapplication\/json\b/i.test(responseType(response))) {
+    return `public player: HTTP ${response.status}, expected JSON 404`;
+  }
+  try {
+    const payload = await response.json();
+    return payload?.error === "not_found" ? null : "public player: unexpected response";
+  } catch {
+    return "public player: invalid JSON";
+  }
+}
+
 export async function inspectManifest(response) {
   return checkJson(
     response,
@@ -186,6 +210,8 @@ export async function verifyLiveRelease({
   const checks = [
     ["/api/v1/health", inspectHealth],
     ["/api/v1/not-found", inspectMissingApi],
+    ["/api/v1/social", inspectSocialAuthBoundary],
+    ["/api/v1/players/eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee", inspectPublicPlayerAbsent],
     ["/app.webmanifest", inspectManifest],
     [
       "/sw.js",
@@ -193,6 +219,7 @@ export async function verifyLiveRelease({
     ],
     ["/today", (response) => inspectPage(response, "/today")],
     ["/games", (response) => inspectPage(response, "/games")],
+    ["/friends", (response) => inspectPage(response, "/friends")],
     ["/icons/icon-192.png", (response) => inspectIcon(response, 192)],
     ["/icons/icon-512.png", (response) => inspectIcon(response, 512)],
     ["/icons/apple-touch-icon.png", (response) => inspectIcon(response, 180)],
