@@ -228,19 +228,10 @@ export async function handleResultsRequest(
   const url = new URL(request.url);
   const pathname = url.pathname;
   const detail = pathname.match(/^\/api\/v1\/results\/([a-f0-9-]{36})$/i);
-  if (
-    pathname !== RESULTS_PATH &&
-    pathname !== RESULTS_PATH + "/unknown" &&
-    !detail
-  ) {
+  if (pathname !== RESULTS_PATH && !detail) {
     return errorResponse("not_found", 404);
   }
-  const allowed =
-    pathname === RESULTS_PATH
-      ? "GET, POST"
-      : pathname === RESULTS_PATH + "/unknown"
-        ? "POST"
-        : "GET, DELETE";
+  const allowed = pathname === RESULTS_PATH ? "GET, POST" : "GET, DELETE";
   if (!allowed.split(", ").includes(request.method)) {
     return errorResponse("method_not_allowed", 405, { allow: allowed });
   }
@@ -332,9 +323,11 @@ export async function handleResultsRequest(
       return errorResponse("invalid_game_confirmation", 422);
     }
     const chosen = parser.parse(normalized.lines);
-    if (!chosen)
-      return responseJson({ status: "invalid", code: "invalid_format" }, 422);
-    parsed = { status: "parsed", result: chosen };
+    if (!chosen) {
+      parsed = { status: "invalid", code: "invalid_format", gameSlug: parser.gameSlug };
+    } else {
+      parsed = { status: "parsed", result: chosen };
+    }
   }
   if (
     pathname === RESULTS_PATH &&
@@ -345,39 +338,44 @@ export async function handleResultsRequest(
     return errorResponse("invalid_game_confirmation", 422);
   }
 
-  if (pathname === RESULTS_PATH + "/unknown") {
-    if (body.retain !== true)
-      return errorResponse("retention_requires_consent", 422);
-    if (parsed.status === "parsed" || parsed.status === "ambiguous") {
-      return errorResponse("recognized_share", 409);
-    }
-    if (parsed.status === "invalid" && parsed.code !== "invalid_format") {
-      return responseJson({ status: "invalid", code: parsed.code }, 422);
-    }
-    const game = body.gameSlug;
+  // Submission explicitly authorizes parser evaluation and retention of
+  // bounded failures. Reading the clipboard/typing never uploads anything.
+  // Unsafe or oversized input is rejected without a write.
+  if (parsed.status !== "parsed") {
     if (
-      game !== undefined &&
-      (typeof game !== "string" || !GAME_SLUG_PATTERN.test(game))
+      parsed.status === "invalid" &&
+      (parsed.code === "empty" || parsed.code === "too_long" ||
+       body.text.includes("\u0000"))
     ) {
-      return errorResponse("invalid_game_filter", 422);
+      return responseJson({ status: "invalid", code: parsed.code, captured: false }, 422);
     }
-    const result = await rpc(auth, "retain_unknown_share", {
+    const reason =
+      parsed.status === "unknown" ? "unknown_header" :
+        parsed.status === "ambiguous" ? "ambiguous_match" : parsed.code;
+    const disposition = parsed.status === "unknown" || parsed.status === "ambiguous" ?
+      "unsupported" : "invalid";
+    const candidates = parsed.status === "ambiguous" ? parsed.gameSlugs : [];
+    const game = parsed.status === "invalid" ? parsed.gameSlug : null;
+    const saved = await rpc(auth, "capture_unparsed_share", {
       p_user: auth.userId,
       p_raw: body.text,
-      p_game_slug: game ?? null,
+      p_disposition: disposition,
+      p_reason: reason,
+      p_candidates: candidates,
+      p_game_slug: game,
     });
-    return isResponse(result) ? result : mutation(result);
+    if (isResponse(saved)) return saved;
+    if (!saved || typeof saved !== "object" ||
+        !("status" in saved) ||
+        !["captured", "already_captured"].includes(String(saved.status))) {
+      return errorResponse("result_service_unavailable", 503);
+    }
+    const response = parsed.status === "unknown" ? { status: "unknown", captured: true } :
+      parsed.status === "ambiguous" ? {
+        status: "ambiguous", gameSlugs: parsed.gameSlugs, captured: true,
+      } : { status: "invalid", code: parsed.code, captured: true };
+    return responseJson(response, parsed.status === "ambiguous" ? 409 : 202);
   }
-
-  if (parsed.status === "invalid")
-    return responseJson({ status: "invalid", code: parsed.code }, 422);
-  if (parsed.status === "unknown")
-    return responseJson({ status: "unknown" }, 422);
-  if (parsed.status === "ambiguous")
-    return responseJson(
-      { status: "ambiguous", gameSlugs: parsed.gameSlugs },
-      409,
-    );
 
   const target = body.replaceResultId;
   if (
