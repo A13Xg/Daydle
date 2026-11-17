@@ -117,7 +117,10 @@ export function ComparisonsPage({
   const readyPuzzles = puzzles.status === "ready" ? puzzles.data.items : [];
   const choice = readyPuzzles.find((p) => p.puzzleKey === puzzleKey);
   const visible = board.status === "ready" && puzzleKey ? board.data : null;
-  const safeBoard = visible && visible.puzzleKey === puzzleKey && visible.gameSlug === game ? visible : null;
+  const safeBoard =
+    visible && visible.puzzleKey === puzzleKey && visible.gameSlug === game
+      ? visible
+      : null;
 
   return (
     <section className="comparison-page" aria-labelledby="comparison-heading">
