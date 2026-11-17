@@ -230,7 +230,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Code/link/QR flows and two-account mutual relation tests pass; no private field disclosure; block/unfriend behavior and race/idempotency covered.
 
 ## Phase 10 — Spoiler-safe comparisons, scoreboards, and rankings
-**Status:** IN REVIEW — [PR #18](https://github.com/A13Xg/Daydle/pull/18) synchronized with deployed main `f7dd10c`; hosted Phase 10 SQL applied and verified at `20261117075359_phase10_comparisons`. Source CI and human merge pending; Phase 10 Worker/UI deployment and authenticated E2E not yet performed. **Dependencies:** 9.
+**Status:** COMPLETE (source and hosted API/PWA release) — [PR #18](https://github.com/A13Xg/Daydle/pull/18) merged as `9098fdc7502f6912b4d0b7a8cefc2ec6409c443a`; [main CI #44044954484](https://github.com/A13Xg/Daydle/actions/runs/44044954484) and protected [Deploy Worker #44045005321](https://github.com/A13Xg/Daydle/actions/runs/44045005321) both PASS on that commit. Hosted migration `20261117075359_phase10_comparisons` verified. Real authenticated two-account comparison E2E is NOT VERIFIED; physical iPhone testing remains owner-deferred. **Dependencies:** 9.
 
 **Purpose:** Provide meaningful public and friend-filtered competition without leaking current puzzle answers/results.
 
