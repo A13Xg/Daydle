@@ -69,6 +69,17 @@ export const ACHIEVEMENT_RULES = [
   },
 ] as const;
 
+export function earnedAchievements(
+  totalResults: number,
+  longestStreak: number,
+): PersonalStatistics["achievements"] {
+  return ACHIEVEMENT_RULES.filter(
+    (rule) =>
+      (!("minimumResults" in rule) || totalResults >= rule.minimumResults) &&
+      (!("minimumStreak" in rule) || longestStreak >= rule.minimumStreak),
+  ).map(({ code, name, description }) => ({ code, name, description }));
+}
+
 function dayKey(date: Date, formatter: Intl.DateTimeFormat): string {
   if (!Number.isFinite(date.valueOf())) {
     throw new RangeError("Invalid statistics timestamp");
@@ -205,12 +216,7 @@ export function calculatePersonalStatistics(
       (a, b) => a.name.localeCompare(b.name) || a.slug.localeCompare(b.slug),
     );
 
-  const achievements = ACHIEVEMENT_RULES.filter(
-    (rule) =>
-      (!("minimumResults" in rule) ||
-        results.length >= rule.minimumResults) &&
-      (!("minimumStreak" in rule) || longestStreak >= rule.minimumStreak),
-  ).map(({ code, name, description }) => ({ code, name, description }));
+  const achievements = earnedAchievements(results.length, longestStreak);
 
   return {
     timezone: formatter.resolvedOptions().timeZone,
