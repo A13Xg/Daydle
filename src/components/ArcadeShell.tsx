@@ -20,6 +20,8 @@ export function shellForPath(pathname: string): ShellKind {
     pathname === "/lineup" ||
     pathname === "/history" ||
     pathname === "/compare" ||
+    pathname === "/requests" ||
+    pathname === "/admin" ||
     /^\/comparison-results\/[0-9a-f-]{36}\/?$/i.test(pathname) ||
     pathname === "/notifications" ||
     pathname === "/how-it-works" ||
@@ -40,6 +42,8 @@ export function stackTitle(pathname: string): string {
   if (pathname === "/lineup") return "Edit lineup";
   if (pathname === "/history") return "Result history";
   if (pathname === "/compare") return "Scoreboards";
+  if (pathname === "/requests") return "Request a game";
+  if (pathname === "/admin") return "Administration";
   if (pathname.startsWith("/comparison-results/")) return "Public result";
   if (pathname === "/notifications") return "Notifications";
   if (pathname === "/how-it-works") return "How it works";
@@ -58,6 +62,8 @@ export function stackBackPath(pathname: string): string {
   if (pathname.startsWith("/games/")) return "/games";
   if (pathname.startsWith("/players/")) return "/friends";
   if (pathname === "/compare") return "/friends";
+  if (pathname === "/requests") return "/games";
+  if (pathname === "/admin") return "/account";
   if (pathname.startsWith("/comparison-results/")) return "/compare";
   return "/today";
 }
