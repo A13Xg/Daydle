@@ -63,7 +63,7 @@ AS $$
       (SELECT count(*) FROM public.suggestion_votes v WHERE v.suggestion_id = s.id)::integer AS vote_count,
       EXISTS(SELECT 1 FROM public.suggestion_votes v
         WHERE v.suggestion_id=s.id AND v.user_id=p_actor) AS voted_by_me,
-      s.suggested_by=p_actor AS suggested_by_me
+      COALESCE(s.suggested_by=p_actor,false) AS suggested_by_me
     FROM public.game_suggestions s
     WHERE s.status IN ('pending','approved')
     ORDER BY s.created_at DESC, s.id DESC
@@ -144,8 +144,9 @@ CREATE FUNCTION public.daydle_admin_view(
 )
 RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = ''
 AS $$
-DECLARE cap integer := LEAST(GREATEST(COALESCE(p_limit,20),1),50);
-DECLARE skipped integer := LEAST(GREATEST(COALESCE(p_offset,0),0),5000);
+DECLARE
+  cap integer := LEAST(GREATEST(COALESCE(p_limit,20),1),50);
+  skipped integer := LEAST(GREATEST(COALESCE(p_offset,0),0),5000);
 BEGIN
   IF NOT app_private.request_admin(p_actor) THEN
     RAISE EXCEPTION 'admin_required' USING ERRCODE='42501';
