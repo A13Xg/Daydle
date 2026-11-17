@@ -10,7 +10,6 @@ import {
 import {
   getResultDetail,
   submitShare,
-  retainUnknownShare,
   resultErrorText,
   type SubmissionFeedback,
 } from "../lib/results-api";
@@ -44,8 +43,6 @@ export function PasteDialog({
   const [feedback, setFeedback] = useState<SubmissionFeedback | null>(null);
   const [existing, setExisting] = useState<ExistingResult | null>(null);
   const [approvedReplace, setApprovedReplace] = useState(false);
-  const [retainConsent, setRetainConsent] = useState(false);
-  const [sampleGame, setSampleGame] = useState("");
   const [confirmedGame, setConfirmedGame] = useState("");
   const [detailRetry, setDetailRetry] = useState(0);
   const area = useRef<HTMLTextAreaElement>(null);
@@ -91,9 +88,7 @@ export function PasteDialog({
   function resetFeedback() {
     setFeedback(null);
     setApprovedReplace(false);
-    setRetainConsent(false);
     setConfirmedGame("");
-    setSampleGame("");
   }
 
   function closeIfIdle() {
@@ -179,19 +174,22 @@ export function PasteDialog({
           break;
         case "ambiguous":
           setNotice(
-            "The share matches multiple supported games. Choose the correct game below.",
+            "Share retained privately for parser analysis. It matches multiple games; choose the correct game below to save a result.",
           );
           break;
         case "unknown":
           setNotice(
-            "The share was not recognized and has not been saved. You may opt in to retain a sample.",
+            decision.captured
+              ? "Unrecognized share stored privately for parser analysis. It is not a saved result."
+              : "The share could not be retained. Check the input and try again.",
           );
           break;
         case "invalid":
           setNotice(
-            "Share validation failed (" +
-              decision.code +
-              "). Check the publisher text.",
+            "Share validation failed (" + decision.code + "). " +
+              (decision.captured
+                ? "A private sample was retained for parser review."
+                : "No sample was retained because the input was empty, oversized or unsafe."),
           );
           break;
         default:
@@ -201,36 +199,6 @@ export function PasteDialog({
       }
     } catch (cause) {
       setFeedback(null);
-      setNotice(resultErrorText(cause));
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function retainUnknown() {
-    if (
-      !client ||
-      !userId ||
-      saving ||
-      !retainConsent ||
-      feedback?.status !== "unknown"
-    )
-      return;
-    setSaving(true);
-    setNotice("");
-    try {
-      await retainUnknownShare(
-        client,
-        userId,
-        value,
-        sampleGame.trim() || undefined,
-      );
-      setValue("");
-      resetFeedback();
-      setNotice(
-        "Sample retained with a 90-day expiry date. Automated cleanup is not active yet. This does not record a completed game.",
-      );
-    } catch (cause) {
       setNotice(resultErrorText(cause));
     } finally {
       setSaving(false);
@@ -283,7 +251,8 @@ export function PasteDialog({
         </div>
         <p>
           Copy one publisher share message and return here. Reading your
-          clipboard requires a tap; manual paste always works.
+          clipboard requires a tap; manual paste always works. No text is
+          uploaded until you select Submit result.
         </p>
         <button
           type="button"
@@ -342,7 +311,7 @@ export function PasteDialog({
         {previewDecision?.status === "unknown" && (
           <p className="muted paste-hint">
             This format is not recognized locally. Submitting will check the
-            server without automatically retaining an unknown sample.
+            server and privately retain the sample for parser development.
           </p>
         )}
         {previewDecision?.status === "invalid" && (
@@ -368,6 +337,12 @@ export function PasteDialog({
             <a className="secondary-link" href="/history">
               View my history
             </a>
+            <p className="muted paste-submit-disclosure">
+              Submit result uploads the pasted text for validation. If parsing
+              fails, a private sample and failure category are retained with a
+              90-day expiry date for parser improvement. Automated purge is not
+              scheduled yet. Reading the clipboard alone does not upload text.
+            </p>
           </div>
         )}
         {feedback?.status === "conflict" && feedback.id && (
@@ -470,45 +445,6 @@ export function PasteDialog({
               onClick={() => void submit(undefined, confirmedGame)}
             >
               Confirm game and submit
-            </button>
-          </section>
-        )}
-        {feedback?.status === "unknown" && client && userId && (
-          <section
-            className="panel paste-unknown"
-            aria-label="Optional sample retention"
-          >
-            <p>
-              Unknown shares are <strong>not retained automatically.</strong>{" "}
-              You may send a sample for parser development; it will not count as
-              a saved result.
-            </p>
-            <div className="field">
-              <label htmlFor="unknown-game">Game slug (optional)</label>
-              <input
-                id="unknown-game"
-                value={sampleGame}
-                onChange={(event) => setSampleGame(event.target.value)}
-                placeholder="e.g. worldle"
-                autoComplete="off"
-                maxLength={64}
-              />
-            </div>
-            <label className="consent-line">
-              <input
-                type="checkbox"
-                checked={retainConsent}
-                onChange={(event) => setRetainConsent(event.target.checked)}
-              />
-              Assign a 90-day expiry to this sample for authorized review
-              (automated deletion is not active yet)
-            </label>
-            <button
-              type="button"
-              disabled={!retainConsent || saving}
-              onClick={() => void retainUnknown()}
-            >
-              Retain sample (not a saved result)
             </button>
           </section>
         )}
