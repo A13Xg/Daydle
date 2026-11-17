@@ -19,6 +19,10 @@ interface AdminRow {
   status?: string;
   parser_status?: string;
   link_status?: string;
+  category_slugs?: string[];
+  game_slug?: string;
+  parser_version?: string;
+  day?: string;
   notes?: string;
   vote_count?: number;
   reason?: string;
@@ -44,6 +48,7 @@ interface GameForm {
   url: string;
   description: string;
   publisher: string;
+  categories: string;
   cadence: string;
   status: string;
 }
@@ -54,6 +59,7 @@ const EMPTY_GAME: GameForm = {
   url: "",
   description: "",
   publisher: "",
+  categories: "",
   cadence: "daily",
   status: "active",
 };
@@ -482,7 +488,7 @@ export function AdminPage({
                   <div className="today-actions">
                     <button
                       type="button"
-                      disabled={busy}
+                      disabled={busy || !sampleGame.trim()}
                       onClick={() =>
                         void submit("review_sample", {
                           id: sample.id,
