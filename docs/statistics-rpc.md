@@ -8,7 +8,7 @@ A bounded 366-day activity series is provided for rendering; lifetime totals and
 
 Achievements are derived from server-returned canonical counts and longest streak using the same deterministic shared rules as the pure fixture-tested calculator. They are not persisted as irreversible award rows; deletion and correction change eligibility on the next read.
 
-**Deploy gate:** This source migration is not approved for live Supabase. Apply and verify it only with separate authorization after CI/PR review. Do not infer permission from the owner's prior explicit Phase 7 migration authorization.
+**Deploy gate:** The owner approved and the connected migration action applied the Phase 8 SQL on Daydle Preview. The Cloudflare Worker/frontend deployment is separately gated by the existing main-only, reviewer-protected release workflow and its runtime-binding preflight.
 
 ## Authorized Daydle Preview migration record (November 16, 2026)
 

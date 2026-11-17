@@ -27,9 +27,7 @@ Do not store `SUPABASE_SERVICE_ROLE_KEY` as a `VITE_*` browser variable; do not 
 
 ## Deployment decision
 
-**Preferred:** create an isolated named Cloudflare preview Worker and preview hostname/route with its own runtime secrets and its own authenticated allowed-origin callback configuration. Deploy the reviewed PR SHA to that worker, leaving `daydle.agoodman.io` and its production workflow untouched.
-
-**Alternative:** owner explicitly approves using the single live Worker as the test environment, after merging reviewed PR #15 to `main`, with existing production environment review controls. This is a live-site replacement, not a separate preview deployment. Do not bypass the main-only or reviewer gates.
+**Owner decision (November 16, 2026):** deploy to the existing `daydle.agoodman.io` host after PR #15 passes review, using the `main` branch and protected `production` environment workflow. No new preview Worker is required; the live host is the authorized test target. Preserve manual reviewer approval. The updated `deploy.yml` validates the six already-applied migrations read-only (no `db push`), checks the presence of the Cloudflare service-role secret binding (without reading its value), supplies the public Worker bindings from protected environment variables, and verifies the exact deployed PWA version.
 
 The currently connected tools can read/write repository sources and apply authorized Supabase migrations, but **cannot** set Cloudflare runtime secrets, modify GitHub protected environment secrets, dispatch Actions or run Wrangler. Connecting deployment-capable tooling or executing the protected release outside this connection is necessary. Approval alone does not establish that those capabilities are available.
 
