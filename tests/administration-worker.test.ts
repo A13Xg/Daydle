@@ -292,6 +292,29 @@ describe("Phase 11 request and administration boundary", () => {
     });
   });
 
+  it("refuses expired private sample text even from a malformed privileged upstream", async () => {
+    mockBackends({
+      daydle_admin_status: true,
+      daydle_admin_view: {
+        id: ITEM,
+        raw_text: "EXPIRED PRIVATE CONTENT",
+        disposition: "invalid",
+        expires_at: "2020-01-01T00:00:00Z",
+        diagnostics: { reason_code: "invalid_format" },
+      },
+    });
+    const response = await worker.fetch(
+      makeRequest(ADMIN_PATH + "?view=sample&id=" + ITEM, {
+        token: "Bearer token.jwt.value",
+      }),
+      env,
+    );
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({
+      error: "admin_service_unavailable",
+    });
+  });
+
   it("rejects malformed and restricted admin actions", async () => {
     const calls = mockBackends({ daydle_admin_status: true });
     const invalid = [
