@@ -36,7 +36,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 6.5 | Obsidian Arcade UI/UX overhaul | 6 | COMPLETE — [PR #13](https://github.com/A13Xg/Daydle/pull/13) merged into main at `520ca5b`; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43970518949) passed; redesigned iPhone acceptance remains owner-deferred before release |
 | 7 | Result ingestion, history, and correction lifecycle | 6.5 | BLOCKED (hosted acceptance) — [PR #14](https://github.com/A13Xg/Daydle/pull/14) merged at `1ff1b04`; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/44004416809) passed. Phase 7 SQL applied and verified on Daydle Preview; Worker configuration, deployment and authenticated E2E acceptance remain unverified. [Active release plan](Phase7Exec.md) |
 | 8 | Personal statistics, streaks, and achievements | 7 | SOURCE CI VERIFIED / RELEASE PENDING — [PR #15](https://github.com/A13Xg/Daydle/pull/15) contains the feature. Phase 8 SQL applied/verified on Daydle Preview; Worker release and real authenticated E2E still pending. [Active plan](Phase8Exec.md) |
-| 9 | Public profiles and instant friendship | 8 | IN REVIEW — [PR #16](https://github.com/A13Xg/Daydle/pull/16), [CI #44021921013](https://github.com/A13Xg/Daydle/actions/runs/44021921013) PASS: 245 tests, 20 Chromium checks, 2 PostgreSQL databases; hosted Phase 9 migration/deployment separately gated |
+| 9 | Public profiles and instant friendship | 8 | SOURCE MERGED / HOSTED RELEASE PENDING — [PR #16](https://github.com/A13Xg/Daydle/pull/16) merged at `d47d360b`; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/44022863047) PASS; hosted Phase 9 migration/deployment and authenticated E2E not yet verified |
 | 10 | Spoiler-safe comparisons, scoreboards, and rankings | 9 | NOT STARTED |
 | 11 | Administration, game requests/voting, and diagnostics | 10 | NOT STARTED |
 | 12 | Privacy lifecycle, encrypted backups, and recovery | 11 | NOT STARTED |
@@ -216,7 +216,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Statistics agree with result fixtures, recalc correctly after corrections, avoid unsupported cross-game comparisons, and meet reasonable latency targets.
 
 ## Phase 9 — Public profiles and instant friendship
-**Status:** IN REVIEW — source implemented and verified via [PR #16](https://github.com/A13Xg/Daydle/pull/16), [CI #44021921013](https://github.com/A13Xg/Daydle/actions/runs/44021921013). Phase 9 SQL not applied to hosted Supabase; Worker/frontend not deployed. [Archived source verification plan](completedPhases/Phase9Exec.md). **Dependencies:** 8 (merged).
+**Status:** SOURCE MERGED / HOSTED RELEASE PENDING — [PR #16](https://github.com/A13Xg/Daydle/pull/16) merged at `d47d360b`; post-merge CI [#44022863047](https://github.com/A13Xg/Daydle/actions/runs/44022863047) passed. Phase 9 SQL not applied to hosted Supabase; Worker/frontend not deployed. [Archived source verification plan](completedPhases/Phase9Exec.md). **Dependencies:** 8 (merged).
 
 **Purpose:** Publish permitted performance and implement mutual friends as an optional comparison filter.
 
