@@ -1,6 +1,6 @@
 # Phase 9 Execution Plan — Public profiles and instant friendship
 
-**Status:** IN PROGRESS — SOURCE ONLY / NOT DEPLOYED
+**Status:** IN REVIEW — SOURCE VERIFIED / HOSTED RELEASE NOT DEPLOYED
 **Branch / PR:** `phase/09-public-profiles-instant-friends` · [PR #16](https://github.com/A13Xg/Daydle/pull/16)
 **Base:** main `db7bc2d9832bd5f60cca16e8c8ded0963255fd08`. Phase 8 PR #15 merged, main CI #44019612778 passed.
 **Authority:** IDEA.md §§3–4,8–9; roadmap.md Phase 9; AGENTS.md; owner-approved Obsidian Arcade DESIGN.md and examples.
@@ -34,3 +34,15 @@
 
 ## Known release dependency
 If the Phase 7/8 Worker on `daydle.agoodman.io` hasn't been deployed from merged main, Phase 9 source may be implemented and validated independently. Do not misstate hosted availability or block source development merely because an earlier release isn't accessible. Capture the actual hosted readiness gap at completion.
+
+## Phase 9 source completion and acceptance — November 16, 2026
+
+- Phase 9 source built on the existing Phase 2/3 identity and friend tables. Implemented five service-role-only SQL functions, atomic owner quota, pair-serialized relation mutation, code regeneration, private network list and public profile allowlist. Applied no new schema or user data to the hosted database.
+- Real Friends UI with shareable code/link, **locally rendered offline QR** from pinned MIT `qrcode-generator@2.0.4`, optional camera scanning with manual fallback, signed-out login-resume, friend list, block/unblock and regenerate confirmations. Profile view shows only user-approved public identity and selected games; no current-puzzle result, score, derived counts, achievements, leaked email/raw data or fake rankings. Compared patterns against owner-approved Obsidian Arcade Friends design; its sample leaderboard/requests/feed are deliberately not implemented (Phase 10 spoiler/privacy dependency and owner product spec).
+- UX audit fixes: confirm controls scroll into view and receive keyboard focus (with cancel restoration); actionable self-code/invalid-code errors; local safe friend code URLs; validated public-profile dates; account link and stack back navigation. UI respects 44px touch targets, dark palette and local fonts. Camera hardware behavior not verified on iPhone by owner decision.
+- SQL audit fixes: PostgreSQL `LEAST/GREATEST` syntax; `SELECT FOR SHARE` locks code lookup against concurrent rotation; pair advisory lock serializes connect and block; unique relationship key prevents duplicate friendships. Public browser roles cannot invoke the server-only RPCs.
+- **Final clean CI:** [run #44021921013](https://github.com/A13Xg/Daydle/actions/runs/44021921013), exact branch SHA `a4c6205a30f551acd652cdee0d9438dbccb23289`: **245 unit/API tests across 33 suites**, strict TS, lint, Prettier, production build, API/PWA smoke, **20 Chromium route/viewport checks** (320/393/1024 CSS px, not Safari), two isolated PostgreSQL 17 migration/RLS/grant/social fixtures and concurrency suites **PASS**. Temporary QR-lock and Prettier diagnostics removed from source.
+- No unreviewed CDN/external QR requests, new auth mechanism, public score endpoint or system credential. No automatic PR merge or Cloudflare/Supabase Phase 9 deployment.
+- **Limits and future work:** Hosted real OAuth/social E2E and iPhone Safari/camera scanning unverified; database/function rollout awaits owner authorization. Large friend/block lists are bounded to 200; expand pagination in a later quality-of-life improvement if needed. Spoiler-aware current-puzzle results and meaningful per-game rankings remain Phase 10, not Phase 9. This is a deliberate product/security contract boundary, not a passed Phase 10 gate.
+
+**Disposition:** Source acceptance verified. Keep PR #16 ready for owner review/merge. Archive the source plan while maintaining hosted rollout and hardware limitations explicitly. Main Phase 9 remains not COMPLETE until merge and required follow-up checks.
