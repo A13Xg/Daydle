@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { authCallbackDestination, exchangeAuthCode } from "../lib/auth-actions";
+import { pendingFriendStorage, takePendingFriendCode } from "../lib/social-api";
 
 // React StrictMode mounts effects twice in development. OAuth authorization
 // codes are single-use, so both effects must await the same exchange request.
@@ -50,10 +51,15 @@ export function AuthCallback({ client }: { client: SupabaseClient | null }) {
     } else {
       void exchangeCallbackOnce(client, code)
         .then(() => {
-          if (active)
+          if (active) {
+            const fallback = authCallbackDestination(window.location.search);
+            const pending = takePendingFriendCode(pendingFriendStorage());
             window.location.replace(
-              authCallbackDestination(window.location.search),
+              pending && fallback === "/account"
+                ? "/friends?code=" + pending
+                : fallback,
             );
+          }
         })
         .catch(() => {
           if (active)

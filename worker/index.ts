@@ -5,6 +5,7 @@ import {
   type ResultsEnvironment,
 } from "./results";
 import { HEALTH_PATH } from "../shared/contracts";
+import { handleSocialRequest } from "./social";
 import { healthResponse } from "./health";
 
 function apiError(
@@ -46,6 +47,10 @@ export default {
     request: Request,
     env: ResultsEnvironment,
   ): Response | Promise<Response> {
+    const path = new URL(request.url).pathname;
+    if (path === "/api/v1/social" || path.startsWith("/api/v1/players/")) {
+      return handleSocialRequest(request, env);
+    }
     if (new URL(request.url).pathname === "/api/v1/statistics") {
       return handleStatisticsRequest(request, env);
     }

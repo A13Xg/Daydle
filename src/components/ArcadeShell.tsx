@@ -21,6 +21,7 @@ export function shellForPath(pathname: string): ShellKind {
     pathname === "/history" ||
     pathname === "/notifications" ||
     pathname === "/how-it-works" ||
+    /^\/players\/[0-9a-f-]{36}\/?$/i.test(pathname) ||
     /^\/games\/[a-z0-9-]+\/?$/.test(pathname)
   )
     return "stack";
@@ -39,6 +40,7 @@ export function stackTitle(pathname: string): string {
   if (pathname === "/notifications") return "Notifications";
   if (pathname === "/how-it-works") return "How it works";
   if (pathname.startsWith("/games/")) return "Game details";
+  if (pathname.startsWith("/players/")) return "Player profile";
   return "Daydle";
 }
 
@@ -50,6 +52,7 @@ export function stackBackPath(pathname: string): string {
   )
     return "/today";
   if (pathname.startsWith("/games/")) return "/games";
+  if (pathname.startsWith("/players/")) return "/friends";
   return "/today";
 }
 

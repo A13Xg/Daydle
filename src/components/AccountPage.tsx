@@ -218,9 +218,10 @@ export function AccountPage({
             <span>Friend code</span>
             <strong>{profileState.friendCode}</strong>
             <small>
-              Shareable codes, QR links, and friend connections arrive in Phase
-              9.
+              Share your code or an invitation QR to connect instantly.
             </small>
+            <a href="/friends">Share code and manage friends</a>
+            <a href={`/players/${user.id}`}>View my public profile</a>
           </div>
         </>
       )}
