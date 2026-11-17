@@ -90,6 +90,7 @@ describe("Phase 12 authenticated backup encryption", () => {
     await expect(encryptBackup(input, existing, key)).rejects.toThrow(
       "backup_encryption_failed",
     );
+    expect(await readFile(existing, "utf8")).toBe("Do not overwrite");
     await expect(decryptBackup(encrypted, existing, key)).rejects.toThrow(
       "backup_decryption_failed",
     );
