@@ -21,13 +21,13 @@ interface ResultAuth {
 }
 
 const MAX_BODY_BYTES = 48_000;
-const errorResponse = (
+export const errorResponse = (
   error: string,
   status: number,
   headers: HeadersInit = {},
 ) => responseJson({ error }, status, headers);
 
-function responseJson(
+export function responseJson(
   data: unknown,
   status = 200,
   headers: HeadersInit = {},
@@ -82,7 +82,7 @@ function configuration(
   }
 }
 
-async function authenticate(
+export async function authenticate(
   request: Request,
   env: ResultsEnvironment | undefined,
 ): Promise<ResultAuth | Response> {
@@ -118,7 +118,7 @@ async function authenticate(
   }
 }
 
-async function boundedJson(
+export async function boundedJson(
   request: Request,
 ): Promise<Record<string, unknown> | Response> {
   if (
@@ -166,7 +166,7 @@ async function boundedJson(
   }
 }
 
-async function rpc(
+export async function rpc(
   auth: ResultAuth,
   method: string,
   args: Record<string, unknown>,
@@ -204,7 +204,7 @@ async function rpc(
   }
 }
 
-function isResponse(data: unknown): data is Response {
+export function isResponse(data: unknown): data is Response {
   return data instanceof Response;
 }
 
@@ -470,4 +470,18 @@ export async function handleStatisticsRequest(
       summary.longestStreak,
     ),
   });
+}
+
+/** Single allowlisted unauthenticated RPC. Do not expose a general service proxy. */
+export async function publicProfileLookup(
+  env: ResultsEnvironment | undefined,
+  profileId: string,
+): Promise<unknown | Response> {
+  const settings = configuration(env);
+  if (!settings) return errorResponse("service_unavailable", 503);
+  return rpc(
+    { ...settings, userId: profileId },
+    "social_public_profile",
+    { p_profile: profileId },
+  );
 }
