@@ -64,8 +64,12 @@ export async function encryptBackup(input, output, base64Key) {
     await handle.sync();
     return true;
   } catch {
-    if (handle) await handle.close().catch(() => undefined);
-    await unlink(output).catch(() => undefined);
+    // A failed exclusive open means the destination already belongs to
+    // someone else. Never delete it during cleanup.
+    if (handle) {
+      await handle.close().catch(() => undefined);
+      await unlink(output).catch(() => undefined);
+    }
     throw new Error("backup_encryption_failed");
   } finally {
     if (handle) await handle.close().catch(() => undefined);
