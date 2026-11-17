@@ -125,12 +125,20 @@ describe("authenticated result Worker boundary", () => {
   });
 
   it("retains bounded unknown shares on explicit Submit and classifies them", async () => {
-    const calls = mockUpstream({ status: "captured", classification: "unknown_header" });
+    const calls = mockUpstream({
+      status: "captured",
+      classification: "unknown_header",
+    });
     const raw = "Unrecognized Daily Game #17";
-    const result = await worker.fetch(makeRequest(path(), "POST", { text: raw, userId: OTHER }), env);
+    const result = await worker.fetch(
+      makeRequest(path(), "POST", { text: raw, userId: OTHER }),
+      env,
+    );
     expect(result.status).toBe(202);
     expect(await result.json()).toEqual({ status: "unknown", captured: true });
-    const request = calls.find((call) => call.url.endsWith("/rpc/capture_unparsed_share"));
+    const request = calls.find((call) =>
+      call.url.endsWith("/rpc/capture_unparsed_share"),
+    );
     expect(request?.body).toEqual({
       p_user: USER,
       p_raw: raw,
@@ -142,14 +150,25 @@ describe("authenticated result Worker boundary", () => {
   });
 
   it("captures recognized but malformed shares with parser hint and category", async () => {
-    const calls = mockUpstream({ status: "captured", classification: "invalid_format" });
+    const calls = mockUpstream({
+      status: "captured",
+      classification: "invalid_format",
+    });
     const raw = "Wordle 1406 4/6*\n⬛⬛⬛⬛🟩";
-    const result = await worker.fetch(makeRequest(path(), "POST", { text: raw }), env);
+    const result = await worker.fetch(
+      makeRequest(path(), "POST", { text: raw }),
+      env,
+    );
     expect(result.status).toBe(202);
     expect(await result.json()).toEqual({
-      status: "invalid", code: "invalid_format", captured: true,
+      status: "invalid",
+      code: "invalid_format",
+      captured: true,
     });
-    expect(calls.find((call) => call.url.endsWith("/rpc/capture_unparsed_share"))?.body).toMatchObject({
+    expect(
+      calls.find((call) => call.url.endsWith("/rpc/capture_unparsed_share"))
+        ?.body,
+    ).toMatchObject({
       p_disposition: "invalid",
       p_reason: "invalid_format",
       p_game_slug: "wordle",
@@ -157,16 +176,24 @@ describe("authenticated result Worker boundary", () => {
   });
 
   it("retains ambiguous mixed-game shares with a bounded candidate set", async () => {
-    const calls = mockUpstream({ status: "captured", classification: "ambiguous_match" });
+    const calls = mockUpstream({
+      status: "captured",
+      classification: "ambiguous_match",
+    });
     const mixed = wordle + "\nStrands #987";
-    const response = await worker.fetch(makeRequest(path(), "POST", { text: mixed }), env);
+    const response = await worker.fetch(
+      makeRequest(path(), "POST", { text: mixed }),
+      env,
+    );
     expect(response.status).toBe(409);
     expect(await response.json()).toEqual({
       status: "ambiguous",
       gameSlugs: ["wordle", "strands"],
       captured: true,
     });
-    const captured = calls.find((call) => call.url.endsWith("/rpc/capture_unparsed_share"));
+    const captured = calls.find((call) =>
+      call.url.endsWith("/rpc/capture_unparsed_share"),
+    );
     expect(captured?.body).toMatchObject({
       p_user: USER,
       p_disposition: "unsupported",
@@ -178,11 +205,15 @@ describe("authenticated result Worker boundary", () => {
   it("bounds invalid sample capture and never retains empty, oversized or NUL shares", async () => {
     const calls = mockUpstream({ status: "captured" });
     for (const raw of ["", "x".repeat(10_001), "Wordle 1/6\u0000bad"]) {
-      const response = await worker.fetch(makeRequest(path(), "POST", { text: raw }), env);
+      const response = await worker.fetch(
+        makeRequest(path(), "POST", { text: raw }),
+        env,
+      );
       expect(response.status).toBe(422);
-      const body = await response.json() as { captured?: boolean };
+      const body = (await response.json()) as { captured?: boolean };
       expect(body.captured).toBe(false);
-      if (raw.length > 0) expect(JSON.stringify(body)).not.toContain(raw.slice(0, 150));
+      if (raw.length > 0)
+        expect(JSON.stringify(body)).not.toContain(raw.slice(0, 150));
     }
     expect(calls.filter((call) => call.url.includes("/rpc/"))).toHaveLength(0);
   });
@@ -190,30 +221,47 @@ describe("authenticated result Worker boundary", () => {
   it("captures too-many-lines input when within raw retention limits", async () => {
     const calls = mockUpstream({ status: "captured" });
     const raw = Array.from({ length: 65 }, () => "a").join("\n");
-    const response = await worker.fetch(makeRequest(path(), "POST", { text: raw }), env);
+    const response = await worker.fetch(
+      makeRequest(path(), "POST", { text: raw }),
+      env,
+    );
     expect(response.status).toBe(202);
     expect(await response.json()).toEqual({
-      status: "invalid", code: "too_many_lines", captured: true,
+      status: "invalid",
+      code: "too_many_lines",
+      captured: true,
     });
-    expect(calls.find((call) => call.url.includes("/rpc/"))?.body).toMatchObject({
-      p_disposition: "invalid", p_reason: "too_many_lines",
+    expect(
+      calls.find((call) => call.url.includes("/rpc/"))?.body,
+    ).toMatchObject({
+      p_disposition: "invalid",
+      p_reason: "too_many_lines",
     });
   });
 
   it("returns service failure rather than claiming capture if the database write fails", async () => {
     const calls = mockUpstream({ invalid: true });
     const response = await worker.fetch(
-      makeRequest(path(), "POST", { text: "unknown publisher format" }), env,
+      makeRequest(path(), "POST", { text: "unknown publisher format" }),
+      env,
     );
     expect(response.status).toBe(503);
-    expect(await response.json()).toEqual({ error: "result_service_unavailable" });
-    expect(calls.find((call) => call.url.endsWith("/rpc/capture_unparsed_share"))).toBeTruthy();
+    expect(await response.json()).toEqual({
+      error: "result_service_unavailable",
+    });
+    expect(
+      calls.find((call) => call.url.endsWith("/rpc/capture_unparsed_share")),
+    ).toBeTruthy();
   });
 
   it("does not expose the obsolete standalone unknown-retention endpoint", async () => {
     const calls = mockUpstream({ status: "captured" });
     const result = await worker.fetch(
-      makeRequest(path("/unknown"), "POST", { text: "random unknown", retain: true }), env,
+      makeRequest(path("/unknown"), "POST", {
+        text: "random unknown",
+        retain: true,
+      }),
+      env,
     );
     expect(result.status).toBe(404);
     expect(calls).toHaveLength(0);

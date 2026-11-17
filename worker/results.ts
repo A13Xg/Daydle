@@ -324,7 +324,11 @@ export async function handleResultsRequest(
     }
     const chosen = parser.parse(normalized.lines);
     if (!chosen) {
-      parsed = { status: "invalid", code: "invalid_format", gameSlug: parser.gameSlug };
+      parsed = {
+        status: "invalid",
+        code: "invalid_format",
+        gameSlug: parser.gameSlug,
+      };
     } else {
       parsed = { status: "parsed", result: chosen };
     }
@@ -344,16 +348,25 @@ export async function handleResultsRequest(
   if (parsed.status !== "parsed") {
     if (
       parsed.status === "invalid" &&
-      (parsed.code === "empty" || parsed.code === "too_long" ||
-       body.text.includes("\u0000"))
+      (parsed.code === "empty" ||
+        parsed.code === "too_long" ||
+        body.text.includes("\u0000"))
     ) {
-      return responseJson({ status: "invalid", code: parsed.code, captured: false }, 422);
+      return responseJson(
+        { status: "invalid", code: parsed.code, captured: false },
+        422,
+      );
     }
     const reason =
-      parsed.status === "unknown" ? "unknown_header" :
-        parsed.status === "ambiguous" ? "ambiguous_match" : parsed.code;
-    const disposition = parsed.status === "unknown" || parsed.status === "ambiguous" ?
-      "unsupported" : "invalid";
+      parsed.status === "unknown"
+        ? "unknown_header"
+        : parsed.status === "ambiguous"
+          ? "ambiguous_match"
+          : parsed.code;
+    const disposition =
+      parsed.status === "unknown" || parsed.status === "ambiguous"
+        ? "unsupported"
+        : "invalid";
     const candidates = parsed.status === "ambiguous" ? parsed.gameSlugs : [];
     const game = parsed.status === "invalid" ? parsed.gameSlug : null;
     const saved = await rpc(auth, "capture_unparsed_share", {
@@ -365,15 +378,24 @@ export async function handleResultsRequest(
       p_game_slug: game,
     });
     if (isResponse(saved)) return saved;
-    if (!saved || typeof saved !== "object" ||
-        !("status" in saved) ||
-        !["captured", "already_captured"].includes(String(saved.status))) {
+    if (
+      !saved ||
+      typeof saved !== "object" ||
+      !("status" in saved) ||
+      !["captured", "already_captured"].includes(String(saved.status))
+    ) {
       return errorResponse("result_service_unavailable", 503);
     }
-    const response = parsed.status === "unknown" ? { status: "unknown", captured: true } :
-      parsed.status === "ambiguous" ? {
-        status: "ambiguous", gameSlugs: parsed.gameSlugs, captured: true,
-      } : { status: "invalid", code: parsed.code, captured: true };
+    const response =
+      parsed.status === "unknown"
+        ? { status: "unknown", captured: true }
+        : parsed.status === "ambiguous"
+          ? {
+              status: "ambiguous",
+              gameSlugs: parsed.gameSlugs,
+              captured: true,
+            }
+          : { status: "invalid", code: parsed.code, captured: true };
     return responseJson(response, parsed.status === "ambiguous" ? 409 : 202);
   }
 

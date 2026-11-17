@@ -153,8 +153,8 @@ export function HowItWorksPage() {
           <p>
             Use Paste Results after copying a share message. Supported formats
             are recognized when you select Submit result, then saved to private
-            History. Submitted unknown or invalid formats are retained privately for parser
-            analysis (within size/safety limits).
+            History. Submitted unknown or invalid formats are retained privately
+            for parser analysis (within size/safety limits).
           </p>
         </li>
       </ol>

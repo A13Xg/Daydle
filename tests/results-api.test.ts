@@ -109,17 +109,35 @@ describe("browser-to-Worker owner results API", () => {
   });
 
   it("recognizes categorized failure acknowledgments without echoing raw text", async () => {
-    const fake = vi.fn()
-      .mockResolvedValueOnce(Response.json({ status: "unknown", captured: true }, { status: 202 }))
-      .mockResolvedValueOnce(Response.json({
-        status: "invalid", code: "invalid_format", captured: true,
-      }, { status: 202 }));
+    const fake = vi
+      .fn()
+      .mockResolvedValueOnce(
+        Response.json({ status: "unknown", captured: true }, { status: 202 }),
+      )
+      .mockResolvedValueOnce(
+        Response.json(
+          {
+            status: "invalid",
+            code: "invalid_format",
+            captured: true,
+          },
+          { status: 202 },
+        ),
+      );
     vi.stubGlobal("fetch", fake);
     const raw = "Private unknown result text";
     const unknown = await submitShare(authenticatedClient(), USER, raw);
     expect(unknown).toEqual({ status: "unknown", captured: true });
-    const invalid = await submitShare(authenticatedClient(), USER, "Wordle incomplete");
-    expect(invalid).toEqual({ status: "invalid", code: "invalid_format", captured: true });
+    const invalid = await submitShare(
+      authenticatedClient(),
+      USER,
+      "Wordle incomplete",
+    );
+    expect(invalid).toEqual({
+      status: "invalid",
+      code: "invalid_format",
+      captured: true,
+    });
     expect(JSON.stringify(unknown)).not.toContain(raw);
     const first = fake.mock.calls[0] as [string, RequestInit];
     expect(first[0]).toBe("/api/v1/results");

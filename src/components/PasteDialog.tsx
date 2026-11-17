@@ -186,7 +186,9 @@ export function PasteDialog({
           break;
         case "invalid":
           setNotice(
-            "Share validation failed (" + decision.code + "). " +
+            "Share validation failed (" +
+              decision.code +
+              "). " +
               (decision.captured
                 ? "A private sample was retained for parser review."
                 : "No sample was retained because the input was empty, oversized or unsafe."),
