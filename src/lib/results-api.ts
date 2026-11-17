@@ -1,6 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
-  GAME_SLUG_PATTERN,
   RESULT_ID_PATTERN,
   RESULTS_PATH,
   type ResultMutationResponse,
@@ -66,9 +65,9 @@ function errorCode(body: unknown): string {
 
 export type SubmissionFeedback =
   | ResultMutationResponse
-  | { status: "unknown" }
-  | { status: "invalid"; code: string }
-  | { status: "ambiguous"; gameSlugs: string[] };
+  | { status: "unknown"; captured: boolean }
+  | { status: "invalid"; code: string; captured: boolean }
+  | { status: "ambiguous"; gameSlugs: string[]; captured: boolean };
 
 export async function submitShare(
   client: SupabaseClient,
@@ -108,34 +107,6 @@ export async function submitShare(
     ].includes(body.status)
   ) {
     return body as SubmissionFeedback;
-  }
-  throw new ResultApiError(errorCode(body), response.status);
-}
-
-export async function retainUnknownShare(
-  client: SupabaseClient,
-  userId: string,
-  text: string,
-  gameSlug?: string,
-): Promise<ResultMutationResponse> {
-  if (gameSlug && !GAME_SLUG_PATTERN.test(gameSlug)) {
-    throw new ResultApiError("invalid_game_filter", 422);
-  }
-  const { response, body } = await callResults(
-    client,
-    userId,
-    RESULTS_PATH + "/unknown",
-    "POST",
-    { text, retain: true, ...(gameSlug ? { gameSlug } : {}) },
-  );
-  if (
-    response.status === 201 &&
-    body &&
-    typeof body === "object" &&
-    "status" in body &&
-    body.status === "retained"
-  ) {
-    return body as ResultMutationResponse;
   }
   throw new ResultApiError(errorCode(body), response.status);
 }
