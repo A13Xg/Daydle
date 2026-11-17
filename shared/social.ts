@@ -47,7 +47,10 @@ export function connectionLink(code: string, origin: string): string | null {
   if (!normalized) return null;
   try {
     const base = new URL(origin);
-    if (base.protocol !== "https:" && base.hostname !== "localhost")
+    if (
+      base.protocol !== "https:" &&
+      !(base.protocol === "http:" && ["localhost", "127.0.0.1", "[::1]"].includes(base.hostname))
+    )
       return null;
     const url = new URL("/friends", base);
     url.searchParams.set("code", normalized);
