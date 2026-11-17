@@ -65,6 +65,7 @@ for db in "${databases[@]}"; do
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/social-assertions.sql
   bash scripts/test-category-concurrency.sh
   bash scripts/test-result-concurrency.sh
+  bash scripts/test-social-concurrency.sh
 done
 
 echo "PASS: All Daydle schema, RLS, auth identity, catalog, Today result-lifecycle and statistics tests passed on two clean databases."
