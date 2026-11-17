@@ -130,7 +130,7 @@ function projectAdminView(
       "review_status",
       "game_slug",
     ],
-    diagnostics: ["reason", "disposition", "samples"],
+    diagnostics: ["game_slug", "parser_version", "reason", "disposition", "day", "samples"],
     restrictions: ["user_id", "reason", "created_at"],
   };
   if (
@@ -326,6 +326,7 @@ export async function handleAdministrationRequest(
       "url",
       "description",
       "publisher",
+      "categories",
       "cadence",
       "status",
     ],
