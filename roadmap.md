@@ -258,7 +258,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Authorized workflows work, unauthorized users cannot invoke admin endpoints, requests/votes are consistent, and failures are diagnosable.
 
 ## Phase 12 — Privacy lifecycle, encrypted backups, and recovery
-**Status:** NOT STARTED. **Dependencies:** 11.
+**Status:** IN PROGRESS — source CI verified in [PR #23](https://github.com/A13Xg/Daydle/pull/23) stacked on Phase 11; [CI #44145170505](https://github.com/A13Xg/Daydle/actions/runs/44145170505) PASS. Authenticated export/deletion, source purge cron, forward-only SQL and AES-GCM archive tests exist, but **independent offsite backup scheduling, actual isolated restore and deleted-user reconciliation remain NOT VERIFIED**. Keep PR draft; no hosted migration or deployment. [Active execution plan](Phase12Exec.md). **Dependencies:** 11.
 
 **Purpose:** Finish data privacy obligations and real recovery capability on a free managed-database plan.
 
