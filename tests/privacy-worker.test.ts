@@ -216,7 +216,8 @@ describe("Phase 12 irreversible account deletion boundary", () => {
       confirmation: "DELETE MY DAYDLE ACCOUNT",
     }), env);
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ status: "deleted" });
+    const body = await res.clone().text();
+    expect(JSON.parse(body)).toEqual({ status: "deleted" });
     expect(res.headers.get("cache-control")).toContain("no-store");
     expect(calls[1]?.url).toBe(
       "https://fixture.supabase.co/auth/v1/admin/users/" + OWNER,
@@ -227,7 +228,7 @@ describe("Phase 12 irreversible account deletion boundary", () => {
       JSON.stringify({ should_soft_delete: false }),
     );
     expect(JSON.stringify(calls[1]?.init?.headers)).toContain(env.SUPABASE_SERVICE_ROLE_KEY);
-    expect(JSON.stringify(await res.clone().text())).not.toContain(env.SUPABASE_SERVICE_ROLE_KEY);
+    expect(body).not.toContain(env.SUPABASE_SERVICE_ROLE_KEY);
   });
 
   it("does not falsely claim deletion on an Auth Admin failure", async () => {
