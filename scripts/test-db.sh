@@ -64,6 +64,7 @@ for db in "${databases[@]}"; do
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/statistics-assertions.sql
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/social-assertions.sql
   psql -X -v ON_ERROR_STOP=1 -f tests/sql/comparisons-assertions.sql
+  psql -X -v ON_ERROR_STOP=1 -f tests/sql/administration-assertions.sql
   bash scripts/test-category-concurrency.sh
   bash scripts/test-result-concurrency.sh
   bash scripts/test-social-concurrency.sh
