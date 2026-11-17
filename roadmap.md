@@ -258,7 +258,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Authorized workflows work, unauthorized users cannot invoke admin endpoints, requests/votes are consistent, and failures are diagnosable.
 
 ## Phase 12 — Privacy lifecycle, encrypted backups, and recovery
-**Status:** NOT STARTED. **Dependencies:** 11.
+**Status:** IN PROGRESS — source CI verified in [PR #23](https://github.com/A13Xg/Daydle/pull/23) stacked on Phase 11; [CI #44145170505](https://github.com/A13Xg/Daydle/actions/runs/44145170505) PASS. Authenticated export/deletion, source purge cron, forward-only SQL and AES-GCM archive tests exist, but **independent offsite backup scheduling, actual isolated restore and deleted-user reconciliation remain NOT VERIFIED**. Keep PR draft; no hosted migration or deployment. [Active execution plan](Phase12Exec.md). **Dependencies:** 11.
 
 **Purpose:** Finish data privacy obligations and real recovery capability on a free managed-database plan.
 
@@ -272,7 +272,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Controlled test export/delete/restore succeeds; raw expiry works; backup recovery documented and observable, no secret/public raw leaks.
 
 ## Phase 13 — UX completeness, security, accessibility, and QA hardening
-**Status:** NOT STARTED. **Dependencies:** 12.
+**Status:** IN PROGRESS (source QA CI verified; dependency acceptance pending) — [PR #24](https://github.com/A13Xg/Daydle/pull/24) stacked on [PR #23](https://github.com/A13Xg/Daydle/pull/23). Chromium computed accessibility audit and admin fallback heading/expired-sample privacy defense added; 28-route UI smoke and two PostgreSQL security jobs pass. Real Safari and dependent Phase 12 offsite backup restoration remain NOT VERIFIED. [Active plan](Phase13Exec.md). **Dependencies:** 12.
 
 **Purpose:** Deliver polished workflows without choosing the final visual identity.
 
