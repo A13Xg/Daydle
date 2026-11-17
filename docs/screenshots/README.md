@@ -19,3 +19,14 @@ Captured from the **compiled Daydle React/Vite application**, not from reference
 **Limitations:** CI has no Supabase project configuration, so these screenshots cannot demonstrate signed-in games, provider callback, or private user data. Physical iPhone Safari/home-screen PWA acceptance is **owner-deferred and NOT VERIFIED**; real-device testing remains required before release. Images are source-only documentation, excluded from the production/PWA bundle and precache.
 
 **Verification:** [Final clean CI #43949077483](https://github.com/A13Xg/Daydle/actions/runs/43949077483) passed 196 unit/API/UI tests, 16 Chromium route/viewport checks, build/smoke, TypeScript/lint/format and two PostgreSQL security jobs after removing temporary capture/format instrumentation.
+
+## Phase 7 — real guest UI captures (PR #14)
+
+Captured from the compiled Phase 7 React/Vite bundle in [Chromium CI #44001940876](https://github.com/A13Xg/Daydle/actions/runs/44001940876), not from standalone mockups or hosted production, at 393×852 CSS pixels (2× device scale) with iPhone-style safe-area emulation.
+
+| Route/state | Evidence | Review |
+|---|---|---|
+| `/history` signed out | [Phase 7 guest History](phase7-history-guest.png) | Approved dark/stack shell, no bottom nav, login gate and no private result controls/data |
+| `/today` with Paste open, signed out | [Phase 7 guest Paste dialog](phase7-paste-guest.png) | Rounded surface/modal overlay, manual textarea, real gesture-based clipboard button, working Escape/focus restoration, no unauthorized Submit control |
+
+**Scope:** These images are accurate guest-state evidence only, NOT evidence of authenticated History contents, saved-result styling, example parser matches, conflict/replacement comparison, protected Worker secret availability, or physical iPhone acceptance. Those require a separately authorized hosted integration environment and real devices. Images are source documentation, excluded from the PWA asset bundle and service-worker precache. The temporary screenshot capture code used in CI has been removed.

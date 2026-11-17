@@ -58,3 +58,7 @@ ORDER BY sample_count DESC;
 To inspect private raw content, authorized project operators can filter `public.raw_submissions` by specific pending IDs in a controlled SQL session. Do not print full raw shares in CI, general logs, PRs, error responses or public issues. Convert verified examples into sanitized parser fixtures only after review. Do not silently run OCR, LLM categorization, automatic schema changes, or code generation based on untrusted user-supplied text.
 
 The existing hosted Daydle Preview database was checked on November 16, 2026: `raw_submissions=0`, `game_results=0`, and only Phase 2–5 migrations were applied. Previously pasted text was not persisted and cannot be recovered from this database. This receive path becomes active **only** after authorized migration, Worker secret setup and deployment.
+
+## UI visual verification
+
+[Phase 7 guest History and Paste screenshots](screenshots/README.md#phase-7--real-guest-ui-captures-pr-14) were captured from the built app via [CI #44001940876](https://github.com/A13Xg/Daydle/actions/runs/44001940876). The approved Obsidian Arcade palette, stack routing, mobile touch targets and clipboard gesture were checked in Chromium. Authenticated results, actual private sample review and physical iOS behavior are not proven by guest screenshots.

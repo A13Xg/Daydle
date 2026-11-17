@@ -147,17 +147,6 @@ function browserMetrics() {
   };
 }
 
-async function captureGuestScreenshot(client, path) {
-  if (process.env.DAYDLE_CAPTURE_PHASE7 !== "1") return;
-  const screenshot = await client.send("Page.captureScreenshot", {
-    format: "png", captureBeyondViewport: false, fromSurface: true,
-  });
-  const chunks = screenshot.data.match(/.{1,760}/g) ?? [];
-  for (let i = 0; i < chunks.length; i++) {
-    console.log("DAYDLE_SCREEN_CHUNK:" + JSON.stringify({path,index:i,total:chunks.length,chunk:chunks[i]}));
-  }
-}
-
 async function visit(client, pathname, viewport) {
   await client.send("Emulation.setDeviceMetricsOverride", {
     width: viewport.width,
@@ -217,7 +206,6 @@ async function visit(client, pathname, viewport) {
     throw new Error("Arcade shell assertion failed: " + JSON.stringify(result));
   }
   if (pathname === "/history" && viewport.width === 393) {
-    await captureGuestScreenshot(client, "history-guest");
     const privacy = await evaluate(
       client,
       '({login:!!document.querySelector(\'a[href="/auth"]\'),privateRows:document.querySelectorAll(".history-entry").length,filter:!!document.querySelector("#history-game")})',
@@ -236,7 +224,6 @@ async function visit(client, pathname, viewport) {
     if (!dialog.open || !dialog.input || !dialog.guestLogin || dialog.saveButton) {
       throw new Error("Guest Paste contract failed: " + JSON.stringify(dialog));
     }
-    await captureGuestScreenshot(client, "paste-guest");
     await client.send("Input.dispatchKeyEvent", {
       type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27,
     });
