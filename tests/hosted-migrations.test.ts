@@ -15,6 +15,7 @@ const filenames = [
   "20261117051824_20261117050000_phase9_social.sql",
   "20261117075359_phase10_comparisons.sql",
   "20261117090000_phase11_administration.sql",
+  "20261117100000_phase12_privacy.sql",
 ];
 const baseline = [
   { version: "20261114050000", name: "phase2_domain_security" },
@@ -40,8 +41,10 @@ const phase10 = {
 };
 const phase11 = {
   version: "20261117090000",
+      "20261117100000",
   name: "phase11_administration",
 };
+const phase12 = { version: "20261117100000", name: "phase12_privacy" };
 const projectRef = "abcdefghijklmnopqrst";
 const accessToken = "synthetic-private-test-credential";
 
@@ -64,6 +67,7 @@ describe("structured Supabase production migration history", () => {
         "20261117051824",
         "20261117075359",
         "20261117090000",
+      "20261117100000",
       ],
     });
   });
@@ -78,10 +82,11 @@ describe("structured Supabase production migration history", () => {
       "20261117051824",
       "20261117075359",
       "20261117090000",
+      "20261117100000",
     ]);
     expect(
       verifyStructuredHistory(
-        [...baseline, phase4, phase5, phase7, phase8, phase9, phase10, phase11],
+        [...baseline, phase4, phase5, phase7, phase8, phase9, phase10, phase11, phase12],
         filenames,
         true,
       ),
@@ -101,15 +106,17 @@ describe("structured Supabase production migration history", () => {
       phase9,
       phase10,
       phase11,
+      phase12,
     ];
     expect(verifyStructuredHistory(full, filenames, true)).toEqual({
       applied: filenames.map((name) => name.slice(0, 14)),
       pending: [],
     });
     const inventedVersion = [
-      ...full.slice(0, -2),
+      ...full.slice(0, -3),
       { ...phase10, version: "20261117060000" },
       phase11,
+      phase12,
     ];
     expect(() =>
       verifyStructuredHistory(inventedVersion, filenames, true),
@@ -164,7 +171,7 @@ describe("structured Supabase production migration history", () => {
         baseline.map(({ version }) => ({ version })),
         filenames,
       ).pending,
-    ).toHaveLength(7);
+    ).toHaveLength(8);
     expect(() =>
       verifyStructuredHistory(
         [baseline[0], { ...baseline[1], name: "wrong_migration" }],
@@ -193,6 +200,7 @@ describe("structured Supabase production migration history", () => {
       "20261117051824",
       "20261117075359",
       "20261117090000",
+      "20261117100000",
     ]);
     const [url, options] = fetchImpl.mock.calls[0];
     expect(url).toBe(
