@@ -147,6 +147,55 @@ function browserMetrics() {
   };
 }
 
+// Assert semantics against the browser's actual accessibility computation,
+// not guessed labels from CSS classes or icon names.
+async function auditAccessibleControls(client, pathname) {
+  const tree = await client.send("Accessibility.getFullAXTree");
+  const interactive = new Set([
+    "button", "link", "textbox", "searchbox", "combobox",
+    "checkbox", "radio", "switch", "slider", "spinbutton",
+    "menuitem", "tab",
+  ]);
+  const unnamed = (tree.nodes ?? []).filter(
+    (node) =>
+      !node.ignored &&
+      interactive.has(node.role?.value) &&
+      !String(node.name?.value ?? "").trim(),
+  );
+  if (unnamed.length) {
+    // Never emit raw element text or values (including private clipboard data).
+    const roles = [...new Set(unnamed.map((node) => node.role.value))].sort();
+    throw new Error(
+      "Unnamed accessible controls on " + pathname +
+      ": count=" + unnamed.length + " roles=" + roles.join(","),
+    );
+  }
+
+  const semantics = await evaluate(client, `(() => ({
+    main: document.querySelectorAll("main").length,
+    h1: [...document.querySelectorAll("h1")].filter(x => x.getClientRects().length).length,
+    lang: document.documentElement.lang,
+    missingAlt: [...document.querySelectorAll("img")].filter(
+      x => x.getClientRects().length && !x.hasAttribute("alt"),
+    ).length,
+    focusableHidden: [...document.querySelectorAll(
+      '[aria-hidden="true"] a[href], [aria-hidden="true"] button, [aria-hidden="true"] input, [aria-hidden="true"] [tabindex="0"]',
+    )].filter(x => x.getClientRects().length).length,
+  }))()`);
+  if (
+    semantics?.main !== 1 ||
+    semantics?.h1 !== 1 ||
+    semantics?.lang !== "en" ||
+    semantics?.missingAlt !== 0 ||
+    semantics?.focusableHidden !== 0
+  ) {
+    throw new Error(
+      "Accessibility landmarks/semantics invalid on " +
+      pathname + ": " + JSON.stringify(semantics),
+    );
+  }
+}
+
 async function visit(client, pathname, viewport) {
   await client.send("Emulation.setDeviceMetricsOverride", {
     width: viewport.width,
@@ -208,6 +257,7 @@ async function visit(client, pathname, viewport) {
   ) {
     throw new Error("Arcade shell assertion failed: " + JSON.stringify(result));
   }
+  await auditAccessibleControls(client, pathname);
   if (pathname === "/requests" && viewport.width === 393) {
     const guest = await evaluate(client,
       '({heading:[...document.querySelectorAll("h1")].some(x=>x.textContent.includes("Request a game")),login:!!document.querySelector(\'a[href="/auth"]\'),admin:!!document.querySelector("#admin-section")})');
