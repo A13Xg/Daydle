@@ -38,6 +38,46 @@ const ACTIONS: readonly AdminAction[] = [
   "unrestrict",
 ];
 
+function projectedMutation(value: { status: string; id?: string }): {
+  status: string;
+  id?: string;
+} {
+  return value.id ? { status: value.status, id: value.id } : { status: value.status };
+}
+
+function projectAdminView(view: AdminView, value: unknown, id: string | null): unknown | null {
+  if (view === "overview") {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+    const row = value as Record<string, unknown>;
+    const keys = ["pending_requests", "unparsed_samples", "restricted_users"] as const;
+    if (keys.some((key) => typeof row[key] !== "number" || !Number.isSafeInteger(row[key]) || (row[key] as number) < 0))
+      return null;
+    return Object.fromEntries(keys.map((key) => [key, row[key]]));
+  }
+  if (view === "sample") {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+    const row = value as Record<string, unknown>;
+    if (row.id !== id || typeof row.raw_text !== "string" ||
+      row.raw_text.length > 10000 || typeof row.expires_at !== "string" ||
+      !["invalid", "unsupported"].includes(String(row.disposition)) ||
+      !row.diagnostics || typeof row.diagnostics !== "object" || Array.isArray(row.diagnostics))
+      return null;
+    return { id: row.id, raw_text: row.raw_text, disposition: row.disposition,
+      diagnostics: row.diagnostics, expires_at: row.expires_at };
+  }
+  const allowed: Record<Exclude<AdminView,"overview"|"sample">, readonly string[]> = {
+    requests: ["id","name","url","notes","status","created_at","suggested_by","vote_count"],
+    games: ["id","slug","name","description","publisher","url","status","cadence","parser_status","link_status"],
+    samples: ["id","disposition","received_at","expires_at","reason","review_status","game_slug"],
+    diagnostics: ["reason","disposition","samples"],
+    restrictions: ["user_id","reason","created_at"],
+  };
+  if (!Array.isArray(value) || value.length > 100 ||
+    value.some((row) => !row || typeof row !== "object" || Array.isArray(row))) return null;
+  return value.map((row: Record<string, unknown>) =>
+    Object.fromEntries(allowed[view].map((key) => [key, row[key] ?? null])));
+}
+
 function statusFor(value: { status: string }): number {
   switch (value.status) {
     case "created":
@@ -137,7 +177,7 @@ export async function handleAdministrationRequest(
     if (isResponse(value)) return value;
     if (!validMutation(value))
       return errorResponse("request_service_unavailable", 503);
-    return responseJson(value, statusFor(value));
+    return responseJson(projectedMutation(value), statusFor(value));
   }
 
   if (!auth) return errorResponse("authentication_required", 401);
@@ -168,15 +208,9 @@ export async function handleAdministrationRequest(
     if (isResponse(value)) return value;
     if (view === "sample" && value === null)
       return errorResponse("not_found", 404);
-    if (
-      (view === "overview" || view === "sample")
-        ? (!value || typeof value !== "object" || Array.isArray(value))
-        : (!Array.isArray(value) || value.length > 100)
-    )
-      return errorResponse("admin_service_unavailable", 503);
-    // SQL intentionally returns only view-specific columns; unlike public
-    // request results these private responses are never stored in a cache.
-    return responseJson(value);
+    const safe = projectAdminView(view as AdminView, value, id);
+    if (safe === null) return errorResponse("admin_service_unavailable", 503);
+    return responseJson(safe);
   }
 
   const body = await boundedJson(request);
