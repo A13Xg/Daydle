@@ -211,32 +211,92 @@ REVOKE ALL ON FUNCTION public.ingest_parsed_share(uuid,text,jsonb,uuid)
 GRANT EXECUTE ON FUNCTION public.ingest_parsed_share(uuid,text,jsonb,uuid)
   TO service_role;
 
-CREATE FUNCTION public.retain_unknown_share(
-  p_user uuid, p_raw text, p_game_slug text DEFAULT NULL
+-- Enforce idempotency for unsupported/invalid submitted samples. Accepted
+-- shares always link a structured result and are excluded from this index.
+CREATE UNIQUE INDEX raw_unparsed_user_fingerprint_unique
+  ON public.raw_submissions (user_id, md5(raw_share_text), disposition)
+  WHERE result_id IS NULL;
+
+-- Called ONLY for an explicit authenticated Submit result action when the
+-- deterministic parser did not produce one accepted canonical puzzle.
+-- All diagnostics are allow-listed server-generated classifications, not
+-- untrusted text or fields inferred from a client's own claimed score.
+CREATE FUNCTION public.capture_unparsed_share(
+  p_user uuid, p_raw text, p_disposition text, p_reason text,
+  p_candidates text[] DEFAULT '{}'::text[], p_game_slug text DEFAULT NULL
 )
 RETURNS jsonb LANGUAGE plpgsql VOLATILE SECURITY DEFINER
 SET search_path = ''
 AS $$
-DECLARE v_game_id uuid; v_id uuid;
+DECLARE v_game_id uuid; v_id uuid; v_inserted boolean := false;
 BEGIN
   IF p_user IS NULL OR NOT EXISTS (SELECT 1 FROM public.profiles WHERE id=p_user)
     OR p_raw IS NULL OR char_length(p_raw) NOT BETWEEN 1 AND 10000
-  THEN RAISE EXCEPTION 'invalid_unknown_sample' USING ERRCODE='22023'; END IF;
+    OR pg_catalog.btrim(p_raw) = ''
+    OR p_disposition NOT IN ('unsupported','invalid')
+    OR p_reason NOT IN (
+      'unknown_header','ambiguous_match','invalid_format',
+      'control_character','too_many_lines'
+    )
+    OR p_candidates IS NULL OR COALESCE(array_length(p_candidates,1),0) > 5
+    OR EXISTS (
+      SELECT 1 FROM unnest(p_candidates) candidate
+      WHERE candidate IS NULL OR candidate !~ '^[a-z][a-z0-9-]{1,63}$'
+    )
+    OR (p_game_slug IS NOT NULL
+      AND p_game_slug !~ '^[a-z][a-z0-9-]{1,63}$')
+    OR (p_disposition='unsupported' AND p_reason NOT IN ('unknown_header','ambiguous_match'))
+    OR (p_disposition='invalid' AND p_reason IN ('unknown_header','ambiguous_match'))
+  THEN RAISE EXCEPTION 'invalid_unparsed_sample' USING ERRCODE='22023'; END IF;
+
   IF p_game_slug IS NOT NULL THEN
     SELECT id INTO v_game_id FROM public.games WHERE slug=p_game_slug;
-    IF v_game_id IS NULL THEN
-      RAISE EXCEPTION 'unknown_game_slug' USING ERRCODE='22023';
-    END IF;
+    IF v_game_id IS NULL THEN RAISE EXCEPTION 'unknown_game_slug' USING ERRCODE='22023'; END IF;
   END IF;
   PERFORM app_private.consume_result_quota(p_user);
-  INSERT INTO public.raw_submissions(user_id,game_id,raw_share_text,disposition)
-    VALUES (p_user,v_game_id,p_raw,'unsupported') RETURNING id INTO v_id;
-  RETURN jsonb_build_object('status','retained','id',v_id);
+
+  -- Re-capturing a previously expired exact share replaces the expired
+  -- sample rather than counting it as current. Existing non-expired copies
+  -- are idempotent even when concurrent submissions race.
+  DELETE FROM public.raw_submissions
+  WHERE user_id=p_user AND result_id IS NULL AND expires_at <= pg_catalog.now()
+    AND disposition=p_disposition AND md5(raw_share_text)=md5(p_raw)
+    AND raw_share_text=p_raw;
+  INSERT INTO public.raw_submissions (
+    user_id,game_id,raw_share_text,disposition,parser_diagnostics
+  )
+  VALUES (
+    p_user,v_game_id,p_raw,p_disposition,
+    jsonb_build_object(
+      'review_status','pending',
+      'reason_code',p_reason,
+      'candidate_game_slugs',to_jsonb(p_candidates),
+      'source','explicit_submit',
+      'parser_analysis_version',1
+    )
+  )
+  ON CONFLICT DO NOTHING
+  RETURNING id INTO v_id;
+  v_inserted := (v_id IS NOT NULL);
+  IF NOT v_inserted THEN
+    SELECT id INTO v_id FROM public.raw_submissions
+    WHERE user_id=p_user AND result_id IS NULL AND disposition=p_disposition
+      AND raw_share_text=p_raw
+    LIMIT 1;
+  END IF;
+  IF v_id IS NULL THEN
+    RAISE EXCEPTION 'sample_capture_failed' USING ERRCODE='P0001';
+  END IF;
+  RETURN jsonb_build_object(
+    'status', CASE WHEN v_inserted THEN 'captured' ELSE 'already_captured' END,
+    'classification', p_reason
+  );
 END;
 $$;
-REVOKE ALL ON FUNCTION public.retain_unknown_share(uuid,text,text)
+REVOKE ALL ON FUNCTION public.capture_unparsed_share(uuid,text,text,text,text[],text)
   FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.retain_unknown_share(uuid,text,text) TO service_role;
+GRANT EXECUTE ON FUNCTION public.capture_unparsed_share(uuid,text,text,text,text[],text)
+  TO service_role;
 
 CREATE FUNCTION public.my_result_history(
   p_user uuid, p_game text DEFAULT NULL, p_limit integer DEFAULT 20,
