@@ -359,7 +359,7 @@ BEGIN
         'winner',CASE
           WHEN page.left_metric IS NOT NULL AND page.right_metric IS NULL THEN 'left'
           WHEN page.right_metric IS NOT NULL AND page.left_metric IS NULL THEN 'right'
-          WHEN page.left_metric IS NULL OR page.right_metric IS NULL THEN 'tie'
+          WHEN page.left_metric IS NULL OR page.right_metric IS NULL THEN NULL
           WHEN page.left_metric < page.right_metric THEN 'left'
           WHEN page.right_metric < page.left_metric THEN 'right'
           ELSE 'tie' END
