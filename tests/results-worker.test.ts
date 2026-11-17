@@ -495,8 +495,9 @@ describe("Cloudflare Worker outbound redirect compatibility", () => {
     vi.stubGlobal("fetch", upstream);
     const response = await worker.fetch(makeRequest(path()), env);
     expect(response.status).toBe(503);
-    expect(upstream).toHaveBeenCalledOnce();
+    expect(upstream).toHaveBeenCalledTimes(2);
     expect(upstream.mock.calls[0]?.[1]?.redirect).toBe("manual");
+    expect(upstream.mock.calls[1]?.[1]?.redirect).toBe("manual");
   });
 
   it("does not follow Supabase Auth redirects or forward the user token", async () => {
