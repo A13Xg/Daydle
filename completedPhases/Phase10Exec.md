@@ -1,6 +1,6 @@
 # Phase 10 Execution Plan — Spoiler-safe comparisons, scoreboards and rankings
 
-**Status:** IN PROGRESS — SOURCE ONLY / NO HOSTED PHASE 10 DEPLOYMENT
+**Status:** IN REVIEW — VERIFIED SOURCE / NO HOSTED PHASE 10 DEPLOYMENT
 **Branch / draft PR:** `phase/10-spoiler-safe-comparisons` · [PR #18](https://github.com/A13Xg/Daydle/pull/18)
 **Base:** main `9df11aa111732b69105b53c9927eb397374c9db3`; Phase 9 merged `d47d360b`, post-merge CI #44022863047 PASS.
 **Release dependency:** Daydle Preview Phase 9 migration recorded `20261117051824`, read-only RLS/grant verification passed. Dedicated strict migration/release reconciliation PR #17 is open; no Cloudflare deploy or Phase 10 SQL application in this phase branch.
@@ -49,3 +49,19 @@
 - No verified next-reset feed currently exists. Recent puzzles are intentionally locked for anonymous/unplayed viewers; do not use arbitrary expiry as a workaround.
 - Full public profile achievements based on the complete private history could leak activity. Phase 10 public summaries may show only visible per-game results, never inferred global-streak achievements. Claims should say "visible results" rather than imply complete public history.
 - Relational friend list already capped at 200. Compete over a bounded list, not a client-submitted arbitrary friend filter.
+
+## Phase 10 completion and audit evidence
+
+**Source outcome:** All planned Phase 10 functionality implemented and source verification passed. No hosted Phase 10 SQL or Worker deployment was attempted. Public direct-result, profile, board and head-to-head reads all pass through the same server-side viewer/puzzle unlock policy before ranking, aggregation and pagination. Unknown resets remain locked; friendship does not increase access.
+
+**Files delivered:** forward-only `supabase/migrations/20261117060000_phase10_comparisons.sql`; `shared/comparisons.ts`, `worker/comparisons.ts`, `src/lib/comparisons-api.ts`; `ComparisonsPage` including spoiler shield and safe direct result, `PlayerPerformance` and `HeadToHead`; Friends/profile/App/ArcadeShell integration, responsive Obsidian Arcade CSS, SQL/Worker/Chromium tests, `docs/comparisons.md`.
+
+**Audit findings corrected:** Previous tests expected an unplayed fixture but Bob already had a persisted matching result: changed adversarial viewer to Carol and verified unrelated puzzle remains locked. Fixed invalid SQL dollar-quote delimiter. Fixed duplicate RPC export. Two unranked head-to-head outcomes are now **incomparable** (NULL), not falsely classified as a tie; regression added. Added gameSlug guard to prevent stale, mismatched puzzle board display while selectors change. Chromium smoke includes new stack routes, guest visibility checks and bounded cleanup retries.
+
+**CI evidence:** [Full passing validation run #44025967926](https://github.com/A13Xg/Daydle/actions/runs/44025967926) at exact source commit `ef167b4e36a60bef1495d252442520c09f0b4e41` — strict TypeScript, ESLint, Prettier, **258 passing Vitest tests in 34 files**, production build, Worker/API/PWA smoke, **24 Chromium route/viewport checks**, **two isolated PostgreSQL 17 databases**, SQL privileges, release verification, spoiler gates and corrections/deletion **PASS**. Chromium is not actual Safari; physical iPhone remains deferred.
+
+**Permission / rollout state:** PR #18 is owner-review-ready source, not merged. Phase 10 migration remains unapplied to hosted Supabase, Phase 10 cloud code not deployed. User has already authorized hosted Phase 9 migration/deployment; its applied SQL was independently verified, and the protected manual main-only release requires merging [release PR #17](https://github.com/A13Xg/Daydle/pull/17) and starting `Deploy Worker` through GitHub Actions because this connector cannot dispatch a workflow. Hosted authenticated E2E and native camera/clipboard checks are still NOT VERIFIED. When Phase 10 is eventually merged, reconcile its **new** migration generated hosted version into a separately reviewed strict release allowlist before deploying; do not weaken the current deployment gate.
+
+**Boundary decisions:** No fabricated leaderboard, anonymous pre-reset counters, fake self-game verification, universal cross-game score, private all-time totals or friend-acceptance requests. Public achievements requiring private overall history are not published. Comparator sorted with verified per-game metrics and tied competition rank. This is the narrowest safe implementation consistent with IDEA.md and visual specification.
+
+**Disposition:** Move the complete reviewed plan to `completedPhases/Phase10Exec.md` on the phase branch; set proposed roadmap status IN REVIEW. Main Phase 10 remains NOT STARTED until actual merge/reconciliation. Keep production/manual release acceptance separate.

@@ -37,7 +37,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 7 | Result ingestion, history, and correction lifecycle | 6.5 | BLOCKED (hosted acceptance) — [PR #14](https://github.com/A13Xg/Daydle/pull/14) merged at `1ff1b04`; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/44004416809) passed. Phase 7 SQL applied and verified on Daydle Preview; Worker configuration, deployment and authenticated E2E acceptance remain unverified. [Active release plan](Phase7Exec.md) |
 | 8 | Personal statistics, streaks, and achievements | 7 | SOURCE CI VERIFIED / RELEASE PENDING — [PR #15](https://github.com/A13Xg/Daydle/pull/15) contains the feature. Phase 8 SQL applied/verified on Daydle Preview; Worker release and real authenticated E2E still pending. [Active plan](Phase8Exec.md) |
 | 9 | Public profiles and instant friendship | 8 | SOURCE MERGED / HOSTED RELEASE PENDING — [PR #16](https://github.com/A13Xg/Daydle/pull/16) merged at `d47d360b`; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/44022863047) PASS; hosted Phase 9 migration/deployment and authenticated E2E not yet verified |
-| 10 | Spoiler-safe comparisons, scoreboards, and rankings | 9 | NOT STARTED |
+| 10 | Spoiler-safe comparisons, scoreboards, and rankings | 9 | IN REVIEW — [PR #18](https://github.com/A13Xg/Daydle/pull/18), [CI #44025967926](https://github.com/A13Xg/Daydle/actions/runs/44025967926) PASS (258 tests, 24 Chromium, 2 PostgreSQL databases); hosted Phase 10 schema/deployment not authorized/applied |
 | 11 | Administration, game requests/voting, and diagnostics | 10 | NOT STARTED |
 | 12 | Privacy lifecycle, encrypted backups, and recovery | 11 | NOT STARTED |
 | 13 | UX completeness, security, accessibility, and QA hardening | 12 | NOT STARTED |
@@ -230,7 +230,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Code/link/QR flows and two-account mutual relation tests pass; no private field disclosure; block/unfriend behavior and race/idempotency covered.
 
 ## Phase 10 — Spoiler-safe comparisons, scoreboards, and rankings
-**Status:** NOT STARTED. **Dependencies:** 9.
+**Status:** IN REVIEW — [PR #18](https://github.com/A13Xg/Daydle/pull/18) source verified, [CI #44025967926](https://github.com/A13Xg/Daydle/actions/runs/44025967926) PASS. Phase 10 SQL not applied to hosted Supabase and Worker/frontend not deployed. [Archived execution record](completedPhases/Phase10Exec.md). **Dependencies:** 9 (merged).
 
 **Purpose:** Provide meaningful public and friend-filtered competition without leaking current puzzle answers/results.
 
