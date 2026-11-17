@@ -278,6 +278,11 @@ BEGIN
       RETURNING id INTO saved_id;
     ELSE
       UPDATE public.games SET name=target_name,canonical_url=target_url,
+        -- A changed publisher URL cannot inherit the previous link verification.
+        link_status=CASE WHEN canonical_url IS DISTINCT FROM target_url
+          THEN 'unverified' ELSE link_status END,
+        link_checked_at=CASE WHEN canonical_url IS DISTINCT FROM target_url
+          THEN NULL ELSE link_checked_at END,
         description=COALESCE(p_data->>'description',''),publisher=p_data->>'publisher',
         cadence=COALESCE(p_data->>'cadence','daily'),
         status=COALESCE(p_data->>'status','active'),updated_at=now()
