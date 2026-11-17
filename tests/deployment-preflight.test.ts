@@ -44,7 +44,10 @@ describe("protected Daydle Worker release preflight", () => {
     ).toThrow();
     expect(() =>
       prepareWorkerRuntime(
-        { ...sample, vars: { SUPABASE_SERVICE_ROLE_KEY: "synthetic_private_value" } },
+        {
+          ...sample,
+          vars: { SUPABASE_SERVICE_ROLE_KEY: "synthetic_private_value" },
+        },
         options,
       ),
     ).toThrow();
