@@ -87,6 +87,19 @@ export async function inspectSocialAuthBoundary(response) {
 }
 
 export async function inspectPublicPlayerAbsent(response) {
+  if (response.status === 503 && /\bapplication\/json\b/i.test(responseType(response))) {
+    try {
+      const code = (await response.json())?.error;
+      if (code === "service_unavailable")
+        return "public player: HTTP 503, missing/invalid Worker runtime configuration or encrypted service-role binding";
+      if (code === "result_service_unavailable")
+        return "public player: HTTP 503, Supabase privileged RPC rejected/unavailable; verify the legacy service-role JWT and project";
+      if (code === "social_service_unavailable")
+        return "public player: HTTP 503, unexpected safe public-profile RPC result";
+    } catch {
+      // Do not print arbitrary response bodies or provider errors.
+    }
+  }
   if (response.status !== 404 || !/\bapplication\/json\b/i.test(responseType(response))) {
     return `public player: HTTP ${response.status}, expected JSON 404`;
   }

@@ -19,7 +19,11 @@ describe("protected Daydle Worker release preflight", () => {
       SUPABASE_PUBLISHABLE_KEY: options.publishableKey,
     });
     expect(configured.assets).toEqual(sample.assets);
-    expect(JSON.stringify(configured)).not.toContain("SERVICE_ROLE");
+    expect(configured.secrets).toEqual({
+      required: ["SUPABASE_SERVICE_ROLE_KEY"],
+    });
+    expect(configured.vars).not.toHaveProperty("SUPABASE_SERVICE_ROLE_KEY");
+    expect(JSON.stringify(configured)).not.toContain("synthetic_private_value");
     expect(sample).not.toHaveProperty("vars");
   });
   it("rejects incorrect project, secret-like public values or broken routing", () => {
@@ -37,6 +41,18 @@ describe("protected Daydle Worker release preflight", () => {
     ).toThrow();
     expect(() =>
       prepareWorkerRuntime({ ...sample, assets: {} }, options),
+    ).toThrow();
+    expect(() =>
+      prepareWorkerRuntime(
+        { ...sample, vars: { SUPABASE_SERVICE_ROLE_KEY: "synthetic_private_value" } },
+        options,
+      ),
+    ).toThrow();
+    expect(() =>
+      prepareWorkerRuntime(
+        { ...sample, secrets: { required: ["UNEXPECTED_SECRET"] } },
+        options,
+      ),
     ).toThrow();
     expect(() =>
       prepareWorkerRuntime(
