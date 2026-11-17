@@ -500,11 +500,12 @@ describe("Cloudflare Worker outbound redirect compatibility", () => {
   });
 
   it("does not follow Supabase Auth redirects or forward the user token", async () => {
-    const upstream = vi.fn(async () =>
-      new Response(null, {
-        status: 302,
-        headers: { location: "https://untrusted.example/collect" },
-      }),
+    const upstream = vi.fn(
+      async () =>
+        new Response(null, {
+          status: 302,
+          headers: { location: "https://untrusted.example/collect" },
+        }),
     );
     vi.stubGlobal("fetch", upstream);
     const response = await worker.fetch(makeRequest(path()), env);
@@ -516,11 +517,12 @@ describe("Cloudflare Worker outbound redirect compatibility", () => {
 
   it("does not follow privileged RPC redirects or forward the service-role key", async () => {
     const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    const upstream = vi.fn(async () =>
-      new Response(null, {
-        status: 302,
-        headers: { location: "https://untrusted.example/collect" },
-      }),
+    const upstream = vi.fn(
+      async () =>
+        new Response(null, {
+          status: 302,
+          headers: { location: "https://untrusted.example/collect" },
+        }),
     );
     vi.stubGlobal("fetch", upstream);
     const response = await worker.fetch(new Request(requestUrl), env);
