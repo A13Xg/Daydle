@@ -1,7 +1,7 @@
 import { readdirSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { resolve } from "node:path";
-/** Exact hosted migration versions and names, including generated Phase 7/8 IDs. */
+/** Exact hosted migration versions and names, including generated Phase 7/8/9 IDs. */
 export const HOSTED_MIGRATIONS = Object.freeze([
   { version: "20261114050000", name: "phase2_domain_security" },
   { version: "20261114060000", name: "phase3_auth_identity" },
@@ -9,6 +9,7 @@ export const HOSTED_MIGRATIONS = Object.freeze([
   { version: "20261115050000", name: "phase5_today_marks" },
   { version: "20261117030322", name: "20261117010000_phase7_results" },
   { version: "20261117034143", name: "20261117040000_phase8_statistics" },
+  { version: "20261117051824", name: "20261117050000_phase9_social" },
 ]);
 
 const EXPECTED_MIGRATIONS = HOSTED_MIGRATIONS.map(({ version }) => version);

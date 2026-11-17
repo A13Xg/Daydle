@@ -4,6 +4,8 @@ import {
   inspectHealth,
   inspectIcon,
   inspectServiceWorker,
+  inspectSocialAuthBoundary,
+  inspectPublicPlayerAbsent,
   verifyLiveRelease,
   waitForEndpoint,
 } from "../scripts/ops/verify-live-release.mjs";
@@ -37,6 +39,16 @@ function liveResponse(url: string): Response {
       status: 404,
       headers: TYPE_JSON,
     });
+  if (path === "/api/v1/social")
+    return new Response(JSON.stringify({ error: "authentication_required" }), {
+      status: 401,
+      headers: TYPE_JSON,
+    });
+  if (path === "/api/v1/players/eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee")
+    return new Response(JSON.stringify({ error: "not_found" }), {
+      status: 404,
+      headers: TYPE_JSON,
+    });
   if (path === "/app.webmanifest")
     return new Response(
       JSON.stringify({
@@ -51,7 +63,7 @@ function liveResponse(url: string): Response {
       status: 200,
       headers: { "content-type": "text/javascript" },
     });
-  if (path === "/today" || path === "/games")
+  if (path === "/today" || path === "/games" || path === "/friends")
     return new Response("<!doctype html><html>Daydle</html>", {
       status: 200,
       headers: TYPE_HTML,
@@ -189,6 +201,33 @@ describe("live release verification after Cloudflare deployment", () => {
     ).toMatch(/invalid PNG/);
   });
 
+  it("fails closed on missing social route, missing Worker secrets or incorrect authorization denial", async () => {
+    expect(
+      await inspectSocialAuthBoundary(
+        new Response("<html>fallback</html>", {
+          status: 200,
+          headers: TYPE_HTML,
+        }),
+      ),
+    ).toMatch(/social auth/);
+    expect(
+      await inspectSocialAuthBoundary(
+        new Response('{"error":"authentication_required"}', {
+          status: 503,
+          headers: TYPE_JSON,
+        }),
+      ),
+    ).toMatch(/HTTP 503/);
+    expect(
+      await inspectPublicPlayerAbsent(
+        new Response('{"error":"not_found"}', {
+          status: 503,
+          headers: TYPE_JSON,
+        }),
+      ),
+    ).toMatch(/HTTP 503/);
+  });
+
   it("verifies the entire live PWA/API contract using non-secret requests", async () => {
     const fetchImpl = vi.fn(async (url: string) => liveResponse(url));
     const log = vi.fn();
@@ -200,7 +239,7 @@ describe("live release verification after Cloudflare deployment", () => {
       attempts: 1,
       log,
     });
-    expect(fetchImpl).toHaveBeenCalledTimes(9);
+    expect(fetchImpl).toHaveBeenCalledTimes(12);
     expect(log.mock.calls.flat().join(" ")).toContain(
       "hosted API, current service worker version",
     );
