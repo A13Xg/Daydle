@@ -48,6 +48,7 @@ export function validRequest(value: unknown): value is GameRequest {
     (row.status === "pending" || row.status === "approved") &&
     typeof row.created_at === "string" &&
     Number.isFinite(Date.parse(row.created_at)) &&
+    typeof row.vote_count === "number" &&
     Number.isInteger(row.vote_count) &&
     row.vote_count >= 0 &&
     typeof row.voted_by_me === "boolean" &&
