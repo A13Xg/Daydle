@@ -175,7 +175,7 @@ ROLLBACK;
 BEGIN;
 SET LOCAL ROLE authenticated;
 SELECT set_config('request.jwt.claim.sub','22222222-2222-2222-2222-222222222222',true);
-DO $
+DO $$
 BEGIN
  IF (SELECT count(*) FROM public.game_results WHERE puzzle_id='cccccccc-cccc-cccc-cccc-cccccccccccc')<>2
  THEN RAISE EXCEPTION 'Direct RLS did not unlock own matching puzzle'; END IF;
