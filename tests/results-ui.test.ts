@@ -64,7 +64,7 @@ describe("Phase 7 owner results UI", () => {
     );
     expect(guest).toContain("Paste from clipboard");
     expect(guest).toContain("not uploaded");
-    expect(guest).not.toContain("Submit result");
+    expect(guest).not.toMatch(/<button[^>]*>Submit result<\/button>/);
 
     const signedIn = renderToStaticMarkup(
       createElement(PasteDialog, {
@@ -77,5 +77,7 @@ describe("Phase 7 owner results UI", () => {
     expect(signedIn).toContain("View my history");
     expect(signedIn).toContain("disabled");
     expect(signedIn).not.toContain("Retain sample (not a saved result)");
+    expect(signedIn).toContain("90-day expiry date");
+    expect(signedIn).toContain("Submit result uploads the pasted text");
   });
 });

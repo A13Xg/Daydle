@@ -16,7 +16,7 @@ describe("Paste and Today accessibility", () => {
     expect(markup).toContain("not upload");
     expect(markup).toContain("Sign in");
     expect(markup).toContain('href="/auth"');
-    expect(markup).not.toContain("Submit result");
+    expect(markup).not.toMatch(/<button[^>]*>Submit result<\/button>/);
   });
 
   it("never presents the signed-out visitor as a signed-in game player", () => {

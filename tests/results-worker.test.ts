@@ -163,7 +163,7 @@ describe("authenticated result Worker boundary", () => {
       expect(response.status).toBe(422);
       const body = await response.json() as { captured?: boolean };
       expect(body.captured).toBe(false);
-      expect(JSON.stringify(body)).not.toContain(raw.slice(0, 150));
+      if (raw.length > 0) expect(JSON.stringify(body)).not.toContain(raw.slice(0, 150));
     }
     expect(calls.filter((call) => call.url.includes("/rpc/"))).toHaveLength(0);
   });
