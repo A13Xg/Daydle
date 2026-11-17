@@ -34,10 +34,10 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 5 | Today experience, PWA, and external-game navigation | 4 | COMPLETE — [PR #7](https://github.com/A13Xg/Daydle/pull/7) merged; [release](https://github.com/A13Xg/Daydle/actions/runs/43814332227) deployed; [PR #10](https://github.com/A13Xg/Daydle/pull/10) merged; owner-reported 8/8 iPhone PWA tests PASS; [archive](completedPhases/Phase5Exec.md) |
 | 6 | Deterministic parser registry and initial game coverage | 5 | COMPLETE — [PR #12](https://github.com/A13Xg/Daydle/pull/12), merge `99401d5`, [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43930997408) passed, [archive](completedPhases/Phase6Exec.md) |
 | 6.5 | Obsidian Arcade UI/UX overhaul | 6 | COMPLETE — [PR #13](https://github.com/A13Xg/Daydle/pull/13) merged into main at `520ca5b`; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43970518949) passed; redesigned iPhone acceptance remains owner-deferred before release |
-| 7 | Result ingestion, history, and correction lifecycle | 6.5 | BLOCKED (hosted acceptance) — [PR #14](https://github.com/A13Xg/Daydle/pull/14) merged at `1ff1b04`; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/44004416809) passed. Phase 7 SQL applied and verified on Daydle Preview; Worker configuration, deployment and authenticated E2E acceptance remain unverified. [Active release plan](Phase7Exec.md) |
-| 8 | Personal statistics, streaks, and achievements | 7 | SOURCE CI VERIFIED / RELEASE PENDING — [PR #15](https://github.com/A13Xg/Daydle/pull/15) contains the feature. Phase 8 SQL applied/verified on Daydle Preview; Worker release and real authenticated E2E still pending. [Active plan](Phase8Exec.md) |
-| 9 | Public profiles and instant friendship | 8 | SOURCE MERGED / HOSTED RELEASE PENDING — [PR #16](https://github.com/A13Xg/Daydle/pull/16) merged at `d47d360b`; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/44022863047) PASS; hosted Phase 9 migration/deployment and authenticated E2E not yet verified |
-| 10 | Spoiler-safe comparisons, scoreboards, and rankings | 9 | IN REVIEW — [PR #18](https://github.com/A13Xg/Daydle/pull/18), [CI #44025967926](https://github.com/A13Xg/Daydle/actions/runs/44025967926) PASS (258 tests, 24 Chromium, 2 PostgreSQL databases); hosted Phase 10 schema/deployment not authorized/applied |
+| 7 | Result ingestion, history, and correction lifecycle | 6.5 | COMPLETE (source and hosted API release) — [PR #14](https://github.com/A13Xg/Daydle/pull/14) merged; Phase 7 SQL applied and protected production [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648) PASS. Authenticated result-lifecycle E2E remains deferred/unverified. |
+| 8 | Personal statistics, streaks, and achievements | 7 | COMPLETE (source and hosted API release) — [PR #15](https://github.com/A13Xg/Daydle/pull/15) merged; Phase 8 SQL applied and protected production [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648) PASS. Authenticated statistics E2E remains deferred/unverified. |
+| 9 | Public profiles and instant friendship | 8 | COMPLETE (source and hosted API release) — [PR #16](https://github.com/A13Xg/Daydle/pull/16) merged; Phase 9 SQL applied, public-profile route and social auth boundary verified by [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648). Real two-account friendship E2E remains deferred/unverified. |
+| 10 | Spoiler-safe comparisons, scoreboards, and rankings | 9 | IN REVIEW — [PR #18](https://github.com/A13Xg/Daydle/pull/18) synchronized with deployed main `f7dd10c`; hosted Phase 10 SQL applied and verified at `20261117075359_phase10_comparisons`. Source CI and human merge pending; Phase 10 Worker/UI deployment and authenticated E2E not yet performed. |
 | 11 | Administration, game requests/voting, and diagnostics | 10 | NOT STARTED |
 | 12 | Privacy lifecycle, encrypted backups, and recovery | 11 | NOT STARTED |
 | 13 | UX completeness, security, accessibility, and QA hardening | 12 | NOT STARTED |
@@ -188,7 +188,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Consistent responsive UI and interaction coverage across existing routes; automated accessibility and full regression suite; manual Safari/PWA checks for affected flows.
 
 ## Phase 7 — Result ingestion, history, and correction lifecycle
-**Status:** BLOCKED on hosted acceptance after [PR #14](https://github.com/A13Xg/Daydle/pull/14) merged at `1ff1b044` and [main CI #44004416809](https://github.com/A13Xg/Daydle/actions/runs/44004416809) passed. [Active plan](Phase7Exec.md) remains at repository root until Worker configuration, authenticated E2E and release gates are authorized and verified. The owner explicitly approved and completed the Phase 7 preview SQL migration on November 16, 2026. **Dependencies:** 6.5 (merged). The hosted Phase 7 migration was verified; the owner authorized release to `daydle.agoodman.io`, which has not yet been executed.
+**Status:** COMPLETE (source and hosted API release) — [PR #14](https://github.com/A13Xg/Daydle/pull/14) merged; Phase 7 SQL applied and protected production [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648) PASS. Authenticated result-lifecycle E2E remains deferred/unverified. **Dependencies:** 6.5.
 
 **Purpose:** Make pasted results reliably owned, deduplicated, persisted, corrected, and retrievable.
 
@@ -202,7 +202,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Paste-to-history and correction E2E pass; duplicate replay is idempotent; malformed/unknown handling safe; raw expiry metadata present and tested.
 
 ## Phase 8 — Personal statistics, streaks, and achievements
-**Status:** SOURCE CI VERIFIED / RELEASE PENDING — [draft PR #15](https://github.com/A13Xg/Daydle/pull/15), [active plan](Phase8Exec.md). The Phase 8 SQL has been applied and verified; the Worker/frontend is not deployed. **Dependencies:** Phase 7 source/SQL present; staged release acceptance is independent.
+**Status:** COMPLETE (source and hosted API release) — [PR #15](https://github.com/A13Xg/Daydle/pull/15) merged; Phase 8 SQL applied and protected production [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648) PASS. Authenticated statistics E2E remains deferred/unverified. **Dependencies:** 7.
 
 **Purpose:** Turn canonical results into trustworthy, game-aware historical insights.
 
@@ -216,7 +216,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Statistics agree with result fixtures, recalc correctly after corrections, avoid unsupported cross-game comparisons, and meet reasonable latency targets.
 
 ## Phase 9 — Public profiles and instant friendship
-**Status:** SOURCE MERGED / HOSTED RELEASE PENDING — [PR #16](https://github.com/A13Xg/Daydle/pull/16) merged at `d47d360b`; post-merge CI [#44022863047](https://github.com/A13Xg/Daydle/actions/runs/44022863047) passed. Phase 9 SQL not applied to hosted Supabase; Worker/frontend not deployed. [Archived source verification plan](completedPhases/Phase9Exec.md). **Dependencies:** 8 (merged).
+**Status:** COMPLETE (source and hosted API release) — [PR #16](https://github.com/A13Xg/Daydle/pull/16) merged; Phase 9 SQL applied, public-profile route and social auth boundary verified by [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648). Real two-account friendship E2E remains deferred/unverified. **Dependencies:** 8.
 
 **Purpose:** Publish permitted performance and implement mutual friends as an optional comparison filter.
 
@@ -230,7 +230,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Code/link/QR flows and two-account mutual relation tests pass; no private field disclosure; block/unfriend behavior and race/idempotency covered.
 
 ## Phase 10 — Spoiler-safe comparisons, scoreboards, and rankings
-**Status:** IN REVIEW — [PR #18](https://github.com/A13Xg/Daydle/pull/18) source verified, [CI #44025967926](https://github.com/A13Xg/Daydle/actions/runs/44025967926) PASS. Phase 10 SQL not applied to hosted Supabase and Worker/frontend not deployed. [Archived execution record](completedPhases/Phase10Exec.md). **Dependencies:** 9 (merged).
+**Status:** IN REVIEW — [PR #18](https://github.com/A13Xg/Daydle/pull/18) synchronized with deployed main `f7dd10c`; hosted Phase 10 SQL applied and verified at `20261117075359_phase10_comparisons`. Source CI and human merge pending; Phase 10 Worker/UI deployment and authenticated E2E not yet performed. **Dependencies:** 9.
 
 **Purpose:** Provide meaningful public and friend-filtered competition without leaking current puzzle answers/results.
 
