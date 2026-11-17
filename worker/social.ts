@@ -1,11 +1,11 @@
 import {
   SOCIAL_PATH,
-  RESULT_ID_PATTERN,
   normalizeFriendCode,
   validPublicPlayer,
   validSocialNetwork,
   validSocialMutation,
 } from "../shared/social";
+import { RESULT_ID_PATTERN } from "../shared/results";
 import {
   authenticate, boundedJson, errorResponse, isResponse, publicProfileLookup,
   responseJson, rpc, type ResultsEnvironment,
