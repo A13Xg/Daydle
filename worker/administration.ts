@@ -131,7 +131,14 @@ function projectAdminView(
       "review_status",
       "game_slug",
     ],
-    diagnostics: ["game_slug", "parser_version", "reason", "disposition", "day", "samples"],
+    diagnostics: [
+      "game_slug",
+      "parser_version",
+      "reason",
+      "disposition",
+      "day",
+      "samples",
+    ],
     restrictions: ["user_id", "reason", "created_at"],
   };
   if (
