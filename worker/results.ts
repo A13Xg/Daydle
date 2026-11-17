@@ -97,7 +97,7 @@ export async function authenticate(
       method: "GET",
       headers: { apikey: config.publishable, authorization: token },
       cache: "no-store",
-      redirect: "error",
+      redirect: "manual",
     });
     if (result.status === 401 || result.status === 403)
       return errorResponse("authentication_required", 401);
@@ -182,7 +182,7 @@ export async function rpc(
       },
       body: JSON.stringify(args),
       cache: "no-store",
-      redirect: "error",
+      redirect: "manual",
     });
     if (!result.ok) {
       if (result.status === 429) return errorResponse("rate_limited", 429);

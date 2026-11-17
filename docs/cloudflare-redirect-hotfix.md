@@ -1,6 +1,6 @@
 # Cloudflare Worker redirect compatibility hotfix
 
-**Status:** PLANNING — no deployment
+**Status:** IMPLEMENTED — awaiting CI and owner review, no deployment
 **Branch:** `hotfix/cloudflare-redirect-mode`
 **Base:** `fd109095f5cdf53592ff1bf519a7a3e806ae8085`
 
@@ -18,3 +18,7 @@ Production Cloudflare Worker `daydle-app` generated `supabase_rpc_transport_fail
 ## Acceptance
 
 GitHub CI: typecheck, ESLint, Prettier, unit/API tests including redirect regression, build/preview/PWA and Chromium smoke, and two PG17 security jobs. No automatic merge or deploy. Owner can merge this isolated hotfix and run protected `Deploy Worker` on main. Current Cloudflare logs and GitHub preflight show that credentials are provisioned; their **actual validity remains to be verified after the outbound requests run**.
+
+## Implementation notes
+
+Both Supabase outbound requests now explicitly use `redirect: "manual"`. Any `3xx` is treated as unsuccessful: authentication returns HTTP 503, and privileged RPC returns the existing sanitized HTTP 503 plus a safe status-only diagnostic. Neither request follows or forwards credentials to a redirect target. The hotfix deliberately does not change the published key, encrypted service-role binding, database schema or existing API response contracts.
