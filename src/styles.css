@@ -1947,3 +1947,428 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+
+/* Phase 9 — Obsidian Arcade social identity and invitation surfaces. */
+.friends-page,
+.public-player {
+  max-width: 1040px;
+  margin-inline: auto;
+}
+.social-page-intro {
+  margin: 0.35rem 0 1.6rem;
+}
+.social-page-intro h1 {
+  margin-bottom: 0.55rem;
+}
+.social-page-intro > p:last-child {
+  max-width: 68ch;
+  color: var(--on-surface-variant);
+  line-height: 1.7;
+}
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 1rem;
+}
+.social-grid > .panel {
+  margin-block: 0;
+  min-width: 0;
+}
+.social-invite {
+  background:
+    radial-gradient(circle at 97% 3%, rgba(77, 142, 255, 0.22), transparent 53%),
+    linear-gradient(155deg, rgba(28, 43, 60, 0.76), #0d1c2d);
+}
+.social-connect {
+  background:
+    radial-gradient(circle at 93% 4%, rgba(78, 222, 163, 0.1), transparent 47%),
+    var(--surface-container-low);
+}
+.social-section-head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+  margin-bottom: 0.8rem;
+}
+.social-section-head > svg {
+  color: var(--primary);
+  flex: none;
+}
+.social-section-head h2,
+.social-section-head .eyebrow {
+  margin: 0;
+}
+.social-section-head .eyebrow {
+  margin-bottom: 0.35rem;
+}
+.social-code {
+  display: block;
+  width: fit-content;
+  margin: 1.1rem 0;
+  color: var(--primary);
+  font-size: clamp(1.6rem, 5.6vw, 2.75rem);
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.22em;
+  overflow-wrap: anywhere;
+  text-shadow: 0 0 28px rgba(77, 142, 255, 0.25);
+}
+.social-link-field {
+  display: grid;
+  gap: 0.4rem;
+  margin-block: 1.15rem;
+}
+.social-link-field label,
+.social-connect form label {
+  font-size: 0.83rem;
+  font-weight: 750;
+  color: var(--on-surface-variant);
+}
+.social-link-field input,
+.social-connect form input {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0.75rem 0.9rem;
+  color: var(--on-surface);
+  border: 1px solid var(--outline-variant);
+  background: var(--surface-container-lowest);
+  border-radius: 0.8rem;
+}
+.social-link-field input {
+  font-size: 0.8rem;
+}
+.social-connect form {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1.35rem;
+}
+.social-connect form input {
+  font-weight: 800;
+  font-size: 1.5rem;
+  text-align: center;
+  letter-spacing: 0.25em;
+  font-variant-numeric: tabular-nums;
+}
+.social-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+.social-actions button,
+.social-connect form button,
+.social-scan-options button,
+.social-qr-wrap button,
+.social-friend button,
+.social-confirm button,
+.social-list-panel > button,
+.social-guest a,
+.social-public-link {
+  min-height: 44px;
+}
+.social-actions button,
+.social-connect form button,
+.social-scan-options button,
+.social-friend button,
+.social-confirm button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.7rem 1rem;
+  border-radius: 0.95rem;
+  border: 1px solid var(--outline-variant);
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  font-weight: 750;
+  font-size: 0.85rem;
+}
+.social-actions button:hover:not(:disabled),
+.social-friend button:hover:not(:disabled) {
+  border-color: var(--primary);
+}
+.social-actions button.social-primary,
+.social-connect form button.social-primary,
+.social-confirm button.social-primary {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  border-color: var(--primary-container);
+}
+.social-actions button.social-danger,
+.social-confirm button.social-danger {
+  color: var(--error);
+  border-color: rgba(255, 180, 171, 0.55);
+  background: rgba(147, 0, 10, 0.18);
+}
+.social-subtle {
+  display: block;
+  min-height: 44px;
+  margin-top: 0.85rem;
+  padding: 0.65rem 0;
+  color: var(--on-surface-variant);
+  border: 0;
+  background: none;
+  font-size: 0.85rem;
+  text-decoration: underline;
+}
+.social-public-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+.social-qr-wrap {
+  width: min(100%, 250px);
+  margin: 1rem auto 0;
+  padding: 0.75rem;
+  background: #fff;
+  border-radius: 1rem;
+}
+.friend-qr {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+.social-qr-wrap .muted {
+  color: #233143;
+  margin: 0.55rem 0 0;
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+.social-scan-options {
+  margin-top: 0.9rem;
+}
+.social-disclaimer {
+  font-size: 0.79rem;
+  margin-top: 1rem;
+}
+.social-scanner {
+  margin-block: 1rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--outline-variant);
+}
+.social-scanner-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.8rem;
+}
+.social-scanner video {
+  display: block;
+  width: 100%;
+  max-height: 280px;
+  object-fit: cover;
+}
+.social-scanner > p {
+  padding: 0.8rem;
+}
+.social-guest {
+  display: flex;
+  align-items: start;
+  gap: 1.25rem;
+}
+.social-guest h2 {
+  margin-top: 0;
+}
+.social-avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 70px;
+  height: 70px;
+  border-radius: 22px;
+  color: var(--primary);
+  background: rgba(77, 142, 255, 0.14);
+  border: 1px solid rgba(173, 198, 255, 0.28);
+  font-size: 1.8rem;
+  font-weight: 850;
+}
+.social-avatar-small {
+  width: 47px;
+  height: 47px;
+  border-radius: 15px;
+  font-size: 1.2rem;
+}
+.social-list-panel {
+  margin-top: 1.25rem;
+}
+.social-list-panel .social-section-head {
+  margin-bottom: 1.25rem;
+}
+.social-count {
+  margin-left: auto;
+  padding: 0.4rem 0.7rem;
+  color: var(--primary);
+  background: rgba(77, 142, 255, 0.14);
+  border-radius: 99px;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+.social-friend-list,
+.social-public-games {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.social-friend {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--hairline);
+}
+.social-friend:first-child {
+  border-top: 0;
+}
+.social-friend-name {
+  display: flex;
+  flex: 1 1 10rem;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.18rem;
+}
+.social-friend-name strong {
+  overflow-wrap: anywhere;
+}
+.social-friend-name span {
+  font-size: 0.78rem;
+  color: var(--on-surface-variant);
+}
+.social-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.social-row-actions a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.6rem 0.45rem;
+  font-size: 0.82rem;
+}
+.social-row-actions button {
+  padding: 0.55rem 0.7rem;
+}
+.social-empty {
+  padding: 1.75rem 0.8rem;
+  text-align: center;
+  color: var(--on-surface-variant);
+}
+.social-empty svg {
+  color: var(--primary);
+  margin-bottom: 0.8rem;
+}
+.social-empty h3 {
+  color: var(--on-surface);
+}
+.social-empty p {
+  margin: 0;
+}
+.social-confirm {
+  border-color: rgba(173, 198, 255, 0.48);
+  background: var(--surface-container);
+}
+.social-confirm strong {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+.social-comparison {
+  margin-top: 1.25rem;
+}
+.social-comparison p {
+  max-width: 70ch;
+  color: var(--on-surface-variant);
+}
+.public-player {
+  max-width: 780px;
+}
+.public-player-hero {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  background:
+    radial-gradient(ellipse at 95% 0%, rgba(77, 142, 255, 0.2), transparent 58%),
+    var(--surface-container-low);
+}
+.public-player-hero h2 {
+  font-size: clamp(1.55rem, 4vw, 2rem);
+  margin: 0 0 0.3rem;
+}
+.social-public-games {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+  gap: 0.65rem;
+}
+.social-public-games a {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 50px;
+  padding: 0.75rem;
+  border: 1px solid var(--hairline);
+  border-radius: 0.8rem;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  font-weight: 700;
+  text-decoration: none;
+}
+.social-public-games a:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.social-privacy-note {
+  display: flex;
+  align-items: start;
+  gap: 0.6rem;
+  color: var(--on-surface-variant);
+  background: rgba(77, 142, 255, 0.07);
+  border-left: 3px solid var(--primary);
+  padding: 0.9rem 1rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.1rem;
+  font-size: 0.85rem;
+}
+.social-privacy-note svg {
+  flex: none;
+  color: var(--primary);
+}
+.social-privacy-note p {
+  margin: 0;
+}
+@media (max-width: 720px) {
+  .social-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 460px) {
+  .social-friend {
+    flex-wrap: wrap;
+  }
+  .social-row-actions {
+    justify-content: flex-start;
+    width: 100%;
+    margin-left: 0;
+  }
+  .social-row-actions a,
+  .social-row-actions button {
+    flex: 1;
+  }
+  .social-guest {
+    flex-direction: column;
+  }
+  .social-code {
+    letter-spacing: 0.13em;
+  }
+}
