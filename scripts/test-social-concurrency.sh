@@ -32,7 +32,7 @@ psql -X -v ON_ERROR_STOP=1 -v code="$carol_code" >"$first_log" 2>&1 <<SQL &
 BEGIN;
 SET LOCAL ROLE service_role;
 SELECT public.social_connect_by_code('$alice', :'code')->>'status';
-\\echo CONNECT_READY
+\echo CONNECT_READY
 SELECT pg_sleep(2);
 COMMIT;
 SQL
@@ -57,7 +57,7 @@ psql -X -v ON_ERROR_STOP=1 >"$first_log" 2>&1 <<SQL &
 BEGIN;
 SET LOCAL ROLE service_role;
 SELECT public.social_change_relation('$alice','$carol','block')->>'status';
-\\echo BLOCK_READY
+\echo BLOCK_READY
 SELECT pg_sleep(2);
 COMMIT;
 SQL
