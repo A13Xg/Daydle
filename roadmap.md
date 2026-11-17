@@ -35,7 +35,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 6 | Deterministic parser registry and initial game coverage | 5 | COMPLETE — [PR #12](https://github.com/A13Xg/Daydle/pull/12), merge `99401d5`, [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43930997408) passed, [archive](completedPhases/Phase6Exec.md) |
 | 6.5 | Obsidian Arcade UI/UX overhaul | 6 | COMPLETE — [PR #13](https://github.com/A13Xg/Daydle/pull/13) merged into main at `520ca5b`; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43970518949) passed; redesigned iPhone acceptance remains owner-deferred before release |
 | 7 | Result ingestion, history, and correction lifecycle | 6.5 | BLOCKED (hosted acceptance) — [PR #14](https://github.com/A13Xg/Daydle/pull/14) merged at `1ff1b04`; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/44004416809) passed. Phase 7 SQL is not applied to the hosted project, and authenticated deployment/E2E acceptance remains unverified. [Active release plan](Phase7Exec.md) |
-| 8 | Personal statistics, streaks, and achievements | 7 | NOT STARTED |
+| 8 | Personal statistics, streaks, and achievements | 7 | IN PROGRESS — [draft PR #15](https://github.com/A13Xg/Daydle/pull/15), source CI [#44008702852](https://github.com/A13Xg/Daydle/actions/runs/44008702852) PASS; Phase 8 hosted SQL/deploy/E2E NOT VERIFIED |
 | 9 | Public profiles and instant friendship | 8 | NOT STARTED |
 | 10 | Spoiler-safe comparisons, scoreboards, and rankings | 9 | NOT STARTED |
 | 11 | Administration, game requests/voting, and diagnostics | 10 | NOT STARTED |
@@ -202,7 +202,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Paste-to-history and correction E2E pass; duplicate replay is idempotent; malformed/unknown handling safe; raw expiry metadata present and tested.
 
 ## Phase 8 — Personal statistics, streaks, and achievements
-**Status:** NOT STARTED. **Dependencies:** 7.
+**Status:** IN PROGRESS — source implemented/tested on [draft PR #15](https://github.com/A13Xg/Daydle/pull/15), [active plan](Phase8Exec.md). Phase 7 source and its hosted SQL are present; Phase 7/8 Worker deployments, real authentication E2E and Phase 8 live migration remain gated. **Dependencies:** 7; owner-authorized source development ahead of hosted release acceptance.
 
 **Purpose:** Turn canonical results into trustworthy, game-aware historical insights.
 

@@ -1,6 +1,6 @@
 # Phase 8 Execution Plan — Personal statistics, streaks, and achievements
 
-**Status:** IN PROGRESS — source-only development and verification; not deployed or ready for review.
+**Status:** SOURCE CI VERIFIED / HOSTED ACCEPTANCE BLOCKED — source is implemented and validated; draft PR remains open. Phase 8 SQL is NOT deployed. Do not archive or mark COMPLETE until release gates are satisfied.
 **Branch/PR:** `phase/08-personal-statistics-achievements` / [PR #15](https://github.com/A13Xg/Daydle/pull/15).
 **Base:** `main` at `d0c693035f297d044a0663e6baf9d3e182b5d2e2`.
 **Source authorities:** IDEA.md §§7–9, roadmap.md Phase 8, AGENTS.md, Obsidian Arcade DESIGN.md, completed Phase 7 source PR #14.
@@ -40,4 +40,15 @@
 
 ## Verification log
 
-- Branch and draft PR created. No Phase 8 code, tests, migrations or deployment completed at planning time.
+- Branch and draft PR created. The planning-time note is superseded by the source verification record below.
+
+
+## Phase 8 source implementation and verification — November 16, 2026
+
+- Implemented pure `shared/statistics.ts` calculator with five deterministic rules and regression fixtures for DST, local activity grouping, incomplete/empty outcomes, streak invalidation, best attempts/time and deletion. The unbounded raw result history API is **not** used as the source for lifetime stats.
+- Added source migration `20261117040000_phase8_statistics.sql`: read-only, complete-dataset SQL aggregates over canonical result rows, 366-day bounded activity display series with truncation flag, server-only RPC grant, explicit timezone validation, no raw share access and recalculation after corrections/deletes.
+- Added authenticated Worker GET `/api/v1/statistics?timezone=<IANA>`, derived owner ID, service-only RPC and no-store response, plus browser client and actual Obsidian Arcade Statistics tab. No social/public stats routes or native packaging.
+- Added dedicated Worker boundary tests, two isolated PostgreSQL 17 SQL regression databases, pure calculation tests, docs and route/layout checks.
+- **Final clean committed-source CI:** [#44008702852](https://github.com/A13Xg/Daydle/actions/runs/44008702852) **PASS** at `6a9f535c0`: **233 tests / 31 suites**, TypeScript, lint, Prettier, production build, API/PWA smoke, 17 Chromium viewport/route checks, and two PostgreSQL security tests. The temporary CI formatting diagnostic workflow was removed from source. The guest Chromium Statistics route was checked, not a real authenticated hosted Stats session.
+- **NOT VERIFIED:** Phase 8 migration on live Supabase (separate authorization needed), protected Worker deployment/configuration, authenticated statistics E2E, profile timezone persistence, publisher-release streak semantics and physical iPhone Safari/PWA. These are not passing simply because CI is green; keep draft PR and active root plan until authorized integration acceptance.
+- **Material design disagreement:** the roadmap allows raw captured shares to be ingested before scheduled physical 90-day purging is implemented in Phase 12. A max-90-day privacy promise cannot rely on metadata alone; Phase 7 release should require an operational purge before the first retained sample reaches expiry. This is a release gating proposal, not an unapproved remote change.
