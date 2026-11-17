@@ -41,7 +41,6 @@ const phase10 = {
 };
 const phase11 = {
   version: "20261117090000",
-      "20261117100000",
   name: "phase11_administration",
 };
 const phase12 = { version: "20261117100000", name: "phase12_privacy" };
