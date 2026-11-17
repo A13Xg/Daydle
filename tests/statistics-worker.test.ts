@@ -4,7 +4,8 @@ import type { ResultsEnvironment } from "../worker/results";
 
 const OWNER = "11111111-1111-4111-8111-111111111111";
 const OTHER = "22222222-2222-4222-8222-222222222222";
-const api = "https://daydle.example/api/v1/statistics?timezone=America%2FLos_Angeles";
+const api =
+  "https://daydle.example/api/v1/statistics?timezone=America%2FLos_Angeles";
 const env: ResultsEnvironment = {
   SUPABASE_URL: "https://example.supabase.co",
   SUPABASE_PUBLISHABLE_KEY: "sb_publishable_testing_key",
@@ -25,43 +26,47 @@ describe("owner-only statistics endpoint", () => {
 
     expect((await worker.fetch(request(api), env)).status).toBe(401);
     expect(
-      (await worker.fetch(request(api.replace("America%2FLos_Angeles", "../bad")), env))
-        .status,
-    ).toBe(400);
-    expect((await worker.fetch(request(api, "POST"), env)).status).toBe(405);
-    expect(
       (
         await worker.fetch(
-          request(api, "GET"),
-          {},
+          request(api.replace("America%2FLos_Angeles", "../bad")),
+          env,
         )
       ).status,
-    ).toBe(503);
+    ).toBe(400);
+    expect((await worker.fetch(request(api, "POST"), env)).status).toBe(405);
+    expect((await worker.fetch(request(api, "GET"), {})).status).toBe(503);
     expect(mocked).not.toHaveBeenCalled();
   });
 
   it("uses the verified owner, protects the service key and derives achievements", async () => {
-    const upstream: { url: string; body: unknown; headers: HeadersInit | undefined }[] = [];
-    vi.stubGlobal("fetch", vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
-      upstream.push({
-        url: String(url),
-        body: init?.body ? JSON.parse(String(init.body)) : null,
-        headers: init?.headers,
-      });
-      if (String(url).endsWith("/auth/v1/user")) {
-        return Response.json({ id: OWNER });
-      }
-      return Response.json({
-        timezone: "America/Los_Angeles",
-        totalResults: 10,
-        longestStreak: 3,
-        currentStreak: 2,
-        daysActive: 9,
-        gamesRecorded: 1,
-        activityDays: [],
-        games: [],
-      });
-    }));
+    const upstream: {
+      url: string;
+      body: unknown;
+      headers: HeadersInit | undefined;
+    }[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+        upstream.push({
+          url: String(url),
+          body: init?.body ? JSON.parse(String(init.body)) : null,
+          headers: init?.headers,
+        });
+        if (String(url).endsWith("/auth/v1/user")) {
+          return Response.json({ id: OWNER });
+        }
+        return Response.json({
+          timezone: "America/Los_Angeles",
+          totalResults: 10,
+          longestStreak: 3,
+          currentStreak: 2,
+          daysActive: 9,
+          gamesRecorded: 1,
+          activityDays: [],
+          games: [],
+        });
+      }),
+    );
     const response = await worker.fetch(
       new Request(api + "&userId=" + OTHER, {
         headers: { authorization: "Bearer mock.jwt.token" },
@@ -91,11 +96,14 @@ describe("owner-only statistics endpoint", () => {
   });
 
   it("fails closed for a malformed upstream response", async () => {
-    vi.stubGlobal("fetch", vi.fn(async (url: string | URL | Request) =>
-      String(url).endsWith("/auth/v1/user")
-        ? Response.json({ id: OWNER })
-        : Response.json({ totalResults: "10", games: "bad" }),
-    ));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string | URL | Request) =>
+        String(url).endsWith("/auth/v1/user")
+          ? Response.json({ id: OWNER })
+          : Response.json({ totalResults: "10", games: "bad" }),
+      ),
+    );
     const response = await worker.fetch(
       new Request(api, { headers: { authorization: "Bearer mock.jwt.token" } }),
       env,
