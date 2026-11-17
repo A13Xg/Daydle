@@ -146,3 +146,105 @@ describe("Phase 12 private scheduled retention", () => {
     expect(console.info).not.toHaveBeenCalled();
   });
 });
+
+describe("Phase 12 irreversible account deletion boundary", () => {
+  function deletionRequest(
+    data: Record<string, unknown>,
+    origin = ORIGIN,
+    token = "Bearer valid.jwt.token",
+  ) {
+    return new Request(ORIGIN + "/api/v1/privacy/delete", {
+      method: "POST",
+      headers: {
+        authorization: token,
+        origin,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+  }
+
+  it("requires a recent provider login and exact typed confirmation", async () => {
+    const calls: string[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (url: string | URL | Request) => {
+      calls.push(String(url));
+      return Response.json({
+        id: OWNER,
+        last_sign_in_at: "2020-01-01T00:00:00.000Z",
+      });
+    }));
+    const req = deletionRequest({ confirmation: "DELETE MY DAYDLE ACCOUNT" });
+    expect((await worker.fetch(req, env)).status).toBe(403);
+    expect(calls).toEqual(["https://fixture.supabase.co/auth/v1/user"]);
+  });
+
+  it("rejects cross-origin, missing bearer and extra deletion payload fields", async () => {
+    const calls: string[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (url: string | URL | Request) => {
+      calls.push(String(url));
+      return Response.json({
+        id: OWNER, last_sign_in_at: new Date().toISOString(),
+      });
+    }));
+    const phrase = "DELETE MY DAYDLE ACCOUNT";
+    expect((await worker.fetch(
+      deletionRequest({ confirmation: phrase }, "https://evil.example"),env,
+    )).status).toBe(403);
+    expect((await worker.fetch(
+      deletionRequest({ confirmation: phrase }, ORIGIN, ""),env,
+    )).status).toBe(401);
+    expect((await worker.fetch(
+      deletionRequest({ confirmation: phrase, userId: RECORD }),env,
+    )).status).toBe(422);
+    expect((await worker.fetch(
+      deletionRequest({ confirmation: "delete" }),env,
+    )).status).toBe(422);
+    expect(calls.every((url) => url.endsWith("/auth/v1/user"))).toBe(true);
+  });
+
+  it("deletes only the OAuth-verified identity through the server-held key", async () => {
+    const calls: Array<{ url: string; init?: RequestInit }> = [];
+    vi.stubGlobal("fetch", vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+      calls.push({ url: String(url), init });
+      if (String(url).endsWith("/auth/v1/user"))
+        return Response.json({
+          id: OWNER, last_sign_in_at: new Date().toISOString(),
+        });
+      return new Response("{}", { status: 200 });
+    }));
+    const res = await worker.fetch(deletionRequest({
+      confirmation: "DELETE MY DAYDLE ACCOUNT",
+    }), env);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ status: "deleted" });
+    expect(res.headers.get("cache-control")).toContain("no-store");
+    expect(calls[1]?.url).toBe(
+      "https://fixture.supabase.co/auth/v1/admin/users/" + OWNER,
+    );
+    expect(calls[1]?.init?.method).toBe("DELETE");
+    expect(calls[1]?.init?.redirect).toBe("manual");
+    expect(calls[1]?.init?.body).toBe(
+      JSON.stringify({ should_soft_delete: false }),
+    );
+    expect(JSON.stringify(calls[1]?.init?.headers)).toContain(env.SUPABASE_SERVICE_ROLE_KEY);
+    expect(JSON.stringify(await res.clone().text())).not.toContain(env.SUPABASE_SERVICE_ROLE_KEY);
+  });
+
+  it("does not falsely claim deletion on an Auth Admin failure", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    vi.stubGlobal("fetch", vi.fn(async (url: string | URL | Request) => {
+      if (String(url).endsWith("/auth/v1/user"))
+        return Response.json({
+          id: OWNER, last_sign_in_at: new Date().toISOString(),
+        });
+      return Response.json({ message: "hidden admin error" }, { status: 500 });
+    }));
+    const res = await worker.fetch(deletionRequest({
+      confirmation: "DELETE MY DAYDLE ACCOUNT",
+    }), env);
+    expect(res.status).toBe(503);
+    expect(await res.json()).toEqual({ error: "account_deletion_unavailable" });
+    expect(JSON.stringify(log.mock.calls)).not.toContain(OWNER);
+    expect(JSON.stringify(log.mock.calls)).not.toContain("hidden admin error");
+  });
+});
