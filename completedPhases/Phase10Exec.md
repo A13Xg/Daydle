@@ -1,9 +1,9 @@
 # Phase 10 Execution Plan — Spoiler-safe comparisons, scoreboards and rankings
 
-**Status:** IN REVIEW — VERIFIED SOURCE / NO HOSTED PHASE 10 DEPLOYMENT
+**Status:** IN REVIEW — SOURCE VERIFIED; HOSTED PHASE 10 SQL APPLIED; WORKER/UI DEPLOYMENT PENDING
 **Branch / draft PR:** `phase/10-spoiler-safe-comparisons` · [PR #18](https://github.com/A13Xg/Daydle/pull/18)
 **Base:** main `9df11aa111732b69105b53c9927eb397374c9db3`; Phase 9 merged `d47d360b`, post-merge CI #44022863047 PASS.
-**Release dependency:** Daydle Preview Phase 9 migration recorded `20261117051824`, read-only RLS/grant verification passed. Dedicated strict migration/release reconciliation PR #17 is open; no Cloudflare deploy or Phase 10 SQL application in this phase branch.
+**Release dependency:** Phase 9 is deployed and verified by protected release [#44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648). Phase 10 SQL subsequently applied under hosted version `20261117075359_phase10_comparisons`; Phase 10 Worker/UI is not deployed.
 **Authority:** IDEA.md §§3–4,8–9,12; roadmap.md Phase 10; AGENTS.md; Obsidian Arcade DESIGN.md and `referenceFiles/.../comparisons/` example.
 
 ## Existing implementation and risk assessment
@@ -25,7 +25,7 @@
 - Puzzles list is based only on public canonical puzzle metadata, never on per-user submission totals. Board supports global or friend-filtered membership; friends scope requires authenticated viewer and includes viewer. Public profiles remain readable without friendship.
 
 ## SQL/source design
-- New forward-only migration `supabase/migrations/20261117060000_phase10_comparisons.sql`: common policy, safe metric converter, `comparison_puzzles`, `comparison_board`, `comparison_public_result`, `comparison_profile_summary`, `comparison_head_to_head`. Use read-only `SECURITY DEFINER SET search_path = ''` functions, narrowly scoped grants. No new tables, storage or credentials.
+- New forward-only migration `supabase/migrations/20261117075359_phase10_comparisons.sql`: common policy, safe metric converter, `comparison_puzzles`, `comparison_board`, `comparison_public_result`, `comparison_profile_summary`, `comparison_head_to_head`. Use read-only `SECURITY DEFINER SET search_path = ''` functions, narrowly scoped grants. No new tables, storage or credentials.
 - `worker/comparisons.ts` routes:
   `GET /api/v1/comparisons/puzzles?game=slug`,
   `GET /api/v1/comparisons/board?game=slug&puzzle=canonical-key&scope=global|friends&limit=20&offset=0`,
@@ -52,16 +52,23 @@
 
 ## Phase 10 completion and audit evidence
 
-**Source outcome:** All planned Phase 10 functionality implemented and source verification passed. No hosted Phase 10 SQL or Worker deployment was attempted. Public direct-result, profile, board and head-to-head reads all pass through the same server-side viewer/puzzle unlock policy before ranking, aggregation and pagination. Unknown resets remain locked; friendship does not increase access.
+**Source outcome:** All planned Phase 10 functionality implemented and source verification passed. The hosted Phase 10 SQL was later applied and verified; Phase 10 Worker/UI deployment has not occurred. Public direct-result, profile, board and head-to-head reads all pass through the same server-side viewer/puzzle unlock policy before ranking, aggregation and pagination. Unknown resets remain locked; friendship does not increase access.
 
-**Files delivered:** forward-only `supabase/migrations/20261117060000_phase10_comparisons.sql`; `shared/comparisons.ts`, `worker/comparisons.ts`, `src/lib/comparisons-api.ts`; `ComparisonsPage` including spoiler shield and safe direct result, `PlayerPerformance` and `HeadToHead`; Friends/profile/App/ArcadeShell integration, responsive Obsidian Arcade CSS, SQL/Worker/Chromium tests, `docs/comparisons.md`.
+**Files delivered:** forward-only `supabase/migrations/20261117075359_phase10_comparisons.sql`; `shared/comparisons.ts`, `worker/comparisons.ts`, `src/lib/comparisons-api.ts`; `ComparisonsPage` including spoiler shield and safe direct result, `PlayerPerformance` and `HeadToHead`; Friends/profile/App/ArcadeShell integration, responsive Obsidian Arcade CSS, SQL/Worker/Chromium tests, `docs/comparisons.md`.
 
 **Audit findings corrected:** Previous tests expected an unplayed fixture but Bob already had a persisted matching result: changed adversarial viewer to Carol and verified unrelated puzzle remains locked. Fixed invalid SQL dollar-quote delimiter. Fixed duplicate RPC export. Two unranked head-to-head outcomes are now **incomparable** (NULL), not falsely classified as a tie; regression added. Added gameSlug guard to prevent stale, mismatched puzzle board display while selectors change. Chromium smoke includes new stack routes, guest visibility checks and bounded cleanup retries.
 
 **CI evidence:** [Full passing validation run #44025967926](https://github.com/A13Xg/Daydle/actions/runs/44025967926) at exact source commit `ef167b4e36a60bef1495d252442520c09f0b4e41` — strict TypeScript, ESLint, Prettier, **258 passing Vitest tests in 34 files**, production build, Worker/API/PWA smoke, **24 Chromium route/viewport checks**, **two isolated PostgreSQL 17 databases**, SQL privileges, release verification, spoiler gates and corrections/deletion **PASS**. Chromium is not actual Safari; physical iPhone remains deferred.
 
-**Permission / rollout state:** PR #18 is owner-review-ready source, not merged. Phase 10 migration remains unapplied to hosted Supabase, Phase 10 cloud code not deployed. User has already authorized hosted Phase 9 migration/deployment; its applied SQL was independently verified, and the protected manual main-only release requires merging [release PR #17](https://github.com/A13Xg/Daydle/pull/17) and starting `Deploy Worker` through GitHub Actions because this connector cannot dispatch a workflow. Hosted authenticated E2E and native camera/clipboard checks are still NOT VERIFIED. When Phase 10 is eventually merged, reconcile its **new** migration generated hosted version into a separately reviewed strict release allowlist before deploying; do not weaken the current deployment gate.
+**Permission / rollout state:** PR #18 remains owner-review-ready source, not merged. The owner requested Phase 10 release reconciliation, and the forward-only SQL was applied to hosted Daydle Preview with recorded version `20261117075359`. Its strict migration allowlist is included in this PR. Phase 9's protected Worker release [#44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648) passed. Phase 10 Worker/UI code is NOT deployed; hosted authenticated comparisons E2E and physical iPhone tests are NOT VERIFIED / owner-deferred. Owner performs the PR merge and separately authorizes the protected production Worker deployment.
 
 **Boundary decisions:** No fabricated leaderboard, anonymous pre-reset counters, fake self-game verification, universal cross-game score, private all-time totals or friend-acceptance requests. Public achievements requiring private overall history are not published. Comparator sorted with verified per-game metrics and tied competition rank. This is the narrowest safe implementation consistent with IDEA.md and visual specification.
 
-**Disposition:** Move the complete reviewed plan to `completedPhases/Phase10Exec.md` on the phase branch; set proposed roadmap status IN REVIEW. Main Phase 10 remains NOT STARTED until actual merge/reconciliation. Keep production/manual release acceptance separate.
+**Disposition:** Keep the complete reviewed plan in `completedPhases/Phase10Exec.md` and Phase 10 status IN REVIEW until the owner merges PR #18. Source tests and hosted migration verification do not imply Phase 10 Worker/UI deployment. Keep production/manual release acceptance separate.
+
+## November 17, 2026 — main synchronization and hosted migration audit
+
+- Reconciled Phase 10 on top of deployed main `f7dd10c76daae12f3c294e0645b115314ca359c1` after production hotfixes #19–#21. Preserved the working Cloudflare manual redirect behavior, protected Worker secret manifest and pre/post binding checks, safe RPC failure diagnostics, live PWA release tests, and all main-branch regression tests. Superseded PR #18's earlier experimental Worker-secret preflight with the proven production check; no secret value touched.
+- Hosted schema applied as `20261117075359_phase10_comparisons`. The checked-in migration filename and strict structured-history allowlist use this actual version/name, not the draft filename's inferred version. Post-apply read-only catalog check: 5 public comparison RPCs, all executable by `service_role`, none executable by `anon` or `authenticated`; private comparison policy helper installed. The hosted project had zero puzzles and results before and after, so no user result data was modified or backfilled.
+- Supabase security-advisor findings remained unchanged before/after: 7 informational RLS-no-policy tables, 4 pre-existing warnings about authenticated executable SECURITY DEFINER functions, 1 pre-existing auth leaked-password protection warning. These findings are unrelated to Phase 10 migration and were not silently changed.
+- CI and strict eight-migration preflight must pass at the reconciled PR head before requesting owner merge. Phase 10 Worker/UI release and hosted authenticated comparisons E2E are still pending, not claimed completed.
