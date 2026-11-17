@@ -124,7 +124,9 @@ export default function App() {
       return client ? (
         <AdminPage client={client} userId={userId} />
       ) : (
-        <section className="panel" role="status">Service unavailable.</section>
+        <section className="panel" role="status">
+          Service unavailable.
+        </section>
       );
     }
     if (pathname === "/history")
