@@ -404,6 +404,7 @@ export function AdminPage({
                             url: row.url ?? "",
                             description: row.description ?? "",
                             publisher: row.publisher ?? "",
+                            categories: row.category_slugs?.join(", ") ?? "",
                             cadence: row.cadence ?? "daily",
                             status: row.status ?? "active",
                           })
