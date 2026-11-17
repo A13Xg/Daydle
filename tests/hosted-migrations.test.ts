@@ -192,6 +192,7 @@ describe("structured Supabase production migration history", () => {
       "20261117034143",
       "20261117051824",
       "20261117075359",
+      "20261117090000",
     ]);
     const [url, options] = fetchImpl.mock.calls[0];
     expect(url).toBe(
