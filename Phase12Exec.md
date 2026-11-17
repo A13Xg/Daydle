@@ -1,6 +1,6 @@
 # Phase 12 — Privacy lifecycle, encrypted backups, and recovery
 
-**Status:** IMPLEMENTATION PLANNED; not source verified or deployed.  
+**Status:** SOURCE CI VERIFIED; operational backup/recovery acceptance BLOCKED (draft PR, no production actions).  
 **PR:** [#23](https://github.com/A13Xg/Daydle/pull/23) (draft), targeting `phase/11-admin-requests-diagnostics`; parent [PR #22](https://github.com/A13Xg/Daydle/pull/22) ready for owner review.  
 **Verified stacked base:** `6a0f80c23f24bd0fd3869e53f15faf78d091d57f` (Phase11 final [CI #44050163041](https://github.com/A13Xg/Daydle/actions/runs/44050163041) PASS).  
 **Authority:** [IDEA.md](IDEA.md) §11, [roadmap.md](roadmap.md) Phase12, [AGENTS.md](AGENTS.md).  
@@ -51,3 +51,13 @@
 `npm ci`, `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm test`, `npm run build`, `npm run smoke`, `npm run db:test` on two clean PG17 databases, and Chromium route/viewport checks.
 
 Source tests are necessary but insufficient for claims about: hosted OAuth deletion, live worker Cron, external backup encryption key availability, non-public object-storage retention, tested restore/replay of deleted accounts, actual iPhone Safari behavior and protected production release. All these remain NOT VERIFIED pending explicit operator authorization.
+
+
+## Source validation and audit — November 17, 2026
+
+- [Passing full source CI #44144669011](https://github.com/A13Xg/Daydle/actions/runs/44144669011) at `63a7369a36d10e4fd19c45d581a3e098bb11f177`: validation job (strict TypeScript, ESLint, Prettier, 308 Vitest tests across 38 suites, production build, PWA/API/Chromium smoke) PASS; database-security job (two isolated PG17 migrations and RLS assertions) PASS.
+- Corrected 8 Prettier failures using the pinned toolchain; temporary formatting-export workflow was removed before final CI.
+- Fixed **critical backup crypto cleanup bug**: a failed exclusive output open could delete a pre-existing destination. Cleanup now unlinks output only if the operation itself created the file. Added a separate existing-content assertion to prevent regression; new CI passed.
+- Source includes authenticated owner-scoped JSON export, recent-OAuth-confirmed account deletion, 90-day raw purge scheduling code, private SQL/RPC, and independently tested AES-256-GCM archive encryption/decryption. No production DB migration or live cron was applied.
+- **Unmet Phase 12 acceptance**: no verified offsite object bucket/key retention, scheduled encrypted export, independently tested PostgreSQL restore, external deletion-tombstone/reconciliation mechanism or real hosted account-deletion E2E. Do not mark COMPLETE or mark PR ready while these remain. Real iPhone Safari testing is also owner-deferred.
+- If a downstream source-only phase is explicitly authorized on this stacked branch, that is not proof that these external recovery gates are satisfied. Keep this plan at the root and this PR draft until verified or explicitly re-scoped.
