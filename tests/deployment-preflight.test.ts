@@ -65,7 +65,6 @@ describe("protected Daydle Worker release preflight", () => {
   });
 });
 
-
 import {
   WorkerSecretPreflightError,
   inspectWorkerSecretMetadata,
@@ -74,9 +73,7 @@ import {
 
 const workerSecretMetadata = {
   success: true,
-  result: [
-    { name: "SUPABASE_SERVICE_ROLE_KEY", type: "secret_text" },
-  ],
+  result: [{ name: "SUPABASE_SERVICE_ROLE_KEY", type: "secret_text" }],
 };
 const checkedAccount = "1234567890abcdef1234567890abcdef";
 const checkedToken = "synthetic-unit-test-token";
@@ -84,7 +81,8 @@ const checkedToken = "synthetic-unit-test-token";
 describe("Cloudflare protected runtime secret lookup", () => {
   it("verifies exactly the required encrypted binding by metadata, never its value", async () => {
     const fetchImpl = vi.fn(async () =>
-      Response.json({ ...workerSecretMetadata, extra: "ignored" }));
+      Response.json({ ...workerSecretMetadata, extra: "ignored" }),
+    );
     expect(
       await verifyCloudflareWorkerSecret({
         accountId: checkedAccount,
@@ -96,8 +94,8 @@ describe("Cloudflare protected runtime secret lookup", () => {
     const [url, options] = fetchImpl.mock.calls[0] as [string, RequestInit];
     expect(url).toBe(
       "https://api.cloudflare.com/client/v4/accounts/" +
-      checkedAccount +
-      "/workers/scripts/daydle-app/secrets",
+        checkedAccount +
+        "/workers/scripts/daydle-app/secrets",
     );
     expect(options.method).toBe("GET");
     expect(options.redirect).toBe("error");
@@ -109,7 +107,13 @@ describe("Cloudflare protected runtime secret lookup", () => {
   it("distinguishes missing secret, wrong binding type, and invalid metadata", () => {
     const cases = [
       [{ success: true, result: [] }, "missing_binding"],
-      [{ success: true, result: [{ name: "SUPABASE_SERVICE_ROLE_KEY", type: "plain_text" }] }, "wrong_binding_type"],
+      [
+        {
+          success: true,
+          result: [{ name: "SUPABASE_SERVICE_ROLE_KEY", type: "plain_text" }],
+        },
+        "wrong_binding_type",
+      ],
       [{ success: false, result: [] }, "invalid_response"],
       [{ success: true, result: "not an array" }, "invalid_response"],
     ] as const;
@@ -129,22 +133,27 @@ describe("Cloudflare protected runtime secret lookup", () => {
     [403, "permission_denied"],
     [404, "worker_not_found"],
     [500, "lookup_failed"],
-  ] as const)("reports Cloudflare HTTP %i distinctly (%s)", async (http, code) => {
-    await expect(
-      verifyCloudflareWorkerSecret({
-        accountId: checkedAccount,
-        apiToken: checkedToken,
-        fetchImpl: vi.fn(async () => new Response(null, { status: http })),
-      }),
-    ).rejects.toMatchObject({ code });
-  });
+  ] as const)(
+    "reports Cloudflare HTTP %i distinctly (%s)",
+    async (http, code) => {
+      await expect(
+        verifyCloudflareWorkerSecret({
+          accountId: checkedAccount,
+          apiToken: checkedToken,
+          fetchImpl: vi.fn(async () => new Response(null, { status: http })),
+        }),
+      ).rejects.toMatchObject({ code });
+    },
+  );
 
   it("rejects network failures, JSON corruption and invalid local credentials", async () => {
     await expect(
       verifyCloudflareWorkerSecret({
         accountId: checkedAccount,
         apiToken: checkedToken,
-        fetchImpl: vi.fn(async () => { throw new Error("fake API error"); }),
+        fetchImpl: vi.fn(async () => {
+          throw new Error("fake API error");
+        }),
       }),
     ).rejects.toMatchObject({ code: "lookup_failed" });
     await expect(
@@ -171,8 +180,12 @@ describe("Cloudflare protected runtime secret lookup", () => {
       await verifyCloudflareWorkerSecret({
         accountId: checkedAccount,
         apiToken: secret,
-        fetchImpl: vi.fn(async () =>
-          new Response('{"errors":[{"message":"private-value"}]}', { status: 403 })),
+        fetchImpl: vi.fn(
+          async () =>
+            new Response('{"errors":[{"message":"private-value"}]}', {
+              status: 403,
+            }),
+        ),
       });
     } catch (error) {
       const message = String(error);

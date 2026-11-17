@@ -154,16 +154,15 @@ export async function verifyCloudflareWorkerSecret({
   return inspectWorkerSecretMetadata(data);
 }
 
-if (
-  process.argv[1] &&
-  fileURLToPath(import.meta.url) === process.argv[1]
-) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   try {
     await verifyCloudflareWorkerSecret({
       accountId: process.env.CLOUDFLARE_ACCOUNT_ID,
       apiToken: process.env.CLOUDFLARE_API_TOKEN,
     });
-    console.log("Verified required Cloudflare Worker encrypted secret binding.");
+    console.log(
+      "Verified required Cloudflare Worker encrypted secret binding.",
+    );
   } catch (error) {
     const safeError =
       error instanceof WorkerSecretPreflightError
