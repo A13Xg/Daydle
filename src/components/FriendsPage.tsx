@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   connectionLink,
@@ -107,7 +113,9 @@ export function FriendsPage({
 
   function showConfirmation(next: Confirmation) {
     lastTrigger.current =
-      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
     setConfirm(next);
   }
 
