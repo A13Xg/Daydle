@@ -353,7 +353,6 @@ describe("authenticated result Worker boundary", () => {
   });
 });
 
-
 describe("sanitized privileged Supabase RPC diagnostics", () => {
   const absentProfile = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee";
   const requestUrl = "https://daydle.example/api/v1/players/" + absentProfile;
@@ -363,48 +362,56 @@ describe("sanitized privileged Supabase RPC diagnostics", () => {
     [403, "42501"],
     [404, "PGRST202"],
     [500, "XX000"],
-  ])("logs HTTP %i and a sanitized PostgREST code without disclosing response details", async (status, code) => {
-    const err = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    const upstream = vi.fn(async () =>
-      Response.json(
-        {
-          code,
-          message: "SECRET_UPSTREAM_MESSAGE_AND_JWT",
-          details: "RAW_PRIVATE_SHARE",
-          hint: "access_token=PRIVATE",
-        },
-        { status },
-      ),
-    );
-    vi.stubGlobal("fetch", upstream);
+  ])(
+    "logs HTTP %i and a sanitized PostgREST code without disclosing response details",
+    async (status, code) => {
+      const err = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => undefined);
+      const upstream = vi.fn(async () =>
+        Response.json(
+          {
+            code,
+            message: "SECRET_UPSTREAM_MESSAGE_AND_JWT",
+            details: "RAW_PRIVATE_SHARE",
+            hint: "access_token=PRIVATE",
+          },
+          { status },
+        ),
+      );
+      vi.stubGlobal("fetch", upstream);
 
-    const response = await worker.fetch(new Request(requestUrl), env);
-    expect(response.status).toBe(503);
-    expect(await response.json()).toEqual({
-      error: "result_service_unavailable",
-    });
-    expect(err).toHaveBeenCalledExactlyOnceWith("supabase_rpc_failure", {
-      rpc: "social_public_profile",
-      httpStatus: status,
-      postgrestCode: code,
-    });
-    const recorded = JSON.stringify(err.mock.calls);
-    expect(recorded).not.toContain("SECRET_UPSTREAM");
-    expect(recorded).not.toContain("RAW_PRIVATE_SHARE");
-    expect(recorded).not.toContain("access_token");
-    expect(recorded).not.toContain(env.SUPABASE_SERVICE_ROLE_KEY);
-    expect(recorded).not.toContain(absentProfile);
-    expect(upstream).toHaveBeenCalledOnce();
-  });
+      const response = await worker.fetch(new Request(requestUrl), env);
+      expect(response.status).toBe(503);
+      expect(await response.json()).toEqual({
+        error: "result_service_unavailable",
+      });
+      expect(err).toHaveBeenCalledExactlyOnceWith("supabase_rpc_failure", {
+        rpc: "social_public_profile",
+        httpStatus: status,
+        postgrestCode: code,
+      });
+      const recorded = JSON.stringify(err.mock.calls);
+      expect(recorded).not.toContain("SECRET_UPSTREAM");
+      expect(recorded).not.toContain("RAW_PRIVATE_SHARE");
+      expect(recorded).not.toContain("access_token");
+      expect(recorded).not.toContain(env.SUPABASE_SERVICE_ROLE_KEY);
+      expect(recorded).not.toContain(absentProfile);
+      expect(upstream).toHaveBeenCalledOnce();
+    },
+  );
 
   it("nulls malicious/malformed PostgREST code rather than printing it", async () => {
     const err = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    vi.stubGlobal("fetch", vi.fn(async () =>
-      Response.json(
-        { code: "PGRST202\\nSECRET_HEADER", message: "TOKEN_PRIVATE" },
-        { status: 403 },
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        Response.json(
+          { code: "PGRST202\\nSECRET_HEADER", message: "TOKEN_PRIVATE" },
+          { status: 403 },
+        ),
       ),
-    ));
+    );
     const response = await worker.fetch(new Request(requestUrl), env);
     expect(response.status).toBe(503);
     expect(err).toHaveBeenCalledWith("supabase_rpc_failure", {
@@ -418,9 +425,12 @@ describe("sanitized privileged Supabase RPC diagnostics", () => {
 
   it("handles non-JSON upstream failures without logging the response body", async () => {
     const err = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    vi.stubGlobal("fetch", vi.fn(async () =>
-      new Response("PRIVATE_UPSTREAM_HTML_BODY", { status: 502 }),
-    ));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        async () => new Response("PRIVATE_UPSTREAM_HTML_BODY", { status: 502 }),
+      ),
+    );
     const response = await worker.fetch(new Request(requestUrl), env);
     expect(response.status).toBe(503);
     expect(err).toHaveBeenCalledWith("supabase_rpc_failure", {
@@ -433,9 +443,15 @@ describe("sanitized privileged Supabase RPC diagnostics", () => {
 
   it("retains the existing explicit rate-limit mapping without noisy failure logs", async () => {
     const err = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    vi.stubGlobal("fetch", vi.fn(async () =>
-      Response.json({ message: "result_rate_limited", code: "P0001" }, { status: 400 }),
-    ));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        Response.json(
+          { message: "result_rate_limited", code: "P0001" },
+          { status: 400 },
+        ),
+      ),
+    );
     const response = await worker.fetch(new Request(requestUrl), env);
     expect(response.status).toBe(429);
     expect(await response.json()).toEqual({ error: "rate_limited" });
@@ -444,9 +460,12 @@ describe("sanitized privileged Supabase RPC diagnostics", () => {
 
   it("emits a safe, distinct transport event and never logs exceptions", async () => {
     const err = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    vi.stubGlobal("fetch", vi.fn(async () => {
-      throw new Error("Bearer SENSITIVE_TOKEN_IN_EXCEPTION");
-    }));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        throw new Error("Bearer SENSITIVE_TOKEN_IN_EXCEPTION");
+      }),
+    );
     const response = await worker.fetch(new Request(requestUrl), env);
     expect(response.status).toBe(503);
     expect(err).toHaveBeenCalledWith("supabase_rpc_transport_failure", {
@@ -457,7 +476,10 @@ describe("sanitized privileged Supabase RPC diagnostics", () => {
 
   it("does not log successful public-profile RPC requests", async () => {
     const err = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    vi.stubGlobal("fetch", vi.fn(async () => Response.json(null)));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => Response.json(null)),
+    );
     const response = await worker.fetch(new Request(requestUrl), env);
     expect(response.status).toBe(404);
     expect(err).not.toHaveBeenCalled();
