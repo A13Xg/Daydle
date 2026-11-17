@@ -90,7 +90,7 @@ BEGIN
   END IF;
   IF p_action='create' THEN
     IF p_name IS NULL OR char_length(btrim(p_name)) NOT BETWEEN 2 AND 120
-       OR p_url IS NULL OR NOT app_private.safe_publisher_url(p_url)
+       OR app_private.safe_publisher_url(p_url) IS DISTINCT FROM true
        OR p_notes IS NOT NULL AND char_length(p_notes)>500
        OR p_id IS NOT NULL THEN
       RETURN jsonb_build_object('status','invalid');
@@ -237,7 +237,7 @@ BEGIN
     target_url := p_data->>'url';
     IF target_slug IS NULL OR target_slug !~ '^[a-z][a-z0-9-]{1,63}$'
        OR target_name IS NULL OR char_length(target_name) NOT BETWEEN 1 AND 120
-       OR NOT app_private.safe_publisher_url(target_url)
+       OR app_private.safe_publisher_url(target_url) IS DISTINCT FROM true
        OR COALESCE(length(p_data->>'description'),0)>1000
        OR COALESCE(length(p_data->>'publisher'),0)>120
        OR COALESCE(p_data->>'cadence','daily') NOT IN ('daily','weekly','irregular','multiple_daily','unknown')
