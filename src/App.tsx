@@ -13,6 +13,8 @@ import { HistoryPage } from "./components/HistoryPage";
 import { StatisticsPage } from "./components/StatisticsPage";
 import { FriendsPage } from "./components/FriendsPage";
 import { PublicPlayerPage } from "./components/PublicPlayerPage";
+import { GameRequestsPage } from "./components/GameRequestsPage";
+import { AdminPage } from "./components/AdminPage";
 import {
   ComparisonsPage,
   PublicResultDetail,
@@ -116,6 +118,17 @@ export default function App() {
           lineupOnly={pathname === "/lineup"}
         />
       );
+    if (pathname === "/requests")
+      return <GameRequestsPage client={client} userId={userId} />;
+    if (pathname === "/admin") {
+      return client ? (
+        <AdminPage client={client} userId={userId} />
+      ) : (
+        <section className="panel" role="status">
+          Service unavailable.
+        </section>
+      );
+    }
     if (pathname === "/history")
       return (
         <HistoryPage

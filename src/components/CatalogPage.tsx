@@ -337,6 +337,11 @@ export function CatalogPage({
             ? "Adjust your saved rotation. Each move is saved to your account and verified against the server."
             : "Discover puzzles worth coming back to. Play each game on its publisher site and build your own ritual."}
         </p>
+        {!lineupOnly && (
+          <a className="secondary-link" href="/requests">
+            Request or vote on a game
+          </a>
+        )}
       </header>
 
       {(!online || catalogOffline || selectionReadOnly) && (

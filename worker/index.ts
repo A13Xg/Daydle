@@ -8,6 +8,7 @@ import { HEALTH_PATH } from "../shared/contracts";
 import { handleSocialRequest } from "./social";
 import { handleComparisonRequest } from "./comparisons";
 import { COMPARISON_PATH } from "../shared/comparisons";
+import { handleAdministrationRequest } from "./administration";
 import { healthResponse } from "./health";
 
 function apiError(
@@ -50,6 +51,9 @@ export default {
     env: ResultsEnvironment,
   ): Response | Promise<Response> {
     const path = new URL(request.url).pathname;
+    if (path === "/api/v1/requests" || path === "/api/v1/admin") {
+      return handleAdministrationRequest(request, env);
+    }
     if (path === COMPARISON_PATH || path.startsWith(COMPARISON_PATH + "/")) {
       return handleComparisonRequest(request, env);
     }
