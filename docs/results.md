@@ -1,6 +1,6 @@
 # Phase 7 — Result ingestion, history and correction lifecycle
 
-**Status:** Source merged in [PR #14](https://github.com/A13Xg/Daydle/pull/14) at `1ff1b044` with [passing main CI](https://github.com/A13Xg/Daydle/actions/runs/44004416809). Phase 7 is **BLOCKED on hosted acceptance**: the connected live Supabase project still has Phase 2–5 migrations only; no Phase 7 live migration or deployment has been verified. See the [active plan](../Phase7Exec.md).
+**Status:** Source merged in [PR #14](https://github.com/A13Xg/Daydle/pull/14) at `1ff1b044` with [passing main CI](https://github.com/A13Xg/Daydle/actions/runs/44004416809). Phase 7 is **BLOCKED on hosted acceptance**: the Phase 7 migration is now applied and verified on Daydle Preview, but the owner has authorized a protected Worker/frontend deployment to `daydle.agoodman.io`, but no release or authenticated E2E has been performed. See the [active plan](../Phase7Exec.md).
 
 ## User workflow
 
@@ -33,7 +33,7 @@ Do not retry unknown-outcome writes automatically after a transport failure; ref
 
 ## Deployment gate — requires separate explicit authorization
 
-1. Approve/apply the additive Phase 7 SQL migration to the target Supabase database. Verify the five catalog parser-status updates and all server-only RPC grants.
+1. **COMPLETE on Daydle Preview (2026-11-16):** the owner authorized the additive Phase 7 SQL migration, which was applied successfully. Five catalog parser-status updates and all five service-only RPC grants were verified. Supabase recorded migration name `20261117010000_phase7_results` under generated version `20261117030322`; reconcile this difference before automated migration deployment.
 2. Configure protected Cloudflare Worker secrets SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY and SUPABASE_SERVICE_ROLE_KEY (legacy service-role JWT for PostgREST service-only calls). The service secret must NEVER be prefixed VITE_, committed, printed, or sent to browsers. Existing frontend public Vite Supabase variables remain unchanged.
 3. Approve and deploy Worker/frontend only after the migration is live and the server secret is configured. Test replay, replace, delete, cross-account denial and external auth callbacks with real identities. Physical iPhone testing is an independent pre-release requirement.
 4. Roll back application code first if necessary. Do not remove additive schema or recorded result data without a separate backup/migration plan.
@@ -57,7 +57,7 @@ ORDER BY sample_count DESC;
 
 To inspect private raw content, authorized project operators can filter `public.raw_submissions` by specific pending IDs in a controlled SQL session. Do not print full raw shares in CI, general logs, PRs, error responses or public issues. Convert verified examples into sanitized parser fixtures only after review. Do not silently run OCR, LLM categorization, automatic schema changes, or code generation based on untrusted user-supplied text.
 
-The existing hosted Daydle Preview database was checked on November 16, 2026: `raw_submissions=0`, `game_results=0`, and only Phase 2–5 migrations were applied. Previously pasted text was not persisted and cannot be recovered from this database. This receive path becomes active **only** after authorized migration, Worker secret setup and deployment.
+The hosted Daydle Preview database initially had no raw samples or canonical results and only Phase 2–5 migrations. The owner authorized Phase 7 SQL, which is now **applied and verified** (five supported games, five RPCs restricted to service_role, two private tables protected by RLS). Previously pasted text was not persisted and cannot be recovered. The receiver becomes active only after separate Worker secret setup, deployment and authenticated E2E acceptance.
 
 ## UI visual verification
 
