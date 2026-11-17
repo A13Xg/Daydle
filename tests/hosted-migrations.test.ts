@@ -90,15 +90,17 @@ describe("structured Supabase production migration history", () => {
       applied: filenames.map((name) => name.slice(0, 14)),
       pending: [],
     });
+    const inventedVersion = [
+      ...full.slice(0, -1),
+      { ...phase10, version: "20261117060000" },
+    ];
     expect(() =>
-      verifyStructuredHistory([
-        ...full.slice(0, -1),
-        { ...phase10, version: "20261117060000" },
-      ], filenames, true),
+      verifyStructuredHistory(inventedVersion, filenames, true),
     ).toThrow();
   });
 
   it("rejects missing, unknown, duplicate and out-of-order records", () => {
+    const mismatchedPhase10 = { ...phase10, name: "wrong" };
     const invalid = [
       [],
       [baseline[0]],
@@ -108,7 +110,7 @@ describe("structured Supabase production migration history", () => {
       [...baseline, phase4, phase5, phase8],
       [...baseline, phase4, phase5, phase7, phase9],
       [...baseline, phase4, phase5, phase7, phase8, phase10],
-      [...baseline, phase4, phase5, phase7, phase8, phase9, { ...phase10, name: "wrong" }],
+      [...baseline, phase4, phase5, phase7, phase8, phase9, mismatchedPhase10],
       [
         ...baseline,
         phase4,
