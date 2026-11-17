@@ -100,7 +100,7 @@ describe("social contract and user safety", () => {
     expect(await response.json()).toEqual(network);
     expect(calls[1]?.body).toEqual({ p_user: OWNER });
     expect(JSON.stringify(calls[1]?.init?.headers)).toContain("eyJ_service_role_testing");
-    expect(JSON.stringify(await response.clone().text())).not.toContain("private@example.invalid");
+    expect(JSON.stringify(network)).not.toContain("private@example.invalid");
   });
   it("denies unauthenticated and cross-origin mutation with no upstream call", async () => {
     const upstream = vi.fn();
