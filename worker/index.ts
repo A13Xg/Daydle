@@ -10,6 +10,13 @@ import { handleComparisonRequest } from "./comparisons";
 import { COMPARISON_PATH } from "../shared/comparisons";
 import { handleAdministrationRequest } from "./administration";
 import { healthResponse } from "./health";
+import {
+  handlePrivacyRequest,
+  handleAccountDeletion,
+  PRIVACY_DELETE_PATH,
+  purgeExpiredRawSamples,
+} from "./privacy";
+import { PRIVACY_EXPORT_PATH } from "../shared/privacy";
 
 function apiError(
   status: number,
@@ -51,6 +58,12 @@ export default {
     env: ResultsEnvironment,
   ): Response | Promise<Response> {
     const path = new URL(request.url).pathname;
+    if (path === PRIVACY_DELETE_PATH) {
+      return handleAccountDeletion(request, env);
+    }
+    if (path === PRIVACY_EXPORT_PATH) {
+      return handlePrivacyRequest(request, env);
+    }
     if (path === "/api/v1/requests" || path === "/api/v1/admin") {
       return handleAdministrationRequest(request, env);
     }
@@ -67,5 +80,11 @@ export default {
       return handleResultsRequest(request, env);
     }
     return routeRequest(request);
+  },
+  async scheduled(
+    controller: { cron: string },
+    env: ResultsEnvironment,
+  ): Promise<void> {
+    await purgeExpiredRawSamples(controller.cron, env);
   },
 };

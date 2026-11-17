@@ -3,6 +3,14 @@ import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { validateDisplayName } from "../lib/auth-actions";
 import { ArcadeIcon } from "./ArcadeIcon";
 import { loadAdminView } from "../lib/administration-api";
+import {
+  exportMyData,
+  savePrivacyArchive,
+  privacyErrorText,
+  permanentlyDeleteMyAccount,
+  DELETE_ACCOUNT_PHRASE,
+} from "../lib/privacy-api";
+import { clearSelectedSnapshot } from "../lib/offline-snapshot";
 
 interface Profile {
   display_name: string;
@@ -34,6 +42,10 @@ export function AccountPage({
   const [error, setError] = useState("");
   const [reload, setReload] = useState(0);
   const [adminAccess, setAdminAccess] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [exportProgress, setExportProgress] = useState("");
+  const [deletePhrase, setDeletePhrase] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     setAdminAccess(false);
@@ -126,6 +138,62 @@ export function AccountPage({
       );
     } finally {
       setSavingProfile(false);
+    }
+  }
+
+  async function downloadAccountExport() {
+    if (!client || !user || exporting) return;
+    setExporting(true);
+    setExportProgress("Preparing private account export…");
+    setError("");
+    setMessage("");
+    try {
+      const data = await exportMyData(client, user.id, (dataset, count) => {
+        setExportProgress(
+          "Collecting " +
+            dataset.replaceAll("_", " ") +
+            ": " +
+            count +
+            " records",
+        );
+      });
+      savePrivacyArchive(data);
+      setMessage(
+        "Your private export file was prepared. Check your browser's downloads.",
+      );
+    } catch (cause) {
+      setError(privacyErrorText(cause));
+    } finally {
+      setExporting(false);
+      setExportProgress("");
+    }
+  }
+
+  async function deleteAccount() {
+    if (!client || !user || deleting || deletePhrase !== DELETE_ACCOUNT_PHRASE)
+      return;
+    if (
+      !window.confirm(
+        "Permanently delete your Daydle account and all saved results? This cannot be undone.",
+      )
+    )
+      return;
+    setDeleting(true);
+    setError("");
+    setMessage("");
+    try {
+      await permanentlyDeleteMyAccount(client, user.id, deletePhrase);
+      try {
+        clearSelectedSnapshot(window.localStorage, user.id);
+      } catch {
+        // Privacy preference cache may be inaccessible; it never contains
+        // results, credentials or raw share text.
+      }
+      await client.auth.signOut({ scope: "local" }).catch(() => undefined);
+      window.location.replace("/today");
+    } catch (cause) {
+      setError(privacyErrorText(cause));
+      setDeleting(false);
     }
   }
 
@@ -261,6 +329,52 @@ export function AccountPage({
         <a className="secondary-link" href="/history">
           My result history
         </a>
+        <button
+          type="button"
+          disabled={exporting}
+          onClick={() => void downloadAccountExport()}
+          aria-describedby="account-export-privacy"
+        >
+          {exporting ? "Preparing export…" : "Export my account data"}
+        </button>
+        <small id="account-export-privacy" className="fine-print">
+          The JSON file may include private past share text and result history.
+          Keep the downloaded file private. An interrupted export never saves a
+          partial file.
+        </small>
+        {exportProgress && <p role="status">{exportProgress}</p>}
+        <div className="field">
+          <label htmlFor="delete-account-confirmation">
+            Permanently delete account
+          </label>
+          <small>
+            This permanently removes your profile, saved results, social
+            relationships and other account data. Export your data first. Sign
+            in again before deleting if prompted.
+          </small>
+          <input
+            id="delete-account-confirmation"
+            autoComplete="off"
+            value={deletePhrase}
+            onChange={(event) => setDeletePhrase(event.target.value)}
+            placeholder={DELETE_ACCOUNT_PHRASE}
+            aria-describedby="delete-account-warning"
+          />
+          <small id="delete-account-warning">
+            Type the exact phrase shown to enable deletion. Older encrypted
+            backups require separate expiration and deletion-reconciliation
+            safeguards.
+          </small>
+          <button
+            type="button"
+            disabled={
+              deleting || exporting || deletePhrase !== DELETE_ACCOUNT_PHRASE
+            }
+            onClick={() => void deleteAccount()}
+          >
+            {deleting ? "Deleting account…" : "Permanently delete my account"}
+          </button>
+        </div>
         <a className="secondary-link" href="/how-it-works">
           How Daydle works
         </a>

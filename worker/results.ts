@@ -18,6 +18,7 @@ interface ResultAuth {
   project: string;
   publishable: string;
   serviceKey: string;
+  lastSignInAt?: string;
 }
 
 const MAX_BODY_BYTES = 48_000;
@@ -112,7 +113,13 @@ export async function authenticate(
     ) {
       return errorResponse("authentication_required", 401);
     }
-    return { ...config, userId: data.id };
+    const lastSignInAt =
+      "last_sign_in_at" in data &&
+      typeof data.last_sign_in_at === "string" &&
+      Number.isFinite(Date.parse(data.last_sign_in_at))
+        ? data.last_sign_in_at
+        : undefined;
+    return { ...config, userId: data.id, lastSignInAt };
   } catch {
     return errorResponse("service_unavailable", 503);
   }
