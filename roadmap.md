@@ -274,7 +274,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 ## Phase 13 — UX completeness, security, accessibility, and QA hardening
 **Status:** IN PROGRESS (source QA CI verified; dependency acceptance pending) — [PR #24](https://github.com/A13Xg/Daydle/pull/24) stacked on [PR #23](https://github.com/A13Xg/Daydle/pull/23). Chromium computed accessibility audit and admin fallback heading/expired-sample privacy defense added; 28-route UI smoke and two PostgreSQL security jobs pass. Real Safari and dependent Phase 12 offsite backup restoration remain NOT VERIFIED. [Active plan](Phase13Exec.md). **Dependencies:** 12.
 
-**Purpose:** Deliver polished workflows without choosing the final visual identity.
+**Purpose:** Verify and harden polished workflows against the already approved Obsidian Arcade design system, without introducing a competing visual identity.
 
 **Scope and implementation guidance:**
 - Audit every core surface for loading, offline, empty, denied, error, conflict, retry, success, and save-confirmation states and consistent interaction feedback.
@@ -282,7 +282,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 - Run accessibility audit targeting WCAG 2.2 AA, performance checks, responsiveness/touch target verification, navigation/focus/screen reader flows, and browser baseline.
 - Review security: auth/session, public/private authorization, IDOR, anti-enumeration/rate limits, CSP/XSS, parser DOS, storage/backup secrets, correction races, RLS and spoiler caches.
 - Run thorough unit/integration/E2E and database tests; fix all critical/high regressions, document accepted lower-priority issues.
-- Visual style details (palette, exact layout, typography) remain deferred; not functional/information architecture quality.
+- Preserve the approved Obsidian Arcade palette, typography and layout; verify screenshot and viewport parity while prioritizing accessibility and behavioral quality.
 
 **Exit/verification:** Quality checklist and security/accessibility matrix pass, known-critical-defect count zero, regression suite green, primary iOS workflows demonstrated.
 
