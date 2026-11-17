@@ -144,8 +144,8 @@ BEGIN
   IF v_target=p_user THEN
     RETURN '{"status":"self"}'::jsonb;
   END IF;
-  v_low:=pg_catalog.least(p_user,v_target);
-  v_high:=pg_catalog.greatest(p_user,v_target);
+  v_low:=LEAST(p_user,v_target);
+  v_high:=GREATEST(p_user,v_target);
   PERFORM pg_catalog.pg_advisory_xact_lock(
     pg_catalog.hashtextextended(v_low::text || ':' || v_high::text, 0)
   );
@@ -185,8 +185,8 @@ BEGIN
   THEN RETURN '{"status":"not_found"}'::jsonb; END IF;
   IF p_action NOT IN ('unfriend','block','unblock') OR p_action IS NULL
   THEN RETURN '{"status":"invalid_action"}'::jsonb; END IF;
-  v_low:=pg_catalog.least(p_user,p_other);
-  v_high:=pg_catalog.greatest(p_user,p_other);
+  v_low:=LEAST(p_user,p_other);
+  v_high:=GREATEST(p_user,p_other);
   PERFORM pg_catalog.pg_advisory_xact_lock(
     pg_catalog.hashtextextended(v_low::text || ':' || v_high::text, 0)
   );
