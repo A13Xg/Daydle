@@ -195,7 +195,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Scope and implementation guidance:**
 - Wire global Paste to authenticated API: normalize/detect/parse/validate/resolve; automatically save high-confidence results; prompt on ambiguous game/date; single result per request.
 - Transactionally save raw (90-day expiry) and parsed result with provenance/version. Use unique user/game/puzzle key, idempotent duplicates, and explicit replace/delete flows.
-- Unknown input is not automatically retained; offer explicit opt-in sample retention and game selection. Build user history, game filtering, result details, and correction explanation.
+- For explicit authenticated Submit result actions, automatically retain bounded unknown, ambiguous and malformed publisher shares as owner-private raw samples with reason categories and 90-day expiry metadata; do not capture clipboard reads or unsafe/oversized text. Deduplicate retries, offer candidate-game confirmation, and build user history, game filtering, result details and correction explanation. **Owner-approved revision 2026-11-16**.
 - Record correction lineage and ensure derived scores/streaks/achievements/caches can be invalidated; do not allow arbitrary manual leaderboard score edits.
 - Implement secure text rendering, input/rate/size limits, ownership checks, and duplicate/concurrency scenarios.
 

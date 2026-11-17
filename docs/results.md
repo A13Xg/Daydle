@@ -7,15 +7,14 @@
 1. Sign in; copy exactly one publisher share result; use Paste Results to paste manually or activate the clipboard reader with a real button tap.
 2. Select Submit result. The Worker verifies the current Supabase session through Auth, then runs the deterministic parser server-side. The browser cannot submit invented scores or bypass parser validation.
 3. Valid shares use canonical (game_id,puzzle_key) and one (user_id,puzzle_id) result. An exact semantic replay returns duplicate without storing additional raw text; a conflicting result requires an explicit Replace click referencing the existing result ID. A correction is appended to the private corrections table.
-4. On ambiguous parser matches, the user explicitly selects one of the detected games; the Worker revalidates that parser's actual output. Unrecognized text is NOT automatically saved or retained. Optional retention requires both user consent checkbox and an explicit action; a retained sample is never a completed game.
+4. **Owner-approved Phase 7 revision (2026-11-16):** The explicit Submit result action uploads the share for recognition. Unknown, ambiguous and malformed-but-bounded input is automatically retained privately for later parser analysis with machine-readable reason classification. This does not create a solved result or expose samples publicly. On ambiguity, the user can also select one of the detected games; the Worker revalidates that parser's actual output. Reading a clipboard, typing, or merely opening the dialog never uploads anything.
 5. Open Result history from Today or Account. Filter and paginate owner results, inspect metrics/provenance, correct by pasting a newer share for that same puzzle, or permanently delete with confirmation.
 
 ## Same-origin Worker endpoints
 
 | Endpoint | Response | Limit |
 |---|---|---|
-| POST /api/v1/results | saved / duplicate / conflict / replaced / unknown / invalid / ambiguous | One share, 10,000 chars |
-| POST /api/v1/results/unknown | retained | Explicit user opt-in only |
+| POST /api/v1/results | saved / duplicate / conflict / replaced / unknown / invalid / ambiguous | One share, 10,000 chars; unparsed shares return `captured: true` only after secure server persistence, otherwise fail closed. Unsafe/oversized/empty inputs return `captured: false`. |
 | GET /api/v1/results?game=wordle&limit=20&offset=0 | Owner-only structured history | Max 50 per page |
 | GET /api/v1/results/:uuid | One owner-only structured result | No raw input |
 | DELETE /api/v1/results/:uuid | deleted or not_found | Explicit UI confirmation |
@@ -29,7 +28,7 @@ Do not retry unknown-outcome writes automatically after a transport failure; ref
 - Transactionally insert accepted raw and parsed result; insert accepted raw only once per newly saved result or explicit replacement. Replacement requires matching existing result ID, with old/new typed parsed payload in result_corrections. Deletion cascades raw/correction rows and leaves a private opaque audit event.
 - All new write/history RPCs are service_role-only. Direct browser table writes remain prohibited, including column-level grants. The Worker authenticates the Bearer token through Supabase Auth and obtains the authoritative owner UUID from that response, never a client-provided ID. Queries filter by verified owner.
 - Raw content is not logged, reflected in error bodies, cached in service workers, or persisted by the browser. Request size is streamed and bounded to 48 KB JSON; the parser independently enforces a 10,000 UTF-16 character/64-line share limit. SQL enforces an atomic per-owner 60-write-attempts/hour limit.
-- Accepted and explicitly retained unknown raw text carries an expires_at field <=90 days after receipt. **Metadata is not automatic cleanup**: scheduled purge is a Phase 12 follow-up. No public API or cached HTML may reveal private result data.
+- Accepted and automatically captured unparsed raw text carries an `expires_at` field <=90 days after receipt. Capture uses a server-only `capture_unparsed_share` RPC, `disposition` (`unsupported` or `invalid`) and private `parser_diagnostics` fields (`review_status: pending`, `reason_code`, `candidate_game_slugs`, `source: explicit_submit`, `parser_analysis_version`). Captures are idempotent per owner/share/disposition, rate-limited, bounded to 10,000 characters and never included in History. **Metadata is not automatic cleanup**: scheduled purge is a Phase 12 follow-up. No public API or cached HTML may reveal private result data.
 - Existing viewer-specific spoiler-safe database RLS remains unchanged. New result history/detail endpoints are owner-only. Public profiles, achievements, rankings and stats are separate later phases.
 
 ## Deployment gate — requires separate explicit authorization
@@ -40,3 +39,22 @@ Do not retry unknown-outcome writes automatically after a transport failure; ref
 4. Roll back application code first if necessary. Do not remove additive schema or recorded result data without a separate backup/migration plan.
 
 **Live secrets and hosted integration tests are NOT VERIFIED.** Isolated test DB/CI checks do not imply production availability or deployment permission.
+
+## Private parser-review queue
+
+After an authorized Phase 7 migration and Worker deployment, administrator-led analysis can inspect pending samples inside the **Supabase SQL editor** (never a public endpoint). Start with a privacy-preserving counts query:
+
+```sql
+SELECT disposition,
+       parser_diagnostics->>'reason_code' AS reason_code,
+       COUNT(*) AS sample_count
+FROM public.raw_submissions
+WHERE result_id IS NULL AND expires_at > now()
+  AND parser_diagnostics->>'review_status'='pending'
+GROUP BY 1,2
+ORDER BY sample_count DESC;
+```
+
+To inspect private raw content, authorized project operators can filter `public.raw_submissions` by specific pending IDs in a controlled SQL session. Do not print full raw shares in CI, general logs, PRs, error responses or public issues. Convert verified examples into sanitized parser fixtures only after review. Do not silently run OCR, LLM categorization, automatic schema changes, or code generation based on untrusted user-supplied text.
+
+The existing hosted Daydle Preview database was checked on November 16, 2026: `raw_submissions=0`, `game_results=0`, and only Phase 2–5 migrations were applied. Previously pasted text was not persisted and cannot be recovered from this database. This receive path becomes active **only** after authorized migration, Worker secret setup and deployment.
