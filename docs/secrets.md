@@ -29,7 +29,7 @@ Notes:
 
 ## Cloudflare runtime secrets
 
-Phase 7/8's current Worker code requires `SUPABASE_SERVICE_ROLE_KEY` (the **legacy service-role JWT**, not a `sb_secret_` API key) as an encrypted **Cloudflare Worker runtime secret**, not a GitHub Actions build variable or `VITE_*` setting. That key bypasses RLS and must never be committed, logged, included in untrusted PR CI, or sent to browsers. The protected deploy workflow checks the binding name without reading its value and fails if it is missing. `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` are public runtime bindings injected from the existing protected GitHub environment variables into the generated Worker configuration during deployment (not checked into Git).
+Phase 7/8's current Worker code requires `SUPABASE_SERVICE_ROLE_KEY` (the **legacy service-role JWT**, not a `sb_secret_` API key) as an encrypted **Cloudflare Worker runtime secret**, not a GitHub Actions build variable or `VITE_*` setting. That key bypasses RLS and must never be committed, logged, included in untrusted PR CI, or sent to browsers. The protected deploy workflow checks the binding metadata directly through Cloudflare's read-only Worker secret API. It never retrieves or prints the secret value. It fails closed and distinguishes a missing binding, a missing Worker, insufficient token permission, and a transient Cloudflare/API error. `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` are public runtime bindings injected from the existing protected GitHub environment variables into the generated Worker configuration during deployment (not checked into Git).
 
 Cloudflare `wrangler secret put` normally produces and deploys a new Worker version; **do not run it as a setup step without deployment authorization**. Use the dashboard's Variables and Secrets controls or authorized versioned setup during the deployment phase.
 
@@ -42,3 +42,14 @@ Phase 12 will specify the encrypted backup destination, R2 access policy, key ma
 PR CI does not use Supabase/Cloudflare secrets, does not run `supabase db push`, and does not deploy application code. The only workflow that uses the Cloudflare token is the manual, reviewer-approved **Deploy Worker** workflow, which runs from `main` only. Storing a secret is not authorization to use it.
 
 Sources: [Supabase environment deployment](https://supabase.com/docs/guides/deployment/managing-environments), [Supabase API keys](https://supabase.com/docs/guides/getting-started/api-keys), [Cloudflare GitHub Actions](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/), [Cloudflare Worker secrets](https://developers.cloudflare.com/workers/configuration/secrets/).
+
+### If the protected Worker secret preflight fails
+
+The production Deploy Worker workflow checks the **existing** Cloudflare Worker named `daydle-app` under the protected `CLOUDFLARE_ACCOUNT_ID`. A successfully configured `CLOUDFLARE_API_TOKEN` for code deployment does **not** imply `SUPABASE_SERVICE_ROLE_KEY` has been provisioned on the Worker. These are different secrets in different systems.
+
+- `missing_binding`: Worker exists but its encrypted `SUPABASE_SERVICE_ROLE_KEY` binding is absent. Create that **Cloudflare Worker secret**, not a public variable or `VITE_*` key. Its value must be the Supabase project's **legacy service-role JWT**, handled directly in the Cloudflare dashboard or an approved secure secret injection workflow. Do not copy it to code, PR discussions, CI logs or this chat.
+- `worker_not_found`: Check the Worker name/account. On initial provisioning, set up the Worker and its encrypted secret together; `wrangler secret put` may create/deploy a stub Worker version, so perform it only in the approved release window. Do **not** bypass the preflight merely because the Worker is new.
+- `permission_denied`: Adjust the scope/account of the **production-scoped** Cloudflare API token (Workers Scripts Read/Write as required) without using a user-global token.
+- `lookup_failed`/`invalid_response`: Check Cloudflare API connectivity or response format and retry when healthy. Do not interpret this as confirmation of a missing binding.
+
+The preflight uses the documented Cloudflare **GET /accounts/:account_id/workers/scripts/:script_name/secrets** endpoint. Only public metadata (`name`, `type`) is examined; no arbitrary Cloudflare response content is logged. The existing `wrangler.jsonc` `secrets.required` declaration remains in force and the protected main-only manual deploy still must pass schema verification, production reviewer approval and post-deploy smoke checks.
