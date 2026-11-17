@@ -98,9 +98,11 @@ BEGIN
 
   v:=public.daydle_admin_action(alice,'save_game',
     jsonb_build_object('slug','phase11-demo','name','Phase 11 Demo',
-    'url','https://games.example/puzzle','status','active'));
+    'url','https://games.example/puzzle','status','active','categories','word, numbers'));
   IF v->>'status'<>'saved' THEN RAISE EXCEPTION 'Admin catalog insert failed: %',v; END IF;
   new_id:=(v->>'id')::uuid;
+  IF (SELECT count(*) FROM public.game_category_links WHERE game_id=new_id)<>2
+  THEN RAISE EXCEPTION 'Catalog categories not saved atomically'; END IF;
   v:=public.daydle_admin_action(alice,'retire_game',jsonb_build_object('id',new_id));
   IF v->>'status'<>'saved'
     OR (SELECT status FROM public.games WHERE id=new_id)<>'retired'
@@ -123,6 +125,9 @@ BEGIN
     WHERE id='93333333-3333-3333-3333-333333333333')<>'classified'
   THEN RAISE EXCEPTION 'Sample review state missing'; END IF;
   v:=public.daydle_admin_view(alice,'diagnostics',20,0,NULL);
+  IF jsonb_array_length(v)=0 OR (v->0 ? 'day') IS NOT TRUE
+    OR (v->0 ? 'parser_version') IS NOT TRUE
+  THEN RAISE EXCEPTION 'Parser trends lack date or version'; END IF;
   IF v::text LIKE '%Unrecognized private share%' THEN
     RAISE EXCEPTION 'Raw text leaked into diagnostics'; END IF;
   IF (SELECT count(*) FROM app_private.admin_events
