@@ -38,7 +38,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 8 | Personal statistics, streaks, and achievements | 7 | COMPLETE (source and hosted API release) — [PR #15](https://github.com/A13Xg/Daydle/pull/15) merged; Phase 8 SQL applied and protected production [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648) PASS. Authenticated statistics E2E remains deferred/unverified. |
 | 9 | Public profiles and instant friendship | 8 | COMPLETE (source and hosted API release) — [PR #16](https://github.com/A13Xg/Daydle/pull/16) merged; Phase 9 SQL applied, public-profile route and social auth boundary verified by [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648). Real two-account friendship E2E remains deferred/unverified. |
 | 10 | Spoiler-safe comparisons, scoreboards, and rankings | 9 | COMPLETE (source/hosted release) — [PR #18](https://github.com/A13Xg/Daydle/pull/18) merged at `9098fdc`; [main CI #44044954484](https://github.com/A13Xg/Daydle/actions/runs/44044954484), protected [Deploy Worker #44045005321](https://github.com/A13Xg/Daydle/actions/runs/44045005321) and exact hosted migration `20261117075359_phase10_comparisons` verified. Authenticated two-account E2E and owner-deferred physical iPhone testing remain unverified. |
-| 11 | Administration, game requests/voting, and diagnostics | 10 | IN PROGRESS — [draft PR #22](https://github.com/A13Xg/Daydle/pull/22) on `phase/11-admin-requests-diagnostics` (source not deployed). |
+| 11 | Administration, game requests/voting, and diagnostics | 10 | IN REVIEW — [PR #22](https://github.com/A13Xg/Daydle/pull/22), [CI #44049830796](https://github.com/A13Xg/Daydle/actions/runs/44049830796) PASS (290 Vitest/36 suites, 28 Chromium views, 2 PG17 security runs); [archive](completedPhases/Phase11Exec.md). Proposed hosted migration unapplied; authenticated production E2E not verified. |
 | 12 | Privacy lifecycle, encrypted backups, and recovery | 11 | NOT STARTED |
 | 13 | UX completeness, security, accessibility, and QA hardening | 12 | NOT STARTED |
 | 14 | Public beta release and operational handoff | 13 | NOT STARTED |
@@ -244,7 +244,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** No current-puzzle score leakage pre-unlock through any listed endpoint; game rankings are internally consistent and corrections reflected.
 
 ## Phase 11 — Administration, game requests/voting, and diagnostics
-**Status:** NOT STARTED. **Dependencies:** 10.
+**Status:** IN REVIEW (source CI verified, hosted release pending) — [PR #22](https://github.com/A13Xg/Daydle/pull/22), [CI #44049830796](https://github.com/A13Xg/Daydle/actions/runs/44049830796), [completed execution plan](completedPhases/Phase11Exec.md). Phase 11 proposed forward-only migration is not applied; real admin account enrollment and authenticated hosted E2E are unverified. **Dependencies:** 10.
 
 **Purpose:** Equip owner-operators to maintain the expanding catalog and parsers without unsafe direct database edits.
 
