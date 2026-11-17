@@ -20,7 +20,10 @@ export class SocialApiError extends Error {
   }
 }
 
-async function tokenFor(client: SupabaseClient, userId: string): Promise<string> {
+async function tokenFor(
+  client: SupabaseClient,
+  userId: string,
+): Promise<string> {
   const { data, error } = await client.auth.getSession();
   if (error || !data.session?.access_token || data.session.user.id !== userId)
     throw new SocialApiError("authentication_required", 401);
@@ -36,10 +39,20 @@ async function parse(response: Response): Promise<unknown> {
   }
   if (!response.ok) {
     let code = "social_service_unavailable";
-    if (body && typeof body === "object" && "error" in body &&
-      typeof body.error === "string") code = body.error;
-    if (body && typeof body === "object" && "status" in body &&
-      typeof body.status === "string") code = body.status;
+    if (
+      body &&
+      typeof body === "object" &&
+      "error" in body &&
+      typeof body.error === "string"
+    )
+      code = body.error;
+    if (
+      body &&
+      typeof body === "object" &&
+      "status" in body &&
+      typeof body.status === "string"
+    )
+      code = body.status;
     throw new SocialApiError(code, response.status);
   }
   return body;
@@ -49,14 +62,22 @@ export function socialErrorText(error: unknown): string {
   if (!(error instanceof SocialApiError))
     return "Something went wrong. Please retry.";
   switch (error.code) {
-    case "authentication_required": return "Sign in to manage your friends.";
-    case "invalid_friend_code": return "Enter a valid five-character friend code.";
-    case "invalid_target": return "That player link is invalid.";
-    case "rate_limited": return "Too many connection attempts. Try again later.";
-    case "not_found": return "This player or code is no longer available.";
-    case "unavailable": return "This connection is unavailable.";
-    case "connection_failed": return "Could not connect. Check your connection and retry.";
-    default: return "We couldn't load that information. Please retry.";
+    case "authentication_required":
+      return "Sign in to manage your friends.";
+    case "invalid_friend_code":
+      return "Enter a valid five-character friend code.";
+    case "invalid_target":
+      return "That player link is invalid.";
+    case "rate_limited":
+      return "Too many connection attempts. Try again later.";
+    case "not_found":
+      return "This player or code is no longer available.";
+    case "unavailable":
+      return "This connection is unavailable.";
+    case "connection_failed":
+      return "Could not connect. Check your connection and retry.";
+    default:
+      return "We couldn't load that information. Please retry.";
   }
 }
 
@@ -126,14 +147,20 @@ export async function loadPublicPlayer(
     throw new SocialApiError("connection_failed", 0);
   }
   const result = await parse(response);
-  if (!validPublicPlayer(result) || result.id.toLowerCase() !== id.toLowerCase())
+  if (
+    !validPublicPlayer(result) ||
+    result.id.toLowerCase() !== id.toLowerCase()
+  )
     throw new SocialApiError("invalid_server_response", response.status);
   return result;
 }
 
 const PENDING_FRIEND = "daydle.pendingFriendCode";
 
-export function rememberPendingFriendCode(code: string, storage?: Storage): boolean {
+export function rememberPendingFriendCode(
+  code: string,
+  storage?: Storage,
+): boolean {
   const valid = normalizeFriendCode(code);
   if (!valid || !storage) return false;
   try {

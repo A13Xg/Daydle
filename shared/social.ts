@@ -3,11 +3,20 @@ import { RESULT_ID_PATTERN } from "./results";
 export const SOCIAL_PATH = "/api/v1/social";
 export const FRIEND_CODE_PATTERN = /^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{5}$/;
 
-export type SocialAction = "connect" | "regenerate" | "unfriend" | "block" | "unblock";
+export type SocialAction =
+  "connect" | "regenerate" | "unfriend" | "block" | "unblock";
 export type FriendState =
-  | "connected" | "already_connected" | "self" | "not_found"
-  | "invalid_code" | "unavailable" | "rate_limited"
-  | "unfriended" | "already_unfriended" | "blocked" | "unblocked"
+  | "connected"
+  | "already_connected"
+  | "self"
+  | "not_found"
+  | "invalid_code"
+  | "unavailable"
+  | "rate_limited"
+  | "unfriended"
+  | "already_unfriended"
+  | "blocked"
+  | "unblocked"
   | "regenerated";
 
 export interface PublicPlayer {
@@ -49,7 +58,10 @@ export function connectionLink(code: string, origin: string): string | null {
     const base = new URL(origin);
     if (
       base.protocol !== "https:" &&
-      !(base.protocol === "http:" && ["localhost", "127.0.0.1", "[::1]"].includes(base.hostname))
+      !(
+        base.protocol === "http:" &&
+        ["localhost", "127.0.0.1", "[::1]"].includes(base.hostname)
+      )
     )
       return null;
     const url = new URL("/friends", base);
@@ -66,23 +78,33 @@ export function validPublicPlayer(value: unknown): value is PublicPlayer {
   return (
     typeof v.id === "string" &&
     RESULT_ID_PATTERN.test(v.id) &&
-    typeof v.display_name === "string" && v.display_name.length <= 80 &&
+    typeof v.display_name === "string" &&
+    v.display_name.length <= 80 &&
     typeof v.created_at === "string" &&
-    Array.isArray(v.games) && v.games.length <= 100 &&
+    Array.isArray(v.games) &&
+    v.games.length <= 100 &&
     v.games.every(
-      (g) => !!g && typeof g.slug === "string" &&
+      (g) =>
+        !!g &&
+        typeof g.slug === "string" &&
         /^[a-z][a-z0-9-]{1,63}$/.test(g.slug) &&
-        typeof g.name === "string" && g.name.length <= 120,
+        typeof g.name === "string" &&
+        g.name.length <= 120,
     )
   );
 }
 
 function validSocialPerson(value: unknown): value is SocialPerson {
   return (
-    !!value && typeof value === "object" && !Array.isArray(value) &&
-    "id" in value && typeof value.id === "string" &&
-    RESULT_ID_PATTERN.test(value.id) && "display_name" in value &&
-    typeof value.display_name === "string" && value.display_name.length <= 80
+    !!value &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    "id" in value &&
+    typeof value.id === "string" &&
+    RESULT_ID_PATTERN.test(value.id) &&
+    "display_name" in value &&
+    typeof value.display_name === "string" &&
+    value.display_name.length <= 80
   );
 }
 
@@ -90,10 +112,13 @@ export function validSocialNetwork(value: unknown): value is SocialNetwork {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const v = value as Partial<SocialNetwork>;
   return (
-    typeof v.code === "string" && FRIEND_CODE_PATTERN.test(v.code) &&
-    Array.isArray(v.friends) && v.friends.length <= 200 &&
+    typeof v.code === "string" &&
+    FRIEND_CODE_PATTERN.test(v.code) &&
+    Array.isArray(v.friends) &&
+    v.friends.length <= 200 &&
     v.friends.every(validSocialPerson) &&
-    Array.isArray(v.blocked) && v.blocked.length <= 200 &&
+    Array.isArray(v.blocked) &&
+    v.blocked.length <= 200 &&
     v.blocked.every(validSocialPerson) &&
     typeof v.has_more_friends === "boolean"
   );
@@ -102,13 +127,24 @@ export function validSocialNetwork(value: unknown): value is SocialNetwork {
 export function validSocialMutation(value: unknown): value is SocialMutation {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const v = value as Partial<SocialMutation>;
-  return !!v.status && [
-    "connected","already_connected","self","not_found","invalid_code",
-    "unavailable","rate_limited","unfriended","already_unfriended",
-    "blocked","unblocked","regenerated",
-  ].includes(v.status) &&
+  return (
+    !!v.status &&
+    [
+      "connected",
+      "already_connected",
+      "self",
+      "not_found",
+      "invalid_code",
+      "unavailable",
+      "rate_limited",
+      "unfriended",
+      "already_unfriended",
+      "blocked",
+      "unblocked",
+      "regenerated",
+    ].includes(v.status) &&
     (v.friend === undefined || validSocialPerson(v.friend)) &&
-    (v.code === undefined || (
-      typeof v.code === "string" && FRIEND_CODE_PATTERN.test(v.code)
-    ));
+    (v.code === undefined ||
+      (typeof v.code === "string" && FRIEND_CODE_PATTERN.test(v.code)))
+  );
 }

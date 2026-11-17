@@ -46,42 +46,48 @@ export function FriendScanner({
       setError("Camera scanning isn't supported here. Enter the code instead.");
       return;
     }
-    void navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "environment" },
-      audio: false,
-    }).then(async (camera) => {
-      if (disposed || !video.current) {
-        camera.getTracks().forEach((track) => track.stop());
-        return;
-      }
-      stream = camera;
-      const node = video.current;
-      node.srcObject = camera;
-      try {
-        await node.play();
-        const scan = async () => {
-          if (disposed) return;
-          try {
-            const codes = await detector.detect(node);
-            for (const code of codes) {
-              const valid = codeFromScan(code.rawValue, window.location.origin);
-              if (valid) {
-                onDetected(valid);
-                return;
+    void navigator.mediaDevices
+      .getUserMedia({
+        video: { facingMode: "environment" },
+        audio: false,
+      })
+      .then(async (camera) => {
+        if (disposed || !video.current) {
+          camera.getTracks().forEach((track) => track.stop());
+          return;
+        }
+        stream = camera;
+        const node = video.current;
+        node.srcObject = camera;
+        try {
+          await node.play();
+          const scan = async () => {
+            if (disposed) return;
+            try {
+              const codes = await detector.detect(node);
+              for (const code of codes) {
+                const valid = codeFromScan(
+                  code.rawValue,
+                  window.location.origin,
+                );
+                if (valid) {
+                  onDetected(valid);
+                  return;
+                }
               }
+            } catch {
+              // A temporarily unreadable frame is not a permission error.
             }
-          } catch {
-            // A temporarily unreadable frame is not a permission error.
-          }
-          if (!disposed) frame = requestAnimationFrame(() => void scan());
-        };
-        frame = requestAnimationFrame(() => void scan());
-      } catch {
-        if (!disposed) setError("The camera could not start.");
-      }
-    }).catch(() => {
-      if (!disposed) setError("Camera permission was denied or unavailable.");
-    });
+            if (!disposed) frame = requestAnimationFrame(() => void scan());
+          };
+          frame = requestAnimationFrame(() => void scan());
+        } catch {
+          if (!disposed) setError("The camera could not start.");
+        }
+      })
+      .catch(() => {
+        if (!disposed) setError("Camera permission was denied or unavailable.");
+      });
     return () => {
       disposed = true;
       cancelAnimationFrame(frame);
@@ -91,17 +97,33 @@ export function FriendScanner({
   }, [onDetected]);
 
   return (
-    <div className="social-scanner" role="region" aria-label="Scan friend QR code">
+    <div
+      className="social-scanner"
+      role="region"
+      aria-label="Scan friend QR code"
+    >
       <div className="social-scanner-head">
         <strong>Scan a friend code</strong>
-        <button type="button" onClick={onClose}>Close camera</button>
+        <button type="button" onClick={onClose}>
+          Close camera
+        </button>
       </div>
       {!error ? (
         <>
-          <video ref={video} muted playsInline autoPlay aria-label="Camera QR scanner" />
+          <video
+            ref={video}
+            muted
+            playsInline
+            autoPlay
+            aria-label="Camera QR scanner"
+          />
           <p className="muted">Point the camera at a Daydle invitation QR.</p>
         </>
-      ) : <p role="alert" className="notice error">{error}</p>}
+      ) : (
+        <p role="alert" className="notice error">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

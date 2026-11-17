@@ -135,7 +135,9 @@ export default function App() {
         />
       );
     if (pathname === "/friends")
-      return <FriendsPage key={userId ?? "guest"} client={client} userId={userId} />;
+      return (
+        <FriendsPage key={userId ?? "guest"} client={client} userId={userId} />
+      );
     if (playerId) return <PublicPlayerPage key={playerId} id={playerId} />;
     if (pathname === "/notifications")
       return <FeaturePendingPage feature="notifications" />;

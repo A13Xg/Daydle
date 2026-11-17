@@ -32,11 +32,17 @@ export function PublicPlayerPage({ id }: { id: string }) {
         <h1 id="public-player-heading">Player profile</h1>
         <p>Only information intentionally shared publicly is shown here.</p>
       </header>
-      {state.status === "loading" && <p role="status" className="panel">Loading player profile…</p>}
+      {state.status === "loading" && (
+        <p role="status" className="panel">
+          Loading player profile…
+        </p>
+      )}
       {state.status === "error" && (
         <div className="notice error" role="alert">
           <p>{state.message}</p>
-          <button type="button" onClick={() => setAttempt((n) => n + 1)}>Retry</button>
+          <button type="button" onClick={() => setAttempt((n) => n + 1)}>
+            Retry
+          </button>
         </div>
       )}
       {state.status === "ready" && (
@@ -48,7 +54,13 @@ export function PublicPlayerPage({ id }: { id: string }) {
             <div>
               <p className="eyebrow">DAYDLE PLAYER</p>
               <h2>{state.value.display_name}</h2>
-              <p className="muted">Playing on Daydle since {new Date(state.value.created_at).toLocaleDateString(undefined, { year: "numeric", month: "short" })}</p>
+              <p className="muted">
+                Playing on Daydle since{" "}
+                {new Date(state.value.created_at).toLocaleDateString(
+                  undefined,
+                  { year: "numeric", month: "short" },
+                )}
+              </p>
             </div>
           </section>
           <section className="panel">
@@ -67,14 +79,21 @@ export function PublicPlayerPage({ id }: { id: string }) {
                 ))}
               </ul>
             ) : (
-              <p className="muted">No games added to this player's lineup yet.</p>
+              <p className="muted">
+                No games added to this player's lineup yet.
+              </p>
             )}
           </section>
           <aside className="social-privacy-note">
             <ArcadeIcon name="info" size={20} />
-            <p>Scores, puzzle results and achievement rankings stay hidden until spoiler-safe public comparisons are available.</p>
+            <p>
+              Scores, puzzle results and achievement rankings stay hidden until
+              spoiler-safe public comparisons are available.
+            </p>
           </aside>
-          <a className="secondary-link" href="/friends">Friends and invitations</a>
+          <a className="secondary-link" href="/friends">
+            Friends and invitations
+          </a>
         </>
       )}
     </section>

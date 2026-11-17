@@ -479,9 +479,7 @@ export async function publicProfileLookup(
 ): Promise<unknown | Response> {
   const settings = configuration(env);
   if (!settings) return errorResponse("service_unavailable", 503);
-  return rpc(
-    { ...settings, userId: profileId },
-    "social_public_profile",
-    { p_profile: profileId },
-  );
+  return rpc({ ...settings, userId: profileId }, "social_public_profile", {
+    p_profile: profileId,
+  });
 }

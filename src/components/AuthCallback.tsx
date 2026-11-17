@@ -54,7 +54,11 @@ export function AuthCallback({ client }: { client: SupabaseClient | null }) {
           if (active) {
             const fallback = authCallbackDestination(window.location.search);
             const pending = takePendingFriendCode(pendingFriendStorage());
-            window.location.replace(pending && fallback === "/account" ? "/friends?code=" + pending : fallback);
+            window.location.replace(
+              pending && fallback === "/account"
+                ? "/friends?code=" + pending
+                : fallback,
+            );
           }
         })
         .catch(() => {

@@ -1948,7 +1948,6 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   }
 }
 
-
 /* Phase 9 — Obsidian Arcade social identity and invitation surfaces. */
 .friends-page,
 .public-player {
@@ -1978,7 +1977,11 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
 }
 .social-invite {
   background:
-    radial-gradient(circle at 97% 3%, rgba(77, 142, 255, 0.22), transparent 53%),
+    radial-gradient(
+      circle at 97% 3%,
+      rgba(77, 142, 255, 0.22),
+      transparent 53%
+    ),
     linear-gradient(155deg, rgba(28, 43, 60, 0.76), #0d1c2d);
 }
 .social-connect {
@@ -2299,7 +2302,11 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   align-items: center;
   gap: 1.1rem;
   background:
-    radial-gradient(ellipse at 95% 0%, rgba(77, 142, 255, 0.2), transparent 58%),
+    radial-gradient(
+      ellipse at 95% 0%,
+      rgba(77, 142, 255, 0.2),
+      transparent 58%
+    ),
     var(--surface-container-low);
 }
 .public-player-hero h2 {
