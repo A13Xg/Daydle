@@ -106,7 +106,14 @@ export function AdminPage({
     setRows([]);
     setOverview({});
     setDenied(false);
-    loadAdminView(client, userId, section, offset, undefined, abort.signal).then(
+    loadAdminView(
+      client,
+      userId,
+      section,
+      offset,
+      undefined,
+      abort.signal,
+    ).then(
       (data) => {
         if (abort.signal.aborted) return;
         setRows(Array.isArray(data) ? (data as AdminRow[]) : []);
@@ -120,10 +127,7 @@ export function AdminPage({
       },
       (cause: unknown) => {
         if (abort.signal.aborted) return;
-        if (
-          cause instanceof Error &&
-          cause.message === "admin_required"
-        )
+        if (cause instanceof Error && cause.message === "admin_required")
           setDenied(true);
         setError(administrationErrorText(cause));
         setLoading(false);
@@ -132,7 +136,10 @@ export function AdminPage({
     return () => abort.abort();
   }, [client, userId, section, offset, revision]);
 
-  async function submit(action: AdminAction, data: Record<string, string | null>) {
+  async function submit(
+    action: AdminAction,
+    data: Record<string, string | null>,
+  ) {
     if (!userId || busy) return;
     setBusy(true);
     setError("");
@@ -181,7 +188,9 @@ export function AdminPage({
       <section className="panel">
         <h1>Administration</h1>
         <p>Sign in with an authorized operator account to continue.</p>
-        <a className="action-link" href="/auth">Sign in</a>
+        <a className="action-link" href="/auth">
+          Sign in
+        </a>
       </section>
     );
 
@@ -218,11 +227,17 @@ export function AdminPage({
           ))}
         </select>
       </div>
-      {message && <p role="status" className="notice">{message}</p>}
+      {message && (
+        <p role="status" className="notice">
+          {message}
+        </p>
+      )}
       {error && (
         <div className="notice error" role="alert">
           {error}
-          <button type="button" onClick={reload}>Retry</button>
+          <button type="button" onClick={reload}>
+            Retry
+          </button>
         </div>
       )}
       {loading ? (
@@ -232,12 +247,21 @@ export function AdminPage({
           {section === "overview" && (
             <div className="panel">
               <h2>Operational summary</h2>
-              <p>Pending game requests: {Number(overview.pending_requests ?? 0)}</p>
-              <p>Unexpired unparsed samples: {Number(overview.unparsed_samples ?? 0)}</p>
-              <p>Suggestion-restricted users: {Number(overview.restricted_users ?? 0)}</p>
+              <p>
+                Pending game requests: {Number(overview.pending_requests ?? 0)}
+              </p>
+              <p>
+                Unexpired unparsed samples:{" "}
+                {Number(overview.unparsed_samples ?? 0)}
+              </p>
+              <p>
+                Suggestion-restricted users:{" "}
+                {Number(overview.restricted_users ?? 0)}
+              </p>
               <p className="fine-print">
-                Raw clipboard text is available only through an explicit sample inspection.
-                These controls do not enable production deployment or migrations.
+                Raw clipboard text is available only through an explicit sample
+                inspection. These controls do not enable production deployment
+                or migrations.
               </p>
             </div>
           )}
@@ -250,18 +274,29 @@ export function AdminPage({
                   <h3>{row.name}</h3>
                   <p>{row.notes}</p>
                   <p>{row.vote_count ?? 0} votes</p>
-                  {row.url && <a href={row.url} target="_blank" rel="noopener noreferrer">Publisher page</a>}
+                  {row.url && (
+                    <a href={row.url} target="_blank" rel="noopener noreferrer">
+                      Publisher page
+                    </a>
+                  )}
                   <div className="today-actions">
-                    {(["approved", "rejected", "pending"] as const).map((status) => (
-                      <button
-                        key={status}
-                        type="button"
-                        disabled={busy || row.status === status}
-                        onClick={() => void submit("moderate", { id: row.id ?? "", status })}
-                      >
-                        {status}
-                      </button>
-                    ))}
+                    {(["approved", "rejected", "pending"] as const).map(
+                      (status) => (
+                        <button
+                          key={status}
+                          type="button"
+                          disabled={busy || row.status === status}
+                          onClick={() =>
+                            void submit("moderate", {
+                              id: row.id ?? "",
+                              status,
+                            })
+                          }
+                        >
+                          {status}
+                        </button>
+                      ),
+                    )}
                   </div>
                 </li>
               ))}
@@ -281,57 +316,109 @@ export function AdminPage({
                 }}
               >
                 <h2>{game.id ? "Edit game" : "Add catalog game"}</h2>
-                {(["slug", "name", "url", "description", "publisher"] as const).map((field) => (
+                {(
+                  ["slug", "name", "url", "description", "publisher"] as const
+                ).map((field) => (
                   <div className="field" key={field}>
                     <label htmlFor={"admin-" + field}>{field}</label>
                     <input
                       id={"admin-" + field}
-                      required={field === "slug" || field === "name" || field === "url"}
+                      required={
+                        field === "slug" || field === "name" || field === "url"
+                      }
                       readOnly={field === "slug" && Boolean(game.id)}
                       value={game[field]}
-                      onChange={(event) => setGame((current) => ({
-                        ...current,
-                        [field]: event.target.value,
-                      }))}
+                      onChange={(event) =>
+                        setGame((current) => ({
+                          ...current,
+                          [field]: event.target.value,
+                        }))
+                      }
                     />
                   </div>
                 ))}
                 <div className="field">
                   <label htmlFor="admin-cadence">Cadence</label>
-                  <select id="admin-cadence" value={game.cadence} onChange={(event) => setGame((g) => ({ ...g, cadence: event.target.value }))}>
-                    {["daily", "weekly", "irregular", "multiple_daily", "unknown"].map((v) => <option key={v}>{v}</option>)}
+                  <select
+                    id="admin-cadence"
+                    value={game.cadence}
+                    onChange={(event) =>
+                      setGame((g) => ({ ...g, cadence: event.target.value }))
+                    }
+                  >
+                    {[
+                      "daily",
+                      "weekly",
+                      "irregular",
+                      "multiple_daily",
+                      "unknown",
+                    ].map((v) => (
+                      <option key={v}>{v}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="field">
                   <label htmlFor="admin-status">Status</label>
-                  <select id="admin-status" value={game.status} onChange={(event) => setGame((g) => ({ ...g, status: event.target.value }))}>
-                    {["active", "inactive", "retired"].map((v) => <option key={v}>{v}</option>)}
+                  <select
+                    id="admin-status"
+                    value={game.status}
+                    onChange={(event) =>
+                      setGame((g) => ({ ...g, status: event.target.value }))
+                    }
+                  >
+                    {["active", "inactive", "retired"].map((v) => (
+                      <option key={v}>{v}</option>
+                    ))}
                   </select>
                 </div>
-                <button type="submit" disabled={busy}>Save game</button>
-                {game.id && <button type="button" onClick={() => setGame(EMPTY_GAME)}>Cancel editing</button>}
+                <button type="submit" disabled={busy}>
+                  Save game
+                </button>
+                {game.id && (
+                  <button type="button" onClick={() => setGame(EMPTY_GAME)}>
+                    Cancel editing
+                  </button>
+                )}
               </form>
               <ul className="today-list">
                 {rows.map((row) => (
                   <li key={row.id} className="panel">
                     <h3>{row.name}</h3>
-                    <p>{row.slug} · {row.status} · Parser: {row.parser_status}</p>
+                    <p>
+                      {row.slug} · {row.status} · Parser: {row.parser_status}
+                    </p>
                     <div className="today-actions">
-                      <button type="button" onClick={() => setGame({
-                        id: row.id ?? "",
-                        slug: row.slug ?? "",
-                        name: row.name ?? "",
-                        url: row.url ?? "",
-                        description: row.description ?? "",
-                        publisher: row.publisher ?? "",
-                        cadence: row.cadence ?? "daily",
-                        status: row.status ?? "active",
-                      })}>Edit</button>
-                      <button type="button" disabled={busy || row.status === "retired"}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setGame({
+                            id: row.id ?? "",
+                            slug: row.slug ?? "",
+                            name: row.name ?? "",
+                            url: row.url ?? "",
+                            description: row.description ?? "",
+                            publisher: row.publisher ?? "",
+                            cadence: row.cadence ?? "daily",
+                            status: row.status ?? "active",
+                          })
+                        }
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        disabled={busy || row.status === "retired"}
                         onClick={() => {
-                          if (window.confirm("Retire this game? Saved results will remain."))
+                          if (
+                            window.confirm(
+                              "Retire this game? Saved results will remain.",
+                            )
+                          )
                             void submit("retire_game", { id: row.id ?? "" });
-                        }}>Retire</button>
+                        }}
+                      >
+                        Retire
+                      </button>
                     </div>
                   </li>
                 ))}
@@ -341,14 +428,25 @@ export function AdminPage({
 
           {section === "samples" && (
             <>
-              <p className="fine-print">Only unexpired unknown/invalid shares are listed. Raw text requires explicit inspection.</p>
+              <p className="fine-print">
+                Only unexpired unknown/invalid shares are listed. Raw text
+                requires explicit inspection.
+              </p>
               <ul className="today-list">
                 {rows.map((row) => (
                   <li className="panel" key={row.id}>
                     <h3>{row.reason || "Unknown format"}</h3>
-                    <p>{row.disposition} · Review: {row.review_status ?? "pending"}</p>
+                    <p>
+                      {row.disposition} · Review:{" "}
+                      {row.review_status ?? "pending"}
+                    </p>
                     <p>Expires: {row.expires_at}</p>
-                    <button type="button" onClick={() => void inspectSample(row.id ?? "")}>Inspect raw sample</button>
+                    <button
+                      type="button"
+                      onClick={() => void inspectSample(row.id ?? "")}
+                    >
+                      Inspect raw sample
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -356,23 +454,63 @@ export function AdminPage({
                 <section className="panel" aria-label="Private sample review">
                   <h2>Private retained sample</h2>
                   <p>Expires {sample.expires_at}</p>
-                  <pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>{sample.raw_text}</pre>
+                  <pre
+                    style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}
+                  >
+                    {sample.raw_text}
+                  </pre>
                   <div className="field">
-                    <label htmlFor="sample-game">Catalog game slug (optional)</label>
-                    <input id="sample-game" value={sampleGame} onChange={(e) => setSampleGame(e.target.value)} />
+                    <label htmlFor="sample-game">
+                      Catalog game slug (optional)
+                    </label>
+                    <input
+                      id="sample-game"
+                      value={sampleGame}
+                      onChange={(e) => setSampleGame(e.target.value)}
+                    />
                   </div>
                   <div className="field">
                     <label htmlFor="sample-notes">Review notes</label>
-                    <textarea id="sample-notes" rows={3} maxLength={240} value={sampleNotes} onChange={(e) => setSampleNotes(e.target.value)} />
+                    <textarea
+                      id="sample-notes"
+                      rows={3}
+                      maxLength={240}
+                      value={sampleNotes}
+                      onChange={(e) => setSampleNotes(e.target.value)}
+                    />
                   </div>
                   <div className="today-actions">
-                    <button type="button" disabled={busy} onClick={() => void submit("review_sample", {
-                      id: sample.id, status: "classified", gameSlug: sampleGame || null, notes: sampleNotes,
-                    })}>Classify</button>
-                    <button type="button" disabled={busy} onClick={() => void submit("review_sample", {
-                      id: sample.id, status: "ignored", gameSlug: null, notes: sampleNotes,
-                    })}>Ignore</button>
-                    <button type="button" onClick={() => setSample(null)}>Close</button>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() =>
+                        void submit("review_sample", {
+                          id: sample.id,
+                          status: "classified",
+                          gameSlug: sampleGame || null,
+                          notes: sampleNotes,
+                        })
+                      }
+                    >
+                      Classify
+                    </button>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() =>
+                        void submit("review_sample", {
+                          id: sample.id,
+                          status: "ignored",
+                          gameSlug: null,
+                          notes: sampleNotes,
+                        })
+                      }
+                    >
+                      Ignore
+                    </button>
+                    <button type="button" onClick={() => setSample(null)}>
+                      Close
+                    </button>
                   </div>
                 </section>
               )}
@@ -384,7 +522,10 @@ export function AdminPage({
               <h2>Last 30 days · unexpired samples</h2>
               <ul>
                 {rows.map((row, index) => (
-                  <li key={index}>{row.reason ?? "unknown"} / {row.disposition}: {row.samples ?? 0}</li>
+                  <li key={index}>
+                    {row.reason ?? "unknown"} / {row.disposition}:{" "}
+                    {row.samples ?? 0}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -392,30 +533,59 @@ export function AdminPage({
 
           {section === "restrictions" && (
             <>
-              <form className="panel" onSubmit={(event) => {
-                event.preventDefault();
-                void submit("restrict", { userId: targetUser, reason: restrictionReason });
-              }}>
+              <form
+                className="panel"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  void submit("restrict", {
+                    userId: targetUser,
+                    reason: restrictionReason,
+                  });
+                }}
+              >
                 <h2>Restrict request and voting privileges</h2>
-                <p className="fine-print">This does not disable login, results or friendships.</p>
+                <p className="fine-print">
+                  This does not disable login, results or friendships.
+                </p>
                 <div className="field">
                   <label htmlFor="restrict-user">User UUID</label>
-                  <input id="restrict-user" required value={targetUser} onChange={(event) => setTargetUser(event.target.value)} />
+                  <input
+                    id="restrict-user"
+                    required
+                    value={targetUser}
+                    onChange={(event) => setTargetUser(event.target.value)}
+                  />
                 </div>
                 <div className="field">
                   <label htmlFor="restrict-reason">Internal reason</label>
-                  <input id="restrict-reason" required maxLength={240} value={restrictionReason} onChange={(event) => setRestrictionReason(event.target.value)} />
+                  <input
+                    id="restrict-reason"
+                    required
+                    maxLength={240}
+                    value={restrictionReason}
+                    onChange={(event) =>
+                      setRestrictionReason(event.target.value)
+                    }
+                  />
                 </div>
-                <button type="submit" disabled={busy}>Apply restriction</button>
+                <button type="submit" disabled={busy}>
+                  Apply restriction
+                </button>
               </form>
               <ul className="today-list">
                 {rows.map((row) => (
                   <li className="panel" key={row.user_id}>
                     <h3>{row.user_id}</h3>
                     <p>{row.reason}</p>
-                    <button type="button" disabled={busy} onClick={() =>
-                      void submit("unrestrict", { userId: row.user_id ?? "" })
-                    }>Remove restriction</button>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() =>
+                        void submit("unrestrict", { userId: row.user_id ?? "" })
+                      }
+                    >
+                      Remove restriction
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -427,9 +597,21 @@ export function AdminPage({
           )}
           {section !== "overview" && section !== "diagnostics" && (
             <div className="today-toolbar">
-              <button type="button" disabled={offset === 0} onClick={() => setOffset(Math.max(0, offset - 20))}>Previous</button>
+              <button
+                type="button"
+                disabled={offset === 0}
+                onClick={() => setOffset(Math.max(0, offset - 20))}
+              >
+                Previous
+              </button>
               <span>Page {Math.floor(offset / 20) + 1}</span>
-              <button type="button" disabled={rows.length < 20} onClick={() => setOffset(offset + 20)}>Next</button>
+              <button
+                type="button"
+                disabled={rows.length < 20}
+                onClick={() => setOffset(offset + 20)}
+              >
+                Next
+              </button>
             </div>
           )}
         </>
