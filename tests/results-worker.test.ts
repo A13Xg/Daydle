@@ -485,3 +485,70 @@ describe("sanitized privileged Supabase RPC diagnostics", () => {
     expect(err).not.toHaveBeenCalled();
   });
 });
+
+describe("Cloudflare Worker outbound redirect compatibility", () => {
+  const absentProfile = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee";
+  const requestUrl = "https://daydle.example/api/v1/players/" + absentProfile;
+
+  it("uses Cloudflare-supported manual redirect mode for the authenticated Supabase user lookup", async () => {
+    const upstream = vi.fn(async () => Response.json({ id: USER }));
+    vi.stubGlobal("fetch", upstream);
+    const response = await worker.fetch(makeRequest(path()), env);
+    expect(response.status).toBe(503);
+    expect(upstream).toHaveBeenCalledTimes(2);
+    expect(upstream.mock.calls[0]?.[1]?.redirect).toBe("manual");
+    expect(upstream.mock.calls[1]?.[1]?.redirect).toBe("manual");
+  });
+
+  it("does not follow Supabase Auth redirects or forward the user token", async () => {
+    const upstream = vi.fn(
+      async () =>
+        new Response(null, {
+          status: 302,
+          headers: { location: "https://untrusted.example/collect" },
+        }),
+    );
+    vi.stubGlobal("fetch", upstream);
+    const response = await worker.fetch(makeRequest(path()), env);
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({ error: "service_unavailable" });
+    expect(upstream).toHaveBeenCalledOnce();
+    expect(upstream.mock.calls[0]?.[1]?.redirect).toBe("manual");
+  });
+
+  it("does not follow privileged RPC redirects or forward the service-role key", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const upstream = vi.fn(
+      async () =>
+        new Response(null, {
+          status: 302,
+          headers: { location: "https://untrusted.example/collect" },
+        }),
+    );
+    vi.stubGlobal("fetch", upstream);
+    const response = await worker.fetch(new Request(requestUrl), env);
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({
+      error: "result_service_unavailable",
+    });
+    expect(upstream).toHaveBeenCalledOnce();
+    expect(upstream.mock.calls[0]?.[1]?.redirect).toBe("manual");
+    expect(log).toHaveBeenCalledWith("supabase_rpc_failure", {
+      rpc: "social_public_profile",
+      httpStatus: 302,
+      postgrestCode: null,
+    });
+    expect(JSON.stringify(log.mock.calls)).not.toContain(
+      env.SUPABASE_SERVICE_ROLE_KEY,
+    );
+  });
+
+  it("sets manual redirect mode on successful privileged RPC fetches", async () => {
+    const upstream = vi.fn(async () => Response.json(null));
+    vi.stubGlobal("fetch", upstream);
+    const response = await worker.fetch(new Request(requestUrl), env);
+    expect(response.status).toBe(404);
+    expect(upstream).toHaveBeenCalledOnce();
+    expect(upstream.mock.calls[0]?.[1]?.redirect).toBe("manual");
+  });
+});
