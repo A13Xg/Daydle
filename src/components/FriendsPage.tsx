@@ -492,7 +492,12 @@ export function FriendsPage({
                         </div>
                         <div className="social-row-actions">
                           <a href={`/players/${person.id}`}>Profile</a>
-                          <button type="button" onClick={() => setSelectedFriend(person.id)}>Compare</button>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedFriend(person.id)}
+                          >
+                            Compare
+                          </button>
                           <button
                             type="button"
                             disabled={pending}
@@ -558,9 +563,16 @@ export function FriendsPage({
                   </ul>
                 </section>
               )}
-              {userId && selectedFriend && network.friends.some((p) => p.id === selectedFriend) && (
-                <HeadToHead leftId={userId} rightId={selectedFriend} client={client} viewerId={userId} />
-              )}
+              {userId &&
+                selectedFriend &&
+                network.friends.some((p) => p.id === selectedFriend) && (
+                  <HeadToHead
+                    leftId={userId}
+                    rightId={selectedFriend}
+                    client={client}
+                    viewerId={userId}
+                  />
+                )}
               <section
                 className="panel social-comparison"
                 aria-labelledby="social-compare-heading"

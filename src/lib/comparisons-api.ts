@@ -49,8 +49,12 @@ async function getViewerToken(
   if (!userId) return null;
   if (!client) throw new ComparisonApiError("authentication_required", 401);
   const { data, error } = await client.auth.getSession();
-  if (error || !data.session ||
-    data.session.user.id !== userId || !data.session.access_token)
+  if (
+    error ||
+    !data.session ||
+    data.session.user.id !== userId ||
+    !data.session.access_token
+  )
     throw new ComparisonApiError("authentication_required", 401);
   return data.session.access_token;
 }
@@ -81,9 +85,13 @@ async function requestComparison(
     throw new ComparisonApiError("invalid_server_response", response.status);
   }
   if (!response.ok) {
-    const code = data && typeof data === "object" &&
-      "error" in data && typeof data.error === "string"
-      ? data.error : "comparison_service_unavailable";
+    const code =
+      data &&
+      typeof data === "object" &&
+      "error" in data &&
+      typeof data.error === "string"
+        ? data.error
+        : "comparison_service_unavailable";
     throw new ComparisonApiError(code, response.status);
   }
   return data;
@@ -95,8 +103,8 @@ export async function loadComparisonPuzzles(
   viewerId?: string | null,
   signal?: AbortSignal,
 ): Promise<PuzzlesResponse> {
-  const path = COMPARISON_PATH + "/puzzles?" +
-    new URLSearchParams({ game }).toString();
+  const path =
+    COMPARISON_PATH + "/puzzles?" + new URLSearchParams({ game }).toString();
   const value = await requestComparison(path, client, viewerId, signal);
   if (!validPuzzlesResponse(value))
     throw new ComparisonApiError("invalid_server_response", 503);
@@ -112,9 +120,13 @@ export async function loadComparisonBoard(
   viewerId?: string | null,
   signal?: AbortSignal,
 ): Promise<ComparisonBoard> {
-  const path = COMPARISON_PATH + "/board?" +
+  const path =
+    COMPARISON_PATH +
+    "/board?" +
     new URLSearchParams({
-      game, puzzle, scope,
+      game,
+      puzzle,
+      scope,
       limit: String(pagination.limit),
       offset: String(pagination.offset),
     });
@@ -132,10 +144,14 @@ export async function loadVisiblePerformance(
 ): Promise<PublicPerformance> {
   const value = await requestComparison(
     COMPARISON_PATH + "/profile/" + encodeURIComponent(id),
-    client, viewerId, signal,
+    client,
+    viewerId,
+    signal,
   );
-  if (!validPublicPerformance(value) ||
-    value.profileId.toLowerCase() !== id.toLowerCase())
+  if (
+    !validPublicPerformance(value) ||
+    value.profileId.toLowerCase() !== id.toLowerCase()
+  )
     throw new ComparisonApiError("invalid_server_response", 503);
   return value;
 }
@@ -148,10 +164,14 @@ export async function loadPublicPuzzleResult(
 ): Promise<PublicPuzzleResult> {
   const value = await requestComparison(
     COMPARISON_PATH + "/result/" + encodeURIComponent(id),
-    client, viewerId, signal,
+    client,
+    viewerId,
+    signal,
   );
-  if (!validPublicResult(value) ||
-    value.resultId.toLowerCase() !== id.toLowerCase())
+  if (
+    !validPublicResult(value) ||
+    value.resultId.toLowerCase() !== id.toLowerCase()
+  )
     throw new ComparisonApiError("invalid_server_response", 503);
   return value;
 }
@@ -174,11 +194,15 @@ export async function loadHeadToHead(
   if (game) query.set("game", game);
   const value = await requestComparison(
     COMPARISON_PATH + "/head-to-head?" + query,
-    client, viewerId, signal,
+    client,
+    viewerId,
+    signal,
   );
-  if (!validHeadToHead(value) ||
-      value.leftUserId.toLowerCase() !== leftId.toLowerCase() ||
-      value.rightUserId.toLowerCase() !== rightId.toLowerCase())
+  if (
+    !validHeadToHead(value) ||
+    value.leftUserId.toLowerCase() !== leftId.toLowerCase() ||
+    value.rightUserId.toLowerCase() !== rightId.toLowerCase()
+  )
     throw new ComparisonApiError("invalid_server_response", 503);
   return value;
 }

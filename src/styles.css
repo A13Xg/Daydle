@@ -2380,7 +2380,6 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   }
 }
 
-
 /* Phase 10 — real, viewer-filtered same-puzzle scoreboards (Obsidian Arcade). */
 .comparison-page {
   width: 100%;
@@ -2468,7 +2467,9 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   padding: 1.25rem clamp(1rem, 3vw, 1.6rem);
   border-bottom: 1px solid var(--hairline);
   background: linear-gradient(
-    125deg, rgba(77, 142, 255, 0.13), transparent 64%
+    125deg,
+    rgba(77, 142, 255, 0.13),
+    transparent 64%
   );
 }
 .comparison-board-head .eyebrow {
@@ -2573,7 +2574,9 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
   margin-block: 0.3rem;
   border: 1px solid rgba(173, 198, 255, 0.18);
   background: linear-gradient(
-    100deg, rgba(77, 142, 255, 0.11), rgba(28, 43, 60, 0.33)
+    100deg,
+    rgba(77, 142, 255, 0.11),
+    rgba(28, 43, 60, 0.33)
   );
 }
 .comparison-rank {

@@ -33,10 +33,17 @@ export function HeadToHead({
     const controller = new AbortController();
     setState({ status: "loading" });
     void loadHeadToHead(
-      leftId, rightId, game || null,
-      { limit: 20, offset }, client, viewerId, controller.signal,
+      leftId,
+      rightId,
+      game || null,
+      { limit: 20, offset },
+      client,
+      viewerId,
+      controller.signal,
     ).then(
-      (data) => { if (!controller.signal.aborted) setState({ status: "ready", data }); },
+      (data) => {
+        if (!controller.signal.aborted) setState({ status: "ready", data });
+      },
       (cause: unknown) => {
         if (!controller.signal.aborted)
           setState({ status: "error", text: comparisonErrorText(cause) });
@@ -46,30 +53,52 @@ export function HeadToHead({
   }, [leftId, rightId, game, offset, client, viewerId, refresh]);
 
   return (
-    <section className="panel comparison-head-to-head" aria-labelledby="head-to-head-heading">
+    <section
+      className="panel comparison-head-to-head"
+      aria-labelledby="head-to-head-heading"
+    >
       <div className="social-section-head">
         <ArcadeIcon name="friends" size={23} />
-        <div><p className="eyebrow">SHARED PUZZLES</p>
+        <div>
+          <p className="eyebrow">SHARED PUZZLES</p>
           <h2 id="head-to-head-heading">Head-to-head history</h2>
         </div>
       </div>
       <div className="comparison-control-row">
         <label htmlFor="h2h-game-select">Game</label>
-        <select id="h2h-game-select" value={game}
-          onChange={(event) => { setGame(event.target.value); setOffset(0); }}>
+        <select
+          id="h2h-game-select"
+          value={game}
+          onChange={(event) => {
+            setGame(event.target.value);
+            setOffset(0);
+          }}
+        >
           <option value="">All compatible games</option>
-          {RANKED_GAMES.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}
+          {RANKED_GAMES.map((item) => (
+            <option key={item.slug} value={item.slug}>
+              {item.name}
+            </option>
+          ))}
         </select>
       </div>
-      {state.status === "loading" && <p role="status">Checking mutually visible results…</p>}
-      {state.status === "error" && <div className="notice error" role="alert">
-        <p>{state.text}</p>
-        <button type="button" onClick={() => setRefresh((n) => n + 1)}>Retry</button>
-      </div>}
+      {state.status === "loading" && (
+        <p role="status">Checking mutually visible results…</p>
+      )}
+      {state.status === "error" && (
+        <div className="notice error" role="alert">
+          <p>{state.text}</p>
+          <button type="button" onClick={() => setRefresh((n) => n + 1)}>
+            Retry
+          </button>
+        </div>
+      )}
       {state.status === "ready" && (
         <>
-          <p className="fine-print">Only matching puzzle editions unlocked for
-            this viewer appear. Results from other puzzles are excluded entirely.</p>
+          <p className="fine-print">
+            Only matching puzzle editions unlocked for this viewer appear.
+            Results from other puzzles are excluded entirely.
+          </p>
           {state.data.items.length ? (
             <ul className="h2h-list">
               {state.data.items.map((item) => (
@@ -79,34 +108,68 @@ export function HeadToHead({
                     <span>{item.puzzleDate ?? item.puzzleKey}</span>
                   </div>
                   <div className="h2h-results">
-                    <div className={item.winner === "left" ? "h2h-winning" : ""}>
+                    <div
+                      className={item.winner === "left" ? "h2h-winning" : ""}
+                    >
                       <small>{state.data.leftName}</small>
-                      <strong>{formatComparisonMetric(item.leftMetric, item.gameSlug)}</strong>
+                      <strong>
+                        {formatComparisonMetric(item.leftMetric, item.gameSlug)}
+                      </strong>
                     </div>
                     <span className="h2h-vs">vs</span>
-                    <div className={item.winner === "right" ? "h2h-winning" : ""}>
+                    <div
+                      className={item.winner === "right" ? "h2h-winning" : ""}
+                    >
                       <small>{state.data.rightName}</small>
-                      <strong>{formatComparisonMetric(item.rightMetric, item.gameSlug)}</strong>
+                      <strong>
+                        {formatComparisonMetric(
+                          item.rightMetric,
+                          item.gameSlug,
+                        )}
+                      </strong>
                     </div>
                   </div>
                   <span className="h2h-outcome">
-                    {item.winner === null ? "Not comparable" :
-                      item.winner === "tie" ? "Tie" :
-                      (item.winner === "left" ? state.data.leftName : state.data.rightName) + " ahead"}
+                    {item.winner === null
+                      ? "Not comparable"
+                      : item.winner === "tie"
+                        ? "Tie"
+                        : (item.winner === "left"
+                            ? state.data.leftName
+                            : state.data.rightName) + " ahead"}
                   </span>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="muted">No shared puzzle results are currently visible. This does not disclose locked puzzle activity.</p>
+            <p className="muted">
+              No shared puzzle results are currently visible. This does not
+              disclose locked puzzle activity.
+            </p>
           )}
           {state.data.totalVisible > 20 && (
-            <nav className="comparison-pagination" aria-label="Head-to-head pagination">
-              <button type="button" disabled={offset === 0}
-                onClick={() => setOffset((n) => Math.max(0, n - 20))}>Previous</button>
-              <span>{offset + 1}–{Math.min(offset + 20, state.data.totalVisible)} of {state.data.totalVisible}</span>
-              <button type="button" disabled={offset + 20 >= state.data.totalVisible}
-                onClick={() => setOffset((n) => n + 20)}>Next</button>
+            <nav
+              className="comparison-pagination"
+              aria-label="Head-to-head pagination"
+            >
+              <button
+                type="button"
+                disabled={offset === 0}
+                onClick={() => setOffset((n) => Math.max(0, n - 20))}
+              >
+                Previous
+              </button>
+              <span>
+                {offset + 1}–{Math.min(offset + 20, state.data.totalVisible)} of{" "}
+                {state.data.totalVisible}
+              </span>
+              <button
+                type="button"
+                disabled={offset + 20 >= state.data.totalVisible}
+                onClick={() => setOffset((n) => n + 20)}
+              >
+                Next
+              </button>
             </nav>
           )}
         </>

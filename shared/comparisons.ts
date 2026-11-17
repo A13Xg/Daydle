@@ -119,66 +119,137 @@ const dateOrNull = (v: unknown): v is string | null =>
 const puzzle = (v: unknown): v is string =>
   typeof v === "string" && v.length > 0 && v.length <= 160;
 const outcome = (v: unknown): v is PublicOutcome =>
-  v === null || v === "win" || v === "complete" || v === "loss" || v === "incomplete";
+  v === null ||
+  v === "win" ||
+  v === "complete" ||
+  v === "loss" ||
+  v === "incomplete";
 
 export function validPuzzlesResponse(v: unknown): v is PuzzlesResponse {
-  return record(v) && v.status === "ready" && slug(v.gameSlug) &&
-    label(v.gameName) && Array.isArray(v.items) && v.items.length <= 40 &&
-    v.items.every((p: unknown) => record(p) && puzzle(p.puzzleKey) &&
-      dateOrNull(p.puzzleDate) && typeof p.released === "boolean");
+  return (
+    record(v) &&
+    v.status === "ready" &&
+    slug(v.gameSlug) &&
+    label(v.gameName) &&
+    Array.isArray(v.items) &&
+    v.items.length <= 40 &&
+    v.items.every(
+      (p: unknown) =>
+        record(p) &&
+        puzzle(p.puzzleKey) &&
+        dateOrNull(p.puzzleDate) &&
+        typeof p.released === "boolean",
+    )
+  );
 }
 export function validComparisonBoard(v: unknown): v is ComparisonBoard {
-  if (!record(v) || !slug(v.gameSlug) || !label(v.gameName) ||
-      !puzzle(v.puzzleKey) || !dateOrNull(v.puzzleDate)) return false;
+  if (
+    !record(v) ||
+    !slug(v.gameSlug) ||
+    !label(v.gameName) ||
+    !puzzle(v.puzzleKey) ||
+    !dateOrNull(v.puzzleDate)
+  )
+    return false;
   if (v.status === "locked") return true;
   if (v.status !== "ready") return false;
-  return typeof v.released === "boolean" && label(v.metricLabel, 60) &&
+  return (
+    typeof v.released === "boolean" &&
+    label(v.metricLabel, 60) &&
     (v.scope === "global" || v.scope === "friends") &&
-    count(v.totalVisible) && count(v.rankedCount) &&
-    v.rankedCount <= v.totalVisible && Array.isArray(v.items) &&
-    v.items.length <= 50 && v.items.every(
-      (item: unknown) => record(item) && uuid(item.resultId) &&
-        uuid(item.userId) && label(item.displayName, 80) &&
-        outcome(item.outcome) && numberOrNull(item.metricValue) &&
-        (item.rank === null || (count(item.rank) && item.rank >= 1))
-    );
+    count(v.totalVisible) &&
+    count(v.rankedCount) &&
+    v.rankedCount <= v.totalVisible &&
+    Array.isArray(v.items) &&
+    v.items.length <= 50 &&
+    v.items.every(
+      (item: unknown) =>
+        record(item) &&
+        uuid(item.resultId) &&
+        uuid(item.userId) &&
+        label(item.displayName, 80) &&
+        outcome(item.outcome) &&
+        numberOrNull(item.metricValue) &&
+        (item.rank === null || (count(item.rank) && item.rank >= 1)),
+    )
+  );
 }
 export function validPublicPerformance(v: unknown): v is PublicPerformance {
-  return record(v) && v.status === "ready" && uuid(v.profileId) &&
-    count(v.visibleResults) && count(v.visibleWins) &&
+  return (
+    record(v) &&
+    v.status === "ready" &&
+    uuid(v.profileId) &&
+    count(v.visibleResults) &&
+    count(v.visibleWins) &&
     v.visibleWins <= v.visibleResults &&
-    Array.isArray(v.games) && v.games.length <= 300 &&
-    v.games.every((g: unknown) => record(g) && slug(g.slug) &&
-      label(g.name) && count(g.visibleResults) && count(g.completed) &&
-      g.completed <= g.visibleResults && numberOrNull(g.bestMetric));
+    Array.isArray(v.games) &&
+    v.games.length <= 300 &&
+    v.games.every(
+      (g: unknown) =>
+        record(g) &&
+        slug(g.slug) &&
+        label(g.name) &&
+        count(g.visibleResults) &&
+        count(g.completed) &&
+        g.completed <= g.visibleResults &&
+        numberOrNull(g.bestMetric),
+    )
+  );
 }
 export function validPublicResult(v: unknown): v is PublicPuzzleResult {
-  return record(v) && uuid(v.resultId) && uuid(v.userId) &&
-    label(v.displayName, 80) && slug(v.gameSlug) && label(v.gameName) &&
-    puzzle(v.puzzleKey) && dateOrNull(v.puzzleDate) &&
-    outcome(v.outcome) && label(v.metricLabel, 60) &&
-    numberOrNull(v.metricValue);
+  return (
+    record(v) &&
+    uuid(v.resultId) &&
+    uuid(v.userId) &&
+    label(v.displayName, 80) &&
+    slug(v.gameSlug) &&
+    label(v.gameName) &&
+    puzzle(v.puzzleKey) &&
+    dateOrNull(v.puzzleDate) &&
+    outcome(v.outcome) &&
+    label(v.metricLabel, 60) &&
+    numberOrNull(v.metricValue)
+  );
 }
 export function validHeadToHead(v: unknown): v is HeadToHead {
-  return record(v) && v.status === "ready" &&
-    uuid(v.leftUserId) && uuid(v.rightUserId) &&
-    label(v.leftName, 80) && label(v.rightName, 80) &&
-    count(v.totalVisible) && Array.isArray(v.items) &&
+  return (
+    record(v) &&
+    v.status === "ready" &&
+    uuid(v.leftUserId) &&
+    uuid(v.rightUserId) &&
+    label(v.leftName, 80) &&
+    label(v.rightName, 80) &&
+    count(v.totalVisible) &&
+    Array.isArray(v.items) &&
     v.items.length <= 50 &&
-    v.items.every((item: unknown) => record(item) &&
-      slug(item.gameSlug) && label(item.gameName) &&
-      puzzle(item.puzzleKey) && dateOrNull(item.puzzleDate) &&
-      outcome(item.leftOutcome) && outcome(item.rightOutcome) &&
-      numberOrNull(item.leftMetric) && numberOrNull(item.rightMetric) &&
-      (item.winner === null || ["left", "right", "tie"].includes(String(item.winner))));
+    v.items.every(
+      (item: unknown) =>
+        record(item) &&
+        slug(item.gameSlug) &&
+        label(item.gameName) &&
+        puzzle(item.puzzleKey) &&
+        dateOrNull(item.puzzleDate) &&
+        outcome(item.leftOutcome) &&
+        outcome(item.rightOutcome) &&
+        numberOrNull(item.leftMetric) &&
+        numberOrNull(item.rightMetric) &&
+        (item.winner === null ||
+          ["left", "right", "tie"].includes(String(item.winner))),
+    )
+  );
 }
 
 /** No cross-game score or unverified completion metric is ever fabricated. */
-export function formatComparisonMetric(value: number | null, gameSlug: string): string {
+export function formatComparisonMetric(
+  value: number | null,
+  gameSlug: string,
+): string {
   if (value === null) return "Unranked";
   if (gameSlug === "mini-crossword") {
     const seconds = Math.round(value / 1000);
-    return Math.floor(seconds / 60) + ":" + String(seconds % 60).padStart(2, "0");
+    return (
+      Math.floor(seconds / 60) + ":" + String(seconds % 60).padStart(2, "0")
+    );
   }
   return value.toLocaleString();
 }

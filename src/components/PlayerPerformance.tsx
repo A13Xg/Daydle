@@ -27,7 +27,12 @@ export function PlayerPerformance({
   useEffect(() => {
     const controller = new AbortController();
     setState({ status: "loading" });
-    void loadVisiblePerformance(profileId, client, viewerId, controller.signal).then(
+    void loadVisiblePerformance(
+      profileId,
+      client,
+      viewerId,
+      controller.signal,
+    ).then(
       (data) => {
         if (!controller.signal.aborted) setState({ status: "ready", data });
       },
@@ -40,7 +45,10 @@ export function PlayerPerformance({
   }, [profileId, client, viewerId, reload]);
 
   return (
-    <section className="panel public-performance" aria-labelledby="player-performance-heading">
+    <section
+      className="panel public-performance"
+      aria-labelledby="player-performance-heading"
+    >
       <div className="social-section-head">
         <ArcadeIcon name="statistics" size={22} />
         <div>
@@ -48,25 +56,38 @@ export function PlayerPerformance({
           <h2 id="player-performance-heading">Visible game statistics</h2>
         </div>
       </div>
-      {state.status === "loading" && <p role="status">Checking released and unlocked puzzles…</p>}
+      {state.status === "loading" && (
+        <p role="status">Checking released and unlocked puzzles…</p>
+      )}
       {state.status === "error" && (
         <div className="notice error" role="alert">
           <p>{state.message}</p>
-          <button type="button" onClick={() => setReload((n) => n + 1)}>Retry</button>
+          <button type="button" onClick={() => setReload((n) => n + 1)}>
+            Retry
+          </button>
         </div>
       )}
       {state.status === "ready" && (
         <>
           <div className="performance-overview">
-            <div><span>Visible results</span><strong>{state.data.visibleResults}</strong></div>
-            <div><span>Completed</span><strong>{state.data.visibleWins}</strong></div>
+            <div>
+              <span>Visible results</span>
+              <strong>{state.data.visibleResults}</strong>
+            </div>
+            <div>
+              <span>Completed</span>
+              <strong>{state.data.visibleWins}</strong>
+            </div>
           </div>
           {state.data.games.length ? (
             <ul className="performance-game-list">
               {state.data.games.map((game) => (
                 <li key={game.slug}>
-                  <div><strong>{game.name}</strong>
-                    <small>{game.visibleResults} visible · {game.completed} completed</small>
+                  <div>
+                    <strong>{game.name}</strong>
+                    <small>
+                      {game.visibleResults} visible · {game.completed} completed
+                    </small>
                   </div>
                   <a href={`/compare?game=${game.slug}`}>Compare</a>
                 </li>
@@ -81,7 +102,8 @@ export function PlayerPerformance({
           <p className="fine-print">
             These totals include only results you may view for released puzzles
             or puzzles you have personally completed. They are not the player's
-            private all-time totals. Hidden attempts and achievements are not counted.
+            private all-time totals. Hidden attempts and achievements are not
+            counted.
           </p>
         </>
       )}

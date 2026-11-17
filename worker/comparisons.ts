@@ -46,7 +46,8 @@ function pageBounds(url: URL): { limit: number; offset: number } | null {
   const limit = Number(l);
   const offset = Number(o);
   return limit >= 1 && limit <= 50 && offset >= 0 && offset <= 5000
-    ? { limit, offset } : null;
+    ? { limit, offset }
+    : null;
 }
 const isGame = (value: string | null): value is string =>
   typeof value === "string" && GAME_SLUG_PATTERN.test(value);
@@ -62,7 +63,9 @@ function cleanPuzzles(result: PuzzlesResponse) {
     gameSlug: result.gameSlug,
     gameName: result.gameName,
     items: result.items.map(({ puzzleKey, puzzleDate, released }) => ({
-      puzzleKey, puzzleDate, released,
+      puzzleKey,
+      puzzleDate,
+      released,
     })),
   };
 }
@@ -82,9 +85,16 @@ function cleanBoard(result: ComparisonBoard) {
     scope: result.scope,
     totalVisible: result.totalVisible,
     rankedCount: result.rankedCount,
-    items: result.items.map(({ resultId, userId, displayName, outcome, metricValue, rank }) => ({
-      resultId, userId, displayName, outcome, metricValue, rank,
-    })),
+    items: result.items.map(
+      ({ resultId, userId, displayName, outcome, metricValue, rank }) => ({
+        resultId,
+        userId,
+        displayName,
+        outcome,
+        metricValue,
+        rank,
+      }),
+    ),
   };
 }
 function cleanPerformance(result: PublicPerformance) {
@@ -93,19 +103,41 @@ function cleanPerformance(result: PublicPerformance) {
     profileId: result.profileId,
     visibleResults: result.visibleResults,
     visibleWins: result.visibleWins,
-    games: result.games.map(({ slug, name, visibleResults, completed, bestMetric }) => ({
-      slug, name, visibleResults, completed, bestMetric,
-    })),
+    games: result.games.map(
+      ({ slug, name, visibleResults, completed, bestMetric }) => ({
+        slug,
+        name,
+        visibleResults,
+        completed,
+        bestMetric,
+      }),
+    ),
   };
 }
 function cleanPublicResult(result: PublicPuzzleResult) {
   const {
-    resultId, userId, displayName, gameSlug, gameName,
-    puzzleKey, puzzleDate, outcome, metricLabel, metricValue,
+    resultId,
+    userId,
+    displayName,
+    gameSlug,
+    gameName,
+    puzzleKey,
+    puzzleDate,
+    outcome,
+    metricLabel,
+    metricValue,
   } = result;
   return {
-    resultId, userId, displayName, gameSlug, gameName,
-    puzzleKey, puzzleDate, outcome, metricLabel, metricValue,
+    resultId,
+    userId,
+    displayName,
+    gameSlug,
+    gameName,
+    puzzleKey,
+    puzzleDate,
+    outcome,
+    metricLabel,
+    metricValue,
   };
 }
 function cleanHeadToHead(result: HeadToHead) {
@@ -152,15 +184,22 @@ export async function handleComparisonRequest(
   const game = url.searchParams.get("game");
   const pagination = pageBounds(url);
   if (
-    (path === COMPARISON_PATH + "/puzzles" || path === COMPARISON_PATH + "/board")
-    && !isGame(game)
+    (path === COMPARISON_PATH + "/puzzles" ||
+      path === COMPARISON_PATH + "/board") &&
+    !isGame(game)
   )
     return errorResponse("invalid_game", 400);
-  if (path === COMPARISON_PATH + "/head-to-head" &&
-      game !== null && !isGame(game))
+  if (
+    path === COMPARISON_PATH + "/head-to-head" &&
+    game !== null &&
+    !isGame(game)
+  )
     return errorResponse("invalid_game", 400);
-  if ((path === COMPARISON_PATH + "/board" ||
-       path === COMPARISON_PATH + "/head-to-head") && !pagination)
+  if (
+    (path === COMPARISON_PATH + "/board" ||
+      path === COMPARISON_PATH + "/head-to-head") &&
+    !pagination
+  )
     return errorResponse("invalid_pagination", 400);
 
   let method: string;
@@ -192,9 +231,13 @@ export async function handleComparisonRequest(
   } else {
     const left = url.searchParams.get("left");
     const right = url.searchParams.get("right");
-    if (!left || !right || !RESULT_ID_PATTERN.test(left) ||
+    if (
+      !left ||
+      !right ||
+      !RESULT_ID_PATTERN.test(left) ||
       !RESULT_ID_PATTERN.test(right) ||
-      left.toLowerCase() === right.toLowerCase())
+      left.toLowerCase() === right.toLowerCase()
+    )
       return errorResponse("invalid_players", 400);
     method = "comparison_head_to_head";
     args = {
@@ -208,7 +251,11 @@ export async function handleComparisonRequest(
 
   const verified = await viewerFor(request, env);
   if (isResponse(verified)) return verified;
-  if (method === "comparison_board" && args.p_scope === "friends" && !verified.viewer)
+  if (
+    method === "comparison_board" &&
+    args.p_scope === "friends" &&
+    !verified.viewer
+  )
     return errorResponse("authentication_required", 401);
   args.p_viewer = verified.viewer; // Server-derived identity, never a query/user ID.
   const value = await rpc(verified.config, method, args);

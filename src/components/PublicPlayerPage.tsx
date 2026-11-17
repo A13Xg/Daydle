@@ -12,7 +12,9 @@ type LoadState =
   | { status: "ready"; value: PublicPlayer };
 
 export function PublicPlayerPage({
-  id, client, viewerId,
+  id,
+  client,
+  viewerId,
 }: {
   id: string;
   client: SupabaseClient | null;
@@ -93,15 +95,25 @@ export function PublicPlayerPage({
               </p>
             )}
           </section>
-          <PlayerPerformance profileId={id} client={client} viewerId={viewerId} />
+          <PlayerPerformance
+            profileId={id}
+            client={client}
+            viewerId={viewerId}
+          />
           {viewerId && viewerId !== id && (
-            <HeadToHead leftId={viewerId} rightId={id} client={client} viewerId={viewerId} />
+            <HeadToHead
+              leftId={viewerId}
+              rightId={id}
+              client={client}
+              viewerId={viewerId}
+            />
           )}
           <aside className="social-privacy-note">
             <ArcadeIcon name="info" size={20} />
             <p>
               Only unlocked puzzle results contribute to public statistics.
-              Personal all-time totals and unverified current-puzzle performance remain private.
+              Personal all-time totals and unverified current-puzzle performance
+              remain private.
             </p>
           </aside>
           <a className="secondary-link" href="/friends">
