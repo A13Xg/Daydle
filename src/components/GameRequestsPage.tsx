@@ -11,7 +11,7 @@ export function GameRequestsPage({
   client,
   userId,
 }: {
-  client: SupabaseClient;
+  client: SupabaseClient | null;
   userId: string | null;
 }) {
   const [items, setItems] = useState<GameRequest[]>([]);
@@ -30,7 +30,7 @@ export function GameRequestsPage({
     const abort = new AbortController();
     setLoading(true);
     setError("");
-    loadGameRequests(client, userId, offset, abort.signal).then(
+    loadGameRequests(client ?? undefined, userId, offset, abort.signal).then(
       (rows) => {
         if (!abort.signal.aborted) {
           setItems(rows);
@@ -51,7 +51,7 @@ export function GameRequestsPage({
     action: "create" | "vote" | "unvote",
     data: { id?: string; name?: string; url?: string; notes?: string },
   ) {
-    if (!userId || busy) return;
+    if (!client || !userId || busy) return;
     setBusy(true);
     setError("");
     setSuccess("");
