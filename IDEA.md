@@ -59,7 +59,7 @@ The brand is not limited to games ending in “-dle.” Examples of categories i
 - Preserve one authoritative canonical result per user/game/puzzle. Exact duplicate submissions are idempotent; conflicting new values prompt explicit replacement or rejection. Deleting/replacing results refreshes all affected stats, achievements, rankings, and spoilers.
 - Allow corrections by replacement with a new recognized share output or result deletion, not unrestricted manual edits to leaderboard metrics.
 - Persist structured common fields (game, puzzle ID/date, outcome, attempts, score, completion time as relevant), typed game-specific metrics, provenance, parser/format versions, received timestamp, and correction metadata. Do not force all games into one numeric scoring scale.
-- Unknown or unsupported pasted content requires an **explicit** user action to retain a submission. Offer game selection and a way to suggest support. Store diagnostics and a bounded raw sample for authorized administrator review.
+- **Approved Phase 7 revision (2026-11-16):** Pressing **Submit result** is the explicit upload action. If authenticated parsing returns unknown, ambiguous, or invalid-but-bounded text, retain the private raw share automatically with machine-readable failure category, parser/game hints and a 90-day expiry timestamp. Do not upload on clipboard read, typing or dialog open; refuse empty, oversized or unsafe/NUL input. Disclose the retention behavior directly in Paste Results. Offer candidate-game confirmation on ambiguity; never convert an unparsed share into an invented result or expose raw samples to other players. Keep authorized administrator review and a future categorization workflow.
 - Input is untrusted text: size/rate limits, strict validation, safe rendering, bounded CPU, no HTML interpretation, and no arbitrary code evaluation.
 
 ## 8. Puzzle identity, dates, and spoiler policy
@@ -90,7 +90,7 @@ The brand is not limited to games ending in “-dle.” Examples of categories i
 
 ## 11. Data lifecycle and recovery
 
-- **Raw submission text expires after 90 days**, including accepted and explicitly retained unknown samples. Parsed canonical results and permitted analytics remain until deleted. Expiry must include orphan cleanup and administrative view removal.
+- **Raw submission text has a maximum 90-day retention period**, including accepted and failure-captured samples. Expiry metadata alone is not physical deletion; scheduled purge enforcement remains a later operational requirement. Parsed canonical results and permitted analytics remain until deleted. Expiry must include orphan cleanup and administrative view removal.
 - Historical reparsing is possible only while the original raw text remains; after expiration, rely on versioned parsed snapshots and corrections rather than pretending reparsing is possible.
 - Support self-service result deletion, data export, and account deletion. Define handling for associations, corrections, achievements, ranks, backup expiration, and restores.
 - Use Cloudflare for the React/Vite frontend and Workers API; Supabase Auth and PostgreSQL for identity and data. Prefer free tiers until requirements justify an upgrade.

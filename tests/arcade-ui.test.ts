@@ -28,6 +28,7 @@ describe("Obsidian Arcade route shells", () => {
     ["/friends", "tab"],
     ["/account", "tab"],
     ["/lineup", "stack"],
+    ["/history", "stack"],
     ["/games/wordle", "stack"],
     ["/how-it-works", "stack"],
     ["/notifications", "stack"],
@@ -89,6 +90,7 @@ describe("Obsidian Arcade route shells", () => {
     expect(markup).toContain('aria-label="Paste Results"');
     expect(markup).not.toContain("brand-badge");
     expect(stackTitle("/games/wordle")).toBe("Game details");
+    expect(stackTitle("/history")).toBe("Result history");
     expect(stackBackPath("/games/wordle")).toBe("/games");
   });
 
@@ -156,7 +158,9 @@ describe("feature previews and static onboarding", () => {
     expect(markup).toContain("Build your lineup");
     expect(markup).toContain("Play at the publisher");
     expect(markup).toContain("Bring your share text");
-    expect(markup).toContain("nothing uploads yet");
+    expect(markup).toContain("Supported formats are recognized");
+    expect(markup).toContain("retained privately for parser analysis");
+    expect(markup).not.toContain("nothing uploads yet");
     expect(markup).not.toContain("OCR");
   });
 });

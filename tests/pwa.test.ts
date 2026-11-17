@@ -76,6 +76,8 @@ describe("offline install and security boundaries", () => {
       ["https://daydle.example/api/v1/health", "GET", "cors"],
       ["https://daydle.example/auth/callback?code=private", "GET", "navigate"],
       ["https://daydle.example/account", "GET", "navigate"],
+      ["https://daydle.example/history", "GET", "navigate"],
+      ["https://daydle.example/api/v1/results", "GET", "cors"],
       ["https://daydle.example/rest/v1/game_results", "GET", "cors"],
       ["https://project.supabase.co/rest/v1/game_results", "GET", "cors"],
       ["https://daydle.example/assets/script.js", "POST", "cors"],

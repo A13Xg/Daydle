@@ -2,7 +2,7 @@
 
 **All your daily games. One place.**
 
-Daydle is an iOS-first web application for discovering daily games, launching games on publisher websites, tracking shared results, viewing public statistics and comparing performance with friends. Phases 1–5 provide authentication, secure game discovery, user-selected Today, and an owner-accepted iPhone PWA. Phase 6 adds deterministic parsing; result ingestion, statistics and comparisons follow later.
+Daydle is an iOS-first web application for discovering daily games, launching games on publisher websites, tracking shared results, viewing public statistics and comparing performance with friends. Phases 1–5 provide authentication, secure game discovery, user-selected Today, and an owner-accepted iPhone PWA. Phase 6 adds deterministic parsing; Phase 6.5's Obsidian Arcade UI is merged. Phase 7 result ingestion and private history are being developed in [draft PR #14](https://github.com/A13Xg/Daydle/pull/14), not deployed. Public statistics and comparisons remain future phases.
 
 ## Local development
 
@@ -29,7 +29,7 @@ The app shell and API health endpoint work without a Supabase project or credent
 
 The daily return screen is at **[/today](/today)** (also the application home). It displays your selected games, manual played markers and publisher launch links, with a global user-initiated Paste shell. Read [docs/pwa.md](docs/pwa.md) for install, offline, privacy and manual iOS acceptance checks. **Phase 5 SQL was applied in the owner-approved November 16, 2026 release.** Later deployments/migrations still require authorization.
 
-Public game discovery is at **[/games](/games)**, with per-game details at `/games/:slug`. Selecting favorites requires Google/Apple sign-in; the catalog is browsable anonymously. The catalog remains launchable without result persistence. Five deterministic share parsers from Phase 6 are merged ([PR #12](https://github.com/A13Xg/Daydle/pull/12)); see [docs/parsers.md](docs/parsers.md) for coverage and constraints. Authenticated result ingestion follows Phase 6.5 in Phase 7. See [docs/catalog.md](docs/catalog.md) for seed data, safe URLs, owner selections, and admin RPC permissions. **Phase 4 SQL was applied in the owner-approved Phase 5 release.**
+Public game discovery is at **[/games](/games)**, with per-game details at `/games/:slug`. Selecting favorites requires Google/Apple sign-in; the catalog is browsable anonymously. The current deployed catalog remains launchable without result persistence; the Phase 7 branch adds authenticated result ingestion behind a separately authorized schema/Worker release. Five deterministic share parsers from Phase 6 are merged ([PR #12](https://github.com/A13Xg/Daydle/pull/12)); see [docs/parsers.md](docs/parsers.md) for coverage and constraints. Review the Phase 7 implementation and rollout requirements in [docs/results.md](docs/results.md). See [docs/catalog.md](docs/catalog.md) for seed data, safe URLs, owner selections, and admin RPC permissions. **Phase 4 SQL was applied in the owner-approved Phase 5 release.**
 
 Database schema, test roles and security boundaries are documented in [docs/database.md](docs/database.md). Supabase authentication flow and provider setup are in [docs/auth.md](docs/auth.md); hosting credentials and scopes in [docs/secrets.md](docs/secrets.md). CI tests the migration on two disposable PostgreSQL 17 databases without hosted Supabase credentials. Migrations are applied to the hosted project only with the owner's explicit approval.
 

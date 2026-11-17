@@ -2,7 +2,7 @@ import { ArcadeIcon } from "./ArcadeIcon";
 
 function StatisticsPreview() {
   const metrics = [
-    { label: "Total solved", detail: "Available after result saving" },
+    { label: "Total solved", detail: "Statistics coming in a later phase" },
     { label: "Win rate", detail: "Game-specific results only" },
     { label: "Average speed", detail: "For puzzles that report time" },
     { label: "Flawless runs", detail: "Based on supported game formats" },
@@ -14,8 +14,8 @@ function StatisticsPreview() {
         <p className="eyebrow">ARCADE PERFORMANCE</p>
         <h1 id="feature-title">Your statistics</h1>
         <p>
-          Track each puzzle on its own terms once Daydle can save results. No
-          historical scores are available yet.
+          Saved results are available in your private History. Personal
+          statistics and achievements will be enabled in a later phase.
         </p>
       </header>
       <section
@@ -52,8 +52,9 @@ function StatisticsPreview() {
         <div className="stats-distribution-empty">
           <ArcadeIcon name="info" size={24} />
           <p>
-            There is no saved guess data to chart yet. Game-specific
-            distributions will appear after result ingestion is enabled.
+            This statistics view is not available yet. Saved results can be
+            reviewed in History; game-specific distributions are scheduled for a
+            later phase.
           </p>
         </div>
       </section>
@@ -82,7 +83,7 @@ export function FeaturePendingPage({
       icon: "statistics" as const,
       heading: "Every puzzle tells a story.",
       description:
-        "After result saving becomes available, this space will show your game-by-game progress, streaks, and achievements.",
+        "After personal statistics become available, this space will show game-by-game progress, streaks, and achievements.",
     },
     friends: {
       title: "Friends & rivalry",
@@ -150,9 +151,10 @@ export function HowItWorksPage() {
           <span className="step-number">03</span>
           <h2>Bring your share text</h2>
           <p>
-            Use Paste Results after copying a share message. Automatic
-            recognition and saving are coming in a later phase; nothing uploads
-            yet.
+            Use Paste Results after copying a share message. Supported formats
+            are recognized when you select Submit result, then saved to private
+            History. Submitted unknown or invalid formats are retained privately
+            for parser analysis (within size/safety limits).
           </p>
         </li>
       </ol>

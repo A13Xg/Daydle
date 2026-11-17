@@ -7,8 +7,8 @@ BEGIN
  SELECT count(*) INTO n FROM public.game_categories;
  IF n <> 6 THEN RAISE EXCEPTION 'Expected six curated categories, got %',n; END IF;
  SELECT count(*) INTO n FROM public.games
- WHERE id::text LIKE '40000000-%' AND parser_status='unsupported' AND link_status='unverified';
- IF n <> 12 THEN RAISE EXCEPTION 'Seed falsely claims parser or live link support'; END IF;
+ WHERE id::text LIKE '40000000-%' AND link_status='unverified';
+ IF n <> 12 THEN RAISE EXCEPTION 'Seed falsely claims verified publisher links'; END IF;
  IF has_table_privilege('authenticated','public.games','UPDATE')
    OR has_table_privilege('authenticated','public.user_games','INSERT')
    OR has_table_privilege('authenticated','public.user_games','DELETE')

@@ -2,11 +2,11 @@
 
 ## Overview
 
-Daydle is a directory and stats layer, **not** the publisher of the external daily games. Games open on the publisher's website in a new tab or other context permitted by the browser. The catalog must not embed a third-party game in an unsupported iframe or imply that third-party result text is currently parsable.
+Daydle is a directory and stats layer, **not** the publisher of the external daily games. Games open on the publisher's website in a new tab or other context permitted by the browser. The catalog must not embed a third-party game in an unsupported iframe or imply parsing support beyond the five fixture-backed Phase 6 formats once Phase 7 is deployed.
 
 The migration `supabase/migrations/20261115040000_phase4_catalog.sql` adds link availability metadata, 12 curated games and categories, admin-only catalog RPCs, and one transaction-safe favorites RPC.
 
-**All seed games have `parser_status=unsupported`.** A later Phase 6 parser + fixtures is required to mark a game as supported. Link status is `unverified` by default, because web-source evidence is not a successful Daydle interactive publisher play-test.
+**The original 12 seed games default to `parser_status=unsupported`.** Phase 6 implemented five fixture-tested parsers; the Phase 7 migration changes only their matching catalog slugs to `supported` when explicitly authorized and applied. Unsupported games remain launchable. Link status is `unverified` by default, because web-source evidence is not a successful Daydle interactive publisher play-test.
 
 ## Seed list and source references
 

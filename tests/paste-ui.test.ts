@@ -5,7 +5,7 @@ import { PasteDialog } from "../src/components/PasteDialog";
 import { TodayPage } from "../src/components/TodayPage";
 
 describe("Paste and Today accessibility", () => {
-  it("has a labeled manual fallback, explicit clipboard button and no save action", () => {
+  it("has a labeled manual fallback, explicit clipboard button and no unauthorized save action", () => {
     const markup = renderToStaticMarkup(
       createElement(PasteDialog, { onClose: vi.fn() }),
     );
@@ -14,7 +14,9 @@ describe("Paste and Today accessibility", () => {
     expect(markup).toContain("Paste from clipboard");
     expect(markup).toContain("One game share result");
     expect(markup).toContain("not upload");
-    expect(markup).not.toContain("Submit result");
+    expect(markup).toContain("Sign in");
+    expect(markup).toContain('href="/auth"');
+    expect(markup).not.toMatch(/<button[^>]*>Submit result<\/button>/);
   });
 
   it("never presents the signed-out visitor as a signed-in game player", () => {

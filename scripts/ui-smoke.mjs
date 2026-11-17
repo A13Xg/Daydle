@@ -183,7 +183,7 @@ async function visit(client, pathname, viewport) {
   }
   const kind = pathname.startsWith("/auth")
     ? "blank"
-    : ["/lineup", "/how-it-works", "/notifications", "/games/wordle"].includes(
+    : ["/lineup", "/history", "/how-it-works", "/notifications", "/games/wordle"].includes(
           pathname,
         )
       ? "stack"
@@ -204,6 +204,37 @@ async function visit(client, pathname, viewport) {
     result.hasCDN
   ) {
     throw new Error("Arcade shell assertion failed: " + JSON.stringify(result));
+  }
+  if (pathname === "/history" && viewport.width === 393) {
+    const privacy = await evaluate(
+      client,
+      '({login:!!document.querySelector(\'a[href="/auth"]\'),privateRows:document.querySelectorAll(".history-entry").length,filter:!!document.querySelector("#history-game")})',
+    );
+    if (!privacy.login || privacy.privateRows !== 0 || privacy.filter) {
+      throw new Error("Signed-out History leaked private controls: " + JSON.stringify(privacy));
+    }
+  }
+  if (pathname === "/today" && viewport.width === 393) {
+    await evaluate(client, 'document.querySelector(".paste-global").click()');
+    await sleep(150);
+    const dialog = await evaluate(
+      client,
+      '({open:!!document.querySelector(\'[role="dialog"][aria-modal="true"]\'),input:!!document.querySelector("#paste-input"),guestLogin:!!document.querySelector(\'.paste-dialog a[href="/auth"]\'),saveButton:[...document.querySelectorAll(".paste-dialog button")].some(x=>x.textContent.includes("Submit result"))})',
+    );
+    if (!dialog.open || !dialog.input || !dialog.guestLogin || dialog.saveButton) {
+      throw new Error("Guest Paste contract failed: " + JSON.stringify(dialog));
+    }
+    await client.send("Input.dispatchKeyEvent", {
+      type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27,
+    });
+    await client.send("Input.dispatchKeyEvent", {
+      type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27,
+    });
+    await sleep(150);
+    const closed = await evaluate(client, '({open:!!document.querySelector(".paste-dialog"),focus:document.activeElement?.classList.contains("paste-global")})');
+    if (closed.open || !closed.focus) {
+      throw new Error("Paste Escape/focus restoration failed: " + JSON.stringify(closed));
+    }
   }
   console.log(
     "UI-SMOKE PASS",
@@ -289,6 +320,7 @@ try {
             "/today",
             "/games",
             "/lineup",
+            "/history",
             "/statistics",
             "/friends",
             "/account",
@@ -301,7 +333,7 @@ try {
     for (const pathname of paths) await visit(client, pathname, viewport);
   }
   console.log(
-    "UI-SMOKE: 16 route/viewport checks passed (Chromium, not Safari).",
+    "UI-SMOKE: 17 route/viewport checks passed (Chromium, not Safari).",
   );
 } finally {
   client?.close();

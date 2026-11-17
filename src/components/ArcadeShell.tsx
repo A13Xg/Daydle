@@ -18,6 +18,7 @@ export function shellForPath(pathname: string): ShellKind {
   if (pathname === "/auth" || pathname === "/auth/callback") return "blank";
   if (
     pathname === "/lineup" ||
+    pathname === "/history" ||
     pathname === "/notifications" ||
     pathname === "/how-it-works" ||
     /^\/games\/[a-z0-9-]+\/?$/.test(pathname)
@@ -34,6 +35,7 @@ export function selectedTab(pathname: string): string | null {
 
 export function stackTitle(pathname: string): string {
   if (pathname === "/lineup") return "Edit lineup";
+  if (pathname === "/history") return "Result history";
   if (pathname === "/notifications") return "Notifications";
   if (pathname === "/how-it-works") return "How it works";
   if (pathname.startsWith("/games/")) return "Game details";
@@ -41,7 +43,12 @@ export function stackTitle(pathname: string): string {
 }
 
 export function stackBackPath(pathname: string): string {
-  if (pathname === "/lineup" || pathname === "/how-it-works") return "/today";
+  if (
+    pathname === "/lineup" ||
+    pathname === "/how-it-works" ||
+    pathname === "/history"
+  )
+    return "/today";
   if (pathname.startsWith("/games/")) return "/games";
   return "/today";
 }
