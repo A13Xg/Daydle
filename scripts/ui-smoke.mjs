@@ -183,9 +183,11 @@ async function visit(client, pathname, viewport) {
   }
   const kind = pathname.startsWith("/auth")
     ? "blank"
-    : ["/lineup", "/history", "/how-it-works", "/notifications", "/games/wordle"].includes(
+    : (
+        ["/lineup", "/history", "/how-it-works", "/notifications", "/games/wordle"].includes(
           pathname,
-        )
+        ) || /^\/players\/[0-9a-f-]{36}\/?$/i.test(pathname)
+      )
       ? "stack"
       : "tab";
   if (
@@ -204,6 +206,24 @@ async function visit(client, pathname, viewport) {
     result.hasCDN
   ) {
     throw new Error("Arcade shell assertion failed: " + JSON.stringify(result));
+  }
+  if (pathname === "/friends" && viewport.width === 393) {
+    const privacy = await evaluate(
+      client,
+      '({signIn:!!document.querySelector(\'.social-guest a[href="/auth"]\'),code:!!document.querySelector(".social-code"),friends:document.querySelectorAll(".social-friend").length})',
+    );
+    if (!privacy.signIn || privacy.code || privacy.friends !== 0) {
+      throw new Error("Signed-out Friends leaked owner controls: " + JSON.stringify(privacy));
+    }
+  }
+  if (pathname.startsWith("/players/") && viewport.width === 393) {
+    const card = await evaluate(
+      client,
+      '({heading:!!document.querySelector("#public-player-heading"),spoilers:!!document.querySelector(".history-entry"),ownerCode:!!document.querySelector(".social-code")})',
+    );
+    if (!card.heading || card.spoilers || card.ownerCode) {
+      throw new Error("Public player route leaked private result data: " + JSON.stringify(card));
+    }
   }
   if (pathname === "/history" && viewport.width === 393) {
     const privacy = await evaluate(
@@ -323,17 +343,18 @@ try {
             "/history",
             "/statistics",
             "/friends",
+            "/players/11111111-1111-4111-8111-111111111111",
             "/account",
             "/auth",
             "/how-it-works",
             "/notifications",
             "/games/wordle",
           ]
-        : ["/today", "/games", "/auth"];
+        : ["/today", "/games", "/friends", "/auth"];
     for (const pathname of paths) await visit(client, pathname, viewport);
   }
   console.log(
-    "UI-SMOKE: 17 route/viewport checks passed (Chromium, not Safari).",
+    "UI-SMOKE: 20 route/viewport checks passed (Chromium, not Safari).",
   );
 } finally {
   client?.close();
