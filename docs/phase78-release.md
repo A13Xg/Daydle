@@ -6,12 +6,12 @@
 
 | Migration source | Supabase recorded version | Management API name | Applied |
 |---|---|---|---|
-| `20261117010000_phase7_results.sql` | `20261117030322` | `20261117010000_phase7_results` | Yes |
-| `20261117040000_phase8_statistics.sql` | `20261117034143` | `20261117040000_phase8_statistics` | Yes |
+| `20261117030322_20261117010000_phase7_results.sql` | `20261117030322` | `20261117010000_phase7_results` | Yes |
+| `20261117034143_20261117040000_phase8_statistics.sql` | `20261117034143` | `20261117040000_phase8_statistics` | Yes |
 
 Both source migrations were applied through the Supabase migration service to project `xyjuriehmrkdqdmcxdso` under explicit owner authorizations. Phase 8 function `public.my_personal_statistics(uuid,text)` is executable only by `service_role`; direct `anon`/`authenticated` execution denied. Phase 7's five results RPC grants similarly verified. No result/sample data was changed during the migration.
 
-**Do not use** the old `release-phase5.yml` or `supabase db push` unmodified. `scripts/ops/check-hosted-migrations.mjs` only permits the four old version numbers and fails closed with these newly registered generated versions. The live-schema state is already current; a second application would collide with existing functions.
+**Do not use** the historical `release-phase5.yml` for this release. Source migration filenames now match the recorded versions, and `scripts/ops/check-hosted-migrations.mjs` validates all six records. The protected `deploy.yml` performs read-only schema-history verification; it does **not** re-apply SQL.
 
 ## Environment and credentials
 
