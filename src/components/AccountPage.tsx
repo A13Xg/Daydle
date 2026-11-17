@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { validateDisplayName } from "../lib/auth-actions";
 import { ArcadeIcon } from "./ArcadeIcon";
+import { loadAdminView } from "../lib/administration-api";
 
 interface Profile {
   display_name: string;
@@ -32,6 +33,21 @@ export function AccountPage({
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [reload, setReload] = useState(0);
+  const [adminAccess, setAdminAccess] = useState(false);
+
+  useEffect(() => {
+    setAdminAccess(false);
+    if (!client || !user) return;
+    const abort = new AbortController();
+    loadAdminView(client, user.id, "overview", 0, undefined, abort.signal)
+      .then(() => {
+        if (!abort.signal.aborted) setAdminAccess(true);
+      })
+      .catch(() => {
+        if (!abort.signal.aborted) setAdminAccess(false);
+      });
+    return () => abort.abort();
+  }, [client, user?.id]);
 
   useEffect(() => {
     if (!client || !user) return;
@@ -237,6 +253,11 @@ export function AccountPage({
         </p>
       )}
       <div className="game-actions">
+        {adminAccess && (
+          <a className="secondary-link" href="/admin">
+            Administration
+          </a>
+        )}
         <a className="secondary-link" href="/history">
           My result history
         </a>
