@@ -142,6 +142,15 @@ BEGIN
  OR history ? 'raw_share_text'
  THEN RAISE EXCEPTION 'Head-to-head same-puzzle unlock failed: %',history; END IF;
 
+ -- Two unsuccessful results are incomparable, not a fabricated tie.
+ UPDATE public.game_results SET outcome='loss'
+ WHERE puzzle_id=current_puzzle AND user_id IN (alice,bob);
+ history:=public.comparison_head_to_head(bob,alice,bob,'wordle',20,0);
+ IF history->'items'->0->'winner' <> 'null'::jsonb
+ THEN RAISE EXCEPTION 'Unranked head-to-head fabricated a tie: %',history; END IF;
+ UPDATE public.game_results SET outcome='win'
+ WHERE puzzle_id=current_puzzle AND user_id IN (alice,bob);
+
  UPDATE public.game_results SET attempts=3 WHERE user_id=bob AND puzzle_id=current_puzzle;
  sample:=public.comparison_board(bob,'wordle','wordle-100','global',20,0);
  IF (sample->'items'->0->>'userId')::uuid<>bob
