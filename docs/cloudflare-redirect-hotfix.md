@@ -1,6 +1,6 @@
 # Cloudflare Worker redirect compatibility hotfix
 
-**Status:** IMPLEMENTED — awaiting CI and owner review, no deployment
+**Status:** IMPLEMENTED — CI passed (260 tests, 20 Chromium checks, PostgreSQL security); awaiting owner review/merge, no deployment
 **Branch:** `hotfix/cloudflare-redirect-mode`
 **Base:** `fd109095f5cdf53592ff1bf519a7a3e806ae8085`
 
