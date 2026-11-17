@@ -147,7 +147,7 @@ VALUES
  ('97777777-7777-4777-8777-777777777777','phase11-link-fixture',
   'Link test','https://games.example/old','verified',now());
 SET LOCAL ROLE service_role;
-DO $
+DO $$
 DECLARE v jsonb;
 BEGIN
   v:=public.daydle_admin_action(
@@ -160,7 +160,7 @@ BEGIN
     OR (SELECT link_checked_at FROM public.games
         WHERE slug='phase11-link-fixture') IS NOT NULL
   THEN RAISE EXCEPTION 'Changed publisher URL kept stale verified link'; END IF;
-END $;
+END $$;
 ROLLBACK;
 
 SELECT 'PASS: Phase 11 suggestions, admin, audit, raw privacy and restrictions' AS test_summary;
