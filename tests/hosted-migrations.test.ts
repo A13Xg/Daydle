@@ -14,8 +14,8 @@ const filenames = [
   "20261117034143_20261117040000_phase8_statistics.sql",
   "20261117051824_20261117050000_phase9_social.sql",
   "20261117075359_phase10_comparisons.sql",
-  "20261117090000_phase11_administration.sql",
-  "20261117100000_phase12_privacy.sql",
+  "20261118013515_phase11_administration.sql",
+  "20261118013526_phase12_privacy.sql",
 ];
 const baseline = [
   { version: "20261114050000", name: "phase2_domain_security" },
@@ -40,10 +40,10 @@ const phase10 = {
   name: "phase10_comparisons",
 };
 const phase11 = {
-  version: "20261117090000",
+  version: "20261118013515",
   name: "phase11_administration",
 };
-const phase12 = { version: "20261117100000", name: "phase12_privacy" };
+const phase12 = { version: "20261118013526", name: "phase12_privacy" };
 const projectRef = "abcdefghijklmnopqrst";
 const accessToken = "synthetic-private-test-credential";
 
@@ -65,8 +65,8 @@ describe("structured Supabase production migration history", () => {
         "20261117034143",
         "20261117051824",
         "20261117075359",
-        "20261117090000",
-        "20261117100000",
+        "20261118013515",
+        "20261118013526",
       ],
     });
   });
@@ -80,8 +80,8 @@ describe("structured Supabase production migration history", () => {
       "20261117034143",
       "20261117051824",
       "20261117075359",
-      "20261117090000",
-      "20261117100000",
+      "20261118013515",
+      "20261118013526",
     ]);
     expect(
       verifyStructuredHistory(
@@ -208,8 +208,8 @@ describe("structured Supabase production migration history", () => {
       "20261117034143",
       "20261117051824",
       "20261117075359",
-      "20261117090000",
-      "20261117100000",
+      "20261118013515",
+      "20261118013526",
     ]);
     const [url, options] = fetchImpl.mock.calls[0];
     expect(url).toBe(
