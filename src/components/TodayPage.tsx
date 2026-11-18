@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import {
-  canLaunchGame,
-  safePublisherUrl,
-} from "../../shared/catalog";
+import { canLaunchGame, safePublisherUrl } from "../../shared/catalog";
 import type { CatalogGame } from "../../shared/catalog";
 import { localDayString, manualPlayedLabel } from "../../shared/today";
 import { loadCatalog, loadSelectedGames } from "../lib/catalog-api";
@@ -142,7 +139,8 @@ export function TodayPage({
       setRetry((value) => value + 1);
     }
     window.addEventListener("daydle:played-updated", onSavedResult);
-    return () => window.removeEventListener("daydle:played-updated", onSavedResult);
+    return () =>
+      window.removeEventListener("daydle:played-updated", onSavedResult);
   }, []);
 
   useEffect(() => {
@@ -307,11 +305,7 @@ export function TodayPage({
         <h1>Today in your arcade.</h1>
         <p className="today-date">{day}</p>
         {playedIds !== null && !offline && games.length > 0 && (
-          <div
-            className="today-summary"
-            role="group"
-            aria-label="Played today"
-          >
+          <div className="today-summary" role="group" aria-label="Played today">
             <span>
               {numberPlayed} / {games.length} played
             </span>

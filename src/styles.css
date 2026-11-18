@@ -2815,7 +2815,9 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
 /* Phase 15: compact noninteractive whitespace; preserve 44px touch controls. */
 .content-tab {
   padding-top: calc(var(--topbar-height) + env(safe-area-inset-top) + 0.95rem);
-  padding-bottom: calc(var(--tabbar-height) + env(safe-area-inset-bottom) + 4.75rem);
+  padding-bottom: calc(
+    var(--tabbar-height) + env(safe-area-inset-bottom) + 4.75rem
+  );
 }
 .content-stack {
   padding-top: calc(var(--topbar-height) + env(safe-area-inset-top) + 1rem);

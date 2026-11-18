@@ -38,12 +38,16 @@ export function verifyStructuredHistory(
       filename !== version + "_" + name + ".sql" ||
       !/^\d{14}_[a-z0-9_]+\.sql$/.test(filename)
     ) {
-      throw new Error("Local migration filenames differ from the reviewed hosted version/name allowlist.");
+      throw new Error(
+        "Local migration filenames differ from the reviewed hosted version/name allowlist.",
+      );
     }
     return name;
   });
   if (files.length !== HOSTED_MIGRATIONS.length) {
-    throw new Error("Unreviewed local migration files found. No release authorized.");
+    throw new Error(
+      "Unreviewed local migration files found. No release authorized.",
+    );
   }
   if (!Array.isArray(records)) {
     throw new Error(

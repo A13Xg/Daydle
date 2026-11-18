@@ -10,7 +10,10 @@ import { CatalogPage } from "./components/CatalogPage";
 import { TodayPage } from "./components/TodayPage";
 import { PasteDialog } from "./components/PasteDialog";
 import { ShareTutorial } from "./components/ShareTutorial";
-import { markShareTutorialSeen, shouldShowShareTutorial } from "./lib/share-tutorial";
+import {
+  markShareTutorialSeen,
+  shouldShowShareTutorial,
+} from "./lib/share-tutorial";
 import { HistoryPage } from "./components/HistoryPage";
 import { StatisticsPage } from "./components/StatisticsPage";
 import { FriendsPage } from "./components/FriendsPage";
@@ -304,9 +307,7 @@ export default function App() {
           userId={userId}
         />
       )}
-      {tutorialOpen && !pasteOpen && (
-        <ShareTutorial onDone={closeTutorial} />
-      )}
+      {tutorialOpen && !pasteOpen && <ShareTutorial onDone={closeTutorial} />}
     </div>
   );
 }

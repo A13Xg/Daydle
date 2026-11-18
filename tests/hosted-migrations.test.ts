@@ -69,7 +69,7 @@ describe("structured Supabase production migration history", () => {
         "20261117075359",
         "20261118013515",
         "20261118013526",
-      "20261118234500",
+        "20261118234500",
       ],
     });
   });

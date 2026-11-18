@@ -93,7 +93,6 @@ describe("private played-marker Supabase adapter", () => {
   });
 });
 
-
 describe("automatic played mark after a confirmed result", () => {
   it("does not mark today's lineup for an older dated puzzle", async () => {
     const from = vi.fn();
@@ -110,10 +109,12 @@ describe("automatic played mark after a confirmed result", () => {
 
   it("resolves the canonical game ID, writes the local-day mark and re-reads it", async () => {
     const marks: string[] = [];
-    const insert = vi.fn().mockImplementation(async (row: { game_id: string }) => {
-      marks.push(row.game_id);
-      return { error: null };
-    });
+    const insert = vi
+      .fn()
+      .mockImplementation(async (row: { game_id: string }) => {
+        marks.push(row.game_id);
+        return { error: null };
+      });
     const from = vi.fn().mockImplementation((table: string) =>
       table === "games"
         ? {
@@ -141,7 +142,13 @@ describe("automatic played mark after a confirmed result", () => {
     const client = { from } as unknown as SupabaseClient;
     const clock = new Date(2026, 10, 18, 12, 0);
     expect(
-      await markPlayedFromSubmittedResult(client, "owner", "wordle", null, clock),
+      await markPlayedFromSubmittedResult(
+        client,
+        "owner",
+        "wordle",
+        null,
+        clock,
+      ),
     ).toBe("marked");
     expect(insert).toHaveBeenCalledWith({
       user_id: "owner",

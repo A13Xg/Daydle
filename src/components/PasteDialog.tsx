@@ -137,7 +137,9 @@ export function PasteDialog({
         puzzleDate,
       );
       if (marker === "historical")
-        return message + " This older puzzle did not change today's played status.";
+        return (
+          message + " This older puzzle did not change today's played status."
+        );
       window.dispatchEvent(new Event("daydle:played-updated"));
       return message + " Marked played today.";
     } catch {

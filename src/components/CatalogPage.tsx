@@ -381,7 +381,10 @@ export function CatalogPage({
                       )
                     }
                   />
-                  <span className={"game-avatar " + game.slug} aria-hidden="true">
+                  <span
+                    className={"game-avatar " + game.slug}
+                    aria-hidden="true"
+                  >
                     {game.name.slice(0, 2).toUpperCase()}
                   </span>
                   <span className="setup-game-copy">

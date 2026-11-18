@@ -4,17 +4,17 @@ Pure, server-safe TypeScript modules under `shared/parsers/` decode **one** publ
 
 ## Versioned coverage
 
-| Catalog slug | Expected share signature | Puzzle identity from share | Result metrics |
-|---|---|---|---|
-| `wordle` | `Wordle 1,406 4/6*` and five-wide tile grid | Number only | Attempts, outcome, hard-mode *claim* |
-| `connections` | `Connections`, `Puzzle #687`, four-tile row groups | Number only | Solved groups and mistakes |
-| `strands` | `Strands #985`, blue/yellow/hint sequence | Number only | Theme words, hints, spangram position |
-| `mini-crossword` | `I solved the 4/28/2025 New York Times Mini Crossword in 0:22!` | Share-provided date | Completion time |
-| `quordle` | `Daily Quordle 1190`, two-by-two keycap/red results | Number only | Four board attempts/failed boards |
-| `worldle` | `#Worldle #1701 (DD.MM.YYYY) X/6 (81%)`, square/direction grid | Publisher-provided number and date | Attempts, reported percentage, clue counts; no invented score |
-| `flagle` | `#Flagle #1700 (DD.MM.YYYY) 2/6`, three-tile rows | Publisher-provided number and date | Attempts, green clues; no invented score |
+| Catalog slug     | Expected share signature                                        | Puzzle identity from share         | Result metrics                                                |
+| ---------------- | --------------------------------------------------------------- | ---------------------------------- | ------------------------------------------------------------- |
+| `wordle`         | `Wordle 1,406 4/6*` and five-wide tile grid                     | Number only                        | Attempts, outcome, hard-mode _claim_                          |
+| `connections`    | `Connections`, `Puzzle #687`, four-tile row groups              | Number only                        | Solved groups and mistakes                                    |
+| `strands`        | `Strands #985`, blue/yellow/hint sequence                       | Number only                        | Theme words, hints, spangram position                         |
+| `mini-crossword` | `I solved the 4/28/2025 New York Times Mini Crossword in 0:22!` | Share-provided date                | Completion time                                               |
+| `quordle`        | `Daily Quordle 1190`, two-by-two keycap/red results             | Number only                        | Four board attempts/failed boards                             |
+| `worldle`        | `#Worldle #1701 (DD.MM.YYYY) X/6 (81%)`, square/direction grid  | Publisher-provided number and date | Attempts, reported percentage, clue counts; no invented score |
+| `flagle`         | `#Flagle #1700 (DD.MM.YYYY) 2/6`, three-tile rows               | Publisher-provided number and date | Attempts, green clues; no invented score                      |
 
-All have `parserVersion=1.0.0`; per-format `formatVersion` is stored in parsed output. The registry is independent of catalog records: game slugs are stable join keys; a valid parsed result is **not** proof of actual publisher gameplay. In particular, Wordle's asterisk means publisher-share *claimed* hard mode, not verified gameplay.
+All have `parserVersion=1.0.0`; per-format `formatVersion` is stored in parsed output. The registry is independent of catalog records: game slugs are stable join keys; a valid parsed result is **not** proof of actual publisher gameplay. In particular, Wordle's asterisk means publisher-share _claimed_ hard mode, not verified gameplay.
 
 ### Interface
 

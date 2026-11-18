@@ -66,7 +66,6 @@ export async function updateAndReconcilePlayed(
   };
 }
 
-
 /**
  * Synchronize the Today mark only after a successful server-confirmed result.
  * An explicitly dated historical puzzle must never mark the current day.

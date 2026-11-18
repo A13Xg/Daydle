@@ -39,11 +39,13 @@ describe("sample-derived Worldle parser", () => {
 
   it("accepts a bounded win without optional streak or URL", () => {
     expect(
-      parseShare([
-        "#Worldle #1702 (17.11.2026) 2/6 (100%)",
-        "🟨🟨🟩⬜⬜↗️",
-        "🟩🟩🟩🟩🟩➡️",
-      ].join("\n")),
+      parseShare(
+        [
+          "#Worldle #1702 (17.11.2026) 2/6 (100%)",
+          "🟨🟨🟩⬜⬜↗️",
+          "🟩🟩🟩🟩🟩➡️",
+        ].join("\n"),
+      ),
     ).toMatchObject({
       status: "parsed",
       result: { outcome: "win", attempts: 2, puzzleDate: "2026-11-17" },
@@ -54,7 +56,10 @@ describe("sample-derived Worldle parser", () => {
     WORLDLE_LOSS.replace("(81%)", "(101%)"),
     WORLDLE_LOSS.replace("16.11.2026", "31.02.2026"),
     WORLDLE_LOSS.replace("🟩🟩🟩🟨⬜↘️", "🟩🟩🟩🟨⬜"),
-    WORLDLE_LOSS.replace("https://worldle.teuteuf.fr/share", "https://evil.example/share"),
+    WORLDLE_LOSS.replace(
+      "https://worldle.teuteuf.fr/share",
+      "https://evil.example/share",
+    ),
     WORLDLE_LOSS.replace("🟩🟩⬜⬜⬜↘️\n", ""),
   ])("does not accept malformed or injected Worldle shares", (value) => {
     expect(parseShare(value).status).not.toBe("parsed");
@@ -80,7 +85,9 @@ describe("sample-derived Flagle parser", () => {
 
   it("supports a valid six-guess loss variant", () => {
     const rows = Array.from({ length: 6 }, () => "🟥🟥🟩");
-    expect(parseShare(["#Flagle #1701 (17.11.2026) X/6", ...rows].join("\n"))).toMatchObject({
+    expect(
+      parseShare(["#Flagle #1701 (17.11.2026) X/6", ...rows].join("\n")),
+    ).toMatchObject({
       status: "parsed",
       result: { outcome: "loss", attempts: 6 },
     });
@@ -116,34 +123,46 @@ describe("regressions from accepted existing-game formats", () => {
 
   it("accepts Connections loss with one solved group and four mistakes", () => {
     expect(
-      parseShare([
-        "Connections",
-        "Puzzle #1300",
-        "🟪🟩🟨🟦",
-        "🟨🟨🟨🟨",
-        "🟪🟦🟪🟩",
-        "🟪🟩🟦🟦",
-        "🟩🟩🟪🟩",
-      ].join("\n")),
+      parseShare(
+        [
+          "Connections",
+          "Puzzle #1300",
+          "🟪🟩🟨🟦",
+          "🟨🟨🟨🟨",
+          "🟪🟦🟪🟩",
+          "🟪🟩🟦🟦",
+          "🟩🟩🟪🟩",
+        ].join("\n"),
+      ),
     ).toMatchObject({
       status: "parsed",
-      result: { gameSlug: "connections", outcome: "loss", metrics: { mistakes: 4, solvedGroups: 1 } },
+      result: {
+        gameSlug: "connections",
+        outcome: "loss",
+        metrics: { mistakes: 4, solvedGroups: 1 },
+      },
     });
   });
 
   it("accepts Strands with smart quotes and multiline hint/word rows", () => {
     expect(
-      parseShare([
-        "Strands #995",
-        "“A sample theme”",
-        "💡🔵💡🔵",
-        "💡🔵💡🔵",
-        "💡🔵💡🔵",
-        "🟡",
-      ].join("\n")),
+      parseShare(
+        [
+          "Strands #995",
+          "“A sample theme”",
+          "💡🔵💡🔵",
+          "💡🔵💡🔵",
+          "💡🔵💡🔵",
+          "🟡",
+        ].join("\n"),
+      ),
     ).toMatchObject({
       status: "parsed",
-      result: { gameSlug: "strands", outcome: "complete", metrics: { hints: 6, themeWords: 6 } },
+      result: {
+        gameSlug: "strands",
+        outcome: "complete",
+        metrics: { hints: 6, themeWords: 6 },
+      },
     });
   });
 });

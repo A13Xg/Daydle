@@ -25,31 +25,33 @@ Obsidian Arcade from [PR #11](https://github.com/A13Xg/Daydle/pull/11) is now th
 
 The statuses below represent the **main branch**. Each in-progress PR maintains its live state; avoid claiming it is already on main. Phase 0 is complete after foundational documentation lands on main.
 
-| Phase | Name | Depends on | Main status |
-|---|---|---|---|
-| 0 | Repository foundation and delivery contract | — | COMPLETE |
-| 1 | Application skeleton, tooling, and deploy baselines | 0 | COMPLETE — [PR #1](https://github.com/A13Xg/Daydle/pull/1), merge `b91a6e8` |
-| 2 | Domain model, persistence, and security foundations | 1 | COMPLETE — [PR #2](https://github.com/A13Xg/Daydle/pull/2), merge `b4a1140` |
-| 3 | Authentication, onboarding, and account identity | 2 | COMPLETE with owner-approved scope changes — [PR #3](https://github.com/A13Xg/Daydle/pull/3), merge `bff7b89`, evidence in [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md) |
-| 4 | Game catalog, selection, and discovery | 3 | COMPLETE — [PR #5](https://github.com/A13Xg/Daydle/pull/5), merge `e0fcb2b` |
-| 5 | Today experience, PWA, and external-game navigation | 4 | COMPLETE — [PR #7](https://github.com/A13Xg/Daydle/pull/7) merged; [release](https://github.com/A13Xg/Daydle/actions/runs/43814332227) deployed; [PR #10](https://github.com/A13Xg/Daydle/pull/10) merged; owner-reported 8/8 iPhone PWA tests PASS; [archive](completedPhases/Phase5Exec.md) |
-| 6 | Deterministic parser registry and initial game coverage | 5 | COMPLETE — [PR #12](https://github.com/A13Xg/Daydle/pull/12), merge `99401d5`, [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43930997408) passed, [archive](completedPhases/Phase6Exec.md) |
-| 6.5 | Obsidian Arcade UI/UX overhaul | 6 | COMPLETE — [PR #13](https://github.com/A13Xg/Daydle/pull/13) merged into main at `520ca5b`; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43970518949) passed; redesigned iPhone acceptance remains owner-deferred before release |
-| 7 | Result ingestion, history, and correction lifecycle | 6.5 | COMPLETE (source and hosted API release) — [PR #14](https://github.com/A13Xg/Daydle/pull/14) merged; Phase 7 SQL applied and protected production [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648) PASS. Authenticated result-lifecycle E2E remains deferred/unverified. |
-| 8 | Personal statistics, streaks, and achievements | 7 | COMPLETE (source and hosted API release) — [PR #15](https://github.com/A13Xg/Daydle/pull/15) merged; Phase 8 SQL applied and protected production [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648) PASS. Authenticated statistics E2E remains deferred/unverified. |
-| 9 | Public profiles and instant friendship | 8 | COMPLETE (source and hosted API release) — [PR #16](https://github.com/A13Xg/Daydle/pull/16) merged; Phase 9 SQL applied, public-profile route and social auth boundary verified by [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648). Real two-account friendship E2E remains deferred/unverified. |
-| 10 | Spoiler-safe comparisons, scoreboards, and rankings | 9 | COMPLETE (source/hosted release) — [PR #18](https://github.com/A13Xg/Daydle/pull/18) merged at `9098fdc`; [main CI #44044954484](https://github.com/A13Xg/Daydle/actions/runs/44044954484), protected [Deploy Worker #44045005321](https://github.com/A13Xg/Daydle/actions/runs/44045005321) and exact hosted migration `20261117075359_phase10_comparisons` verified. Authenticated two-account E2E and owner-deferred physical iPhone testing remain unverified. |
-| 11 | Administration, game requests/voting, and diagnostics | 10 | SOURCE MERGED — [PR #22](https://github.com/A13Xg/Daydle/pull/22), merge `339f468`, [main CI #44171841239](https://github.com/A13Xg/Daydle/actions/runs/44171841239) PASS. Phase 11 hosted SQL applied as `20261118013515_phase11_administration` and service-only RPC grants checked; operator enrollment, new Worker deployment and authenticated E2E NOT VERIFIED; [source archive](completedPhases/Phase11Exec.md). |
-| 12 | Privacy lifecycle, encrypted backups, and recovery | 11 | SOURCE MERGED / ACCEPTANCE BLOCKED — [PR #23](https://github.com/A13Xg/Daydle/pull/23), merge `52d9d4c`, [main CI #44172190894](https://github.com/A13Xg/Daydle/actions/runs/44172190894) PASS. Phase 12 hosted SQL applied as `20261118013526_phase12_privacy` with service-only RPC grants checked. Worker cron, independent scheduled encrypted offsite backup, actual restore and deletion reconciliation NOT VERIFIED. [Active acceptance record](Phase12Exec.md). |
-| 13 | UX completeness, security, accessibility, and QA hardening | 12 | SOURCE MERGED / ACCEPTANCE BLOCKED — [PR #24](https://github.com/A13Xg/Daydle/pull/24), merge `2042288`, [main CI #44172784193](https://github.com/A13Xg/Daydle/actions/runs/44172784193) PASS. iOS Safari/VoiceOver, hosted real-user E2E, visual and operational recovery gates NOT VERIFIED. [Active acceptance record](Phase13Exec.md). |
-| 14 | Public beta release and operational handoff | 13 | IN PROGRESS / BETA BLOCKED — [merged PR #25](https://github.com/A13Xg/Daydle/pull/25). Source-only release readiness, privacy disclosures and operator checklist underway; no beta authorization or hosted deployment. [Active plan](Phase14Exec.md). |
+| Phase | Name                                                       | Depends on | Main status                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ----- | ---------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0     | Repository foundation and delivery contract                | —          | COMPLETE                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| 1     | Application skeleton, tooling, and deploy baselines        | 0          | COMPLETE — [PR #1](https://github.com/A13Xg/Daydle/pull/1), merge `b91a6e8`                                                                                                                                                                                                                                                                                                                                                                                             |
+| 2     | Domain model, persistence, and security foundations        | 1          | COMPLETE — [PR #2](https://github.com/A13Xg/Daydle/pull/2), merge `b4a1140`                                                                                                                                                                                                                                                                                                                                                                                             |
+| 3     | Authentication, onboarding, and account identity           | 2          | COMPLETE with owner-approved scope changes — [PR #3](https://github.com/A13Xg/Daydle/pull/3), merge `bff7b89`, evidence in [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md)                                                                                                                                                                                                                                                                               |
+| 4     | Game catalog, selection, and discovery                     | 3          | COMPLETE — [PR #5](https://github.com/A13Xg/Daydle/pull/5), merge `e0fcb2b`                                                                                                                                                                                                                                                                                                                                                                                             |
+| 5     | Today experience, PWA, and external-game navigation        | 4          | COMPLETE — [PR #7](https://github.com/A13Xg/Daydle/pull/7) merged; [release](https://github.com/A13Xg/Daydle/actions/runs/43814332227) deployed; [PR #10](https://github.com/A13Xg/Daydle/pull/10) merged; owner-reported 8/8 iPhone PWA tests PASS; [archive](completedPhases/Phase5Exec.md)                                                                                                                                                                           |
+| 6     | Deterministic parser registry and initial game coverage    | 5          | COMPLETE — [PR #12](https://github.com/A13Xg/Daydle/pull/12), merge `99401d5`, [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43930997408) passed, [archive](completedPhases/Phase6Exec.md)                                                                                                                                                                                                                                                               |
+| 6.5   | Obsidian Arcade UI/UX overhaul                             | 6          | COMPLETE — [PR #13](https://github.com/A13Xg/Daydle/pull/13) merged into main at `520ca5b`; [post-merge CI](https://github.com/A13Xg/Daydle/actions/runs/43970518949) passed; redesigned iPhone acceptance remains owner-deferred before release                                                                                                                                                                                                                        |
+| 7     | Result ingestion, history, and correction lifecycle        | 6.5        | COMPLETE (source and hosted API release) — [PR #14](https://github.com/A13Xg/Daydle/pull/14) merged; Phase 7 SQL applied and protected production [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648) PASS. Authenticated result-lifecycle E2E remains deferred/unverified.                                                                                                                                                          |
+| 8     | Personal statistics, streaks, and achievements             | 7          | COMPLETE (source and hosted API release) — [PR #15](https://github.com/A13Xg/Daydle/pull/15) merged; Phase 8 SQL applied and protected production [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648) PASS. Authenticated statistics E2E remains deferred/unverified.                                                                                                                                                                |
+| 9     | Public profiles and instant friendship                     | 8          | COMPLETE (source and hosted API release) — [PR #16](https://github.com/A13Xg/Daydle/pull/16) merged; Phase 9 SQL applied, public-profile route and social auth boundary verified by [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648). Real two-account friendship E2E remains deferred/unverified.                                                                                                                                |
+| 10    | Spoiler-safe comparisons, scoreboards, and rankings        | 9          | COMPLETE (source/hosted release) — [PR #18](https://github.com/A13Xg/Daydle/pull/18) merged at `9098fdc`; [main CI #44044954484](https://github.com/A13Xg/Daydle/actions/runs/44044954484), protected [Deploy Worker #44045005321](https://github.com/A13Xg/Daydle/actions/runs/44045005321) and exact hosted migration `20261117075359_phase10_comparisons` verified. Authenticated two-account E2E and owner-deferred physical iPhone testing remain unverified.      |
+| 11    | Administration, game requests/voting, and diagnostics      | 10         | SOURCE MERGED — [PR #22](https://github.com/A13Xg/Daydle/pull/22), merge `339f468`, [main CI #44171841239](https://github.com/A13Xg/Daydle/actions/runs/44171841239) PASS. Phase 11 hosted SQL applied as `20261118013515_phase11_administration` and service-only RPC grants checked; operator enrollment, new Worker deployment and authenticated E2E NOT VERIFIED; [source archive](completedPhases/Phase11Exec.md).                                                 |
+| 12    | Privacy lifecycle, encrypted backups, and recovery         | 11         | SOURCE MERGED / ACCEPTANCE BLOCKED — [PR #23](https://github.com/A13Xg/Daydle/pull/23), merge `52d9d4c`, [main CI #44172190894](https://github.com/A13Xg/Daydle/actions/runs/44172190894) PASS. Phase 12 hosted SQL applied as `20261118013526_phase12_privacy` with service-only RPC grants checked. Worker cron, independent scheduled encrypted offsite backup, actual restore and deletion reconciliation NOT VERIFIED. [Active acceptance record](Phase12Exec.md). |
+| 13    | UX completeness, security, accessibility, and QA hardening | 12         | SOURCE MERGED / ACCEPTANCE BLOCKED — [PR #24](https://github.com/A13Xg/Daydle/pull/24), merge `2042288`, [main CI #44172784193](https://github.com/A13Xg/Daydle/actions/runs/44172784193) PASS. iOS Safari/VoiceOver, hosted real-user E2E, visual and operational recovery gates NOT VERIFIED. [Active acceptance record](Phase13Exec.md).                                                                                                                             |
+| 14    | Public beta release and operational handoff                | 13         | IN PROGRESS / BETA BLOCKED — [merged PR #25](https://github.com/A13Xg/Daydle/pull/25). Source-only release readiness, privacy disclosures and operator checklist underway; no beta authorization or hosted deployment. [Active plan](Phase14Exec.md).                                                                                                                                                                                                                   |
 
 ## Phase 0 — Repository foundation and delivery contract
+
 **Status:** COMPLETE (bootstrap; direct-main exception). **Dependencies:** none.
 
 **Purpose:** Establish a single source of truth for product behavior and a repeatable, reviewable execution loop before application development.
 
 **Scope and implementation guidance:**
+
 - Initialize the repository on main; add README.md with navigation and scope.
 - Add IDEA.md containing product specification, confirmed constraints, public social model, ingestion and date/spoiler semantics, privacy, and deferred visual styling.
 - Add this roadmap.md with high-level, start-to-finish phases, dependencies, concrete outcomes, and status semantics.
@@ -59,11 +61,13 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** All files exist and link correctly on main; roadmap statuses are coherent; no app implementation is claimed; initial commit history reflects the repository owner only.
 
 ## Phase 1 — Application skeleton, tooling, and deploy baselines
+
 **Status:** COMPLETE — [PR #1](https://github.com/A13Xg/Daydle/pull/1) merged at `b91a6e859ee345c132cb27380bbff4c9aa4ee56a`, archived plan [completedPhases/Phase1Exec.md](completedPhases/Phase1Exec.md), and successful [main CI](https://github.com/A13Xg/Daydle/actions/runs/43560166887). **Dependencies:** 0.
 
 **Purpose:** Produce a deployable, tested, minimal React/TypeScript/Vite app with a Cloudflare Worker API and reproducible local development.
 
 **Scope and implementation guidance:**
+
 - Establish frontend and server boundaries (monorepo or simple workspace justified in Phase1Exec.md), TypeScript strictness, formatting/linting, environment schema, package lock, and typed shared contracts.
 - Configure Cloudflare Worker serving the Vite build plus versioned API route(s); keep secrets server-side.
 - Establish Supabase project/client wiring for local development and environment-specific configuration without committing secrets.
@@ -74,11 +78,13 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Clean checkout installs and passes checks; Worker API and frontend build locally; deployment configuration documented; preview deployment demonstrated where credentials exist; no secrets in Git.
 
 ## Phase 2 — Domain model, persistence, and security foundations
+
 **Status:** COMPLETE — [PR #2](https://github.com/A13Xg/Daydle/pull/2) merged at `b4a114008680da77f5c897ab70527742443462f6`; archived [completedPhases/Phase2Exec.md](completedPhases/Phase2Exec.md); [main CI passed](https://github.com/A13Xg/Daydle/actions/runs/43562286254). **Dependencies:** 1.
 
 **Purpose:** Establish migration-controlled PostgreSQL schema, row security, and stable application types before feature logic.
 
 **Scope and implementation guidance:**
+
 - Define canonical schemas and constraints for profiles, game/catalog categories, user-game selections, puzzle identity, raw submissions, results, corrections, friendships/blocks, achievements, suggestions/votes, and minimal audit state. Defer optional tables until justified.
 - Separate public profile projections from private authentication, email, raw results, and administrative data. Plan RLS and server authorization for public, owner, friend-irrelevant, and administrator reads/writes.
 - Establish puzzle identity independent from local calendar days; use one canonical user/game/puzzle result constraint with MVP single-per-day handling at service layer.
@@ -89,11 +95,13 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Fresh database migrates reproducibly; integrity/RLS tests pass; key concurrency constraints enforced by database; schema contracts documented and queryable.
 
 ## Phase 3 — Authentication, onboarding, and account identity
+
 **Main status:** COMPLETE — [PR #3](https://github.com/A13Xg/Daydle/pull/3), merge `bff7b89`; verified with owner-approved scope changes (Apple and Google only; installed-PWA test deferred), see [completedPhases/Phase3Exec.md](completedPhases/Phase3Exec.md). **Dependencies:** 2.
 
 **Purpose:** Enable open signup and account lifecycle with unique public identity and private credentials.
 
 **Scope and implementation guidance:**
+
 - Implement email/password registration/login and Apple/Google OAuth using Supabase Auth; provider-only accounts must not require a password. Handle callbacks and Apple relay addresses correctly.
 - Create profile with display name and secure random 5-character friend code from ABCDEFGHJKMNPQRSTUVWXYZ23456789; enforce uniqueness via DB constraint plus bounded insert retry, not lookup-only checks.
 - Build onboarding, session restoration/logout, password recovery, field validation, auth error/empty/loading states, and profile editing.
@@ -103,11 +111,13 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Signup-to-profile flow passes tests on primary target, identity rules verified, unauthorized access rejected, recovery/callback handling validated.
 
 ## Phase 4 — Game catalog, selection, and discovery
+
 **Status:** COMPLETE — [PR #5](https://github.com/A13Xg/Daydle/pull/5) merged at `e0fcb2b825b6298570c94580b928afd59a0c24f9` with [passing main CI](https://github.com/A13Xg/Daydle/actions/runs/43801213149). Plan: [completedPhases/Phase4Exec.md](completedPhases/Phase4Exec.md). **Dependencies:** 3.
 
 **Purpose:** Make a broad external-game catalog browseable while supporting only a smaller initial set of parsers.
 
 **Scope and implementation guidance:**
+
 - Implement canonical game registry with stable IDs, publishers/URLs, categories, cadence/timezone/reset metadata, active/retired status, icon usage, and parser-support labels.
 - Seed a curated representative set of playable game links, distinguish “launchable but not parseable,” and validate outbound URLs.
 - Implement search/filter, game detail, category discovery, personal add/remove/reorder, and persisted selection preferences.
@@ -117,6 +127,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Public discovery works, selections survive login, inactive games handled, permissions enforced, tests cover metadata/URL logic and selection races.
 
 **PR #5 review hardening — IMPLEMENTED / CI VERIFIED:**
+
 - [x] Revoke the inherited `UPDATE(sort_order)` column grant as well as table-level write grants; SQL tests check `has_any_column_privilege` and reject direct owner reordering.
 - [x] Treat failed favorite-save acknowledgements as **unconfirmed**, reread the authoritative ordered selection and block editing if reconciliation fails.
 - [x] Display saved-game loading/error states and a retry action on both catalog and direct detail routes.
@@ -124,11 +135,12 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 - [x] Retain the validated operational keep-alive improvements and correct the false diagnosis from PR #6.
 - **Evidence:** [Phase 4 PR #5](https://github.com/A13Xg/Daydle/pull/5) and [CI run](https://github.com/A13Xg/Daydle/actions/runs/43785315498), 60 unit/API tests plus two clean PG17 databases. Post-merge live database workflow dispatch remains unverified.
 
-
 ## Phase 5 — Today experience, PWA, and external-game navigation
+
 **Main status:** COMPLETE — the owner reported all eight physical iPhone Safari/installed-PWA scenarios PASS on November 16, 2026. This is manual owner attestation, not independently reproduced hardware CI. Archived evidence: [completedPhases/Phase5Exec.md](completedPhases/Phase5Exec.md). Phase 5 application source was merged via [PR #7](https://github.com/A13Xg/Daydle/pull/7). Owner-approved [release run 43814332227](https://github.com/A13Xg/Daydle/actions/runs/43814332227) **actually applied and verified** Phase 4/5 Supabase SQL and **deployed** Cloudflare Worker `daydle-app` (version `126e8806-3cb5-4765-a164-225466531727`). The action's final smoke step misclassified a transient HTTP 200 HTML response as valid health JSON and failed **after** successful deployment. Subsequent independent read-only GitHub CI probes confirmed the hosted health JSON, JSON API 404, manifest, service worker, Today/Games pages and icons. [PR #10](https://github.com/A13Xg/Daydle/pull/10) adds content-aware propagation retries and a build-version PWA check. The eight physical Safari/installed-PWA scenarios were subsequently **reported PASS by the owner**; the plan has been archived. **Dependencies:** 4.
 
 **Automated gates completed on PR #7:**
+
 - [x] Today from selected games in order with private manual played markers distinct from verified results.
 - [x] Global user-tap clipboard entry, manual/denied/empty/oversized paths, publisher return hint, responsive fixed mobile action.
 - [x] Installable manifest, generated 180/192/512/maskable PNG icons, build-versioned service worker and public-only app-shell caching.
@@ -148,10 +160,10 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 - [x] [PR #10](https://github.com/A13Xg/Daydle/pull/10) merged at [1ed806c](https://github.com/A13Xg/Daydle/commit/1ed806c249fbaa4f6e4a1b549ea99384e2590c69). No additional migration needed.
 - [x] Owner reported all eight on-device Safari/home-screen PWA checks PASS: installation, Google/Apple login, publisher return, clipboard gesture/fallback, offline, account isolation and reconnection. No new automated device proof was generated.
 
-
 **Purpose:** Close the mobile game-launch-return loop without inventing iOS clipboard/browser capabilities.
 
 **Scope and implementation guidance:**
+
 - Implement Today from user-selected games with launch links, record/played state, and a persistent global Paste entry. Optional rotation does not impose missed-day failures.
 - Configure installable PWA manifest/icons, application shell caching, and offline read-only access to previously fetched safe catalog/Today/history content; keep sensitive/stale spoilers out of reusable public caches.
 - Prefer new tab/external context for source games, but detect actual iOS Safari/installed-PWA behavior and provide visible fallback/resume affordances.
@@ -161,11 +173,13 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Selected game -> publisher -> Daydle return -> user-triggered Paste shell is usable on iOS; offline read-only experience documented and tested.
 
 ## Phase 6 — Deterministic parser registry and initial game coverage
+
 **Status:** COMPLETE — [PR #12](https://github.com/A13Xg/Daydle/pull/12) merged at `99401d5`, archived [execution plan](completedPhases/Phase6Exec.md), [post-merge CI 43930997408](https://github.com/A13Xg/Daydle/actions/runs/43930997408) passed. **Dependencies:** 5.
 
 **Purpose:** Build an isolated, versioned, testable server-side parsing engine and the first 5–10 reliable game parsers.
 
 **Scope and implementation guidance:**
+
 - Define typed parser interface (detect confidence and diagnostics, parse, validate, puzzle/date resolution, parser+format versions, normalized core fields, structured per-game metrics).
 - Define normalization and bounded input handling, ambiguous-match behavior, error taxonomy, Unicode/emoji considerations, and false-positive avoidance.
 - Implement 5–10 distinct parser modules, with real representative current and historical samples where legitimately available, malformed fixtures, win/loss variants, whitespace/Unicode edges, and format regression tests.
@@ -176,11 +190,13 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Fixture suite verifies all supported games, false-positive and malformed-input handling, confidence routing, puzzle resolution, and bounded execution.
 
 ## Phase 6.5 — Obsidian Arcade UI/UX overhaul
+
 **Status:** COMPLETE — merged [PR #13](https://github.com/A13Xg/Daydle/pull/13) at `520ca5b` and post-merge [CI #43970518949](https://github.com/A13Xg/Daydle/actions/runs/43970518949) passed. Previous pre-merge verification: source validated by [CI #43949077483](https://github.com/A13Xg/Daydle/actions/runs/43949077483) (196 tests/25 suites, 16 Chromium route/viewport cases, two database security jobs). Screenshot-versus-design parity fixes and updated [screenshots](docs/screenshots/README.md) are included. The physical iPhone Safari/PWA gate was expressly deferred by the owner for PR review; it is **NOT VERIFIED** and must be revisited before any release. [Archived plan](completedPhases/Phase6.5Exec.md), with real-browser screenshot provenance [here](docs/screenshots/README.md). The approved UI is now present on main. **Dependencies:** 6. **Visual authority:** [Obsidian Arcade](referenceFiles/Daydle%20UI-UX%20Reference/DESIGN.md) and 13 approved example screens.
 
 **Purpose:** Build the permanent mobile-first visual system before adding result history, statistics and social interfaces.
 
 **Implementation guidance:**
+
 - Implement dark-only Plus Jakarta Sans tokens, accessible shared components, mobile five-tab navigation, stack and blank/auth shells. Bundle production assets; never ship Tailwind Play CDN or remote demo fonts.
 - Rebuild existing auth, Today, catalog, account and Paste views without changing security, clipboard gestures, PWA/offline, external navigation or backend contracts. Unimplemented Stats/Friends routes must have genuine empty/unavailable states, never fabricated metrics.
 - Use mockup screens for visual composition; friend requests, global cross-game rankings, unverified counters, push alerts, reactions and multi-site auto-launch remain outside the approved product baseline.
@@ -189,11 +205,13 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Consistent responsive UI and interaction coverage across existing routes; automated accessibility and full regression suite; manual Safari/PWA checks for affected flows.
 
 ## Phase 7 — Result ingestion, history, and correction lifecycle
+
 **Status:** COMPLETE (source and hosted API release) — [PR #14](https://github.com/A13Xg/Daydle/pull/14) merged; Phase 7 SQL applied and protected production [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648) PASS. Authenticated result-lifecycle E2E remains deferred/unverified. **Dependencies:** 6.5.
 
 **Purpose:** Make pasted results reliably owned, deduplicated, persisted, corrected, and retrievable.
 
 **Scope and implementation guidance:**
+
 - Wire global Paste to authenticated API: normalize/detect/parse/validate/resolve; automatically save high-confidence results; prompt on ambiguous game/date; single result per request.
 - Transactionally save raw (90-day expiry) and parsed result with provenance/version. Use unique user/game/puzzle key, idempotent duplicates, and explicit replace/delete flows.
 - For explicit authenticated Submit result actions, automatically retain bounded unknown, ambiguous and malformed publisher shares as owner-private raw samples with reason categories and 90-day expiry metadata; do not capture clipboard reads or unsafe/oversized text. Deduplicate retries, offer candidate-game confirmation, and build user history, game filtering, result details and correction explanation. **Owner-approved revision 2026-11-16**.
@@ -203,11 +221,13 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Paste-to-history and correction E2E pass; duplicate replay is idempotent; malformed/unknown handling safe; raw expiry metadata present and tested.
 
 ## Phase 8 — Personal statistics, streaks, and achievements
+
 **Status:** COMPLETE (source and hosted API release) — [PR #15](https://github.com/A13Xg/Daydle/pull/15) merged; Phase 8 SQL applied and protected production [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648) PASS. Authenticated statistics E2E remains deferred/unverified. **Dependencies:** 7.
 
 **Purpose:** Turn canonical results into trustworthy, game-aware historical insights.
 
 **Scope and implementation guidance:**
+
 - Compute universal activity counts, days active, active-day streak, and longest streak with user timezone semantics; the activity-based “full completion” requirement is not a separate all-games-complete streak.
 - Compute per-game success/attempt/score/time distributions, trend series, personal bests, and release-based play streaks only when game identity/cadence permits.
 - Add a small rule-driven achievements framework with invalidation on result replacement/deletion; expose public-ready structured metric summaries.
@@ -217,11 +237,13 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Statistics agree with result fixtures, recalc correctly after corrections, avoid unsupported cross-game comparisons, and meet reasonable latency targets.
 
 ## Phase 9 — Public profiles and instant friendship
+
 **Status:** COMPLETE (source and hosted API release) — [PR #16](https://github.com/A13Xg/Daydle/pull/16) merged; Phase 9 SQL applied, public-profile route and social auth boundary verified by [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648). Real two-account friendship E2E remains deferred/unverified. **Dependencies:** 8.
 
 **Purpose:** Publish permitted performance and implement mutual friends as an optional comparison filter.
 
 **Scope and implementation guidance:**
+
 - Publish accessible, shareable user profiles with display name, games, scores/results, statistics, ranks where defined, and achievements; exclude email/raw data/private operational metadata.
 - Create friend code entry, canonical share URL and QR display, camera QR scan where supported, and login-then-resume link acceptance. Codes resolve to public identities but are not authentication tokens.
 - Friend connection occurs instantly, symmetrically, and idempotently; support unfriend, regenerate code, self-friend rejection, blocking, and rate limiting. No friend requests or acceptance flow.
@@ -231,11 +253,13 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Code/link/QR flows and two-account mutual relation tests pass; no private field disclosure; block/unfriend behavior and race/idempotency covered.
 
 ## Phase 10 — Spoiler-safe comparisons, scoreboards, and rankings
+
 **Status:** COMPLETE (source and hosted API/PWA release) — [PR #18](https://github.com/A13Xg/Daydle/pull/18) merged as `9098fdc7502f6912b4d0b7a8cefc2ec6409c443a`; [main CI #44044954484](https://github.com/A13Xg/Daydle/actions/runs/44044954484) and protected [Deploy Worker #44045005321](https://github.com/A13Xg/Daydle/actions/runs/44045005321) both PASS on that commit. Hosted migration `20261117075359_phase10_comparisons` verified. Real authenticated two-account comparison E2E is NOT VERIFIED; physical iPhone testing remains owner-deferred. **Dependencies:** 9.
 
 **Purpose:** Provide meaningful public and friend-filtered competition without leaking current puzzle answers/results.
 
 **Scope and implementation guidance:**
+
 - Implement a single viewer-and-puzzle-aware spoiler policy at server query/service boundary: unlock when viewer submitted their own valid puzzle result OR publisher reset is verified.
 - Protect profiles, direct result APIs, public/friend leaderboards, rankings, cache responses, pagination, and any aggregate that could reveal hidden performance; anonymous viewers see spoiler-safe content.
 - Support daily same-game scoreboards, shared-game friend comparisons, history head-to-head, and compatible per-game rankings; define ties, metric direction, and low-participation policies.
@@ -245,11 +269,13 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** No current-puzzle score leakage pre-unlock through any listed endpoint; game rankings are internally consistent and corrections reflected.
 
 ## Phase 11 — Administration, game requests/voting, and diagnostics
+
 **Status:** SOURCE MERGED — [PR #22](https://github.com/A13Xg/Daydle/pull/22), merge `339f468`, [main CI #44171841239](https://github.com/A13Xg/Daydle/actions/runs/44171841239) PASS; [source archive](completedPhases/Phase11Exec.md). Hosted SQL applied as `20261118013515_phase11_administration`; operator membership, deployment and authenticated E2E **NOT VERIFIED**. **Dependencies:** 10.
 
 **Purpose:** Equip owner-operators to maintain the expanding catalog and parsers without unsafe direct database edits.
 
 **Scope and implementation guidance:**
+
 - Build role-gated admin views for catalog CRUD/deprecation, user restrictions, parser status and errors, retained unknown/failed sample inspection, and request/voting moderation.
 - Implement user-facing game suggestions and votes with duplicate controls, moderation states, visibility/ownership constraints, and abuse/rate limits.
 - Add operational parser diagnostics (game, parser version, error category, trend, sample reference) without exposing clipboard contents in general logs.
@@ -259,11 +285,13 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Authorized workflows work, unauthorized users cannot invoke admin endpoints, requests/votes are consistent, and failures are diagnosable.
 
 ## Phase 12 — Privacy lifecycle, encrypted backups, and recovery
+
 **Status:** SOURCE MERGED / ACCEPTANCE BLOCKED — [PR #23](https://github.com/A13Xg/Daydle/pull/23), merge `52d9d4c`, [main CI #44172190894](https://github.com/A13Xg/Daydle/actions/runs/44172190894) PASS. Source export/deletion, SQL purge and AES-GCM encryption exist; **hosted SQL applied as `20261118013526_phase12_privacy`; live cron, independent scheduled encrypted backups, isolated restore and deleted-user reconciliation NOT VERIFIED**. Root [Phase12Exec.md](Phase12Exec.md) remains active, not archived. **Dependencies:** 11.
 
 **Purpose:** Finish data privacy obligations and real recovery capability on a free managed-database plan.
 
 **Scope and implementation guidance:**
+
 - Enforce rolling 90-day deletion for raw accepted/unknown samples (including administratively accessible samples); verify orphan and historical correction handling.
 - Implement self-service export, result deletion end-to-end, and permanent account deletion with relationships, public stats/rank cleanup, retention documentation, and clear completion feedback.
 - Implement scheduled offsite encrypted PostgreSQL exports, integrity verification, retention and restore procedure outside the Supabase Free backup feature set; never commit secrets or plaintext dumps.
@@ -273,11 +301,13 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Controlled test export/delete/restore succeeds; raw expiry works; backup recovery documented and observable, no secret/public raw leaks.
 
 ## Phase 13 — UX completeness, security, accessibility, and QA hardening
+
 **Status:** SOURCE MERGED / ACCEPTANCE BLOCKED — [PR #24](https://github.com/A13Xg/Daydle/pull/24), merge `2042288`, [main CI #44172784193](https://github.com/A13Xg/Daydle/actions/runs/44172784193) PASS. Chromium accessibility and private-sample checks pass; **real Safari/VoiceOver, hosted OAuth/admin E2E, release monitoring and Phase 12 backup recovery remain NOT VERIFIED**. Root [Phase13Exec.md](Phase13Exec.md) remains active. **Dependencies:** 12.
 
 **Purpose:** Verify and harden polished workflows against the already approved Obsidian Arcade design system, without introducing a competing visual identity.
 
 **Scope and implementation guidance:**
+
 - Audit every core surface for loading, offline, empty, denied, error, conflict, retry, success, and save-confirmation states and consistent interaction feedback.
 - Test iOS Safari plus installed PWA game opening/return, user-activated clipboard, login restoration, QR scanning/share, spoiler reveal, editing, and unexpected interruptions.
 - Run accessibility audit targeting WCAG 2.2 AA, performance checks, responsiveness/touch target verification, navigation/focus/screen reader flows, and browser baseline.
@@ -288,11 +318,13 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Quality checklist and security/accessibility matrix pass, known-critical-defect count zero, regression suite green, primary iOS workflows demonstrated.
 
 ## Phase 14 — Public beta release and operational handoff
+
 **Status:** IN PROGRESS / PUBLIC BETA BLOCKED — [merged PR #25](https://github.com/A13Xg/Daydle/pull/25), [active plan](Phase14Exec.md). Source release-readiness work does not authorize any hosted schema, Worker deployment or beta launch. **Dependencies:** Phase 13 source merged; operational acceptance still open.
 
 **Purpose:** Release Daydle safely to open registration with a maintainable operating model.
 
 **Scope and implementation guidance:**
+
 - Finalize production environment, domain/DNS/TLS, Supabase provider callbacks, signing/cookies, Workers secrets, production migrations and seed data.
 - Verify production observability, admin access, scheduled 90-day cleanup, encrypted backups, backup alerting, restoration runbook, and support/incident procedures.
 - Perform pre-release smoke tests for signup, game selection, PWA installation, external launch/return, paste, profiles, spoilers, friend link/QR, stats, and admin workflows.
@@ -324,6 +356,7 @@ Future possibilities (not automatic phases or MVP blockers): additional parser c
 **Assessment of [PR #6](https://github.com/A13Xg/Daydle/pull/6):** Its claimed `apikey: ***` failure is unsupported. The actual `main` workflow already uses the configured `${SUPABASE_PUBLISHABLE_KEY}` header. A request made with a literal redaction placeholder is not a valid reproduction. Its six-day `*/6` cron also had no seven-day boundary gap. Neither is a demonstrated production defect.
 
 **Accepted and implemented improvements:**
+
 - Increase the cheap, row-limited read-only cron to **daily** for missed/delayed-run resilience, not to fix a nonexistent month-boundary defect.
 - Extract the HTTP check into `scripts/ops/keepalive.mjs`; validate the public Supabase origin/key, preserve the real API key header, fail on HTTP errors, and avoid logging secrets/response bodies.
 - Add isolated local-HTTP-server regression tests for request method, header, row-limited endpoint, 200 success, 401 denial and schedule.
@@ -336,11 +369,13 @@ Future possibilities (not automatic phases or MVP blockers): additional parser c
 Deferred operational items that are not numbered phases and do not block any phase's acceptance gates. Each needs explicit user authorization before work begins.
 
 ### Automated Apple client-secret rotation
+
 **Status:** NOT STARTED. **Depends on:** Sign in with Apple configured in Supabase Auth; production environment secrets; Phase 14 production readiness (or earlier if rotation reminders prove unreliable).
 
 **Why:** Apple's OAuth client secret is a signed token that expires after at most about six months. When it lapses, Apple sign-in fails while Google sign-in keeps working. The current process is manual: re-run the local setup script before the printed expiry date.
 
 **Proposed approach:**
+
 - Add a scheduled GitHub Actions workflow (monthly cron plus `workflow_dispatch`) in the `production` environment. A required-reviewer rule is acceptable, since each run then prompts a human.
 - Generate the ES256 client-secret token with Node's built-in `crypto`; no new dependencies.
 - Update only `external_apple_secret` through the Supabase Management API using `SUPABASE_ACCESS_TOKEN`. Do not push a whole configuration file or touch other auth settings.
@@ -355,23 +390,29 @@ Deferred operational items that are not numbered phases and do not block any pha
 **Exit/verification:** A dispatch run rotates the secret end to end; Apple sign-in succeeds afterwards on the production domain; the new expiry is recorded; no secret appears in logs; rollback and key-revocation steps are documented in `docs/auth.md`.
 
 ### Installed-PWA authentication verification
+
 **Status:** NOT STARTED (deferred from Phase 3 by the owner). **Depends on:** the PWA experience in Phase 5.
 
 Verify on an iPhone, in the installed PWA rather than Safari tabs: Google and Apple sign-in and return to the app, sign-out, and session restoration after the app is closed and reopened. Record results in the Phase 5 archive.
 
 ### Email/password sign-in with confirmation and custom SMTP
+
 **Status:** NOT STARTED. **Depends on:** a verified sending domain and SMTP provider.
 
 Email/password is disabled because unconfirmed email signup allows account pre-hijacking through automatic identity linking (see [docs/auth.md](docs/auth.md)). To re-enable: configure custom SMTP on an owned domain, require email confirmation, restore a form (the removed form and widget are in git history, commit `d534cfd`), verify confirmation and password recovery on a real device, then run `scripts/ops/configure-turnstile.ps1 -EmailSignup Confirmed` if a CAPTCHA is wanted.
 
 ### Google OAuth consent-screen branding and publishing
+
 **Status:** NOT STARTED (owner action). Publish the Google app from Testing to production and add branding: app name, support email, homepage and authorized domain. Basic scopes (`openid`, `email`, `profile`) are expected not to need Google verification; confirm in the console.
 
 ### Retire or rework dormant email-era code
+
 **Status:** NOT STARTED. The auth actions still contain email sign-up, sign-in, recovery and CAPTCHA token pass-through, and `configure-turnstile.ps1` remains. The account page's password-reset form was removed during the Phase 3 review because any signed-in session could open it by URL. Decide whether to delete or restore them when the email decision is made, so unused paths do not rot.
 
 ### Development-dependency advisories
+
 **Status:** NOT STARTED. Dependabot reports a moderate `minimatch` denial-of-service advisory (and `npm audit` reports moderate findings in the lint toolchain). They are development-only and do not ship in the app or Worker. Upgrade the lint tooling in a dedicated change.
 
 ### Provider-supplied display names
+
 **Status:** NOT STARTED (owner decision needed). New users from Apple or Google get their provider name as a **public** display name and are marked as onboarded, so they are never asked to confirm it. The sign-in and account pages now disclose this. To require confirmation instead, add a forward-only migration that sets `onboarding_completed` to false for provider-supplied names (and update the trigger test), or add an explicit "choose your public name" step.

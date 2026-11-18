@@ -71,7 +71,9 @@ export function ShareTutorial({ onDone }: { onDone: () => void }) {
               </span>
             </div>
             <strong>Paste, then Submit result</strong>
-            <span>Paste from the clipboard and submit to save your history.</span>
+            <span>
+              Paste from the clipboard and submit to save your history.
+            </span>
           </li>
         </ol>
         <p className="share-tour-note">
