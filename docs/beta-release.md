@@ -1,6 +1,6 @@
 # Daydle public beta — release gate and operational handoff
 
-**State: BLOCKED — no public beta authorization.** Last checked against source `main` commit `20422881f774a0c5992cc52e8ad1035dfae64458` on November 17, 2026. [Phase 14 execution plan](../Phase14Exec.md) and [quality matrix](quality-matrix.md) are the audit records. This runbook is not authorization to execute a migration, deploy, delete user data, create credentials or open public beta.
+**State: BLOCKED — hosted Phase 11/12 SQL applied, but no verified new Worker deployment or beta authorization.** Last checked against source `main` commit `20422881f774a0c5992cc52e8ad1035dfae64458` on November 17, 2026. [Phase 14 execution plan](../Phase14Exec.md) and [quality matrix](quality-matrix.md) are the audit records. This runbook is not authorization to execute a migration, deploy, delete user data, create credentials or open public beta.
 
 ## 1. Verified source baseline and open gaps
 
@@ -8,7 +8,7 @@
 |---|---|---|
 | Phases 11–13 source merged | PRs [#22](https://github.com/A13Xg/Daydle/pull/22), [#23](https://github.com/A13Xg/Daydle/pull/23), [#24](https://github.com/A13Xg/Daydle/pull/24); [main CI](https://github.com/A13Xg/Daydle/actions/runs/44172784193) | SOURCE VERIFIED |
 | Latest protected production release | [Deploy Worker #44045005321](https://github.com/A13Xg/Daydle/actions/runs/44045005321), Phase 10 commit `9098fdc` | LAST CONFIRMED |
-| Phase 11/12 hosted database migrations | Structured Management API exact version/name plus schema and RLS verification | **NOT VERIFIED** |
+| Phase 11/12 hosted database migrations | Supabase lists `20261118013515_phase11_administration` and `20261118013526_phase12_privacy`; expected RPCs, table/trigger and grants checked | **APPLIED / VERIFIED** (repository filename reconciliation in PR #26) |
 | Phase 11/12/13 deployed APIs and PWA | A new approved protected Deploy Worker on merged main; post-deploy source/asset and public API probes | **NOT VERIFIED** |
 | Authenticated two-account / operator tests | Actual Google/Apple sign-in, result and spoiler flows, role-gated admin, export/deletion in disposable test accounts | **NOT VERIFIED** |
 | Raw-share expiry | Confirm Worker cron is active and logs show successful scheduled physical purge; inspect sample after expiry | **NOT VERIFIED** |
