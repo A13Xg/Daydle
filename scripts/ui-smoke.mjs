@@ -233,7 +233,7 @@ async function visit(client, pathname, viewport) {
   const kind = pathname.startsWith("/auth")
     ? "blank"
     : (
-        ["/lineup", "/history", "/how-it-works", "/notifications", "/games/wordle", "/compare", "/requests", "/admin"].includes(
+        ["/lineup", "/history", "/how-it-works", "/privacy", "/notifications", "/games/wordle", "/compare", "/requests", "/admin"].includes(
           pathname,
         ) || /^\/players\/[0-9a-f-]{36}\/?$/i.test(pathname) ||
         /^\/comparison-results\/[0-9a-f-]{36}\/?$/i.test(pathname)
@@ -269,6 +269,15 @@ async function visit(client, pathname, viewport) {
       '({privateRaw:!!document.querySelector(\'[aria-label="Private sample review"]\'),operatorControls:!!document.querySelector("#admin-section")})');
     if (guest.privateRaw || guest.operatorControls)
       throw new Error("Guest accessed operator controls: " + JSON.stringify(guest));
+  }
+  if (pathname === "/privacy" && viewport.width === 393) {
+    const privacy = await evaluate(
+      client,
+      '({heading:document.querySelector("h1")?.textContent,sections:document.querySelectorAll(".catalog-page h2").length,privateData:!!document.querySelector("#delete-account-confirmation")})',
+    );
+    if (!privacy.heading?.includes("Privacy") || privacy.sections < 5 || privacy.privateData) {
+      throw new Error("Public privacy disclosure contract failed: " + JSON.stringify(privacy));
+    }
   }
   if (pathname === "/friends" && viewport.width === 393) {
     const privacy = await evaluate(
@@ -432,14 +441,15 @@ try {
             "/account",
             "/auth",
             "/how-it-works",
+            "/privacy",
             "/notifications",
             "/games/wordle",
           ]
-        : ["/today", "/games", "/requests", "/friends", "/compare", "/auth"];
+        : ["/today", "/games", "/requests", "/friends", "/compare", "/privacy", "/auth"];
     for (const pathname of paths) await visit(client, pathname, viewport);
   }
   console.log(
-    "UI-SMOKE: 28 route/viewport checks passed (Chromium, not Safari).",
+    "UI-SMOKE: 31 route/viewport checks passed (Chromium, not Safari).",
   );
 } finally {
   client?.close();
