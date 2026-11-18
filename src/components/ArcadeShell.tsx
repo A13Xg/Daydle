@@ -48,6 +48,7 @@ export function stackTitle(pathname: string): string {
   if (pathname.startsWith("/comparison-results/")) return "Public result";
   if (pathname === "/notifications") return "Notifications";
   if (pathname === "/how-it-works") return "How it works";
+  if (pathname === "/privacy") return "Privacy and data";
   if (pathname.startsWith("/games/")) return "Game details";
   if (pathname.startsWith("/players/")) return "Player profile";
   return "Daydle";
