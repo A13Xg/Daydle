@@ -1,26 +1,43 @@
 import { describe, expect, it, vi } from "vitest";
-import { BETA_ORIGIN, runPublicBetaPreflight } from "../scripts/ops/beta-preflight.mjs";
+import {
+  BETA_ORIGIN,
+  runPublicBetaPreflight,
+} from "../scripts/ops/beta-preflight.mjs";
 
 function publicFixture(url: string) {
   const path = new URL(url).pathname;
   if (path === "/api/v1/health")
-    return Response.json({ service: "daydle-api", status: "ok", version: "v1" });
+    return Response.json({
+      service: "daydle-api",
+      status: "ok",
+      version: "v1",
+    });
   if (path === "/api/v1/not-found")
     return Response.json({ error: "not_found" }, { status: 404 });
   if (path === "/api/v1/admin" || path === "/api/v1/privacy/export")
-    return Response.json({ error: "authentication_required" }, {
-      status: 401, headers: { "cache-control": "private, no-store" },
-    });
-  if (path === "/api/v1/requests")
-    return Response.json([{
-      id: "11111111-1111-4111-8111-111111111111",
-      name: "Game", status: "pending",
-    }], {
-      headers: {
-        "cache-control": "private, no-store",
-        vary: "Authorization",
+    return Response.json(
+      { error: "authentication_required" },
+      {
+        status: 401,
+        headers: { "cache-control": "private, no-store" },
       },
-    });
+    );
+  if (path === "/api/v1/requests")
+    return Response.json(
+      [
+        {
+          id: "11111111-1111-4111-8111-111111111111",
+          name: "Game",
+          status: "pending",
+        },
+      ],
+      {
+        headers: {
+          "cache-control": "private, no-store",
+          vary: "Authorization",
+        },
+      },
+    );
   if (path === "/privacy")
     return new Response("<!DOCTYPE html><html><title>Daydle</title></html>", {
       headers: { "content-type": "text/html; charset=utf-8" },
@@ -54,8 +71,11 @@ describe("Phase 14 public beta preflight", () => {
           : publicFixture(url),
     });
     expect(result.passed).toBe(false);
-    expect(result.checks.find((row: { type: string; path: string }) =>
-      row.path === "/api/v1/admin")?.passed).toBe(false);
+    expect(
+      result.checks.find(
+        (row: { type: string; path: string }) => row.path === "/api/v1/admin",
+      )?.passed,
+    ).toBe(false);
     expect(JSON.stringify(result)).not.toContain("must not appear");
   });
 
@@ -63,11 +83,14 @@ describe("Phase 14 public beta preflight", () => {
     const result = await runPublicBetaPreflight({
       fetchImpl: async (url: string) =>
         new URL(url).pathname === "/api/v1/requests"
-          ? Response.json([{
-              id: "11111111-1111-4111-8111-111111111111",
-              name: "Game", status: "pending",
-              raw_share_text: "private",
-            }])
+          ? Response.json([
+              {
+                id: "11111111-1111-4111-8111-111111111111",
+                name: "Game",
+                status: "pending",
+                raw_share_text: "private",
+              },
+            ])
           : publicFixture(url),
     });
     expect(result.passed).toBe(false);
@@ -94,8 +117,9 @@ describe("Phase 14 public beta preflight", () => {
       "https://daydle.agoodman.io/private",
       "https://daydle.agoodman.io/?token=secret",
     ]) {
-      await expect(runPublicBetaPreflight({ base, fetchImpl: vi.fn() }))
-        .rejects.toThrow();
+      await expect(
+        runPublicBetaPreflight({ base, fetchImpl: vi.fn() }),
+      ).rejects.toThrow();
     }
     expect(BETA_ORIGIN).toBe("https://daydle.agoodman.io");
   });
