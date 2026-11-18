@@ -7,6 +7,7 @@ import {
   readClipboardByGesture,
   validateManualPaste,
 } from "../lib/clipboard";
+import { markPlayedFromSubmittedResult } from "../lib/today-api";
 import {
   getResultDetail,
   submitShare,
@@ -124,6 +125,27 @@ export function PasteDialog({
     area.current?.focus();
   }
 
+  async function playedFeedback(message: string): Promise<string> {
+    if (!client || !userId || previewDecision?.status !== "parsed")
+      return message;
+    try {
+      const { gameSlug, puzzleDate } = previewDecision.result;
+      const marker = await markPlayedFromSubmittedResult(
+        client,
+        userId,
+        gameSlug,
+        puzzleDate,
+      );
+      if (marker === "historical")
+        return message + " This older puzzle did not change today's played status.";
+      window.dispatchEvent(new Event("daydle:played-updated"));
+      return message + " Marked played today.";
+    } catch {
+      // A confirmed result can be saved even when a separate played-mark write fails.
+      return message + " Played status could not be verified; check Today.";
+    }
+  }
+
   async function submit(replaceResultId?: string, confirmedGameSlug?: string) {
     if (!client || !userId || !canSubmit) return;
     if (
@@ -150,17 +172,23 @@ export function PasteDialog({
       switch (decision.status) {
         case "saved":
           setValue("");
-          setNotice("Result saved to your history.");
+          setNotice(await playedFeedback("Result saved to your history."));
           break;
         case "duplicate":
           setValue("");
           setNotice(
-            "This result is already in your history. No duplicate was created.",
+            await playedFeedback(
+              "This result is already in your history. No duplicate was created.",
+            ),
           );
           break;
         case "replaced":
           setValue("");
-          setNotice("Saved result replaced. The correction has been recorded.");
+          setNotice(
+            await playedFeedback(
+              "Saved result replaced. The correction has been recorded.",
+            ),
+          );
           break;
         case "conflict":
           setNotice(
