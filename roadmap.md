@@ -302,6 +302,10 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 
 **Exit/verification:** Production smoke pass, rollback and recovery plans documented, monitoring active, beta deploy approved, final release note and version recorded.
 
+## Phase 15 — compact Today UX, first-use share guidance and parser expansion
+
+**Branch status: IN PROGRESS — [draft PR #27](https://github.com/A13Xg/Daydle/pull/27), [active plan](Phase15Exec.md).** This user-requested follow-up begins after the deployed Phase 14 source. It reduces noninteractive spacing, adds a per-account visual Share Results → Copy → Paste guide, sends authoritative empty lineups to a checkbox selector, reconciles played marks on successful result submissions and adds Worldle/Flagle deterministic parser coverage based on privately retained samples. The forward-only Phase 15 parser-status migration is **source only, not hosted**; do not deploy Worker changes before applying and verifying that explicit approved SQL. After merge, verify device and signed-in flows separately.
+
 ## After the roadmap
 
 Future possibilities (not automatic phases or MVP blockers): additional parser coverage, multiple share blocks per paste, deeper percentile analytics with sample-size rules, more achievements, optional custom schedules, new device targets, and a dedicated visual identity redesign. Each requires a new decision and explicit roadmap update before work begins.
