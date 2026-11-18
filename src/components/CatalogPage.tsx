@@ -85,6 +85,11 @@ export function CatalogPage({
     status: "loading",
   });
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [draftIds, setDraftIds] = useState<string[]>([]);
+  const setupMode =
+    !lineupOnly &&
+    !detailSlug &&
+    new URLSearchParams(window.location.search).get("setup") === "1";
   const [selectionLoading, setSelectionLoading] = useState(Boolean(userId));
   const [selectionError, setSelectionError] = useState("");
   const [saveError, setSaveError] = useState("");
@@ -126,6 +131,7 @@ export function CatalogPage({
     setSelectionError("");
     setSaveError("");
     setSelectedIds([]);
+    setDraftIds([]);
     setCatalogOffline(false);
     setSelectionReadOnly(false);
 
@@ -155,12 +161,14 @@ export function CatalogPage({
           if (!active) return;
           saveSelectedSnapshot(storage, userId, ids);
           setSelectedIds(ids);
+          setDraftIds(ids);
         })
         .catch(() => {
           if (!active) return;
           const cached = readSelectedSnapshot(storage, userId);
           if (cached) {
             setSelectedIds(cached);
+            setDraftIds(cached);
             setSelectionReadOnly(true);
           } else {
             setSelectionError("Your saved games could not be loaded.");
@@ -175,7 +183,7 @@ export function CatalogPage({
     };
   }, [client, userId, retry]);
 
-  async function commitSelection(next: string[]) {
+  async function commitSelection(next: string[], returnToToday = false) {
     if (
       !client ||
       !userId ||
@@ -194,6 +202,9 @@ export function CatalogPage({
       const outcome = await saveAndReconcileSelectedGames(client, userId, next);
       setSelectedIds(outcome.gameIds);
       saveSelectedSnapshot(optionalLocalStorage(), userId, outcome.gameIds);
+      if (outcome.confirmed && returnToToday && outcome.gameIds.length > 0) {
+        window.location.assign("/today");
+      }
       if (!outcome.confirmed) {
         setSaveError(
           "The save response was uncertain. We reloaded your games from the server; review the current selection before editing again.",
@@ -321,6 +332,92 @@ export function CatalogPage({
           onToggle={toggleGame}
         />
       </>
+    );
+  }
+
+  if (setupMode && userId) {
+    const choices = games.filter(canAddGame);
+    return (
+      <div className="catalog-page lineup-setup">
+        <header className="catalog-heading">
+          <p className="eyebrow">YOUR DAILY RITUAL</p>
+          <h1>Choose your daily games</h1>
+          <p>
+            Check the puzzles you enjoy. Your choices will appear on Today in
+            this order, and you can change them any time.
+          </p>
+        </header>
+        <section className="panel" aria-labelledby="lineup-choices-title">
+          <div className="today-toolbar">
+            <h2 id="lineup-choices-title">Add to my lineup</h2>
+            <span className="status-pill">{draftIds.length} chosen</span>
+          </div>
+          <SelectionNotice
+            loading={selectionLoading}
+            error={selectionError}
+            onRetry={() => setRetry((value) => value + 1)}
+          />
+          {(!online || catalogOffline || selectionReadOnly) && (
+            <p className="notice" role="status">
+              A verified connection is required to save your lineup.
+            </p>
+          )}
+          {choices.length === 0 ? (
+            <p role="status">No games are currently available to add.</p>
+          ) : (
+            <div className="setup-game-list">
+              {choices.map((game) => (
+                <label className="setup-game" key={game.id}>
+                  <input
+                    type="checkbox"
+                    checked={draftIds.includes(game.id)}
+                    disabled={saving || editingDisabled}
+                    onChange={(event) =>
+                      setDraftIds((ids) =>
+                        event.target.checked
+                          ? [...ids, game.id]
+                          : ids.filter((id) => id !== game.id),
+                      )
+                    }
+                  />
+                  <span className={"game-avatar " + game.slug} aria-hidden="true">
+                    {game.name.slice(0, 2).toUpperCase()}
+                  </span>
+                  <span className="setup-game-copy">
+                    <strong>{game.name}</strong>
+                    <small>
+                      {game.publisher ?? "Independent publisher"} ·{" "}
+                      {parserSupportLabel(game.parserStatus)}
+                    </small>
+                  </span>
+                </label>
+              ))}
+            </div>
+          )}
+          {saveError && (
+            <p className="notice error" role="alert">
+              {saveError}
+            </p>
+          )}
+          <div className="setup-actions">
+            <button
+              type="button"
+              disabled={
+                saving ||
+                editingDisabled ||
+                draftIds.length === 0 ||
+                choices.length === 0
+              }
+              onClick={() => void commitSelection(draftIds, true)}
+            >
+              {saving ? "Saving lineup…" : "Save lineup and open Today"}
+            </button>
+            <a className="secondary-link" href="/games">
+              Browse all games
+            </a>
+          </div>
+        </section>
+      </div>
     );
   }
 
