@@ -1,6 +1,6 @@
 # Daydle — Development, preview, and deployment baseline
 
-**Baseline from Phase 1, updated through Phase 3.** CI never deploys. A deployment happens only when the repository owner runs the deployment script, and a release needs the owner's explicit authorization.
+**Current release note (November 17, 2026):** Phases 11–13 source is merged into `main` and CI passed, but the last confirmed protected Worker deployment is [Phase 10 run #44045005321](https://github.com/A13Xg/Daydle/actions/runs/44045005321). Hosted Phase 11/12 migrations, real account/operator/device acceptance, and offsite encrypted backup/restore are **NOT VERIFIED**. See [Phase 14 beta release gates](beta-release.md). Historical setup detail below remains relevant where noted. CI never deploys, and production changes require explicit owner authorization.
 
 ## Runtime
 
