@@ -8,9 +8,9 @@ Daydle is a mobile-first, iPhone-oriented React/PWA companion for external daily
 
 **Source:** Phases 1–13 merged; latest [main CI](https://github.com/A13Xg/Daydle/actions/runs/44172784193) passed on `2042288` (November 17, 2026).
 
-**Hosted release:** The last confirmed protected Worker deploy is [run #44045005321](https://github.com/A13Xg/Daydle/actions/runs/44045005321) at `9098fdc` (Phase 10). Later source merges are **not** proof of deployed SQL or APIs. [Phase 14 beta readiness](Phase14Exec.md) is in progress.
+**Hosted release:** The last confirmed protected Worker deploy is [run #44045005321](https://github.com/A13Xg/Daydle/actions/runs/44045005321) at `9098fdc` (Phase 10). Phase 11/12 migrations have now been applied and checked in Supabase; later source merges remain **not** proof that Worker APIs are deployed. [Phase 14 beta readiness](Phase14Exec.md) is in progress.
 
-**Public beta: NOT YET APPROVED.** Before release: verify hosted Phase 11/12 migrations, protected Worker deployment, scheduled raw-data purge, genuinely independent encrypted offsite backups and isolated recovery/deletion reconciliation, two-account/admin authenticated flows, and iOS Safari/installed-PWA accessibility/device acceptance. See [beta go/no-go](docs/beta-release.md) and [quality matrix](docs/quality-matrix.md).
+**Public beta: NOT YET APPROVED.** Before release: reconcile the applied Phase 11/12 migration versions (verified in Supabase), perform protected Worker deployment, scheduled raw-data purge, genuinely independent encrypted offsite backups and isolated recovery/deletion reconciliation, two-account/admin authenticated flows, and iOS Safari/installed-PWA accessibility/device acceptance. See [beta go/no-go](docs/beta-release.md) and [quality matrix](docs/quality-matrix.md).
 
 ## Development
 
