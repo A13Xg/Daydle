@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { isLocalDay, localDayString, manualPlayedLabel } from "../shared/today";
 
-describe("Today's local calendar and manual markers", () => {
+describe("Today's local calendar and played markers", () => {
   it("uses device-local calendar date rather than ISO UTC day", () => {
     const date = new Date(2026, 10, 15, 23, 59, 58);
     expect(localDayString(date)).toBe("2026-11-15");
@@ -24,9 +24,9 @@ describe("Today's local calendar and manual markers", () => {
     expect(isLocalDay("2028-02-29")).toBe(true);
   });
 
-  it("distinguishes private, unverified manual completion from results", () => {
-    expect(manualPlayedLabel(true, true)).toBe("Marked played (manual)");
-    expect(manualPlayedLabel(false, true)).toBe("Not marked played");
+  it("labels played status without implying gameplay verification", () => {
+    expect(manualPlayedLabel(true, true)).toBe("Played today");
+    expect(manualPlayedLabel(false, true)).toBe("Not yet played");
     expect(manualPlayedLabel(false, false)).toContain("unavailable offline");
   });
 });
