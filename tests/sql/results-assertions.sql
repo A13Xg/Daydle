@@ -4,9 +4,9 @@ DO $$
 DECLARE n int;
 BEGIN
   SELECT count(*) INTO n FROM public.games WHERE parser_status='supported';
-  IF n <> 5 THEN RAISE EXCEPTION 'Expected exactly five real parser-backed games, got %',n; END IF;
+  IF n <> 7 THEN RAISE EXCEPTION 'Expected seven real parser-backed games after Phase 15, got %',n; END IF;
   IF EXISTS (SELECT 1 FROM public.games WHERE parser_status='supported'
-             AND slug NOT IN ('wordle','connections','strands','mini-crossword','quordle'))
+             AND slug NOT IN ('wordle','connections','strands','mini-crossword','quordle','worldle','flagle'))
   THEN RAISE EXCEPTION 'Unsupported catalog entry marked parseable'; END IF;
 
   IF has_function_privilege('anon','public.ingest_parsed_share(uuid,text,jsonb,uuid)','EXECUTE')
