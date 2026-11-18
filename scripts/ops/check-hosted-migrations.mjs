@@ -1,7 +1,7 @@
 import { readdirSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { resolve } from "node:path";
-/** Exact hosted migration versions and names, including generated Phase 7/8/9/10 and proposed Phase 11/12 IDs. */
+/** Exact hosted migration versions and names, including generated Phase 7/8/9/10 and applied Phase 11/12 plus proposed Phase 15 parser metadata. */
 export const HOSTED_MIGRATIONS = Object.freeze([
   { version: "20261114050000", name: "phase2_domain_security" },
   { version: "20261114060000", name: "phase3_auth_identity" },
@@ -13,6 +13,7 @@ export const HOSTED_MIGRATIONS = Object.freeze([
   { version: "20261117075359", name: "phase10_comparisons" },
   { version: "20261118013515", name: "phase11_administration" },
   { version: "20261118013526", name: "phase12_privacy" },
+  { version: "20261118234500", name: "phase15_parser_coverage" },
 ]);
 
 const EXPECTED_MIGRATIONS = HOSTED_MIGRATIONS.map(({ version }) => version);
