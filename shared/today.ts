@@ -23,5 +23,5 @@ export function isLocalDay(value: unknown): value is string {
 
 export function manualPlayedLabel(marked: boolean, available: boolean): string {
   if (!available) return "Played status unavailable offline";
-  return marked ? "Marked played (manual)" : "Not marked played";
+  return marked ? "Played today" : "Not yet played";
 }
