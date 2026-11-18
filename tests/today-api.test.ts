@@ -109,7 +109,7 @@ describe("automatic played mark after a confirmed result", () => {
   });
 
   it("resolves the canonical game ID, writes the local-day mark and re-reads it", async () => {
-    let marks: string[] = [];
+    const marks: string[] = [];
     const insert = vi.fn().mockImplementation(async (row: { game_id: string }) => {
       marks.push(row.game_id);
       return { error: null };
