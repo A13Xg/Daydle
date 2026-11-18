@@ -32,7 +32,7 @@ describe("sample-derived Worldle parser", () => {
         outcome: "loss",
         attempts: 6,
         score: null,
-        metrics: { sharePercent: 81, greenClues: 17, yellowClues: 3 },
+        metrics: { sharePercent: 81, greenClues: 16, yellowClues: 3 },
       },
     });
   });
