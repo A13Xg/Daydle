@@ -9,6 +9,8 @@ import { AccountPage } from "./components/AccountPage";
 import { CatalogPage } from "./components/CatalogPage";
 import { TodayPage } from "./components/TodayPage";
 import { PasteDialog } from "./components/PasteDialog";
+import { ShareTutorial } from "./components/ShareTutorial";
+import { markShareTutorialSeen, shouldShowShareTutorial } from "./lib/share-tutorial";
 import { HistoryPage } from "./components/HistoryPage";
 import { StatisticsPage } from "./components/StatisticsPage";
 import { FriendsPage } from "./components/FriendsPage";
@@ -33,6 +35,14 @@ import {
 
 type HealthStatus = "checking" | "ready" | "unavailable";
 
+function localStorageAvailable(): Storage | undefined {
+  try {
+    return window.localStorage;
+  } catch {
+    return undefined;
+  }
+}
+
 function sessionStorageAvailable(): Storage | undefined {
   try {
     return window.sessionStorage;
@@ -54,10 +64,23 @@ export default function App() {
     /^\/comparison-results\/([0-9a-f-]{36})\/?$/i,
   )?.[1];
   const [pasteOpen, setPasteOpen] = useState(false);
+  const [tutorialOpen, setTutorialOpen] = useState(false);
+  const tutorialShownFor = useRef<Set<string>>(new Set());
   const [returnPrompt, setReturnPrompt] = useState(false);
   const [health, setHealth] = useState<HealthStatus>("checking");
   const [healthRetry, setHealthRetry] = useState(0);
   const pasteTrigger = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!userId) {
+      setTutorialOpen(false);
+      return;
+    }
+    if (pathname === "/auth/callback" || tutorialShownFor.current.has(userId))
+      return;
+    tutorialShownFor.current.add(userId);
+    setTutorialOpen(shouldShowShareTutorial(localStorageAvailable(), userId));
+  }, [userId, pathname]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -86,13 +109,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!pasteOpen) return;
+    if (!pasteOpen && !tutorialOpen) return;
     const prior = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prior;
     };
-  }, [pasteOpen]);
+  }, [pasteOpen, tutorialOpen]);
+
+  function closeTutorial() {
+    markShareTutorialSeen(localStorageAvailable(), userId);
+    setTutorialOpen(false);
+  }
 
   function openPaste() {
     clearPublisherLaunch(sessionStorageAvailable());
@@ -189,6 +217,7 @@ export default function App() {
           key={userId ?? "anonymous"}
           client={client}
           userId={userId}
+          suspendEmptyRedirect={tutorialOpen}
         />
       );
     return (
@@ -274,6 +303,9 @@ export default function App() {
           client={client}
           userId={userId}
         />
+      )}
+      {tutorialOpen && !pasteOpen && (
+        <ShareTutorial onDone={closeTutorial} />
       )}
     </div>
   );
