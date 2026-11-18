@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   canLaunchGame,
-  gameAvailabilityLabel,
   safePublisherUrl,
 } from "../../shared/catalog";
 import type { CatalogGame } from "../../shared/catalog";
