@@ -1,6 +1,6 @@
 # Daydle — Development, preview, and deployment baseline
 
-**Current release note (November 17, 2026):** Phases 11–13 source is merged into `main` and CI passed, but the last confirmed protected Worker deployment is [Phase 10 run #44045005321](https://github.com/A13Xg/Daydle/actions/runs/44045005321). Hosted Phase 11/12 migrations, real account/operator/device acceptance, and offsite encrypted backup/restore are **NOT VERIFIED**. See [Phase 14 beta release gates](beta-release.md). Historical setup detail below remains relevant where noted. CI never deploys, and production changes require explicit owner authorization.
+**Current release note (November 17, 2026):** Phases 11–13 source is merged into `main` and CI passed, but the last confirmed protected Worker deployment is [Phase 10 run #44045005321](https://github.com/A13Xg/Daydle/actions/runs/44045005321). Hosted Phase 11/12 SQL applied November 17 local / November 18 UTC with recorded versions `20261118013515` and `20261118013526` and RPC/grant checks. **New Worker deployment, real account/operator/device acceptance, and independent encrypted offsite backup/restore are NOT VERIFIED**. See [Phase 14 beta release gates](beta-release.md). Historical setup detail below remains relevant where noted. CI never deploys, and production changes require explicit owner authorization.
 
 ## Runtime
 
