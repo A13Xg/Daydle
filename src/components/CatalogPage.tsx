@@ -89,6 +89,7 @@ export function CatalogPage({
   const setupMode =
     !lineupOnly &&
     !detailSlug &&
+    typeof window !== "undefined" &&
     new URLSearchParams(window.location.search).get("setup") === "1";
   const [selectionLoading, setSelectionLoading] = useState(Boolean(userId));
   const [selectionError, setSelectionError] = useState("");
