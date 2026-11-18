@@ -27,7 +27,7 @@ describe("Phase 14 privacy disclosure", () => {
     expect(stackTitle("/privacy")).toBe("Privacy and data");
     expect(stackBackPath("/privacy")).toBe("/today");
     const html = renderToStaticMarkup(createElement(PrivacyPage));
-    expect((html.match(/<h1\b/g) ?? [])).toHaveLength(1);
-    expect((html.match(/<h2\b/g) ?? [])).toHaveLength(5);
+    expect(html.match(/<h1\b/g) ?? []).toHaveLength(1);
+    expect(html.match(/<h2\b/g) ?? []).toHaveLength(5);
   });
 });
