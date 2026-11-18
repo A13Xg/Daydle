@@ -242,6 +242,9 @@ export default function App() {
             Publisher games open externally. Manual play markers are not
             verified results.
           </small>
+          <a className="secondary-link" href="/privacy">
+            Privacy and data handling
+          </a>
           {health === "unavailable" && (
             <span role="alert" className="health-warning">
               Daydle API unavailable.
