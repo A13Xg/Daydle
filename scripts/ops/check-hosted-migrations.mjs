@@ -11,8 +11,8 @@ export const HOSTED_MIGRATIONS = Object.freeze([
   { version: "20261117034143", name: "20261117040000_phase8_statistics" },
   { version: "20261117051824", name: "20261117050000_phase9_social" },
   { version: "20261117075359", name: "phase10_comparisons" },
-  { version: "20261117090000", name: "phase11_administration" },
-  { version: "20261117100000", name: "phase12_privacy" },
+  { version: "20261118013515", name: "phase11_administration" },
+  { version: "20261118013526", name: "phase12_privacy" },
 ]);
 
 const EXPECTED_MIGRATIONS = HOSTED_MIGRATIONS.map(({ version }) => version);
