@@ -375,6 +375,9 @@ export function AccountPage({
             {deleting ? "Deleting account…" : "Permanently delete my account"}
           </button>
         </div>
+        <a className="secondary-link" href="/privacy">
+          Privacy and data handling
+        </a>
         <a className="secondary-link" href="/how-it-works">
           How Daydle works
         </a>
