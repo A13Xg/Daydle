@@ -88,13 +88,13 @@ describe("Phase 14 public beta preflight", () => {
                 id: "11111111-1111-4111-8111-111111111111",
                 name: "Game",
                 status: "pending",
-                raw_share_text: "private",
+                raw_share_text: "PRIVATE_LEAK_CANARY_987",
               },
             ])
           : publicFixture(url),
     });
     expect(result.passed).toBe(false);
-    expect(JSON.stringify(result)).not.toContain("private");
+    expect(JSON.stringify(result)).not.toContain("PRIVATE_LEAK_CANARY_987");
   });
 
   it("preserves failures when a route cannot be reached", async () => {
