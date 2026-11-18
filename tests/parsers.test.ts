@@ -50,6 +50,8 @@ describe("parser registry contracts", () => {
       "strands",
       "mini-crossword",
       "quordle",
+      "worldle",
+      "flagle",
     ]);
     for (const p of shareParsers) {
       expect(p.parserVersion).toBe("1.0.0");
