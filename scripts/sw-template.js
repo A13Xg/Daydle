@@ -8,7 +8,7 @@ const OFFLINE_HTML = "/index.html";
 
 function isAppNavigation(url) {
   if (url.pathname === "/" || url.pathname === "/today") return true;
-  return ["/games", "/lineup", "/statistics", "/friends", "/notifications", "/how-it-works"].includes(url.pathname) ||
+  return ["/games", "/lineup", "/statistics", "/friends", "/notifications", "/how-it-works", "/privacy"].includes(url.pathname) ||
     /^\/games\/[a-z0-9-]+\/?$/.test(url.pathname);
 }
 
