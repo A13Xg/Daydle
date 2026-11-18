@@ -182,6 +182,7 @@ export default function App() {
     if (pathname === "/notifications")
       return <FeaturePendingPage feature="notifications" />;
     if (pathname === "/how-it-works") return <HowItWorksPage />;
+    if (pathname === "/privacy") return <PrivacyPage />;
     if (pathname === "/" || pathname === "/today" || pathname === "/today/")
       return (
         <TodayPage
