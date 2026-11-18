@@ -35,7 +35,7 @@ Cloudflare `wrangler secret put` normally produces and deploys a new Worker vers
 
 ## Future backups
 
-Phase 12 will specify the encrypted backup destination, R2 access policy, key management, retention schedule, and restore tests. Do not create backup credentials before the destination and threat model are finalized.
+Phase 12 merged **source-only** AES-256-GCM archive encryption and SQL retention handling, but no verified protected backup environment, scheduled PostgreSQL export, private R2/S3 destination, retention/key escrow, alerting or independent restore exists. These are **public beta blockers** in [the release runbook](beta-release.md), not tasks that completed by merging PR #23. Do not create backup credentials without explicit owner approval and a reviewed destination/threat model.
 
 ## Policy
 

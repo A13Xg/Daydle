@@ -1,5 +1,7 @@
 # Phase 12 — Privacy lifecycle, encrypted backups, and recovery
 
+**Post-merge reconciliation (November 17, 2026):** Source [PR #23](https://github.com/A13Xg/Daydle/pull/23) **MERGED** into main at `52d9d4c58b1ac10b13e1c59f625296b4b73f507e`; [main CI #44172190894](https://github.com/A13Xg/Daydle/actions/runs/44172190894) PASS. The draft/unmerged statements below are historical. **Operational acceptance remains BLOCKED**: no verified offsite scheduled backups, restore/deletion replay, hosted Phase 12 SQL/cron, or account-deletion E2E. Retain this root plan pending actual evidence; do not archive it as completed merely because source merged.
+
 **Status:** SOURCE CI VERIFIED; operational backup/recovery acceptance BLOCKED (draft PR, no production actions).  
 **PR:** [#23](https://github.com/A13Xg/Daydle/pull/23) (draft), targeting `phase/11-admin-requests-diagnostics`; parent [PR #22](https://github.com/A13Xg/Daydle/pull/22) ready for owner review.  
 **Verified stacked base:** `6a0f80c23f24bd0fd3869e53f15faf78d091d57f` (Phase11 final [CI #44050163041](https://github.com/A13Xg/Daydle/actions/runs/44050163041) PASS).  

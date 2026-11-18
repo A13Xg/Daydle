@@ -20,7 +20,8 @@ Obsidian Arcade from [PR #11](https://github.com/A13Xg/Daydle/pull/11) is now th
 - **IN PROGRESS** — phase branch/draft PR exists, planning or development underway.
 - **BLOCKED** — documented unsatisfied dependency or failure.
 - **IN REVIEW** — tests and audit passed on branch; PR ready for human review, not merged.
-- **COMPLETE** — merged to main and verified against deliverables.
+- **COMPLETE** — merged to main and verified against deliverables and acceptance gates.
+- **SOURCE MERGED / ACCEPTANCE BLOCKED** — merged and source CI passed, but live provider, privacy/recovery or device acceptance is still open; do not treat as beta-ready.
 
 The statuses below represent the **main branch**. Each in-progress PR maintains its live state; avoid claiming it is already on main. Phase 0 is complete after foundational documentation lands on main.
 
@@ -38,10 +39,10 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 | 8 | Personal statistics, streaks, and achievements | 7 | COMPLETE (source and hosted API release) — [PR #15](https://github.com/A13Xg/Daydle/pull/15) merged; Phase 8 SQL applied and protected production [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648) PASS. Authenticated statistics E2E remains deferred/unverified. |
 | 9 | Public profiles and instant friendship | 8 | COMPLETE (source and hosted API release) — [PR #16](https://github.com/A13Xg/Daydle/pull/16) merged; Phase 9 SQL applied, public-profile route and social auth boundary verified by [Deploy Worker #44040112648](https://github.com/A13Xg/Daydle/actions/runs/44040112648). Real two-account friendship E2E remains deferred/unverified. |
 | 10 | Spoiler-safe comparisons, scoreboards, and rankings | 9 | COMPLETE (source/hosted release) — [PR #18](https://github.com/A13Xg/Daydle/pull/18) merged at `9098fdc`; [main CI #44044954484](https://github.com/A13Xg/Daydle/actions/runs/44044954484), protected [Deploy Worker #44045005321](https://github.com/A13Xg/Daydle/actions/runs/44045005321) and exact hosted migration `20261117075359_phase10_comparisons` verified. Authenticated two-account E2E and owner-deferred physical iPhone testing remain unverified. |
-| 11 | Administration, game requests/voting, and diagnostics | 10 | IN REVIEW — [PR #22](https://github.com/A13Xg/Daydle/pull/22), [CI #44049830796](https://github.com/A13Xg/Daydle/actions/runs/44049830796) PASS (290 Vitest/36 suites, 28 Chromium views, 2 PG17 security runs); [archive](completedPhases/Phase11Exec.md). Proposed hosted migration unapplied; authenticated production E2E not verified. |
-| 12 | Privacy lifecycle, encrypted backups, and recovery | 11 | NOT STARTED |
-| 13 | UX completeness, security, accessibility, and QA hardening | 12 | NOT STARTED |
-| 14 | Public beta release and operational handoff | 13 | NOT STARTED |
+| 11 | Administration, game requests/voting, and diagnostics | 10 | SOURCE MERGED — [PR #22](https://github.com/A13Xg/Daydle/pull/22), merge `339f468`, [main CI #44171841239](https://github.com/A13Xg/Daydle/actions/runs/44171841239) PASS. Hosted Phase 11 SQL, operator enrollment and authenticated E2E NOT VERIFIED; [source archive](completedPhases/Phase11Exec.md). |
+| 12 | Privacy lifecycle, encrypted backups, and recovery | 11 | SOURCE MERGED / ACCEPTANCE BLOCKED — [PR #23](https://github.com/A13Xg/Daydle/pull/23), merge `52d9d4c`, [main CI #44172190894](https://github.com/A13Xg/Daydle/actions/runs/44172190894) PASS. Hosted SQL/cron, independent scheduled encrypted offsite backup, actual restore and deletion reconciliation NOT VERIFIED. [Active acceptance record](Phase12Exec.md). |
+| 13 | UX completeness, security, accessibility, and QA hardening | 12 | SOURCE MERGED / ACCEPTANCE BLOCKED — [PR #24](https://github.com/A13Xg/Daydle/pull/24), merge `2042288`, [main CI #44172784193](https://github.com/A13Xg/Daydle/actions/runs/44172784193) PASS. iOS Safari/VoiceOver, hosted real-user E2E, visual and operational recovery gates NOT VERIFIED. [Active acceptance record](Phase13Exec.md). |
+| 14 | Public beta release and operational handoff | 13 | IN PROGRESS / BETA BLOCKED — [draft PR #25](https://github.com/A13Xg/Daydle/pull/25). Source-only release readiness, privacy disclosures and operator checklist underway; no beta authorization or hosted deployment. [Active plan](Phase14Exec.md). |
 
 ## Phase 0 — Repository foundation and delivery contract
 **Status:** COMPLETE (bootstrap; direct-main exception). **Dependencies:** none.
@@ -244,7 +245,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** No current-puzzle score leakage pre-unlock through any listed endpoint; game rankings are internally consistent and corrections reflected.
 
 ## Phase 11 — Administration, game requests/voting, and diagnostics
-**Status:** IN REVIEW (source CI verified, hosted release pending) — [PR #22](https://github.com/A13Xg/Daydle/pull/22), [CI #44049830796](https://github.com/A13Xg/Daydle/actions/runs/44049830796), [completed execution plan](completedPhases/Phase11Exec.md). Phase 11 proposed forward-only migration is not applied; real admin account enrollment and authenticated hosted E2E are unverified. **Dependencies:** 10.
+**Status:** SOURCE MERGED — [PR #22](https://github.com/A13Xg/Daydle/pull/22), merge `339f468`, [main CI #44171841239](https://github.com/A13Xg/Daydle/actions/runs/44171841239) PASS; [source archive](completedPhases/Phase11Exec.md). Hosted SQL, operator membership and authenticated E2E **NOT VERIFIED**. **Dependencies:** 10.
 
 **Purpose:** Equip owner-operators to maintain the expanding catalog and parsers without unsafe direct database edits.
 
@@ -258,7 +259,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Authorized workflows work, unauthorized users cannot invoke admin endpoints, requests/votes are consistent, and failures are diagnosable.
 
 ## Phase 12 — Privacy lifecycle, encrypted backups, and recovery
-**Status:** IN PROGRESS — source CI verified in [PR #23](https://github.com/A13Xg/Daydle/pull/23) stacked on Phase 11; [CI #44145170505](https://github.com/A13Xg/Daydle/actions/runs/44145170505) PASS. Authenticated export/deletion, source purge cron, forward-only SQL and AES-GCM archive tests exist, but **independent offsite backup scheduling, actual isolated restore and deleted-user reconciliation remain NOT VERIFIED**. Keep PR draft; no hosted migration or deployment. [Active execution plan](Phase12Exec.md). **Dependencies:** 11.
+**Status:** SOURCE MERGED / ACCEPTANCE BLOCKED — [PR #23](https://github.com/A13Xg/Daydle/pull/23), merge `52d9d4c`, [main CI #44172190894](https://github.com/A13Xg/Daydle/actions/runs/44172190894) PASS. Source export/deletion, SQL purge and AES-GCM encryption exist; **hosted SQL, live cron, independent scheduled encrypted backups, isolated restore and deleted-user reconciliation NOT VERIFIED**. Root [Phase12Exec.md](Phase12Exec.md) remains active, not archived. **Dependencies:** 11.
 
 **Purpose:** Finish data privacy obligations and real recovery capability on a free managed-database plan.
 
@@ -272,7 +273,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Controlled test export/delete/restore succeeds; raw expiry works; backup recovery documented and observable, no secret/public raw leaks.
 
 ## Phase 13 — UX completeness, security, accessibility, and QA hardening
-**Status:** IN PROGRESS (source QA CI verified; dependency acceptance pending) — [PR #24](https://github.com/A13Xg/Daydle/pull/24) stacked on [PR #23](https://github.com/A13Xg/Daydle/pull/23). Chromium computed accessibility audit and admin fallback heading/expired-sample privacy defense added; 28-route UI smoke and two PostgreSQL security jobs pass. Real Safari and dependent Phase 12 offsite backup restoration remain NOT VERIFIED. [Active plan](Phase13Exec.md). **Dependencies:** 12.
+**Status:** SOURCE MERGED / ACCEPTANCE BLOCKED — [PR #24](https://github.com/A13Xg/Daydle/pull/24), merge `2042288`, [main CI #44172784193](https://github.com/A13Xg/Daydle/actions/runs/44172784193) PASS. Chromium accessibility and private-sample checks pass; **real Safari/VoiceOver, hosted OAuth/admin E2E, release monitoring and Phase 12 backup recovery remain NOT VERIFIED**. Root [Phase13Exec.md](Phase13Exec.md) remains active. **Dependencies:** 12.
 
 **Purpose:** Verify and harden polished workflows against the already approved Obsidian Arcade design system, without introducing a competing visual identity.
 
@@ -287,7 +288,7 @@ The statuses below represent the **main branch**. Each in-progress PR maintains 
 **Exit/verification:** Quality checklist and security/accessibility matrix pass, known-critical-defect count zero, regression suite green, primary iOS workflows demonstrated.
 
 ## Phase 14 — Public beta release and operational handoff
-**Status:** NOT STARTED. **Dependencies:** 13.
+**Status:** IN PROGRESS / PUBLIC BETA BLOCKED — [draft PR #25](https://github.com/A13Xg/Daydle/pull/25), [active plan](Phase14Exec.md). Source release-readiness work does not authorize any hosted schema, Worker deployment or beta launch. **Dependencies:** Phase 13 source merged; operational acceptance still open.
 
 **Purpose:** Release Daydle safely to open registration with a maintainable operating model.
 

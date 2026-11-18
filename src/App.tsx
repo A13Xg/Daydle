@@ -15,6 +15,7 @@ import { FriendsPage } from "./components/FriendsPage";
 import { PublicPlayerPage } from "./components/PublicPlayerPage";
 import { GameRequestsPage } from "./components/GameRequestsPage";
 import { AdminPage } from "./components/AdminPage";
+import { PrivacyPage } from "./components/PrivacyPage";
 import {
   ComparisonsPage,
   PublicResultDetail,
@@ -181,6 +182,7 @@ export default function App() {
     if (pathname === "/notifications")
       return <FeaturePendingPage feature="notifications" />;
     if (pathname === "/how-it-works") return <HowItWorksPage />;
+    if (pathname === "/privacy") return <PrivacyPage />;
     if (pathname === "/" || pathname === "/today" || pathname === "/today/")
       return (
         <TodayPage
@@ -240,6 +242,9 @@ export default function App() {
             Publisher games open externally. Manual play markers are not
             verified results.
           </small>
+          <a className="secondary-link" href="/privacy">
+            Privacy and data handling
+          </a>
           {health === "unavailable" && (
             <span role="alert" className="health-warning">
               Daydle API unavailable.

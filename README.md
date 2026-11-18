@@ -2,51 +2,45 @@
 
 **All your daily games. One place.**
 
-Daydle is an iOS-first web application for discovering daily games, launching games on publisher websites, tracking shared results, viewing public statistics and comparing performance with friends. Phases 1–5 provide authentication, secure game discovery, user-selected Today, and an owner-accepted iPhone PWA. Phase 6 adds deterministic parsing; Phase 6.5's Obsidian Arcade UI is merged. [Phase 7 PR #14](https://github.com/A13Xg/Daydle/pull/14) merged result ingestion and private History source, and its hosted SQL migration was owner-authorized and applied to Daydle Preview. The owner authorized Worker deployment to `daydle.agoodman.io`; actual release and authenticated acceptance are still pending. Public statistics and comparisons remain future phases.
+Daydle is a mobile-first, iPhone-oriented React/PWA companion for external daily games: discover publisher games, customize your rotation, launch externally, submit publisher share text, review personal history/statistics, and compare permitted scores with friends. Games themselves remain on publisher websites.
 
-## Local development
+## Project status
 
-Requires Node.js 22+ and npm. With a tracked lockfile, use `npm ci`.
+**Source:** Phases 1–13 merged; latest [main CI](https://github.com/A13Xg/Daydle/actions/runs/44172784193) passed on `2042288` (November 17, 2026).
+
+**Hosted release:** The last confirmed protected Worker deploy is [run #44045005321](https://github.com/A13Xg/Daydle/actions/runs/44045005321) at `9098fdc` (Phase 10). Later source merges are **not** proof of deployed SQL or APIs. [Phase 14 beta readiness](Phase14Exec.md) is in progress.
+
+**Public beta: NOT YET APPROVED.** Before release: verify hosted Phase 11/12 migrations, protected Worker deployment, scheduled raw-data purge, genuinely independent encrypted offsite backups and isolated recovery/deletion reconciliation, two-account/admin authenticated flows, and iOS Safari/installed-PWA accessibility/device acceptance. See [beta go/no-go](docs/beta-release.md) and [quality matrix](docs/quality-matrix.md).
+
+## Development
+
+Requires Node 22+ and npm:
 
 ```sh
 npm ci
 npm run dev
 ```
 
-The app shell and API health endpoint work without a Supabase project or credentials. Visit the URL printed by Vite.
-
-| Script | Purpose |
+| Check | Command |
 |---|---|
-| `npm run dev` | React + Worker local development |
-| `npm run typecheck` | Strict TypeScript checks |
-| `npm run lint` | ESLint |
-| `npm run format:check` | Prettier validation |
-| `npm test` | Vitest unit/API contract tests |
-| `npm run build` | Production Worker + SPA bundle |
-| `npm run preview -- --port 4173` | Local preview of built Worker and SPA |
-| `npm run smoke` | HTTP smoke (requires running preview) |
-| `npm run db:test` | PostgreSQL 17 migration/constraint/RLS tests (requires disposable test server) |
+| TypeScript | `npm run typecheck` |
+| Lint and format | `npm run lint && npm run format:check` |
+| Unit/contract tests | `npm test` |
+| Build | `npm run build` |
+| Local HTTP/PWA smoke | `npm run preview -- --port 4173` then `npm run smoke` |
+| Chromium accessibility/viewport | `node scripts/ui-smoke.mjs` against local preview |
+| Dual disposable PostgreSQL 17 RLS | `npm run db:test` with test DB configured |
+| Public beta read-only probes | `node scripts/ops/beta-preflight.mjs --live` (explicit network opt-in; not a deploy) |
 
-The daily return screen is at **[/today](/today)** (also the application home). It displays your selected games, manual played markers and publisher launch links, with a global user-initiated Paste shell. Read [docs/pwa.md](docs/pwa.md) for install, offline, privacy and manual iOS acceptance checks. **Phase 5 SQL was applied in the owner-approved November 16, 2026 release.** Later deployments/migrations still require authorization.
+No real credentials are required for the source CI jobs; never put Supabase service-role keys in `VITE_*` values. Production GitHub Actions are protected and main-only.
 
-Public game discovery is at **[/games](/games)**, with per-game details at `/games/:slug`. Selecting favorites requires Google/Apple sign-in; the catalog is browsable anonymously. The current deployed catalog remains launchable without result persistence; the merged Phase 7 source adds authenticated result ingestion behind separately authorized Worker secrets/deployment and hosted integration acceptance; the Phase 7 SQL is already applied to Daydle Preview. Five deterministic share parsers from Phase 6 are merged ([PR #12](https://github.com/A13Xg/Daydle/pull/12)); see [docs/parsers.md](docs/parsers.md) for coverage and constraints. Review the Phase 7 implementation and rollout requirements in [docs/results.md](docs/results.md). See [docs/catalog.md](docs/catalog.md) for seed data, safe URLs, owner selections, and admin RPC permissions. **Phase 4 SQL was applied in the owner-approved Phase 5 release.**
+## Product and engineering documentation
 
-Database schema, test roles and security boundaries are documented in [docs/database.md](docs/database.md). Supabase authentication flow and provider setup are in [docs/auth.md](docs/auth.md); hosting credentials and scopes in [docs/secrets.md](docs/secrets.md). CI tests the migration on two disposable PostgreSQL 17 databases without hosted Supabase credentials. Migrations are applied to the hosted project only with the owner's explicit approval.
+- [Product scope](IDEA.md), [roadmap/status ledger](roadmap.md), [repository execution protocol](AGENTS.md)
+- [Approved Obsidian Arcade UI system](referenceFiles/Daydle%20UI-UX%20Reference/DESIGN.md) and [UI architecture](docs/ui-architecture.md)
+- [Parsers](docs/parsers.md), [results/history](docs/results.md), [scoreboard spoiler rules](docs/comparisons.md)
+- [OAuth](docs/auth.md), [catalog](docs/catalog.md), [administration](docs/administration.md)
+- [Deployment/release](docs/deployment.md), [secrets](docs/secrets.md), [beta operations](docs/beta-release.md), [privacy data map](docs/privacy-data-map.md)
+- [Phase 12 recovery blockers](Phase12Exec.md), [Phase 13 device/QA blockers](Phase13Exec.md), [source acceptance matrix](docs/quality-matrix.md)
 
-Deployment and environment isolation are documented in [docs/deployment.md](docs/deployment.md). No production deployment is authorized merely by running CI or completing a phase.
-
-## Interface design
-
-Obsidian Arcade's dark palette, locally bundled Plus Jakarta Sans, three screen shells and five-tab navigation were integrated in [Phase 6.5](https://github.com/A13Xg/Daydle/pull/13). The [UI architecture and route matrix](docs/ui-architecture.md) distinguish shipped functionality from display-only future states. The mockups are design references, **not** permission to add fabricated social statistics or notifications.
-
-## Repository guidance
-
-- [IDEA.md](IDEA.md) — approved product requirements and architectural invariants.
-- [roadmap.md](roadmap.md) — numbered delivery phases and their review gates.
-- [AGENTS.md](AGENTS.md) — mandatory branch, draft PR, verification, and review protocol.
-- [completedPhases/](completedPhases/) — reviewed and verified execution plans for finished phases (currently Phases 1–6.5, including owner-attested Phase 5 PWA device acceptance).
-- [scripts/ops/](scripts/ops/README.md) — PowerShell helpers for provisioning, secrets, provider setup, deployment and test-account cleanup. They contain no credentials.
-- [referenceFiles/](referenceFiles/readme.md) — owner-approved Obsidian Arcade visual system and 13 screen examples, implemented in Phase 6.5. Examples do not expand the feature contract.
-- A root-level `Phase#Exec.md` exists only while its phase is actively being implemented.
-
-Obsidian Arcade is the approved visual standard; its React implementation is merged in [Phase 6.5 PR #13](https://github.com/A13Xg/Daydle/pull/13). Phase 7 source is also merged but not deployed; the live PWA remains on the earlier authorized release. Web/PWA remains the shipping platform, with future iOS packaging compatibility influencing architecture only.
+**Release controls:** Merging a PR never authorizes migration, production deployment, user-data deletion, or public launch. Each requires independent explicit approval and verification.

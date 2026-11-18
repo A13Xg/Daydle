@@ -1,4 +1,6 @@
-# Daydle — Phase 13 quality and acceptance matrix
+# Daydle — Source quality and public beta acceptance matrix
+
+**Post-merge status (November 17, 2026):** Phase 11 [PR #22](https://github.com/A13Xg/Daydle/pull/22), Phase 12 [PR #23](https://github.com/A13Xg/Daydle/pull/23) and Phase 13 [PR #24](https://github.com/A13Xg/Daydle/pull/24) are source merged. The last confirmed protected Worker release remains Phase 10. Offsite backup/restore, hosted auth/admin integration and real Safari acceptance remain NOT VERIFIED. Phase 14 [release go/no-go](beta-release.md) is blocked pending those gates.
 
 This matrix distinguishes **automated source evidence**, **hosted production evidence**, and **manual device/operator acceptance**. A passing CI job is not proof that a provider-backed or physical-device flow works. Obsidian Arcade is the existing approved visual system.
 
@@ -10,11 +12,11 @@ This matrix distinguishes **automated source evidence**, **hosted production evi
 | Personal statistics | `tests/statistics.test.ts`, `tests/statistics-worker.test.ts`, `tests/sql/statistics-assertions.sql` | Hosted authenticated statistics history UI |
 | Friend codes, blocks, public profiles | `tests/social-worker.test.ts`, `tests/sql/social-assertions.sql`, guest Chrome routes | Real two-account OAuth relationship tests, camera QR on iOS |
 | Spoiler-safe comparisons | `tests/comparisons-worker.test.ts`, `tests/sql/comparisons-assertions.sql`, guest Chrome shield checks | Real two-account same-puzzle unlock and verified-reset timing |
-| Game suggestions and admin | `tests/administration-worker.test.ts`, `tests/administration-ui.test.ts`, `tests/sql/administration-assertions.sql` where present; guest Chrome route | Admin membership provisioning and real hosted operator/nonoperator E2E; Phase 11 not deployed |
-| Privacy export and deletion | `tests/privacy-worker.test.ts`, `tests/sql/privacy-assertions.sql` where present; private no-store responses | Hosted deletion and export including session restoration; Phase 12 not deployed |
+| Game suggestions and admin | `tests/administration-worker.test.ts`, `tests/administration-ui.test.ts`, `tests/sql/administration-assertions.sql` where present; guest Chrome route | Admin membership provisioning and real hosted operator/nonoperator E2E; Phase 11 source merged; hosted release not verified |
+| Privacy export and deletion | `tests/privacy-worker.test.ts`, `tests/sql/privacy-assertions.sql` where present; private no-store responses | Hosted deletion and export including session restoration; Phase 12 source merged; hosted release not verified |
 | Raw retention and recovery | `tests/backup-crypto.test.ts`, `scripts/ops/backup-crypto.mjs`, SQL TTL/RLS assertions | Independently scheduled offsite encrypted backup, retention, real isolated restore, tombstone replay |
 | Install/offline/cache | `tests/pwa.test.ts`, `tests/offline-snapshot.test.ts`, `tests/live-release.test.ts` | Safari PWA installation and offline authenticated account isolation on device |
-| Theme/responsiveness | `scripts/ui-smoke.mjs`: 320px/393px/1024px, locally bundled font, 5-tab navigation, 44px buttons, no horizontal overflow/CDN | Human screenshot-to-reference parity; dynamic authenticated content |
+| Theme/responsiveness | `scripts/ui-smoke.mjs`: 320px/393px/1024px, 31 responsive route checks in Phase 14, locally bundled font, 5-tab navigation, 44px buttons, no horizontal overflow/CDN | Human screenshot-to-reference parity; dynamic authenticated content |
 | Accessibility semantics | `scripts/ui-smoke.mjs`: computed Chromium accessibility names, page landmarks, H1, image alt, hidden-focusable checks (Phase 13), keyboard Escape focus test | Full WCAG 2.2 AA audit with screen readers/VoiceOver and mobile Safari |
 
 ## Security acceptance boundaries

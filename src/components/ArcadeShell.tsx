@@ -25,6 +25,7 @@ export function shellForPath(pathname: string): ShellKind {
     /^\/comparison-results\/[0-9a-f-]{36}\/?$/i.test(pathname) ||
     pathname === "/notifications" ||
     pathname === "/how-it-works" ||
+    pathname === "/privacy" ||
     /^\/players\/[0-9a-f-]{36}\/?$/i.test(pathname) ||
     /^\/games\/[a-z0-9-]+\/?$/.test(pathname)
   )
@@ -47,6 +48,7 @@ export function stackTitle(pathname: string): string {
   if (pathname.startsWith("/comparison-results/")) return "Public result";
   if (pathname === "/notifications") return "Notifications";
   if (pathname === "/how-it-works") return "How it works";
+  if (pathname === "/privacy") return "Privacy and data";
   if (pathname.startsWith("/games/")) return "Game details";
   if (pathname.startsWith("/players/")) return "Player profile";
   return "Daydle";
