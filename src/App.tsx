@@ -15,6 +15,7 @@ import { FriendsPage } from "./components/FriendsPage";
 import { PublicPlayerPage } from "./components/PublicPlayerPage";
 import { GameRequestsPage } from "./components/GameRequestsPage";
 import { AdminPage } from "./components/AdminPage";
+import { PrivacyPage } from "./components/PrivacyPage";
 import {
   ComparisonsPage,
   PublicResultDetail,
