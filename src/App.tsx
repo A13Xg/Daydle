@@ -271,8 +271,8 @@ export default function App() {
       {shell !== "blank" && (
         <footer className="site-footer">
           <small>
-            Publisher games open externally. Manual play markers are not
-            verified results.
+            Publisher games open externally. Submitted shares and manual
+            marks do not independently verify gameplay.
           </small>
           <a className="secondary-link" href="/privacy">
             Privacy and data handling
