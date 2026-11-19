@@ -125,25 +125,24 @@ export function PasteDialog({
     area.current?.focus();
   }
 
-  async function playedFeedback(message: string): Promise<string> {
-    if (!client || !userId || previewDecision?.status !== "parsed")
-      return message;
+  async function playedFeedback(message: string, resultId?: string): Promise<string> {
+    if (!client || !userId || !resultId) return message;
     try {
-      const { gameSlug, puzzleDate } = previewDecision.result;
+      // Use the server-confirmed canonical result, including confirmed-game
+      // disambiguation, rather than trusting a local preview for an account write.
+      const saved = await getResultDetail(client, userId, resultId);
       const marker = await markPlayedFromSubmittedResult(
         client,
         userId,
-        gameSlug,
-        puzzleDate,
+        saved.game_slug,
+        saved.puzzle_date,
       );
       if (marker === "historical")
-        return (
-          message + " This older puzzle did not change today's played status."
-        );
+        return message + " This older puzzle did not change today's played status.";
       window.dispatchEvent(new Event("daydle:played-updated"));
       return message + " Marked played today.";
     } catch {
-      // A confirmed result can be saved even when a separate played-mark write fails.
+      // A confirmed result may be saved even if its separate played-mark write fails.
       return message + " Played status could not be verified; check Today.";
     }
   }
@@ -174,13 +173,14 @@ export function PasteDialog({
       switch (decision.status) {
         case "saved":
           setValue("");
-          setNotice(await playedFeedback("Result saved to your history."));
+          setNotice(await playedFeedback("Result saved to your history.", decision.id));
           break;
         case "duplicate":
           setValue("");
           setNotice(
             await playedFeedback(
               "This result is already in your history. No duplicate was created.",
+              decision.id,
             ),
           );
           break;
@@ -189,6 +189,7 @@ export function PasteDialog({
           setNotice(
             await playedFeedback(
               "Saved result replaced. The correction has been recorded.",
+              decision.id,
             ),
           );
           break;
