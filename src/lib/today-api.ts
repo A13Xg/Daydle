@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { isLocalDay } from "../../shared/today";
+import { isLocalDay, localDayString } from "../../shared/today";
 
 function validateDay(day: string): void {
   if (!isLocalDay(day)) throw new Error("Invalid local calendar date.");
@@ -64,4 +64,45 @@ export async function updateAndReconcilePlayed(
     ids: await loadManualPlayed(client, userId, day),
     confirmed,
   };
+}
+
+/**
+ * Synchronize the Today mark only after a successful server-confirmed result.
+ * An explicitly dated historical puzzle must never mark the current day.
+ * Number-only shares cannot establish publisher-local dates; they use the
+ * browser-local submission day, just like a manual played mark.
+ */
+export async function markPlayedFromSubmittedResult(
+  client: SupabaseClient,
+  userId: string,
+  gameSlug: string,
+  puzzleDate: string | null,
+  clock: Date = new Date(),
+): Promise<"marked" | "historical"> {
+  const day = localDayString(clock);
+  if (puzzleDate && puzzleDate !== day) return "historical";
+
+  const { data, error } = await client
+    .from("games")
+    .select("id")
+    .eq("slug", gameSlug)
+    .maybeSingle();
+  if (error || typeof data?.id !== "string") {
+    throw new Error("Could not resolve the submitted game's catalog ID.");
+  }
+
+  const before = await loadManualPlayed(client, userId, day);
+  if (before.includes(data.id)) return "marked";
+
+  const after = await updateAndReconcilePlayed(
+    client,
+    userId,
+    data.id,
+    day,
+    true,
+  );
+  if (!after.ids.includes(data.id)) {
+    throw new Error("The played marker was not confirmed by the server.");
+  }
+  return "marked";
 }

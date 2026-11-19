@@ -43,13 +43,15 @@ const QUORDLE = [
 ].join("\n");
 
 describe("parser registry contracts", () => {
-  it("registers five distinct existing catalog slugs with stable versions", () => {
+  it("registers seven distinct catalog slugs with stable versions", () => {
     expect(shareParsers.map((p) => p.gameSlug)).toEqual([
       "wordle",
       "connections",
       "strands",
       "mini-crossword",
       "quordle",
+      "worldle",
+      "flagle",
     ]);
     for (const p of shareParsers) {
       expect(p.parserVersion).toBe("1.0.0");

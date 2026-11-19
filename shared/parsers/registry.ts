@@ -1,8 +1,10 @@
 import { connectionsParser } from "./games/connections";
+import { flagleParser } from "./games/flagle";
 import { miniCrosswordParser } from "./games/mini-crossword";
 import { quordleParser } from "./games/quordle";
 import { strandsParser } from "./games/strands";
 import { wordleParser } from "./games/wordle";
+import { worldleParser } from "./games/worldle";
 import { normalizeShare } from "./normalize";
 import type { ParseDecision, ShareParser } from "./types";
 
@@ -12,6 +14,8 @@ export const shareParsers: readonly ShareParser[] = Object.freeze([
   strandsParser,
   miniCrosswordParser,
   quordleParser,
+  worldleParser,
+  flagleParser,
 ]);
 
 /**

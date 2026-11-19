@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   loadManualPlayed,
+  markPlayedFromSubmittedResult,
   updateAndReconcilePlayed,
   updateManualPlayed,
 } from "../src/lib/today-api";
@@ -89,5 +90,99 @@ describe("private played-marker Supabase adapter", () => {
       ),
     ).rejects.toThrow("Invalid local");
     expect(from).not.toHaveBeenCalled();
+  });
+});
+
+describe("automatic played mark after a confirmed result", () => {
+  it("does not mark today's lineup for an older dated puzzle", async () => {
+    const from = vi.fn();
+    const result = await markPlayedFromSubmittedResult(
+      { from } as unknown as SupabaseClient,
+      "owner",
+      "flagle",
+      "2026-11-16",
+      new Date(2026, 10, 18, 12, 0),
+    );
+    expect(result).toBe("historical");
+    expect(from).not.toHaveBeenCalled();
+  });
+
+  it("resolves the canonical game ID, writes the local-day mark and re-reads it", async () => {
+    const marks: string[] = [];
+    const insert = vi
+      .fn()
+      .mockImplementation(async (row: { game_id: string }) => {
+        marks.push(row.game_id);
+        return { error: null };
+      });
+    const from = vi.fn().mockImplementation((table: string) =>
+      table === "games"
+        ? {
+            select: () => ({
+              eq: () => ({
+                maybeSingle: async () => ({
+                  data: { id: "game-1" },
+                  error: null,
+                }),
+              }),
+            }),
+          }
+        : {
+            select: () => ({
+              eq: () => ({
+                eq: async () => ({
+                  data: marks.map((game_id) => ({ game_id })),
+                  error: null,
+                }),
+              }),
+            }),
+            insert,
+          },
+    );
+    const client = { from } as unknown as SupabaseClient;
+    const clock = new Date(2026, 10, 18, 12, 0);
+    expect(
+      await markPlayedFromSubmittedResult(
+        client,
+        "owner",
+        "wordle",
+        null,
+        clock,
+      ),
+    ).toBe("marked");
+    expect(insert).toHaveBeenCalledWith({
+      user_id: "owner",
+      game_id: "game-1",
+      local_date: "2026-11-18",
+    });
+    expect(
+      await markPlayedFromSubmittedResult(
+        client,
+        "owner",
+        "wordle",
+        "2026-11-18",
+        clock,
+      ),
+    ).toBe("marked");
+    expect(insert).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects unresolved catalog IDs rather than claiming played status", async () => {
+    const from = vi.fn().mockReturnValue({
+      select: () => ({
+        eq: () => ({
+          maybeSingle: async () => ({ data: null, error: null }),
+        }),
+      }),
+    });
+    await expect(
+      markPlayedFromSubmittedResult(
+        { from } as unknown as SupabaseClient,
+        "owner",
+        "unknown-game",
+        null,
+        new Date(2026, 10, 18, 12, 0),
+      ),
+    ).rejects.toThrow("catalog ID");
   });
 });

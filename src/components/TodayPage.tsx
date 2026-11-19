@@ -1,10 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import {
-  canLaunchGame,
-  gameAvailabilityLabel,
-  safePublisherUrl,
-} from "../../shared/catalog";
+import { canLaunchGame, safePublisherUrl } from "../../shared/catalog";
 import type { CatalogGame } from "../../shared/catalog";
 import { localDayString, manualPlayedLabel } from "../../shared/today";
 import { loadCatalog, loadSelectedGames } from "../lib/catalog-api";
@@ -50,9 +46,11 @@ function launchStorage(): Storage | undefined {
 export function TodayPage({
   client,
   userId,
+  suspendEmptyRedirect = false,
 }: {
   client: SupabaseClient | null;
   userId: string | null;
+  suspendEmptyRedirect?: boolean;
 }) {
   const [day, setDay] = useState(() => localDayString(new Date()));
   const [state, setState] = useState<TodayState>({ status: "loading" });
@@ -135,6 +133,29 @@ export function TodayPage({
       active = false;
     };
   }, [client, userId, day, retry]);
+
+  useEffect(() => {
+    function onSavedResult() {
+      setRetry((value) => value + 1);
+    }
+    window.addEventListener("daydle:played-updated", onSavedResult);
+    return () =>
+      window.removeEventListener("daydle:played-updated", onSavedResult);
+  }, []);
+
+  useEffect(() => {
+    if (
+      suspendEmptyRedirect ||
+      !userId ||
+      !online ||
+      state.status !== "ready" ||
+      state.snapshot.offline ||
+      state.snapshot.selectedIds.length !== 0
+    )
+      return;
+    // Redirect only after an authoritative, online read confirms no lineup.
+    window.location.replace("/games?setup=1");
+  }, [state, online, userId, suspendEmptyRedirect]);
 
   async function togglePlayed(gameId: string, mark: boolean) {
     if (
@@ -283,23 +304,15 @@ export function TodayPage({
         <p className="eyebrow">YOUR DAILY RITUAL</p>
         <h1>Today in your arcade.</h1>
         <p className="today-date">{day}</p>
-        <p>
-          Your selected puzzles, in your own order. Play as many or as few as
-          you like.
-        </p>
         {playedIds !== null && !offline && games.length > 0 && (
-          <div
-            className="today-summary"
-            role="group"
-            aria-label="Manually marked played today"
-          >
+          <div className="today-summary" role="group" aria-label="Played today">
             <span>
-              {numberPlayed} / {games.length} marked played
+              {numberPlayed} / {games.length} played
             </span>
             <progress
               value={numberPlayed}
               max={games.length}
-              aria-label="Manual played marks, not verified results"
+              aria-label="Played today, including manual marks and submitted shares"
             />
           </div>
         )}
@@ -329,21 +342,12 @@ export function TodayPage({
           </div>
         </div>
         {games.length === 0 ? (
-          <div>
-            <p>
-              No games selected yet. Add your favorites to build a daily
-              rotation.
-            </p>
-            <a href="/games">Find games</a>
+          <div role="status">
+            <p>Choose the puzzles you want in your daily rotation.</p>
+            <a href="/games?setup=1">Select my games</a>
           </div>
         ) : (
           <>
-            {playedIds !== null && !offline && (
-              <p className="muted" role="status">
-                Progress is based only on manual played marks, not verified
-                puzzle results.
-              </p>
-            )}
             <ol className="today-list">
               {games.map((game) => {
                 const link = safePublisherUrl(game.canonicalUrl);
@@ -374,10 +378,6 @@ export function TodayPage({
                             playedIds !== null && !offline,
                           )}
                         </span>
-                        <small>
-                          {gameAvailabilityLabel(game)} · Results appear in
-                          History after submission
-                        </small>
                       </div>
                     </div>
                     <div className="today-actions">
@@ -419,24 +419,11 @@ export function TodayPage({
           </>
         )}
       </section>
-      <section className="panel" aria-labelledby="today-help">
-        <div className="today-toolbar">
-          <h2 id="today-help">Returning from a publisher</h2>
-          <a href="/how-it-works">How it works</a>
-        </div>
-        <p>
-          Publisher games may open in a Safari tab or another browser context.
-          Return to Daydle from the tab switcher or home screen, then choose
-          <strong> Paste Results</strong>. The text can be pasted manually;
-          supported results can be submitted to your private History after an
-          explicit action.
-        </p>
-        <p className="muted">
-          On iPhone Safari, Share → Add to Home Screen installs Daydle. An
-          installed web app can maintain separate browser storage and may not
-          receive external page redirects automatically.
-        </p>
-      </section>
+      <p className="today-quick-guide">
+        <ArcadeIcon name="paste" size={18} />
+        Finished playing? Share Results → Copy → Paste Results.{" "}
+        <a href="/how-it-works">How it works</a>
+      </p>
     </div>
   );
 }

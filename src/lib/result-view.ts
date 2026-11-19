@@ -9,6 +9,8 @@ const names: Record<string, string> = {
   strands: "Strands",
   "mini-crossword": "The Mini",
   quordle: "Daily Quordle",
+  worldle: "Worldle",
+  flagle: "Flagle",
 };
 
 export const supportedResultGames = shareParsers.map(({ gameSlug }) => ({
@@ -90,6 +92,14 @@ export function resultDetails(
       number("themeWords", "Theme words");
       number("hints", "Hints used");
       number("spangramPosition", "Spangram position");
+      break;
+    case "worldle":
+      number("sharePercent", "Publisher-reported proximity (%)");
+      number("greenClues", "Green clues");
+      number("yellowClues", "Yellow clues");
+      break;
+    case "flagle":
+      number("greenClues", "Green clues");
       break;
     case "quordle": {
       const boards = m.boardAttempts;

@@ -2811,3 +2811,287 @@ button:not(.icon-button):not(.paste-global):not(.provider-button):hover:not(
     font-size: 1rem;
   }
 }
+
+/* Phase 15: compact noninteractive whitespace; preserve 44px touch controls. */
+.content-tab {
+  padding-top: calc(var(--topbar-height) + env(safe-area-inset-top) + 0.95rem);
+  padding-bottom: calc(
+    var(--tabbar-height) + env(safe-area-inset-bottom) + 4.75rem
+  );
+}
+.content-stack {
+  padding-top: calc(var(--topbar-height) + env(safe-area-inset-top) + 1rem);
+}
+.today-heading {
+  padding: clamp(1.1rem, 2.5vw, 1.65rem);
+  border-radius: 1.4rem;
+  margin-bottom: 0.85rem;
+}
+.today-heading h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  margin-block: 0.35rem;
+}
+.today-heading .eyebrow {
+  margin-bottom: 0.4rem;
+}
+.today-summary {
+  margin-block: 0.6rem 0.15rem;
+  gap: 0.65rem;
+}
+.today-page > .panel {
+  margin-block: 0.65rem;
+  padding: clamp(0.9rem, 2vw, 1.25rem);
+}
+.today-list {
+  gap: 0.48rem;
+  margin-top: 0.55rem;
+}
+.today-game {
+  gap: 0.65rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 1.05rem;
+}
+.today-game-info {
+  gap: 0.65rem;
+}
+.today-game-info .game-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 0.9rem;
+}
+.today-quick-guide {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.65rem 0;
+  padding: 0.6rem 0.75rem;
+  color: var(--on-surface-variant);
+  background: var(--surface-container-low);
+  border: 1px solid var(--hairline);
+  border-radius: 0.9rem;
+  font-size: 0.84rem;
+}
+.today-quick-guide a {
+  color: var(--primary);
+}
+.catalog-heading {
+  margin-bottom: 0.8rem;
+}
+.catalog-grid {
+  gap: 0.7rem;
+}
+.catalog-card {
+  min-height: 0;
+  padding: 0.95rem;
+  border-radius: 1.3rem;
+}
+.catalog-card p {
+  margin-block: 0.35rem;
+}
+.catalog-card .game-avatar {
+  width: 46px;
+  height: 46px;
+}
+
+/* First-lineup checkbox editor. Selection is an explicit, atomic save. */
+.lineup-setup {
+  max-width: 780px;
+}
+.lineup-setup .panel {
+  padding: clamp(0.9rem, 2.5vw, 1.4rem);
+}
+.setup-game-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 0.55rem;
+  margin-top: 0.75rem;
+}
+.setup-game {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 60px;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--hairline);
+  border-radius: 1rem;
+  background: var(--surface-container-lowest);
+  cursor: pointer;
+}
+.setup-game:focus-within {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.setup-game:has(input:checked) {
+  border-color: rgba(78, 222, 163, 0.6);
+  background: rgba(78, 222, 163, 0.07);
+}
+.setup-game input {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  accent-color: var(--tertiary);
+}
+.setup-game .game-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 0.85rem;
+}
+.setup-game-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+.setup-game-copy small {
+  color: var(--on-surface-variant);
+  font-size: 0.75rem;
+}
+.setup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 0.9rem;
+}
+.setup-actions > button {
+  background: var(--primary-container) !important;
+  color: var(--on-primary-container) !important;
+}
+
+/* Illustrated first-use guide, in the established Obsidian Arcade palette. */
+.share-tour-backdrop {
+  position: fixed;
+  z-index: 65;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: max(1rem, env(safe-area-inset-top))
+    max(0.75rem, env(safe-area-inset-right))
+    max(1rem, env(safe-area-inset-bottom))
+    max(0.75rem, env(safe-area-inset-left));
+  background: rgba(1, 15, 31, 0.88);
+  -webkit-backdrop-filter: blur(9px);
+  backdrop-filter: blur(9px);
+}
+.share-tour {
+  width: min(100%, 820px);
+  max-height: min(92dvh, 760px);
+  overflow-y: auto;
+  margin: 0;
+  border-color: rgba(173, 198, 255, 0.35);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.5);
+}
+.share-tour h2 {
+  margin: 0.3rem 0 0.45rem;
+  font-size: clamp(1.3rem, 4.5vw, 1.85rem);
+}
+.share-tour > p {
+  margin-block: 0.45rem;
+}
+.share-tour-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  padding: 0;
+  margin: 1rem 0 0.65rem;
+  list-style: none;
+}
+.share-tour-steps li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.42rem;
+  padding: 0.75rem;
+  border: 1px solid var(--hairline);
+  border-radius: 1rem;
+  background: var(--surface-container-lowest);
+  font-size: 0.82rem;
+  color: var(--on-surface-variant);
+}
+.share-tour-steps strong {
+  font-size: 0.93rem;
+  color: var(--on-surface);
+}
+.share-tour-number {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--tertiary);
+}
+.share-tour-visual {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  gap: 0.4rem;
+  min-height: 99px;
+  padding: 0.65rem;
+  border: 1px solid rgba(173, 198, 255, 0.15);
+  border-radius: 0.8rem;
+  background: linear-gradient(135deg, #18324d, #0b1d31);
+}
+.share-tour-mini-label {
+  font-size: 0.69rem;
+  font-weight: 700;
+  color: var(--on-surface-variant);
+}
+.share-tour-sample-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.4rem;
+  border-radius: 0.65rem;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-weight: 800;
+  text-align: center;
+}
+.share-tour-copy {
+  background: var(--surface-container-highest);
+  color: var(--on-surface);
+}
+.share-tour-paste {
+  background: var(--tertiary-container);
+  color: var(--on-tertiary-container);
+}
+.share-tour-note {
+  font-size: 0.78rem;
+  color: var(--on-surface-variant);
+}
+.share-tour > button {
+  display: block;
+  margin-left: auto;
+  background: var(--primary-container) !important;
+  color: var(--on-primary-container) !important;
+}
+@media (min-width: 850px) {
+  .content-tab {
+    padding-bottom: 5.5rem;
+  }
+}
+@media (max-width: 650px) {
+  .share-tour-steps {
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+  }
+  .share-tour-steps li {
+    display: grid;
+    grid-template-columns: 1.15rem minmax(0, 1fr);
+    gap: 0.3rem 0.55rem;
+    padding: 0.65rem;
+  }
+  .share-tour-number {
+    grid-column: 1;
+  }
+  .share-tour-visual,
+  .share-tour-steps strong,
+  .share-tour-steps li > span:last-child {
+    grid-column: 2;
+  }
+  .share-tour-visual {
+    min-height: 62px;
+  }
+  .share-tour > button {
+    width: 100%;
+  }
+}
