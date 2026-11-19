@@ -178,7 +178,9 @@ export function PasteDialog({
       switch (decision.status) {
         case "saved":
           setValue("");
-          setNotice(await playedFeedback("Result saved to your history.", decision.id));
+          setNotice(
+            await playedFeedback("Result saved to your history.", decision.id),
+          );
           break;
         case "duplicate":
           setValue("");
@@ -378,8 +380,9 @@ export function PasteDialog({
             <p className="muted paste-submit-disclosure">
               Submit result uploads the pasted text for validation. If parsing
               fails, a private sample and failure category are retained with a
-              90-day expiry date for parser improvement. Scheduled purge execution requires operational
-              verification. Reading the clipboard alone does not upload text.
+              90-day expiry date for parser improvement. Scheduled purge
+              execution requires operational verification. Reading the clipboard
+              alone does not upload text.
             </p>
           </div>
         )}
