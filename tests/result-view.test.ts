@@ -18,8 +18,12 @@ describe("result presentation contracts", () => {
       "strands",
       "mini-crossword",
       "quordle",
+      "worldle",
+      "flagle",
     ]);
     expect(supportedResultGames.map(({ name }) => name)).toContain("The Mini");
+    expect(gameDisplayName("worldle")).toBe("Worldle");
+    expect(gameDisplayName("flagle")).toBe("Flagle");
     expect(gameDisplayName("unsupported-new-game")).toBe(
       "unsupported-new-game",
     );
