@@ -25,3 +25,10 @@
 - Two isolated PostgreSQL 17 migrations/security suites (including Phase 15 metadata update).
 - Read-only preflight expected pending migration; no production SQL deployment, data deletion, secrets or Worker publish in this PR.
 - Final self-review: exact diff, no private sample contents, no temporary formatting workflows, accurate docs/roadmap, link source CI when green.
+
+## Hosted release reconciliation (2026-11-18 Pacific)
+
+- Owner explicitly authorized PR merge and required database migration.
+- Supabase project `xyjuriehmrkdqdmcxdso` applied the reviewed, non-destructive parser metadata SQL successfully. The hosted migration service generated **version `20261119021325`, name `phase15_parser_coverage`**. Local migration filename and exact version allowlist were reconciled to match this real version rather than a guessed timestamp.
+- A read-only follow-up verified exactly two active catalog rows (`worldle`, `flagle`) now report `parser_status='supported'`. No raw result data, accounts, history, privacy retention, or RLS was changed.
+- Protected Worker/frontend production release remains a separate manual `workflow_dispatch` on main with GitHub environment reviewer approval; source merge and hosted migration do not deploy the Worker.
