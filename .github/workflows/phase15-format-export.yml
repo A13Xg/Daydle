@@ -1,0 +1,29 @@
+name: Phase 15 Formatting Export (temporary)
+
+on:
+  push:
+    branches:
+      - phase/15-compact-onboarding-parsers
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: "22"
+      - run: npm ci --no-audit --no-fund
+      - name: Export formatting of two files without pushing or credentials
+        run: |
+          set -euo pipefail
+          npx --no-install prettier --write src/App.tsx src/components/PasteDialog.tsx
+          for file in src/App.tsx src/components/PasteDialog.tsx; do
+            echo "::FORMATTED_BEGIN::$file"
+            base64 -w76 "$file"
+            echo "::FORMATTED_END::$file"
+          done
